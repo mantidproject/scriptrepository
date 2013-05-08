@@ -1,0 +1,6 @@
+Instname 		LET
+rawfile_extenstion 	.raw
+DAE 			ndxlet
+mon1			40962
+mon2			40965
+mon3			40967

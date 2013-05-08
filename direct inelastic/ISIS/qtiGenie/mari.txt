@@ -1,0 +1,6 @@
+Instname 		MAR
+rawfile_extenstion 	.raw
+DAE 			ndxmari
+mon1			1
+mon2			2
+mon3			3

@@ -1,0 +1,6 @@
+Instname 		MER
+rawfile_extenstion 	.RAW
+DAE 			ndxmerlin
+mon1			69633
+mon2			69636
+mon3			69638

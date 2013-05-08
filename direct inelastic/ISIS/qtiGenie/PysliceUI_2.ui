@@ -1,0 +1,1113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>831</width>
+    <height>512</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Reduction</string>
+       </attribute>
+       <widget class="QLineEdit" name="DetVanNum">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>10</y>
+          <width>113</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="RunNum">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>50</y>
+          <width>113</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string extracomment="Run nubers for reduction, single numbe, comma seperated list or colon seperated range"/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_16">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>131</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Detector Vanadium</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_17">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>131</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Run numbers</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="Reduce">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>130</y>
+          <width>114</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Reduce</string>
+        </property>
+       </widget>
+       <widget class="QListWidget" name="ReduceOutput">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>210</y>
+          <width>781</width>
+          <height>221</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="sumRuns">
+        <property name="geometry">
+         <rect>
+          <x>270</x>
+          <y>50</y>
+          <width>141</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>sum these runs</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_18">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>131</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Output workpspace
+name</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="outputWksp">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>90</y>
+          <width>113</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string extracomment="Run nubers for reduction, single numbe, comma seperated list or colon seperated range"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QTabWidget" name="tabWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>0</y>
+          <width>381</width>
+          <height>201</height>
+         </rect>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab_3">
+         <attribute name="title">
+          <string>Reduction options</string>
+         </attribute>
+         <widget class="QCheckBox" name="BkgSwitch">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>30</y>
+            <width>181</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>BackGround Subtraction</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="AutoEiChbox">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>71</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>AutoEi</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="FixEi">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>70</y>
+            <width>61</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>FixEi</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="EiGuess">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>70</y>
+            <width>41</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="MonSpecNumber">
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>95</y>
+            <width>41</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="FixMonitorSpectrum">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>90</y>
+            <width>71</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Monitor
+Spec</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="NormMethod">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>120</y>
+            <width>81</width>
+            <height>26</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>Current</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Monitor-1</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="label_23">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>125</y>
+            <width>91</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Normalisation</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="mapfile">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>150</y>
+            <width>131</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_24">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>150</y>
+            <width>60</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>MapFile</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="InstName">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>0</y>
+            <width>111</width>
+            <height>26</height>
+           </rect>
+          </property>
+          <item>
+           <property name="text">
+            <string>Select Inst</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Mari</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Merlin</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Maps</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LET</string>
+           </property>
+          </item>
+         </widget>
+         <widget class="QLabel" name="label_25">
+          <property name="geometry">
+           <rect>
+            <x>130</x>
+            <y>73</y>
+            <width>60</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>EiGuess</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_4">
+         <attribute name="title">
+          <string>Absolute Normalisation</string>
+         </attribute>
+         <widget class="QCheckBox" name="AbsNormSwitch">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>221</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Perform absolute normalisation</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="DetVanNum_2">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>50</y>
+            <width>113</width>
+            <height>22</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_19">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>80</y>
+            <width>131</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Mono Van Run</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_20">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>131</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Detector Vanadium
+for mono run</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="MonoRunNum">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>80</y>
+            <width>113</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string extracomment="Run nubers for reduction, single numbe, comma seperated list or colon seperated range"/>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="sampleMass">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>110</y>
+            <width>113</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_21">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>140</y>
+            <width>131</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Mass of a
+formula unit</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_22">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>110</y>
+            <width>131</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Sample Mass</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="RMMmass">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>140</y>
+            <width>113</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string extracomment="Run nubers for reduction, single numbe, comma seperated list or colon seperated range"/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Visulisation</string>
+       </attribute>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>534</x>
+          <y>61</y>
+          <width>62</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Smooth</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>92</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Min</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="plot">
+        <property name="geometry">
+         <rect>
+          <x>554</x>
+          <y>142</y>
+          <width>91</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Plot cut</string>
+        </property>
+        <property name="text">
+         <string>Plot</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="removePlot">
+        <property name="geometry">
+         <rect>
+          <x>294</x>
+          <y>380</y>
+          <width>150</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Remove figure</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>409</x>
+          <y>163</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Min</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="scalemin">
+        <property name="geometry">
+         <rect>
+          <x>383</x>
+          <y>178</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Minimum valaue for cut integration</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_14">
+        <property name="geometry">
+         <rect>
+          <x>299</x>
+          <y>220</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Figure List </string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="cutMax">
+        <property name="geometry">
+         <rect>
+          <x>469</x>
+          <y>112</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Maximum valaue for cut axis</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>669</x>
+          <y>330</y>
+          <width>81</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>MeanSquare</string>
+        </property>
+       </widget>
+       <widget class="QFrame" name="frame">
+        <property name="geometry">
+         <rect>
+          <x>319</x>
+          <y>3</y>
+          <width>301</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Controls for displaying Q, W map</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>584</x>
+          <y>92</y>
+          <width>30</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Step</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="removeWksp">
+        <property name="geometry">
+         <rect>
+          <x>3</x>
+          <y>380</y>
+          <width>150</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Remove workspace</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>322</x>
+          <y>142</y>
+          <width>71</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Integrate </string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="intMin">
+        <property name="geometry">
+         <rect>
+          <x>383</x>
+          <y>142</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Minimum valaue for cut integration</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="DispMin">
+        <property name="geometry">
+         <rect>
+          <x>362</x>
+          <y>40</y>
+          <width>71</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="scalemax">
+        <property name="geometry">
+         <rect>
+          <x>469</x>
+          <y>177</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Maximum valaue for cut integration</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>92</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Max</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>456</x>
+          <y>60</y>
+          <width>41</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>I Max</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>674</x>
+          <y>284</y>
+          <width>62</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Temp[K]</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>74</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Workspace List </string>
+        </property>
+       </widget>
+       <widget class="QListWidget" name="FigureList">
+        <property name="geometry">
+         <rect>
+          <x>299</x>
+          <y>240</y>
+          <width>361</width>
+          <height>141</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>List of Plots</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="Temperature">
+        <property name="geometry">
+         <rect>
+          <x>668</x>
+          <y>260</y>
+          <width>71</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Temperature of Run Units K</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="intMax">
+        <property name="geometry">
+         <rect>
+          <x>469</x>
+          <y>142</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Maximum valaue for cut integration</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="WkspIn">
+        <property name="geometry">
+         <rect>
+          <x>13</x>
+          <y>4</y>
+          <width>171</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Avalailable Workspaces</string>
+        </property>
+        <property name="statusTip">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="DispMax">
+        <property name="geometry">
+         <rect>
+          <x>441</x>
+          <y>40</y>
+          <width>71</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="refresh">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>30</y>
+          <width>114</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Refresh available workspaces</string>
+        </property>
+        <property name="text">
+         <string>Refresh List</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="axis">
+        <property name="geometry">
+         <rect>
+          <x>303</x>
+          <y>109</y>
+          <width>71</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Axis to cut along</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>664</x>
+          <y>350</y>
+          <width>91</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Displacement</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_15">
+        <property name="geometry">
+         <rect>
+          <x>379</x>
+          <y>60</y>
+          <width>41</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>I Min</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="genScript">
+        <property name="geometry">
+         <rect>
+          <x>662</x>
+          <y>370</y>
+          <width>91</width>
+          <height>40</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>GenScript</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="calcProj">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>3</y>
+          <width>121</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>calcProjections</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="plotOver">
+        <property name="geometry">
+         <rect>
+          <x>554</x>
+          <y>172</y>
+          <width>91</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Plot cut over existing plot (Must seleect a plot below)</string>
+        </property>
+        <property name="text">
+         <string>Plot Over</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="delta">
+        <property name="geometry">
+         <rect>
+          <x>559</x>
+          <y>112</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Step valaue for cut axis rebin</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="display">
+        <property name="geometry">
+         <rect>
+          <x>357</x>
+          <y>10</y>
+          <width>241</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>display</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>305</x>
+          <y>177</y>
+          <width>81</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Y Axis scale</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="cutMin">
+        <property name="geometry">
+         <rect>
+          <x>383</x>
+          <y>112</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Minimum valaue for cut axis</string>
+        </property>
+       </widget>
+       <widget class="QListWidget" name="wkspList">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>100</y>
+          <width>271</width>
+          <height>281</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>List of transformed workspaces</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="smooth">
+        <property name="geometry">
+         <rect>
+          <x>522</x>
+          <y>39</y>
+          <width>71</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>499</x>
+          <y>162</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Max</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="DBWFac">
+        <property name="geometry">
+         <rect>
+          <x>670</x>
+          <y>310</y>
+          <width>71</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Mean square displacement [Angstrom]</string>
+        </property>
+       </widget>
+       <zorder>frame</zorder>
+       <zorder>label_6</zorder>
+       <zorder>label</zorder>
+       <zorder>plot</zorder>
+       <zorder>removePlot</zorder>
+       <zorder>label_7</zorder>
+       <zorder>scalemin</zorder>
+       <zorder>label_14</zorder>
+       <zorder>cutMax</zorder>
+       <zorder>label_10</zorder>
+       <zorder>label_3</zorder>
+       <zorder>removeWksp</zorder>
+       <zorder>label_4</zorder>
+       <zorder>intMin</zorder>
+       <zorder>DispMin</zorder>
+       <zorder>scalemax</zorder>
+       <zorder>label_2</zorder>
+       <zorder>label_13</zorder>
+       <zorder>label_9</zorder>
+       <zorder>label_12</zorder>
+       <zorder>FigureList</zorder>
+       <zorder>Temperature</zorder>
+       <zorder>intMax</zorder>
+       <zorder>WkspIn</zorder>
+       <zorder>DispMax</zorder>
+       <zorder>refresh</zorder>
+       <zorder>axis</zorder>
+       <zorder>label_11</zorder>
+       <zorder>label_15</zorder>
+       <zorder>genScript</zorder>
+       <zorder>calcProj</zorder>
+       <zorder>plotOver</zorder>
+       <zorder>delta</zorder>
+       <zorder>display</zorder>
+       <zorder>label_5</zorder>
+       <zorder>cutMin</zorder>
+       <zorder>wkspList</zorder>
+       <zorder>smooth</zorder>
+       <zorder>label_8</zorder>
+       <zorder>DBWFac</zorder>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>831</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCalculations">
+    <property name="title">
+     <string>Calculations</string>
+    </property>
+    <addaction name="actionDensityOfstates"/>
+    <addaction name="actionBoseFactor"/>
+   </widget>
+   <addaction name="menuCalculations"/>
+  </widget>
+  <action name="actionDensityOfstates">
+   <property name="text">
+    <string>DensityOfstates</string>
+   </property>
+  </action>
+  <action name="actionBoseFactor">
+   <property name="text">
+    <string>BoseFactor</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>cutMin</tabstop>
+  <tabstop>cutMax</tabstop>
+  <tabstop>delta</tabstop>
+  <tabstop>intMin</tabstop>
+  <tabstop>intMax</tabstop>
+  <tabstop>scalemin</tabstop>
+  <tabstop>scalemax</tabstop>
+  <tabstop>plot</tabstop>
+  <tabstop>DetVanNum</tabstop>
+  <tabstop>removeWksp</tabstop>
+  <tabstop>Reduce</tabstop>
+  <tabstop>DispMin</tabstop>
+  <tabstop>removePlot</tabstop>
+  <tabstop>FigureList</tabstop>
+  <tabstop>Temperature</tabstop>
+  <tabstop>ReduceOutput</tabstop>
+  <tabstop>WkspIn</tabstop>
+  <tabstop>DispMax</tabstop>
+  <tabstop>refresh</tabstop>
+  <tabstop>axis</tabstop>
+  <tabstop>genScript</tabstop>
+  <tabstop>calcProj</tabstop>
+  <tabstop>plotOver</tabstop>
+  <tabstop>RunNum</tabstop>
+  <tabstop>display</tabstop>
+  <tabstop>wkspList</tabstop>
+  <tabstop>smooth</tabstop>
+  <tabstop>DBWFac</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

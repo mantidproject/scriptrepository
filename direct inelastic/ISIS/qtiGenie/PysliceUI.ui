@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>685</width>
+    <height>376</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="calcProj">
+    <property name="geometry">
+     <rect>
+      <x>223</x>
+      <y>2</y>
+      <width>121</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>calcProjections</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="display">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>2</y>
+      <width>114</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>display</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="smooth">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>6</y>
+      <width>71</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="WkspIn">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>4</y>
+      <width>171</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Avalailable Workspaces</string>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="intMin">
+    <property name="geometry">
+     <rect>
+      <x>294</x>
+      <y>100</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Minimum valaue for cut integration</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="cutMax">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>70</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Maximum valaue for cut axis</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="delta">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>70</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Step valaue for cut axis rebin</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="cutMin">
+    <property name="geometry">
+     <rect>
+      <x>294</x>
+      <y>70</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Minimum valaue for cut axis</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="plotOver">
+    <property name="geometry">
+     <rect>
+      <x>465</x>
+      <y>130</y>
+      <width>91</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Plot cut over existing plot (Must seleect a plot below)</string>
+    </property>
+    <property name="text">
+     <string>Plot Over</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="intMax">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>100</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Maximum valaue for cut integration</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="plot">
+    <property name="geometry">
+     <rect>
+      <x>465</x>
+      <y>100</y>
+      <width>91</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Plot cut</string>
+    </property>
+    <property name="text">
+     <string>Plot</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="axis">
+    <property name="geometry">
+     <rect>
+      <x>214</x>
+      <y>67</y>
+      <width>71</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Axis to cut along</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="genScript">
+    <property name="geometry">
+     <rect>
+      <x>579</x>
+      <y>270</y>
+      <width>91</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GenScript</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>321</x>
+      <y>50</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Min</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>401</x>
+      <y>50</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Max</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>495</x>
+      <y>50</y>
+      <width>30</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Step</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>100</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Integration </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>472</x>
+      <y>30</y>
+      <width>62</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Smooth</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="wkspList">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>70</y>
+      <width>181</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>List of transformed workspaces</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="refresh">
+    <property name="geometry">
+     <rect>
+      <x>17</x>
+      <y>30</y>
+      <width>114</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Refresh available workspaces</string>
+    </property>
+    <property name="text">
+     <string>Refresh List</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>121</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Min</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>120</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Max</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="FigureList">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>160</y>
+      <width>361</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>List of Plots</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>184</y>
+      <width>62</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Temp[K]</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="Temperature">
+    <property name="geometry">
+     <rect>
+      <x>584</x>
+      <y>160</y>
+      <width>71</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Temperature of Run Units K</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>585</x>
+      <y>230</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>MeanSquare</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="DBWFac">
+    <property name="geometry">
+     <rect>
+      <x>586</x>
+      <y>210</y>
+      <width>71</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Mean square displacement [Angstrom]</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>250</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Displacement</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="removeWksp">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>310</y>
+      <width>150</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Remove workspace</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="scalemin">
+    <property name="geometry">
+     <rect>
+      <x>294</x>
+      <y>136</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Minimum valaue for cut integration</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="scalemax">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>135</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Maximum valaue for cut integration</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>269</x>
+      <y>137</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>cut</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="removePlot">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>310</y>
+      <width>150</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Remove figure</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>685</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCalculations">
+    <property name="title">
+     <string>Calculations</string>
+    </property>
+    <addaction name="actionDensityOfstates"/>
+    <addaction name="actionBoseFactor"/>
+   </widget>
+   <addaction name="menuCalculations"/>
+  </widget>
+  <action name="actionDensityOfstates">
+   <property name="text">
+    <string>DensityOfstates</string>
+   </property>
+  </action>
+  <action name="actionBoseFactor">
+   <property name="text">
+    <string>BoseFactor</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>WkspIn</tabstop>
+  <tabstop>calcProj</tabstop>
+  <tabstop>display</tabstop>
+  <tabstop>axis</tabstop>
+  <tabstop>cutMin</tabstop>
+  <tabstop>cutMax</tabstop>
+  <tabstop>delta</tabstop>
+  <tabstop>intMin</tabstop>
+  <tabstop>intMax</tabstop>
+  <tabstop>scalemin</tabstop>
+  <tabstop>scalemax</tabstop>
+  <tabstop>plot</tabstop>
+  <tabstop>plotOver</tabstop>
+  <tabstop>smooth</tabstop>
+  <tabstop>genScript</tabstop>
+  <tabstop>wkspList</tabstop>
+  <tabstop>refresh</tabstop>
+  <tabstop>FigureList</tabstop>
+  <tabstop>Temperature</tabstop>
+  <tabstop>DBWFac</tabstop>
+  <tabstop>removeWksp</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
