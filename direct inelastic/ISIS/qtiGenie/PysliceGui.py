@@ -49,7 +49,7 @@ class MainWindow(QtGui.QMainWindow):
 		QtCore.QObject.connect(self.ui.BkgSwitch,  QtCore.SIGNAL("stateChanged(int)"), self.BkgSwitchOn)
 		
 		QtCore.QObject.connect(self.ui.AutoEiChbox,  QtCore.SIGNAL("stateChanged(int)"), self.AutoEiOn)
-		QtCore.QObject.connect(self.ui.FixEi,  QtCore.SIGNAL("stateChanged(int)"), self.AutoEiOn)
+		QtCore.QObject.connect(self.ui.FixEi,  QtCore.SIGNAL("stateChanged(int)"), self.FixEiOn)
 		QtCore.QObject.connect(self.ui.FixMonitorSpectrum,  QtCore.SIGNAL("stateChanged(int)"), self.MonitorSpec)
 		
 		QtCore.QObject.connect(self.ui.AbsNormSwitch,  QtCore.SIGNAL("stateChanged(int)"), self.AbsNormOn)
@@ -257,7 +257,7 @@ class MainWindow(QtGui.QMainWindow):
 				monovanreb=[tmp[0],tmp[2]]
 				
 			else:
-				ei=double(self.ui.EiGuess.text())
+				ei=self.EiVal
 				rebin_params=str(-ei*.5)+','+str(ei*(2.5e-3))+','+str(ei*.95)	
 				tmp=rebin_params.split(',')
 				monovanreb=[tmp[0],tmp[2]]
@@ -311,16 +311,17 @@ class MainWindow(QtGui.QMainWindow):
 		
 			if self.AutoEi==True:
 				ei,rebin_params,self.BkgdRange=autoEi(str(Run),BkgdGen=True,monspecin=int(self.ui.MonSpecNumber.text())) 
+			
 			else:
-				ei=double(self.ui.EiGuess.text())
+				ei=self.EiVal
 				rebin_params=str(-ei*.5)+','+str(ei*(2.5e-3))+','+str(ei*.95)	
 		
 			#w1=iliad(WB,Run,ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method='current')
 			if self.BkgSwitch==True:
-				w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+				w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',fixei=self.FixEi,background=self.BkgSwitch,bkgd_range=self.BkgdRange)
 				RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 			else:
-				w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='')
+				w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,fixei=self.FixEi,save_format='')
 				RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 		
 		
@@ -605,9 +606,9 @@ class MainWindow(QtGui.QMainWindow):
 		Qz=-(sin(maxTheta)*sin(0))*ki
 		Qmax=sqrt(Qx**2+Qy**2+Qz**2)
 		
-		deltaQ=(Qmax-Qmin)/numHist
+		deltaQ=(Qmax-Qmin)/(numHist-50)
 		text=str(self.ui.WkspIn.currentText())
-		string1=text+': ei= '+" %.2f" % ei+'meV qmin= '+" %.2f" % Qmin+'qmax = '+" %.2f" % Qmax
+		string1=text+': ei= '+" %.2f" % ei+'meV qmin= '+" %.2f" % Qmin+' qmax = '+" %.2f" % Qmax+' deltaQ = '+" %.2f" % deltaQ
 		rebin=str(Qmin)+','+str(deltaQ)+','+str(Qmax)
 		self.ui.wkspList.addItem(string1)
 		#print self.ui.WkspIn.currentText()
