@@ -355,13 +355,13 @@ class Ui_MAGGOTWindow(object):
         self.FLips = QtGui.QLabel(self.layoutWidget)
         self.FLips.setObjectName(_fromUtf8("FLips"))
         self.LPF_Grid.addWidget(self.FLips, 0, 0, 1, 1)
-        self.LPF_FinalNMR = QtGui.QSpinBox(self.layoutWidget)
+        self.LPF_FinalNMR = QtGui.QSpinBox(self.layoutWidget) #number of flips
 	
         self.LPF_FinalNMR.setMaximum(99999)
         self.LPF_FinalNMR.setProperty(_fromUtf8("value"), 200)
         self.LPF_FinalNMR.setObjectName(_fromUtf8("LPF_FinalNMR"))
         self.LPF_Grid.addWidget(self.LPF_FinalNMR, 0, 1, 1, 1)
-        self.LPP_Value = QtGui.QDoubleSpinBox(self.layoutWidget)
+        self.LPP_Value = QtGui.QDoubleSpinBox(self.layoutWidget)# loss per pulse
 	
         self.LPP_Value.setDecimals(6)
         self.LPP_Value.setMinimum(0.0)
@@ -370,7 +370,7 @@ class Ui_MAGGOTWindow(object):
         self.LPP_Value.setProperty(_fromUtf8("value"), 0.0005)
         self.LPP_Value.setObjectName(_fromUtf8("LPP_Value"))
         self.LPF_Grid.addWidget(self.LPP_Value, 1, 1, 1, 1)
-        self.Use_LPP = QtGui.QCheckBox(self.layoutWidget)
+        self.Use_LPP = QtGui.QCheckBox(self.layoutWidget)#use lpp?
 	
         self.Use_LPP.setObjectName(_fromUtf8("Use_LPP"))
         self.LPF_Grid.addWidget(self.Use_LPP, 1, 0, 1, 1)
@@ -418,14 +418,16 @@ class Ui_MAGGOTWindow(object):
         self.LPF_FIDorMax.setObjectName(_fromUtf8("LPF_FIDorMax"))
         self.LPF_FID = QtGui.QWidget()
         self.LPF_FID.setObjectName(_fromUtf8("LPF_FID"))
-        self.Fit_LPF_FID = QtGui.QPushButton(self.LPF_FID)
+        self.Fit_LPF_FID = QtGui.QPushButton(self.LPF_FID)#fit button
+	#
 	
+	#
         self.Fit_LPF_FID.setGeometry(QtCore.QRect(10, 10, 211, 23))
         self.Fit_LPF_FID.setObjectName(_fromUtf8("Fit_LPF_FID"))
         self.LPF_FIDorMax.addTab(self.LPF_FID, _fromUtf8(""))
         self.LPF_Max = QtGui.QWidget()
         self.LPF_Max.setObjectName(_fromUtf8("LPF_Max"))
-        self.Run_LPF_Max = QtGui.QPushButton(self.LPF_Max)
+        self.Run_LPF_Max = QtGui.QPushButton(self.LPF_Max)#run max
 	
         self.Run_LPF_Max.setGeometry(QtCore.QRect(10, 10, 211, 23))
         self.Run_LPF_Max.setObjectName(_fromUtf8("Run_LPF_Max"))
@@ -439,7 +441,7 @@ class Ui_MAGGOTWindow(object):
         self.LPF_Results_2 = QtGui.QGridLayout(self.gridLayoutWidget_9)
         self.LPF_Results_2.setMargin(0)
         self.LPF_Results_2.setObjectName(_fromUtf8("LPF_Results_2"))
-        self.LPF_Result = QtGui.QLineEdit(self.gridLayoutWidget_9)
+        self.LPF_Result = QtGui.QLineEdit(self.gridLayoutWidget_9)#loss per flip result
 	
         self.LPF_Result.setObjectName(_fromUtf8("LPF_Result"))
         self.LPF_Results_2.addWidget(self.LPF_Result, 0, 2, 1, 1)
@@ -448,6 +450,8 @@ class Ui_MAGGOTWindow(object):
         self.LPF_Results_2.addWidget(self.LPF_Res_Label, 0, 0, 1, 1)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.LPF_Results_2.addItem(spacerItem2, 0, 1, 1, 1)
+	
+	########################################################################
         self.SingleorMulti.addTab(self.LPF, _fromUtf8(""))
         self.MainTab.addTab(self.NMR, _fromUtf8(""))
         self.NeutronData = QtGui.QWidget()
