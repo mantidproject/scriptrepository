@@ -420,7 +420,7 @@ class Ui_MAGGOTWindow(object):
         self.LPF_FID.setObjectName(_fromUtf8("LPF_FID"))
         self.Fit_LPF_FID = QtGui.QPushButton(self.LPF_FID)#fit button
 	#
-	
+	QtCore.QObject.connect(self.Fit_LPF_FID,QtCore.SIGNAL("clicked()"),self.LPF_f)
 	#
         self.Fit_LPF_FID.setGeometry(QtCore.QRect(10, 10, 211, 23))
         self.Fit_LPF_FID.setObjectName(_fromUtf8("Fit_LPF_FID"))
@@ -811,7 +811,84 @@ class Ui_MAGGOTWindow(object):
 		self.LPP_Value.setValue(exp(-1/table.cell(2,1)) )
 	
 	
+    def LPF_f(self):
+
+	p=0 #number of pulses with amplitude between preaverage and postaverage
+	PreSum=0
+	PostSum=0
+	PreAverage=0
+	PostAverage=0
+	Frequency= self.SetUp_Freq_Val.value()
+	Filepath = (self.FilePath_2.text())
+	PreFile = (self.PreFlipName_2.text())
+	PostFile = (self.PostFlipName_2.text())
+	PathandName= Filepath + PreFile
+	#print PathandName
 	
+	try:	
+		for i in range (1, (1000)):
+			LoadAscii(Filename=Filepath+PreFile+str(i),OutputWorkspace=PreFile)
+			Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Frequency)+'.0,p=0.000000',InputWorkspace=PreFile  ,Output=PreFile+'res',StartX='0.002',EndX='0.19999',CalcErrors=True)
+			table = mtd[str(PreFile)+'res_Parameters']	
+			print 'Amplitude is ' + str(abs(table.cell(0,1))) + ' mV.'	
+			PreSum=PreSum+abs(table.cell(0,1))
+		
+	except: 
+		if i==1:
+			print 'Error: only 1 PreFile attempted'
+		else: 
+			#print i
+			print PreSum
+			PreAverage = float(PreSum)/(float(i-1))
+			print PreAverage
+
+	try:
+		for i in range (1, (1000)):	
+			LoadAscii(Filename=Filepath+PostFile+str(i),OutputWorkspace=PostFile)
+			Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Frequency)+'.0,p=0.000000',InputWorkspace=PostFile  ,Output=PostFile+'res',StartX='0.002',EndX='0.19999',CalcErrors=True)
+			table = mtd[str(PostFile)+'res_Parameters']
+			print 'Amplitude is ' + str(abs(table.cell(0,1))) + ' mV.'
+			PostSum=PostSum+abs(table.cell(0,1))
+	except:
+		if i==1:
+			print 'Error: only 1 PostFile attempted'
+		else:
+			#print i
+			print PostSum
+			PostAverage = float(PostSum)/(float(i-1))
+			print PostAverage
 	
+	if self.Use_LPP.isChecked() == True : 
+		try: 
+			for i in range (1, 1000):
+				LoadAscii(Filename=Filepath+PreFile+str(i),OutputWorkspace=PreFile)
+				Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Frequency)+'.0,p=0.000000',InputWorkspace=PreFile  ,Output=PreFile+'res',StartX='0.002',EndX='0.19999',CalcErrors=True)
+				table = mtd[str(PreFile)+'res_Parameters']
+				if (abs(table.cell(0,1))) > PostAverage and (abs(table.cell(0,1))) < PreAverage: 
+					p=p+1
+				else:
+					p=p
+		except: 
+			if i==1:
+				print 'Error: only 1 PreFile attempted'
+		print 'p from first is '+str(p)
+		try:
+			for i in range (1, 1000):
+				LoadAscii(Filename=Filepath+PostFile+str(i),OutputWorkspace=PostFile)
+				Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Frequency)+'.0,p=0.000000',InputWorkspace=PostFile  ,Output=PostFile+'res',StartX='0.002',EndX='0.19999',CalcErrors=True)
+				table = mtd[str(PostFile)+'res_Parameters']
+				if (abs(table.cell(0,1))) > PostAverage and (abs(table.cell(0,1))) < PreAverage :
+					p=p+1
+				else:
+					p=p
+		except: 
+			if i==1:
+				print 'Error: only 1 PostFile attempted'
+		print 'p from second is '+str(p)
+	else: 
+		p=0
+		
 	
-	
+	F=((1/(float(1-self.LPP_Value.value())**float(p)))*((float(PostSum))/(float(PreSum))))**(1/float(self.LPF_FinalNMR.value()))
+	print 'Loss per flip is ' +str(1-F)
+	self.LPF_Result.setText(str(1-F))
