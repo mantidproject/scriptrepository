@@ -633,7 +633,10 @@ class Ui_MAGGOTWindow(object):
 	
 	#global filepath , filename
 	dialog=QtGui.QFileDialog()
-	PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'\\Britannic\3He\Cells')
+	try:
+		PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'\\Britannic\3He\Cells')
+	except:
+		PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'C:/')
 	#Extracts File Path
 	for i in range(1,len(PathandName)):
 		if PathandName[len(PathandName)-i] <> '/' :
@@ -658,7 +661,10 @@ class Ui_MAGGOTWindow(object):
 	
 	#global filepath , filename
 	dialog=QtGui.QFileDialog()
-	PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'\\Britannic\3He\Cells')
+	try:
+		PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'\\Britannic\3He\Cells')
+	except:
+		PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'C:/')
 	#Extracts File Path
 	for i in range(1,len(PathandName)):
 		if PathandName[len(PathandName)-i] <> '/' :
@@ -724,16 +730,17 @@ class Ui_MAGGOTWindow(object):
 	self.SFResFreq_2.setText(str(table.cell(2,1)))
 	self.Phase_2.setText(str(table.cell(3,1)))
 	
-   # def Dr_or_Norm(self):
-	#if self.DiagMode.isChecked() == True :
-	#	MAGGOT(self)
-	#else:
-	#	Dr_MAGGOT
+
     def MAGGOT(self):	#Basic fitting algorithm for polarising a cell
 	
-	A_NMR= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR', 'w')
-	NMRDIAG= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv', 'w')
-	
+	try:
+		A_NMR= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR', 'w')
+		NMRDIAG= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv', 'w')
+	except:
+		A_NMR= open(r'C:\MantidInstall\logs\\A_NMR', 'w')
+		NMRDIAG= open(r'C:\MantidInstall\logs\\NMR Diagnostics.csv', 'w')
+		ISIS='no'
+
 	filepath=self.FilePath.text()
 	filename=self.File_Name_2.text()
 	Freq = self.SetUp_Freq_Val.value()
@@ -789,9 +796,15 @@ class Ui_MAGGOTWindow(object):
 		
 	#elif Smoothing == no :
 	if self.DiagMode.isChecked() == True :
-		LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv',OutputWorkspace='Rate_Data',Unit='Time')
+		if ISIS == 'no':
+			LoadAscii(Filename=r'C:\MantidInstall\logs\\NMR Diagnostics.csv',OutputWorkspace='Rate_Data',Unit='Time')
+		else:
+			LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv',OutputWorkspace='Rate_Data',Unit='Time')
 	else:
-		LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
+		if ISIS =='no':
+			LoadAscii(Filename=r'C:\MantidInstall\logs\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
+		else:
+			LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
 	Fit(Function,InputWorkspace='Rate_Data',Output=str(filename)+'res',StartX='0',EndX=str(i*self.TimeBetweenNMR.value()))
 	table = mtd[str(filename) +'res_Parameters']
 	
