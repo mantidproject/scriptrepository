@@ -736,6 +736,7 @@ class Ui_MAGGOTWindow(object):
 	try:
 		A_NMR= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR', 'w')
 		NMRDIAG= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv', 'w')
+		ISIS='yes'
 	except:
 		A_NMR= open(r'C:\MantidInstall\logs\\A_NMR', 'w')
 		NMRDIAG= open(r'C:\MantidInstall\logs\\NMR Diagnostics.csv', 'w')
@@ -801,7 +802,7 @@ class Ui_MAGGOTWindow(object):
 		else:
 			LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv',OutputWorkspace='Rate_Data',Unit='Time')
 	else:
-		if ISIS =='no':
+		if ISIS == 'no':
 			LoadAscii(Filename=r'C:\MantidInstall\logs\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
 		else:
 			LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
