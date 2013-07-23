@@ -90,7 +90,7 @@ class Ui_MAGGOTWindow(object):
         self.SetUp_Freq = QtGui.QLabel(self.gridLayoutWidget_5)
         self.SetUp_Freq.setObjectName(_fromUtf8("SetUp_Freq"))
 	#
-	QtCore.QObject.connect(self.SetUp_Freq_Val,QtCore.SIGNAL("valueChanged(int)"),self.Frequency_F)
+	#QtCore.QObject.connect(self.SetUp_Freq_Val,QtCore.SIGNAL("valueChanged(int)"),self.Frequency_F)
 	#
 	######################################################
         self.SetUp_FID_Grid.addWidget(self.SetUp_Freq, 0, 1, 1, 1)
@@ -106,7 +106,7 @@ class Ui_MAGGOTWindow(object):
         self.Smoothing = QtGui.QCheckBox(self.gridLayoutWidget_2)
         self.Smoothing.setObjectName(_fromUtf8("Smoothing"))
 	#
-	QtCore.QObject.connect( self.Smoothing, QtCore.SIGNAL("toggled(bool)"), self.Smoothing_F)
+	#QtCore.QObject.connect( self.Smoothing, QtCore.SIGNAL("toggled(bool)"), self.Smoothing_F)
 	#
         self.SetUp_Max_Grid.addWidget(self.Smoothing, 0, 0, 1, 2)
         self.Step_Tol = QtGui.QLabel(self.gridLayoutWidget_2)
@@ -122,7 +122,7 @@ class Ui_MAGGOTWindow(object):
         self.Step_Tol_Val.setProperty(_fromUtf8("value"), 0.0001)
         self.Step_Tol_Val.setObjectName(_fromUtf8("Step_Tol_Val"))
 	#
-	QtCore.QObject.connect(self.Step_Tol_Val,QtCore.SIGNAL("valueChanged(int)"),self.Step_Tol_F)
+	#QtCore.QObject.connect(self.Step_Tol_Val,QtCore.SIGNAL("valueChanged(int)"),self.Step_Tol_F)
 	#
         self.SetUp_Max_Grid.addWidget(self.Step_Tol_Val, 1, 1, 1, 1)
         self.A_Tol_Val = QtGui.QDoubleSpinBox(self.gridLayoutWidget_2)
@@ -132,7 +132,7 @@ class Ui_MAGGOTWindow(object):
         self.A_Tol_Val.setProperty(_fromUtf8("value"), 0.003)
         self.A_Tol_Val.setObjectName(_fromUtf8("A_Tol_Val"))
 	#
-	QtCore.QObject.connect(self.A_Tol_Val,QtCore.SIGNAL("valueChanged(int)"),self.A_Tol_F)
+	#QtCore.QObject.connect(self.A_Tol_Val,QtCore.SIGNAL("valueChanged(int)"),self.A_Tol_F)
 	#
         self.SetUp_Max_Grid.addWidget(self.A_Tol_Val, 2, 1, 1, 1)
         self.SetUp_FIDMax.addTab(self.SetUp_Max, _fromUtf8(""))
@@ -159,7 +159,7 @@ class Ui_MAGGOTWindow(object):
         self.FileNo_2.setProperty(_fromUtf8("value"), 1)
         self.FileNo_2.setObjectName(_fromUtf8("FileNo_2"))
 	#
-	QtCore.QObject.connect(self.FileNo_2,QtCore.SIGNAL("valueChanged(int)"),self.FileNo_2_F)
+	#QtCore.QObject.connect(self.FileNo_2,QtCore.SIGNAL("valueChanged(int)"),self.FileNo_2_F)
 	#
         self.SingleGrid.addWidget(self.FileNo_2)
         self.SF_FIDorMax = QtGui.QTabWidget(self.SingleFit)
@@ -687,32 +687,32 @@ class Ui_MAGGOTWindow(object):
 	
 	
 	#Extracts frequency
-    def Frequency_F(self):
-	global Freq
-	Freq = self.SetUp_Freq_Val.value()
+    #def Frequency_F(self):
+	#global Freq
+	#Freq = self.SetUp_Freq_Val.value()
 	#self.File_Name_2.setText(str(Freq))
 	
 	#def test(self):
 	#self.FilePath.setText(str(self.SetUp_Freq_Val.value())) #Can use results of other functions as arguments for other functions! supposedly...
 	
 	#Reads whether to use smoothing
-    def Smoothing_F(self):
-	    if self.Smoothing.isChecked() == True :
+  #  def Smoothing_F(self):
+	    #if self.Smoothing.isChecked() == True :
 		    #self.File_Name_2.setText(self.Smoothing.isChecked())
-		    Smoothing = yes
-	    else:
+		  #  Smoothing = yes
+	  #  else:
 		    #self.File_Name_2.setText(self.Smoothing.isChecked())
-		    Smoothing = no
+		   # Smoothing = no
 	#Reads Step Tolerance	    
-    def Step_Tol_F(self):
-	    Step_Tol = self.Step_Tol_Val.value()
+   # def Step_Tol_F(self):
+	#    Step_Tol = self.Step_Tol_Val.value()
 	#Reads Amplitude Tolerance
-    def A_Tol_F(self):
-	    A_Tol = self.A_Tol_Val.value()
+   # def A_Tol_F(self):
+	#   A_Tol = self.A_Tol_Val.value()
 ###############################################################
-    def FileNo_2_F(self):
+    #def FileNo_2_F(self):
 	    
-	    fileno = self.FileNo_2.value()
+	  #  fileno = self.FileNo_2.value()
 
     def MAGGOT_SingleFit(self): #Fits a single NMR pulse file
     
@@ -732,7 +732,7 @@ class Ui_MAGGOTWindow(object):
 	
 
     def MAGGOT(self):	#Basic fitting algorithm for polarising a cell
-	
+##Open files in appropriate place to write fit parameters to	
 	try:
 		A_NMR= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR', 'w')
 		NMRDIAG= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\NMR Diagnostics.csv', 'w')
@@ -741,25 +741,26 @@ class Ui_MAGGOTWindow(object):
 		A_NMR= open(r'C:\MantidInstall\logs\\A_NMR', 'w')
 		NMRDIAG= open(r'C:\MantidInstall\logs\\NMR Diagnostics.csv', 'w')
 		ISIS='no'
-
+##read filepath,name,frequency and file range from GUI
 	filepath=self.FilePath.text()
 	filename=self.File_Name_2.text()
 	Freq = self.SetUp_Freq_Val.value()
 	#print 'Freq'+ str(Freq)
 	n0=self.InitialNMR.value()
 	n=self.FinalNMR.value()
+##load and fit range of files
 	try:
 		for i in range(n0,n+1):
 			LoadAscii(Filename=str(filepath)+str(filename)+str(i),OutputWorkspace=str(filename),Unit='Time')
-			
+##fit first file with input params
 			if i == self.InitialNMR.value():
 				Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Freq)+'.0,p=0.000000',InputWorkspace=str(filename)  ,Output=str(filename)+'res',StartX='0.002',EndX='0.19999')
-				
+##fit subsequent with params from previous fit				
 			else:
 				Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+ str(abs(table1.cell(2,1)))+',p='+ str(abs(table1.cell(3,1))),InputWorkspace=str(filename)  ,Output=str(filename)+'res',StartX='0.002',EndX='0.19999')
 				
 			table1 = mtd[str(filename) +'res_Parameters']
-			
+##write params to file(daig mode writes all and normal mode only writes Amplitude and amplitude error)			
 			if self.DiagMode.isChecked() == True : 
 				if i==n0:
 					NMRDIAG.write('T'+','+'A'+','+'Aer' + ',' + 'T2'+',' + 'T2er' + ',' + 'f' +','+ 'fer'+',' + 'p' + ','+'per'+ '\n')
@@ -769,33 +770,35 @@ class Ui_MAGGOTWindow(object):
 				A_NMR.write(str(i*self.TimeBetweenNMR.value())+'	'+ str(abs(table1.cell(0,1)))+'	' + str(table1.cell(0,2))+'\n')
 							
 			self.MF_Results.setTitle(QtGui.QApplication.translate("MAGGOTWindow", "Fit complete for file "+str(i)+".", None, QtGui.QApplication.UnicodeUTF8))
+##error if no files fit or all files fitted
 	except:
 		if i == n0:
 			print 'Error: Initial filepath incorrect.'
 		elif n0 < i <= n+1 :
 			print 'All NMR files fitted.'
-
+##close params file
 	NMRDIAG.close()
 	A_NMR.close()		
 	self.MF_Results.setTitle(QtGui.QApplication.translate("MAGGOTWindow", "Results", None, QtGui.QApplication.UnicodeUTF8))
-
+##choose function for fitting polarisation rate behaviour
 	if self.UP_Down_LPP.currentText() == 'Spin Up':
 		Function='name=UserFunction,Formula=A*(1-exp( -(x+T0)/T1)),T0=0.011,A=0.000286216,T1=10.00,constraints=(0<=T1)'
 	
 	elif self.UP_Down_LPP.currentText() == 'T1 Decay' or 'Loss Per Pulse':
-		Function='name=UserFunction,Formula=A*(exp( -(x+T0)/T1)),T0=0.011,A=0.000186216,T1=50.00,constraints=(0<=T1)'
+		Function='name=UserFunction,Formula=A*(exp( -(x+T0)/T1)),T0=0.011,A=0.000106216,T1=50.00,constraints=(0<=T1)'
 	
 	#elif self.UP_Down_LPP.currentText() == 'Loss Per Pulse':
 		#Function='name=UserFunction,Formula=A*(exp( -(x+T0)/T1)),T0=0.011,A=0.000286216,T1=50.00,constraints=(0<=T1)'
 	
 	else:
-		fun = 58008
+		fun = 0.000017239
 	#if Smoothing == yes:
 	#	LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\ANMRsmooth',OutputWorkspace='T1_Data')
 	#	Fit(Function,InputWorkspace='T1_Data',Output=File+'res',StartX='0',EndX=str(i*T))
 	#	table = mtd[File +'res_Parameters']
 		
 	#elif Smoothing == no :
+##load parameter files from fitting
 	if self.DiagMode.isChecked() == True :
 		if ISIS == 'no':
 			LoadAscii(Filename=r'C:\MantidInstall\logs\\NMR Diagnostics.csv',OutputWorkspace='Rate_Data',Unit='Time')
@@ -806,9 +809,10 @@ class Ui_MAGGOTWindow(object):
 			LoadAscii(Filename=r'C:\MantidInstall\logs\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
 		else:
 			LoadAscii(Filename=r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NMR',OutputWorkspace='Rate_Data',Unit='Time')
+##fit using already chosen function
 	Fit(Function,InputWorkspace='Rate_Data',Output=str(filename)+'res',StartX='0',EndX=str(i*self.TimeBetweenNMR.value()))
 	table = mtd[str(filename) +'res_Parameters']
-	
+##write results of relevant fit into GUI	
 	if self.UP_Down_LPP.currentText() == 'Spin Up':
 		self.MF_Amplitude_2.setText(str(table.cell(0,1)))
 		self.T1orTup.setText(QtGui.QApplication.translate("MAGGOTWindow", "Tup(Time)", None, QtGui.QApplication.UnicodeUTF8))
