@@ -33,11 +33,11 @@ xlabel('Time / Hours')
 ylabel('Relative Error')
 ax=gca()
 ax.ticklabel_format(style='sci',scilimits=(0,0),axis='y')
-
+##plot DeltaS0
 t=arange(0,r,0.001)
 E=abs( (cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))))/( 6*cosh(nl*lmda*Pol*(1-exp(-(a+t)/10))) ) -1 )
 gui_cmd(plot,t,E)
-##find optimum time
+##find optimum time(point of intersect)
 Y=-a-Tup*log(1-(1/(nl*lmda*Pol))*arccosh((cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))) )/6 ))
 
 print 'Optimum time for this wavelength is '+str(Y)+' hours'
@@ -64,7 +64,7 @@ Error=open(r'\\Britannic\3he\LET Data\\Error','a')
 for i in range(len(x)):
 	Error.write(str(x[i])+'	' +str(y[i]) +'\n')
 Error.close()
-
+##load 'Error' as workspace and multiply by the monitor to obtain 'AbsError'
 LoadAscii(Filename=r'//Britannic/3He/LET Data/Error',OutputWorkspace='Error',Unit='Wavelength')
 Load(Filename=r'\\isis\inst$\cycle_12_5\NDXLET\LET0000'+str(run)+'.raw',OutputWorkspace='Monitor',SpectrumList='40966')
 ConvertUnits(InputWorkspace='Monitor',OutputWorkspace='Monitor',Target='Wavelength')
@@ -75,7 +75,7 @@ ConvertToHistogram(InputWorkspace='Monitor',OutputWorkspace='Monitor')
 Multiply(LHSWorkspace='Error',RHSWorkspace='Monitor',OutputWorkspace='AbsError',AllowDifferentNumberSpectra='1')
 Integration(InputWorkspace='AbsError',OutputWorkspace='Integral of AbsError',RangeLower=str(lmda_min),RangeUpper=str(lmda_max))
 
-
+##Open graphs
 gui_cmd(show)
 
 
