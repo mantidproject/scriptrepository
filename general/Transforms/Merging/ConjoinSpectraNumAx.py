@@ -6,8 +6,9 @@ Modified from standard ConjoinSpectra to make the Y axis numeric and so allow Co
 *WIKI*"""
 
 
-from MantidFramework import *
-from mantidsimple import *
+from mantid.api import *
+from mantid.kernel import *
+from mantid.simpleapi import *
 import os
 
 class ConjoinSpectraNumAx(PythonAlgorithm):
@@ -24,12 +25,12 @@ class ConjoinSpectraNumAx(PythonAlgorithm):
         return "ConjoinSpectraNumAx"
 
     def PyInit(self):
-        self.declareProperty("InputWorkspaces","", Validator=MandatoryValidator(), Description="Comma seperated list of workspaces to use, group workspaces will automatically include all members.")
-        self.declareWorkspaceProperty("OutputWorkspace", "", Direction=Direction.Output, Description="Name the workspace that will contain the result")
-        self.declareProperty("WorkspaceIndex", 0, Description="The workspace index of the spectra in each workspace to extract. Default: 0")
-        self.declareProperty("LabelUsing", "", Description="The name of a log value used to label the resulting spectra. Default: The source workspace name")
+        self.declareProperty("InputWorkspaces","", validator=StringMandatoryValidator(), doc="Comma seperated list of workspaces to use, group workspaces will automatically include all members.")
+        self.declareProperty(WorkspaceProperty("OutputWorkspace", "", direction=Direction.Output), doc="Name the workspace that will contain the result")
+        self.declareProperty("WorkspaceIndex", 0, doc="The workspace index of the spectra in each workspace to extract. Default: 0")
+        self.declareProperty("LabelUsing", "", doc="The name of a log value used to label the resulting spectra. Default: The source workspace name")
         labelValueOptions =  ["Mean","Median","Maximum","Minimum","First Value","Last Value"]
-        self.declareProperty("LabelValue", "Mean", Validator=ListValidator(labelValueOptions), Description="How to derive the value from a time series property")
+        self.declareProperty("LabelValue", "Mean", validator=StringListValidator(labelValueOptions), doc="How to derive the value from a time series property")
       
       
     def PyExec(self):
@@ -52,19 +53,19 @@ class ConjoinSpectraNumAx(PythonAlgorithm):
             #if we cannot find the ws then stop
             if ws == None:
                 raise RuntimeError ("Cannot find workspace '" + wsName.strip() + "', aborting")
-            if ws.isGroup():
+            if isinstance(ws, WorkspaceGroup):
                 wsNames.extend(ws.getNames())
             else:
                 wsNames.append(wsName)
 
-        #ta = createTextAxis(len(wsNames))
-        na = createNumericAxis(len(wsNames))
+        #ta = TextAxis.create(len(wsNames))
+        na = NumericAxis.create(len(wsNames))
         #if (labelUsing != ""):
 	#    na.title(labelUsing)
 	#else:
 	#    na.title("Workspaces")
 	na.setUnit("TOF")
-        if mtd.workspaceExists(wsOutput):
+        if mtd.doesExist(wsOutput):
             DeleteWorkspace(Workspace=wsOutput)
         for wsName in wsNames:
             #extract the spectrum
@@ -78,9 +79,9 @@ class ConjoinSpectraNumAx(PythonAlgorithm):
             #ta.setValue(loopIndex,labelString)
             na.setValue(loopIndex,labelDouble)
             loopIndex += 1
-            if mtd.workspaceExists(wsOutput):
+            if mtd.doesExist(wsOutput):
                 ConjoinWorkspaces(InputWorkspace1=wsOutput,InputWorkspace2=wsTemp,CheckOverlapping=False)
-                if mtd.workspaceExists(wsTemp):
+                if mtd.doesExist(wsTemp):
                     DeleteWorkspace(Workspace=wsTemp)
             else:
                 RenameWorkspace(InputWorkspace=wsTemp,OutputWorkspace=wsOutput)
@@ -117,7 +118,7 @@ class ConjoinSpectraNumAx(PythonAlgorithm):
         except:
             #failed to find the property
             #log and pass out zero
-            mtd.sendLogMessage("Could not find log " + labelUsing + " in workspace " + str(ws) + " using workspace label instead.")
+            logger.notice("Could not find log " + labelUsing + " in workspace " + str(ws) + " using workspace label instead.")
         return labelDouble
         
-mtd.registerPyAlgorithm(ConjoinSpectraNumAx())
+AlgorithmFactory.subscribe(ConjoinSpectraNumAx)
