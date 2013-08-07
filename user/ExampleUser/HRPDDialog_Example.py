@@ -25,7 +25,7 @@ sampleWorkspace="Sample"
 LoadAndAlign("sample", sampleWorkspace)
 
 # === Focus the data ===
-ConvertUnits(dataWorkspace,dataWorkspace,'dSpacing')
+ConvertUnits(dataWorkspace,'dSpacing',OutputWorkspace=dataWorkspace,)
 alg = DiffractionFocussingDialog(InputWorkspace=dataWorkspace,OutputWorkspace=dataWorkspace)
 calibFile = alg.getPropertyValue("GroupingFileName")
 StripPeaks(InputWorkspace=dataWorkspace, OutputWorkspace=dataWorkspace)

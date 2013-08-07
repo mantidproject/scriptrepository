@@ -3,13 +3,13 @@
 #
 
 # Get some data
-LoadRaw("LOQ48094.raw","LOQTest")
+LoadRaw("LOQ48094.raw",OutputWorkspace="LOQTest")
 
 insView = getInstrumentView("LOQTest")
 
 #insView.changeColorMap("../../../repo/Code/Mantid/Installers/colormaps/_standard.map")   # Change to the correct path
 
-insView.setColorMapRange(0.,195)
+#insView.setColorMapRange(0.,195)
 # Or can set a minimum and maximum separately
 #insView.setColorMapMinValue(1.)
 #insView.setColorMapMaxValue(10.)

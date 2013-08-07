@@ -4,12 +4,13 @@
 ##          sample position
 ##
 ##-------------------------------------------------------------------------
+import math
 # Prompt for a raw file to load
 rawWSTitle = "RawFile"
 LoadRawDialog(OutputWorkspace=rawWSTitle)
 
 # Get the loaded workspace from Mantid
-rawData = mantid.getMatrixWorkspace(rawWSTitle)
+rawData = mtd[rawWSTitle]
 # Find the position of the sample and beamline. This is a 3D vector with X(), Y() and Z() functions
 sample = rawData.getInstrument().getSample()
 samplePos = sample.getPos()
