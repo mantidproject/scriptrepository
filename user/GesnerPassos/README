@@ -3,4 +3,168 @@ This folder belongs to Gesner Passos.
 It is here to allow developing features for ScriptRepository and testing 
 them. 
 
-Update.
+
+checking old api: 
+
+grep mtd.initialize *
+grep MantidFramework *
+grep mtd.sendLogMessage * 
+grep mtd.deleteWorkspace * 
+grep mtd.settings * 
+grep mtd.getSettings * 
+grep mtd.workspaceExists * 
+grep mtd.getConfigProperty * 
+grep isGroup * 
+grep getSampleDetails * 
+grep createNumericAxis * 
+grep createTextAxis * 
+grep createSpectraAxis * 
+grep '.workspace()' * 
+grep qti * 
+
+
+#python to find the algorithms used in scripts
+
+import numpy
+import re
+
+#f = type(globals()['Load'])
+#all_algs = [k for (k,v) in globals().items() if isinstance(v,f)]
+list_of = ['reduce_from_autoreduce_script.py', 'reduce_mult_T.py', 'reducenoguess.py', 'scan.py', 'sum_split_plot_slice.py' ]
+for name in list_of:
+	fil = open('/apps/scriptrepository/direct inelastic/SNS/%s'%name,'r')
+	print fil
+	for line in fil:
+		res = numpy.intersect1d(all_algs, re.split('\W+', line))
+		if len(res):
+			print line
+
+
+
+Migrating scriptrepository
+/diffraction
+
+NOTHING
+
+-==================-
+
+
+/direct inelastic - verified
+
+ISIS/
+
+Ticket to assign alex: 
+
+
+Remove the 'txt' files that are not used anymore
+let.txt maps.txt mari.txt merlin.txt
+
+Copy all the files from:
+
+https://github.com/mantidproject/scripts/tree/master/inelastic/direct_geometry/qtiGenie
+
+and put them into script repository: 
+
+https://github.com/mantidproject/scriptrepository/tree/master/direct%20inelastic/ISIS/qtiGenie
+
+
+
+
+ticket to assign to me:
+
+Upgrage the scripts inside https://github.com/mantidproject/scripts/tree/master/inelastic/direct_geometry/qtiGenie
+to the new API. 
+
+
+SNS/ 
+all using new api
+
+-==================-
+
+
+general/Transforms/Merging/ConjoinSpectraNumAx.py
+
+need to be migrated
+
+
+-==================-
+
+
+indirect inelastic
+
+NOTHING
+
+-==================-
+
+
+reflectometry/offspec
+
+removed from 7522 (investigate)
+
+Tested with:
+#addRuns(['7709','7709'],'out')
+#addRuns(['7709'],'single')
+#plot2D('single, out',[0,10000,0,10000,0,1000], [0,0,0])
+#XYPlot('single, out','2,3',[0,10000,0,10000,0,1000], [2,2,2], True,True)
+#nrtestfn('7709, 7709','out, out2')
+#removeoutlayer('out')
+
+
+binning=["2.0","0.2","12.0","2"]
+config["default.instrument"] = "OFFSPEC"
+nrSESANSP0Fn("10792","P055","109","119","2","1",binning)
+nrSESANSFn("10791+10793","dPMMA","","P055pol",
+                           "100","130","2","1","2","3009.9",binning,"2","0")
+			   
+			   
+binning=["2.0","0.2","12.0","2"]
+config["default.instrument"] = "OFFSPEC"
+nrSESANSP0Fn("10792","P055","109","119","2","1",binning)
+
+
++++++++++++++++++++++++++Send the user the new file and ask him to test it!++++++++++++++++++++++++++++++++++
+
+
+
+-==================-
+user/ExampleUser
+
+SimpleMtdCommands_Example.py
+StripPeaks.py
+TableWorkspace_Example.py
+SampleLogs_Demo.py
+
+
+
+
+========================
+#! /usr/bin/env python
+from mantidsimple import *
+from MantidFramework import *
+
+f = type(globals()['LoadRaw'])
+all_algs = [k for (k,v) in globals().items() if isinstance(v,f)]
+
+import sys
+import numpy
+import re
+
+
+for file_n in sys.argv[1:]:
+        print "\n\n==================================="
+	print file_n
+        #python to find the algorithms used in scripts
+        
+	fil = open(file_n ,'r')
+	for line in fil:
+		res = numpy.intersect1d(all_algs, re.split('\W+', line))
+		if len(res):
+			print line
+        fil.close()
+
+
+=============================
+egrep "mantidsimple|mtd\.initialize|MantidFramework|mtd\.sendLogMessage|mtd\.deleteWorkspace|mtd\.settings|mtd\.getSettings|mtd\.workspaceExists|mtd\.getConfigProperty|isGroup|getSampleDetails|createNumericAxis|createTextAxis|createSpectraAxis|\.workspace\(\)|qti" $1
+if [[ $? == '0' ]];then
+echo "============== " $1 " ================="
+fi;
