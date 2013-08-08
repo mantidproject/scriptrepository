@@ -58,7 +58,7 @@ def addRuns(runlist,wname):
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
-		StartLiveData("OFFSPEC",AccumulationMethod="Replace",UpdateEvery=0.0,OutputWorkspace=output)
+		StartLiveData("OFFSPEC",AccumulationMethod="Replace",UpdateEvery=0.0,OutputWorkspace="wtemp")
 		#LoadDAE(DAEname=dae,OutputWorkspace="wtemp",SpectrumMin="1")
 		#LoadLiveData(Instrument="OFFSPEC",AccumulationMethod="Replace",OutputWorkspace="output")
 		if isinstance(mtd['wtemp'], WorkspaceGroup):
