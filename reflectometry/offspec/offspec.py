@@ -29,7 +29,8 @@ def addRuns(runlist,wname):
   else:
     #dae="ndx"+config['default.instrument'].lower()
     dae="ndxoffspec"
-    LoadDAE(DAEname=dae,OutputWorkspace=output,SpectrumMin="1")
+    StartLiveData("OFFSPEC",AccumulationMethod="Replace",UpdateEvery=0.0,OutputWorkspace="output")
+   #LoadDAE(DAEname=dae,OutputWorkspace=output,SpectrumMin="1")
     #LoadLiveData(Instrument="OFFSPEC",AccumulationMethod="Replace",OutputWorkspace="output")
     if isinstance(mtd[output], WorkspaceGroup):
     	for k in mtd[output].getNames():
@@ -57,7 +58,8 @@ def addRuns(runlist,wname):
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
-		LoadDAE(DAEname=dae,OutputWorkspace="wtemp",SpectrumMin="1")
+		StartLiveData("OFFSPEC",AccumulationMethod="Replace",UpdateEvery=0.0,OutputWorkspace="output")
+		#LoadDAE(DAEname=dae,OutputWorkspace="wtemp",SpectrumMin="1")
 		#LoadLiveData(Instrument="OFFSPEC",AccumulationMethod="Replace",OutputWorkspace="output")
 		if isinstance(mtd['wtemp'], WorkspaceGroup):
 			for k in mtd['wtemp'].getNames():
