@@ -35,16 +35,16 @@ ax=gca()
 ax.ticklabel_format(style='sci',scilimits=(0,0),axis='y')
 ##plot DeltaS0
 t=arange(0,r,0.001)
-E=abs( (cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))))/( 6*cosh(nl*lmda*Pol*(1-exp(-(a+t)/10))) ) -1 )
-gui_cmd(plot,t,E)
+DS=abs( (cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))))/( 6*cosh(nl*lmda*Pol*(1-exp(-(a+t)/10))) ) -1 )
+gui_cmd(plot,t,DS)
 ##find optimum time(point of intersect)
-Y=-a-Tup*log(1-(1/(nl*lmda*Pol))*arccosh((cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))) )/6 ))
+DS0=-a-Tup*log(1-(1/(nl*lmda*Pol))*arccosh((cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))) )/6 ))
 
-print 'Optimum time for this wavelength is '+str(Y)+' hours'
+print 'Optimum time for this wavelength is '+str(DS0)+' hours'
 
 ##create wavelength error graph
 x=arange(0,15.05,0.05)
-y=abs( (   cosh(nl*x*Pol*(1-exp(-a/Tup) ) )+cosh(nl*x*Pol*(1-exp(-(a+r)/Tup) ) )+4*cosh(nl*x*Pol*(1-exp(-(2*a+r)/(2*Tup)) ) )   ) / (   6*cosh(nl*x*Pol*(1-exp(-(a+Y)/10) ) ) ) -1  )
+y=abs( (   cosh(nl*x*Pol*(1-exp(-a/Tup) ) )+cosh(nl*x*Pol*(1-exp(-(a+r)/Tup) ) )+4*cosh(nl*x*Pol*(1-exp(-(2*a+r)/(2*Tup)) ) )   ) / (   6*cosh(nl*x*Pol*(1-exp(-(a+DS0)/10) ) ) ) -1  )
 
 figure(1)
 gui_cmd(plot,x,y,'b-')
