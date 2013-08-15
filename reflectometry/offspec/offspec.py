@@ -7,6 +7,7 @@ except ImportError:
   pass
 
 import numpy as n
+import os
 
 def addRuns(runlist,wname):
   #DeleteWorkspace(str(wname))
@@ -144,9 +145,16 @@ def floodnorm(wkspName,floodfile):
    #
    # pixel by pixel efficiency correction for the linear detector
    #
+   if(len(floodfile)==0):
+	flood_file = os.path.join(os.path.dirname(__file__), "LD240flood.nxs")
+   else:
+      flood_file=floodfile
+
+   print "using flood normalisation file "+flood_file
+	
    flood_wksp = "ld240flood"
    if  flood_wksp not in mtd:
-	   LoadNexusProcessed(Filename=floodfile,OutputWorkspace=flood_wksp)
+	   LoadNexusProcessed(Filename=flood_file,OutputWorkspace=flood_wksp)
 
    Divide(LHSWorkspace=wkspName, RHSWorkspace=flood_wksp, OutputWorkspace=wkspName)
 #
