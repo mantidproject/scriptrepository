@@ -1,6 +1,0 @@
-Instname 		map
-rawfile_extenstion 	.RAW
-DAE 			ndxmerlin
-mon1			41473
-mon2			41474
-mon3			41475

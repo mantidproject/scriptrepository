@@ -1,17 +1,18 @@
-from MantidFramework import *
+from mantid.api import PythonAlgorithm, AlgorithmFactory
+from mantid.kernel import StringListValidator, StringMandatoryValidator
 from qtiGenie import *
 class c2et(PythonAlgorithm):
 
 	def PyInit(self):
-		self.declareProperty("instrument","Full",ListValidator(["mar","maps"]))
-		self.declareProperty("Runfile","", Validator = MandatoryValidator(), Description = "runfile")
-		self.declareProperty("dVan", "", Validator = MandatoryValidator(), Description = "Detector Vanadium")
-		#self.declareWorkspaceProperty("Run file","", Direction = Direction.Input, Description = "A value for the end of the range(inclusive)")
-		#self.declareWorkspaceProperty("Whitebeam", "", Direction = Direction.Input, Description = "Optional preamble")
-		self.declareProperty("Ei", "",MandatoryValidator(),Description='Ei guess')
-		self.declareProperty("Rebin","", MandatoryValidator(),Description='Rebin string')
-		self.declareProperty("keywords","",Description='Key words')
-		self.declareProperty("mapfile", "", MandatoryValidator(), Description = 'mapfile')
+		self.declareProperty("instrument","Full",StringListValidator(["mar","maps"]))
+		self.declareProperty("Runfile","", validator = StringMandatoryValidator(), doc = "runfile")
+		self.declareProperty("dVan", "", validator = StringMandatoryValidator(), doc = "Detector Vanadium")
+		#self.declareWorkspaceProperty("Run file","", Direction = Direction.Input, doc = "A value for the end of the range(inclusive)")
+		#self.declareWorkspaceProperty("Whitebeam", "", Direction = Direction.Input, doc = "Optional preamble")
+		self.declareProperty("Ei", "",StringMandatoryValidator(),doc='Ei guess')
+		self.declareProperty("Rebin","", StringMandatoryValidator(),doc='Rebin string')
+		self.declareProperty("keywords","",doc='Key words')
+		self.declareProperty("mapfile", "", StringMandatoryValidator(), doc = 'mapfile')
 		
 	def PyExec(self):
 		run = self.getProperty("Runfile")
@@ -37,4 +38,4 @@ class c2et(PythonAlgorithm):
 #############################################################################################
 
 # Register algorithm with Mantid
-mantid.registerPyAlgorithm(c2et())
+AlgorithmFactory.subscribe(c2et)
