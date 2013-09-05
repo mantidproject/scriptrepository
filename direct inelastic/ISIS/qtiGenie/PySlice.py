@@ -1,5 +1,6 @@
-from utils import *
+#from utils import *
 from mantid.simpleapi import *
+from mantid.kernel import funcreturns
 from mantidplot import *
 from DirectEnergyConversion import *
 import time as time
@@ -61,7 +62,7 @@ def sqw(wksp_in,qbin):
 	sqw(w1,'0,.1,12')
 	"""
 	try:
-		n,r=lhs('both')
+		n,r=funcreturns.lhs_info('both')
 		wksp_out=r[0]
 		ei= (wksp_in.getRun().getLogData("Ei").value)
 
@@ -198,7 +199,7 @@ def transpose(wksp_in):
 	"""
 	transpose workspace
 	"""
-	n,r=lhs('both')
+	n,r=funcreturns.lhs_info('both')
 	wksp_out=r[0]
 	Transpose(InputWorkspace=wksp_in,OutputWorkspace=wksp_out)
 	return mtd[wksp_out]
