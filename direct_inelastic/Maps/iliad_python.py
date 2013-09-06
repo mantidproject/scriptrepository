@@ -7,7 +7,6 @@ from mantid import config
 
 import time
 
-#dgrd = reload(dgrd)
 #instrument name:
 inst='map'
 iliad_setup(inst)
@@ -91,7 +90,8 @@ argi['save_format']   = 'none'
 for i in range(len(runno)):
     if ei[i]==60:
         #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],rebin_pars,mapfile,mv_mapfile,**argi)
-        w1=iliad(wbvan,runno[i],ei,rebin_params,mapfile,monovan,**params)
+        # this does absolute units normalization as far as monovan is not None. Uses default map file, provided in MAPS_Parameters.xml file. Any changes from defaults should be provided here or above as parameters
+        w1=iliad(wbvan,runno[i],ei[i],[-6,0.6,54],None,monovan,**params)
         #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,**argi)
         #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,bkgd_range=[13000,19000],\
         #                     hardmaskPlus=maskfile,diag_remove_zero=False,save_format='none')
