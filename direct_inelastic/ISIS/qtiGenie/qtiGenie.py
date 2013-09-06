@@ -219,7 +219,7 @@ def getspepath(silent=False):
     The folder is used for output operations if other path is not specified explicitly by an output operation.    
     if silent opiton is used, the function just returns the path without printing it to std output. 
     """    
-    spepath=config.getetString('defaultsave.directory')
+    spepath=config.getString('defaultsave.directory')
     if not(silent):
        print ' Default output data path:',spepath
     
