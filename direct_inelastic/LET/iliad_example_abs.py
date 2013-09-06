@@ -1,3 +1,6 @@
+"""
+The sample script for LET absolute units reduction
+"""
 from qtiGenie import *
 iliad_setup('let')
 
