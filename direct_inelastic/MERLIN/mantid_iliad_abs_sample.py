@@ -11,27 +11,28 @@ iliad_setup(inst)
 
 #mapfile = 'rings_123.map'
 
-# where to save resutls (usually specified in Mantid)
+# where to save resutls (usually specified in Mantid, data search directories)
 save_dir = config.getString('defaultsave.directory')
 if len(save_dir) ==0 :
     config['defaultsave.directory']=os.getcwd()
-# map mask and cal files
-config.appendDataSearchDir('../../../InstrumentFiles/merlin') 
-# data (raw or nxs) run files
-config.appendDataSearchDir('d:/Data/isis/Adroja') 
+    save_dir = config.getString('defaultsave.directory')
     
+print "Data will be saved into: ",save_dir
+# map mask and cal file, again the values from Mantid, data search directories can be modified here
+config.appendDataSearchDir('/home/merlin/mprogs/InstrumentFiles/merlin') 
+# data (raw or nxs) run files -- values from data search directories can be modified here
+config.appendDataSearchDir('/isisdatar55/NDXMERLIN/Instrument/data/cycle_12_3') 
+
+
 #load vanadium file    
 whitebeamfile="13123"
 LoadRaw(Filename=whitebeamfile,OutputWorkspace="wb_wksp",LoadLogFiles="0")
 MonoVanWB="wb_wksp"
-# set up single calibration file to use with all workspaces
-#---------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------
 
 # Mandatory positional parameters 
 ei=25  # ei-guess
 rebin_params=[-10,.1,23]
-MonoVanRun=[13271] # mandatory for absolute units, for arbitrary should be None or absent in Iliad
+MonoVanRun=[13271]   # mandatory for absolute units, for arbitrary units should be None here or absent parameter in Iliad
 
 #   Other positional  parameters
 mapfile='one2one_123' # ring map file is used for powder.  if absend idf file value is used instead
@@ -43,7 +44,7 @@ params['det_cal_file']='det_corr_123.dat'  #det_cal_file must be specified if th
 params['sample_mass']=32.62
 params['sample_rmm']=50.94
 params['monovan_mapfile']='rings_123.map' # good 
-params['hardmaskPlus']='w1.msk'
+params['hardmaskPlus']='4to1.msk'
 
 
 
