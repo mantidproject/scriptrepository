@@ -17,16 +17,17 @@ if len(save_dir) ==0 :
     
 print "Data will be saved into: ",save_dir
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
-config.appendDataSearchDir('/home/let/Desktop/LAT_maps') 
+config.appendDataSearchDir('/home/let/Desktop/LET_maps') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
-config.appendDataSearchDir('/isisdatar55/NDXLET/Instrument/data/cycle_12_3') 
+config.appendDataSearchDir('/archive/NDXLET/Instrument/data/cycle_12_3') 
 
 
 # this is the user input section
 wb=10431   # enter whitebeam run number here (cycle 2013/1)
 #run_no=[8570,8581] # event mode run numbers here or use next line for a continous sequence of runs i.e range(first run, last run +1)
 #run_no=range(11376,11379)
-run_no=[11398]#range(11440,11516)
+run_no=[11398]#range(11440,11516
+MonoVanRun=10433 # vanadium run in the same configuration as your sample
 ei = [2.3]#[0.943] 
 #ei=[5.8,15]           # incident energies you want analysed, or leave as ei=[]  if you want all incident energies analysed
 ebin=[-0.2,0.002,0.8]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
@@ -102,7 +103,8 @@ for run in run_no:     #loop around runs
             argi['bkgd_range']=[int(t_elastic),int(tmax)]
             argi['hardmaskOnly']=file
 
+
             for kk,val in argi.iteritems():
                 print "arguments :" ,kk,val
-            out=iliad("wb_wksp","w1reb",energy,ebinstring,mapping,**argi)
+            out=iliad("wb_wksp","w1reb",energy,ebinstring,mapping,MonoVanRun,**argi)
             SaveNXSPE(out,'LET'+str(run)+'_'+str(energy)+'mask_mev.nxspe') #
