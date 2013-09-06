@@ -47,6 +47,8 @@ LoadRaw(Filename=str(wb),OutputWorkspace="wb_wksp") # load whitebeam
 ######################################################################
  
  
+ 
+ 
 for run in run_no:     #loop around runs
         fname='LET0000'+str(run)+'.nxs'
         print ' processing file ', fname
