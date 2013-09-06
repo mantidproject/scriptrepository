@@ -20,7 +20,7 @@ if len(save_dir) ==0 :
     
 print "Data will be saved into: ",save_dir
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
-config.appendDataSearchDir('/home/merlin/mprogs/InstrumentFiles/merlin') 
+config.appendDataSearchDir('/home/maps/mprogs/InstrumentFiles/maps') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
 config.appendDataSearchDir('/isisdatar55/NDXMAPS/Instrument/data/cycle_12_3') 
 
@@ -91,7 +91,7 @@ for i in range(len(runno)):
     if ei[i]==60:
         #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],rebin_pars,mapfile,mv_mapfile,**argi)
         # this does absolute units normalization as far as monovan is not None. Uses default map file, provided in MAPS_Parameters.xml file. Any changes from defaults should be provided here or above as parameters
-        w1=iliad(wbvan,runno[i],ei[i],[-6,0.6,54],None,monovan,**params)
+        w1=iliad(wbvan,runno[i],ei[i],[-6,0.6,54],None,monovan,**argi)
         #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,**argi)
         #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,bkgd_range=[13000,19000],\
         #                     hardmaskPlus=maskfile,diag_remove_zero=False,save_format='none')
