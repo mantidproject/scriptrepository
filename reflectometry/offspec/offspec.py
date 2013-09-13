@@ -409,10 +409,10 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 			if lnPOverLam == "2":
 				if p > 0.0:
 					new_y[j]=log(p)/((lam)**2)
-					new_e(0)[j]=(e/p)/((lam)**2)
+					new_e[j]=(e/p)/((lam)**2)
 				else:
-					new_y(0)[j]=0.0
-					new_e(0)[j]=0.0
+					new_y[j]=0.0
+					new_e[j]=0.0
 		for j in range(len(x)):
 			if convertToSEL == "2":
 				lam=a1.readX(0)[j]
