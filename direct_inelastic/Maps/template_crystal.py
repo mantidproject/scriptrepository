@@ -28,12 +28,12 @@ sam_mass=0
 #monovan=19403
 monovan=[]
 
-##Run the analysis routine
-iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm)
+##Run the analysis routine for a single run, ei and set of rebin parameters
+#iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm)
 
-##If a list of ei is given, then can run a for-loop as below
-#for i in range(len(runno)):
-#	iliad_maps_crystal(runno[i],ei[i],wbvan,rebin_pars[i],monovan,sam_mass,sam_rmm)
+##If a list of ei is given, then can run a for-loop as below (ensure the array of ei, run numbers and rebin parameters are all the same length)
+for i in range(len(runno)):
+iliad_maps_crystal(runno[i],ei[i],wbvan,rebin_pars[i],monovan,sam_mass,sam_rmm)
 	
 ##You can also specify things like the rebinning parameters and ei inside the for-loop if you have lots of runs with the same configuration
 ##And there are plenty of other ways of doing this...
