@@ -31,7 +31,7 @@ rebin_pars=[[-6,0.6,54],[-6,0.6,54]]
 
 
 
-##Run the analysis routine
+##Run the analysis routine  for a single run, ei and set of rebin parameters (ensure the array of ei, run numbers and rebin parameters are all the same length)
 #iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm)
 
 ##If a list of ei is given, then can run a for-loop as below
