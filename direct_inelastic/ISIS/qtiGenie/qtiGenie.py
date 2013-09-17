@@ -50,7 +50,7 @@ if mpl==0:
 save_dir = config.getString('defaultsave.directory')
 if len(save_dir) ==0 :
    #set save directory to the directory where qtigenie resides
-   save_dir = str(os.path.dirname(inspect.getmodule(dgreduce).__file__))
+   save_dir = str(os.path.dirname(insp.getmodule(dgreduce).__file__))
    
 qtg_par["instname"] = config['default.instrument'][0:3]
 
