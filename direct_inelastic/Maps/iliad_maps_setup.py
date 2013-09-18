@@ -164,6 +164,7 @@ def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	
 	save_file=inst+str(runno)+'_ei'+str(ei)  
 	SaveNXSPE(w1,save_file+'_powder.nxspe')
+	SaveSPE(w1,save_file+'_powder.spe')
 	#SaveNexus(w1,save_file+'newDgrd_NewQTG_NewDirectConv.nxs')	
 	DeleteWorkspace(w1)
 	if runno==0:
