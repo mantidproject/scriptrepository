@@ -847,7 +847,7 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 				Divide(snames[k],snames[k]+"int",OutputWorkspace=snames[k])
 				a1=findbin(lnames[k],float(minWavelength))
 				MultiplyRange(lnames[k],"0",str(a1),"0.0",OutputWorkspace=lnames[k])
-				WeightedMean(snames[k],nlistComb[i]+"_"+str(k+1),OutputWorkspace=lnames[k])
+				WeightedMean(snames[k],lnames[k],OutputWorkspace=nlistComb[i]+'_'+str(k+1))
 				if (diagnostics=="0"):
 					DeleteWorkspace(snames[k]+"int")
 					DeleteWorkspace(lnames[k]+"int")
