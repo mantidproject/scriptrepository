@@ -433,8 +433,8 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 			nspec=a1.getNumberHistograms()
 			for l in range(nspec):
 				x = n.array(a1.readX(l))
-                                new_y = n.array(a1.readY(l))
-                                new_e = n.array(a1.readE(l))
+				new_y = n.array(a1.readY(l))
+				new_e = n.array(a1.readE(l))
 				for j in range(len(x)-1):
 					lam=((a1.readX(l)[j]+a1.readX(l)[j+1])/2.0)/10.0
 					p=a1.readY(l)[j]
@@ -451,9 +451,11 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 						lam=a1.readX(l)[j]                                                
 						x[j]=1.0e-2*float(SEConstList[k])*lam*lam
 						#print str(lam)+" "+str(1.0e-2*float(SEConstList[k])*lam*lam)
-                        a1.setY(l, new_y)
-                        a1.setE(l, new_e)
-                        a1.setX(l, x)
+				if convertToSEL == "2":
+					a1.setX(l, x)
+				if lnPOverLam == "2":
+					a1.setY(l, new_y)
+					a1.setE(l, new_e)
 			k=k+1
 
 #
