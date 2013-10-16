@@ -1,6 +1,7 @@
 from math import *
 from mantid.simpleapi import *
 from mantid.api import WorkspaceGroup
+from mantid.api import IEventWorkspace 
 try:
   from mantidplot import *
 except ImportError:
@@ -26,9 +27,17 @@ def addRuns(runlist,wname):
     #fname=fname.lower()
     ##fname=str.replace(fname,'.nxs','.raw')
     #Load(fname,output)
-	Load(str(runlist[0]),OutputWorkspace=output)
+	# Try loading the data, if it is event mode then splice the monitors onto detector data set.
+	Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors=True)
+	if isinstance(mtd[output],IEventWorkspace):
+		Rebin(output,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb')
+		Rebin(output+'_monitors','5.0,20.0,100000.0',OutputWorkspace=output+'monreb')
+		ConjoinWorkspaces(output+'monreb',output+'reb',CheckOverlapping=False)
+		RenameWorkspace(output+'monreb',OutputWorkspace=output)
+		DeleteWorkspace(output+'_monitors')
   else:
     #dae="ndx"+config['default.instrument'].lower()
+	# Live data doesn't return an event mode data set.. only histograms
     dae="ndxoffspec"
     StartLiveData("OFFSPEC",AccumulationMethod="Replace",UpdateEvery=0.0,OutputWorkspace=output)
    #LoadDAE(DAEname=dae,OutputWorkspace=output,SpectrumMin="1")
@@ -55,7 +64,13 @@ def addRuns(runlist,wname):
         #fname=fname.lower()
         ##fname=str.replace(fname,'.nxs','.raw')
         #Load(fname,"wtemp")
-		Load(str(runlist[i]),OutputWorkspace="wtemp")
+		Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors=True)
+		if isinstance(mtd["wtemp"],IEventWorkspace):
+			Rebin("wtemp",'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb')
+			Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
+			ConjoinWorkspaces("wtemp"+'monreb',"wtemp"+'reb',CheckOverlapping=False)
+			RenameWorkspace("wtemp"+'monreb',OutputWorkspace="wtemp")
+			DeleteWorkspace(output+'_monitors')
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
