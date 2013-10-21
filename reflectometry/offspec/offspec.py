@@ -660,7 +660,7 @@ def nrSERGISFn(runList,nameList,P0runList,P0nameList,incidentAngles,SEConstants,
 #
 #===========================================================
 #
-def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,subbgd=0,qgroup=0,dofloodnorm=1,diagnostics=0):
+def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,subbgd=0,btmbgd=[0,50],topbgd=[160,240],qgroup=0,dofloodnorm=1,diagnostics=0):
 	nlist=parseNameList(nameList)
 	#logger.notice("This is the sample nameslist:"+str(nlist))
 	rlist=parseRunList(runList)
@@ -718,10 +718,10 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
 			RotateInstrumentComponent(i+"det","DetectorBench",X="-1.0",Angle=str(a1))
 			if (subbgd==1):
 				# Calculate a background correction
-				GroupDetectors(i+"det",OutputWorkspace=i+"bgd2",WorkspaceIndexList=range(0,50),KeepUngroupedSpectra="0")
-				GroupDetectors(i+"det",OutputWorkspace=i+"bgd1",WorkspaceIndexList=range(160,240),KeepUngroupedSpectra="0")
+				GroupDetectors(i+"det",OutputWorkspace=i+"bgd2",WorkspaceIndexList=range(btmbgd[0],btmbgd[1]),KeepUngroupedSpectra="0")
+				GroupDetectors(i+"det",OutputWorkspace=i+"bgd1",WorkspaceIndexList=range(topbgd[0],topbgd[1]),KeepUngroupedSpectra="0")
 				Plus(i+"bgd1",i+"bgd2",OutputWorkspace=i+"bgd")
-				wbgdtemp=mtd[i+"bgd"]/130.0
+				wbgdtemp=mtd[i+"bgd"]/((btmbgd[1]-btmbgd[0])+(topbgd[1]-topbgd[0]))
 				DeleteWorkspace(i+"bgd1")
 				DeleteWorkspace(i+"bgd2")
 				DeleteWorkspace(i+"bgd")
