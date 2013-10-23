@@ -19,42 +19,43 @@ if len(save_dir) ==0 :
     
 print "Data will be saved into: ",save_dir
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
-config.appendDataSearchDir('/home/merlin/mprogs/InstrumentFiles/merlin') 
+#config.appendDataSearchDir('home/dta67/merlin_copy/adrojaDec2012/CeFe2Al10/') 
+config.appendDataSearchDir('//Merlin/home/merlin/mprogs/InstrumentFiles/merlin') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
-config.appendDataSearchDir('/isisdatar55/NDXMERLIN/Instrument/data/cycle_12_3') 
+config.appendDataSearchDir('/isisdatar55/NDXMERLIN/Instrument/data/cycle_13_3') 
 
 
 #load vanadium file    
-whitebeamfile="13123"
+whitebeamfile="15871"
 LoadRaw(Filename=whitebeamfile,OutputWorkspace="wb_wksp",LoadLogFiles="0")
 MonoVanWB="wb_wksp"
 
 # Mandatory positional parameters 
-ei=25  # ei-guess
-rebin_params=[-10,.1,23]
-MonoVanRun=[13271]   # mandatory for absolute units, for arbitrary units should be None here or absent parameter in Iliad
+ei=40  # ei-guess
+rebin_params=[-10, 0.2, 38]
+MonoVanRun=[16353]   # mandatory for absolute units, for arbitrary units should be None here or absent parameter in Iliad
 
 #   Other positional  parameters
-mapfile='one2one_123' # ring map file is used for powder.  if absend idf file value is used instead
+mapfile='one2one_125' # ring map file is used for powder.  if absend idf file value is used instead
 # key-coded parameters
 params={}
-params['monovan_integr_range']=[-25,23]
+params['monovan_integr_range']=[-40,36]
 params['norm_method']='current'
-params['det_cal_file']='det_corr_123.dat'  #det_cal_file must be specified if the reduction sends out put to a workpsace
-params['sample_mass']=32.62
-params['sample_rmm']=50.94
-params['monovan_mapfile']='rings_123.map' # good 
-params['hardmaskPlus']='4to1.msk'
+params['det_cal_file']='det_corr_125.dat'  #det_cal_file must be specified if the reduction sends out put to a workpsace
+params['sample_mass']=8.49   #CeFe2Al10
+params['sample_rmm']=521.63   #CeFe2Al10
+params['monovan_mapfile']='rings_125.map' # good 
+#params['hardmaskPlus']='4to1.msk'
 
 
 
 #runs=[13151 13152 13153 13154 13155 13156 13157 13158 13159 13160 13161 13162 13163 13164 13165 13166 13167 13168 13169 13170 13171 13172 13173 13174 13175 13176 13177]
-runs=[13271]
+runs=[15889]
 ############## normal reduction####################
 
 #save .nxspe file
 for runfile in runs:
-    save_file=inst+str(runfile)+'.nxspe'
+    save_file=inst+str(runfile)+'_abs.nxspe'
     LoadRaw(Filename=str(runfile),OutputWorkspace="run_wksp",LoadLogFiles="0")
 
     w1=iliad("wb_wksp","run_wksp",ei,rebin_params,mapfile,MonoVanRun,**params)
