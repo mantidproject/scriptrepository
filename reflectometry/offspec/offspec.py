@@ -790,7 +790,7 @@ def findbin(wksp,val):
 #
 #===========================================================
 #
-def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minSpec,maxSpec,minWavelength,gparams,floodfile="",diagnostics="0"):
+def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minSpec,maxSpec,minWavelength,gparams,floodfile="",fitspline=0,diagnostics="0"):
 	nlistS=parseNameList(nameListShort)
 	rlistS=parseRunList(runListShort)
 	nlistL=parseNameList(nameListLong)
@@ -865,6 +865,9 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 				a1=findbin(lnames[k],float(minWavelength))
 				MultiplyRange(lnames[k],"0",str(a1),"0.0",OutputWorkspace=lnames[k])
 				WeightedMean(snames[k],lnames[k],OutputWorkspace=nlistComb[i]+'_'+str(k+1))
+				if(fitspline > 0):
+					SmoothData(nlistComb[i]+'_'+str(k+1),OutputWorkspace=nlistComb[i]+'_'+str(k+1))
+					SplineBackground(InputWorkspace=nlistComb[i]+'_'+str(k+1),NCoeff=fitspline,OutputWorkspace=nlistComb[i]+'_spline_'+str(k+1))
 				if (diagnostics=="0"):
 					DeleteWorkspace(snames[k]+"int")
 					DeleteWorkspace(lnames[k]+"int")
@@ -876,6 +879,9 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 			a1=findbin(nlistL[i]+"norm",float(minWavelength))
 			MultiplyRange(nlistL[i]+"norm","0",str(a1),"0.0", OutputWorkspace=nlistL[i]+"norm")
 			WeightedMean(nlistS[i]+"norm",nlistL[i]+"norm", OutputWorkspace=nlistComb[i])
+			if(fitspline > 0):
+				SmoothData(nlistComb[i],OutputWorkspace=nlistComb[i])
+				SplineBackground(InputWorkspace=nlistComb[i],NCoeff=fitspline,OutputWorkspace=nlistComb[i]+'_spline')
 			if (diagnostics=="0"):
 				DeleteWorkspace(nlistS[i]+"int")
 				DeleteWorkspace(nlistL[i]+"int")
@@ -893,7 +899,8 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 					DeleteWorkspace(nlistL[i]+"sum")
 				DeleteWorkspace(nlistL[i]+"norm")
 				DeleteWorkspace(nlistL[i])
-		
+
+				
 #
 #===========================================================
 #
