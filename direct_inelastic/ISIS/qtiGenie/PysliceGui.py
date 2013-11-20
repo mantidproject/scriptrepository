@@ -2,6 +2,10 @@
 import sys
 from PySliceUI2 import Ui_MainWindow
 from PyQt4 import QtCore, uic,QtGui
+#import MantidFramework 
+#MantidFramework.mtd.initialise()
+from mantid.simpleapi import *
+#from DirectEnergyConversion import *
 import time as time
 from mantidplotpy import *
 import dgreduce
@@ -46,7 +50,7 @@ class MainWindow(QtGui.QMainWindow):
 		QtCore.QObject.connect(self.ui.BkgSwitch,  QtCore.SIGNAL("stateChanged(int)"), self.BkgSwitchOn)
 		
 		QtCore.QObject.connect(self.ui.AutoEiChbox,  QtCore.SIGNAL("stateChanged(int)"), self.AutoEiOn)
-		QtCore.QObject.connect(self.ui.FixEi,  QtCore.SIGNAL("stateChanged(int)"), self.AutoEiOn)
+		QtCore.QObject.connect(self.ui.FixEi,  QtCore.SIGNAL("stateChanged(int)"), self.FixEiOn)
 		QtCore.QObject.connect(self.ui.FixMonitorSpectrum,  QtCore.SIGNAL("stateChanged(int)"), self.MonitorSpec)
 		
 		QtCore.QObject.connect(self.ui.AbsNormSwitch,  QtCore.SIGNAL("stateChanged(int)"), self.AbsNormOn)
@@ -254,17 +258,27 @@ class MainWindow(QtGui.QMainWindow):
 				monovanreb=[tmp[0],tmp[2]]
 				
 			else:
-				ei=double(self.ui.EiGuess.text())
-				rebin_params=str(-ei*.5)+','+str(ei*(2.5e-3))+','+str(ei*.95)	
+				ei=self.EiVal
+				deltaEi=(ei*.01)/20.0
+				rebin_params=str(-ei*.5)+','+str(deltaEi)+','+str(ei*.95)
 				tmp=rebin_params.split(',')
 				monovanreb=[tmp[0],tmp[2]]
-				
-			if self.BkgSwitch==True:
-				w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=self.BkgSwitch,bkgd_range=self.BkgdRange)
-				RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+			
+			
+			if self.FixEi == True:
+				if self.BkgSwitch==True:
+					w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+				else:
+					w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 			else:
-				w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
-				RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+				if self.BkgSwitch==True:
+					w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+				else:
+					w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 		
 		
 		WkspOut=str(self.ui.outputWksp.text())
@@ -309,17 +323,25 @@ class MainWindow(QtGui.QMainWindow):
 			if self.AutoEi==True:
 				ei,rebin_params,self.BkgdRange=autoEi(str(Run),BkgdGen=True,monspecin=int(self.ui.MonSpecNumber.text())) 
 			else:
-				ei=double(self.ui.EiGuess.text())
-				rebin_params=str(-ei*.5)+','+str(ei*(2.5e-3))+','+str(ei*.95)	
+				ei=self.EiVal
+				deltaEi=(ei*.01)/20.0
+				rebin_params=str(-ei*.5)+','+str(deltaEi)+','+str(ei*.95)	
 		
 			#w1=iliad(WB,Run,ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method='current')
-			if self.BkgSwitch==True:
-				w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',background=self.BkgSwitch,bkgd_range=self.BkgdRange)
-				RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+			if self.FixEi == True:
+				if self.BkgSwitch==True:
+					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+				else:
+					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,fixei=True,save_format='')
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 			else:
-				w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='')
-				RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
-		
+				if self.BkgSwitch==True:
+					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
+				else:
+					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='')
+					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 		
 		WkspOut=str(self.ui.outputWksp.text())
 		
@@ -602,9 +624,11 @@ class MainWindow(QtGui.QMainWindow):
 		Qz=-(sin(maxTheta)*sin(0))*ki
 		Qmax=sqrt(Qx**2+Qy**2+Qz**2)
 		
-		deltaQ=(Qmax-Qmin)/numHist
+		#deltaQ=(Qmax-Qmin)/(numHist-50)
+		#set the deltaQ to be the elastic line intrinsic resolution
+		deltaQ=(Qmax-Qmin)/(numHist)
 		text=str(self.ui.WkspIn.currentText())
-		string1=text+': ei= '+" %.2f" % ei+'meV qmin= '+" %.2f" % Qmin+'qmax = '+" %.2f" % Qmax
+		string1=text+': ei= '+" %.2f" % ei+'meV qmin= '+" %.2f" % Qmin+' qmax = '+" %.2f" % Qmax+' deltaQ = '+" %.2f" % deltaQ
 		rebin=str(Qmin)+','+str(deltaQ)+','+str(Qmax)
 		self.ui.wkspList.addItem(string1)
 		#print self.ui.WkspIn.currentText()
@@ -624,7 +648,6 @@ def qapp():
 	return app
  
 app = qapp()
-PySliceGui = MainWindow()
-PySliceGui.show()
+reducer = MainWindow()
+reducer.show()
 app.exec_()
-
