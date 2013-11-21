@@ -267,17 +267,17 @@ class MainWindow(QtGui.QMainWindow):
 			
 			if self.FixEi == True:
 				if self.BkgSwitch==True:
-					w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+					w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=True,bkgd_range=self.BkgdRange)
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 				else:
-					w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
+					w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,background=False,fixei=True,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 			else:
 				if self.BkgSwitch==True:
-					w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=self.BkgSwitch,bkgd_range=self.BkgdRange)
+					w1=iliad_abs(str(WB),str(Run),str(MonoRun),str(monoWB),RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb,background=True,bkgd_range=self.BkgdRange)
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 				else:
-					w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
+					w1=iliad_abs(WB,str(Run),MonoRun,monoWB,RMMmass,sampleMass,ei,rebin_params,mapfile,monovan_mapfile,det_cal_file=cal_file,background=False,norm_method=self.Normalisation,save_format='',abs_units_van_range=monovanreb)
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 		
 		
@@ -333,14 +333,14 @@ class MainWindow(QtGui.QMainWindow):
 					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,fixei=True,norm_method=self.Normalisation,save_format='',background=self.BkgSwitch,bkgd_range=self.BkgdRange)
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 				else:
-					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,fixei=True,save_format='')
+					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,background=False,fixei=True,save_format='')
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 			else:
 				if self.BkgSwitch==True:
 					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='',background=self.BkgSwitch,bkgd_range=self.BkgdRange)
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 				else:
-					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,norm_method=self.Normalisation,save_format='')
+					w1=iliad(WB,str(Run),ei,rebin_params,mapfile,det_cal_file=cal_file,background=False,norm_method=self.Normalisation,save_format='')
 					RenameWorkspace(InputWorkspace='w1',OutputWorkspace=str(Run)+'reduced')
 		
 		WkspOut=str(self.ui.outputWksp.text())
@@ -605,8 +605,19 @@ class MainWindow(QtGui.QMainWindow):
 				
 		data=mtd[str(self.ui.WkspIn.currentText())]
 		numHist=data.getNumberHistograms()
-		minTheta=data.detectorTwoTheta(data.getDetector(0))
-		maxTheta=data.detectorTwoTheta(data.getDetector(numHist-1))
+		#find the max and min angles
+		maxTheta=0.1
+		for i in range(numHist):
+			tmp=(data.detectorTwoTheta(data.getDetector(i)))
+			if tmp > maxTheta:
+				maxTheta=tmp
+		
+		minTheta=360
+		for i in range(numHist):
+			tmp=(data.detectorTwoTheta(data.getDetector(i)))
+			if tmp < minTheta:
+				minTheta=tmp
+				
 		#calculate extents in mod q for the data and generate rebin parameters
 		
 		ei= data.getRun().getLogData('Ei').value
@@ -626,9 +637,19 @@ class MainWindow(QtGui.QMainWindow):
 		
 		#deltaQ=(Qmax-Qmin)/(numHist-50)
 		#set the deltaQ to be the elastic line intrinsic resolution
-		deltaQ=(Qmax-Qmin)/(numHist)
+		
+		#approximate deltaQ given the number of histograms
+		if not self.ui.DeltaQ.text():
+			deltaQ=(Qmax-Qmin)/(numHist)
+		else:
+			deltaQ=float(self.ui.DeltaQ.text())
+			
+			
 		text=str(self.ui.WkspIn.currentText())
 		string1=text+': ei= '+" %.2f" % ei+'meV qmin= '+" %.2f" % Qmin+' qmax = '+" %.2f" % Qmax+' deltaQ = '+" %.2f" % deltaQ
+		
+		
+		
 		rebin=str(Qmin)+','+str(deltaQ)+','+str(Qmax)
 		self.ui.wkspList.addItem(string1)
 		#print self.ui.WkspIn.currentText()
