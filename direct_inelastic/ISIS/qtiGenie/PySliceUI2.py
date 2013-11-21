@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PysliceUI_2.ui'
+# Form implementation generated from reading ui file 'PysliceUi_2.ui'
 #
-# Created: Fri Apr 26 14:43:17 2013
+# Created: Thu Nov 21 12:01:18 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -191,7 +191,7 @@ class Ui_MainWindow(object):
         self.label_3.setGeometry(QtCore.QRect(584, 92, 30, 16))
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.removeWksp = QtGui.QPushButton(self.tab_2)
-        self.removeWksp.setGeometry(QtCore.QRect(3, 380, 150, 32))
+        self.removeWksp.setGeometry(QtCore.QRect(3, 410, 150, 32))
         self.removeWksp.setObjectName(_fromUtf8("removeWksp"))
         self.label_4 = QtGui.QLabel(self.tab_2)
         self.label_4.setGeometry(QtCore.QRect(322, 142, 71, 20))
@@ -215,7 +215,7 @@ class Ui_MainWindow(object):
         self.label_9.setGeometry(QtCore.QRect(674, 284, 62, 16))
         self.label_9.setObjectName(_fromUtf8("label_9"))
         self.label_12 = QtGui.QLabel(self.tab_2)
-        self.label_12.setGeometry(QtCore.QRect(9, 74, 101, 16))
+        self.label_12.setGeometry(QtCore.QRect(9, 90, 101, 16))
         self.label_12.setObjectName(_fromUtf8("label_12"))
         self.FigureList = QtGui.QListWidget(self.tab_2)
         self.FigureList.setGeometry(QtCore.QRect(299, 240, 361, 141))
@@ -249,7 +249,7 @@ class Ui_MainWindow(object):
         self.genScript.setGeometry(QtCore.QRect(662, 370, 91, 40))
         self.genScript.setObjectName(_fromUtf8("genScript"))
         self.calcProj = QtGui.QPushButton(self.tab_2)
-        self.calcProj.setGeometry(QtCore.QRect(190, 3, 121, 32))
+        self.calcProj.setGeometry(QtCore.QRect(200, 0, 101, 61))
         self.calcProj.setObjectName(_fromUtf8("calcProj"))
         self.plotOver = QtGui.QPushButton(self.tab_2)
         self.plotOver.setGeometry(QtCore.QRect(554, 172, 91, 32))
@@ -267,7 +267,7 @@ class Ui_MainWindow(object):
         self.cutMin.setGeometry(QtCore.QRect(383, 112, 81, 22))
         self.cutMin.setObjectName(_fromUtf8("cutMin"))
         self.wkspList = QtGui.QListWidget(self.tab_2)
-        self.wkspList.setGeometry(QtCore.QRect(9, 100, 271, 281))
+        self.wkspList.setGeometry(QtCore.QRect(9, 110, 271, 301))
         self.wkspList.setObjectName(_fromUtf8("wkspList"))
         self.smooth = QtGui.QLineEdit(self.tab_2)
         self.smooth.setGeometry(QtCore.QRect(522, 39, 71, 22))
@@ -278,6 +278,12 @@ class Ui_MainWindow(object):
         self.DBWFac = QtGui.QLineEdit(self.tab_2)
         self.DBWFac.setGeometry(QtCore.QRect(670, 310, 71, 22))
         self.DBWFac.setObjectName(_fromUtf8("DBWFac"))
+        self.DeltaQ = QtGui.QLineEdit(self.tab_2)
+        self.DeltaQ.setGeometry(QtCore.QRect(210, 80, 81, 22))
+        self.DeltaQ.setObjectName(_fromUtf8("DeltaQ"))
+        self.label_26 = QtGui.QLabel(self.tab_2)
+        self.label_26.setGeometry(QtCore.QRect(200, 60, 111, 20))
+        self.label_26.setObjectName(_fromUtf8("label_26"))
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.horizontalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -296,8 +302,8 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuCalculations.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.cutMin, self.cutMax)
         MainWindow.setTabOrder(self.cutMax, self.delta)
@@ -390,7 +396,8 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "Displacement", None))
         self.label_15.setText(_translate("MainWindow", "I Min", None))
         self.genScript.setText(_translate("MainWindow", "GenScript", None))
-        self.calcProj.setText(_translate("MainWindow", "calcProjections", None))
+        self.calcProj.setText(_translate("MainWindow", "Calculate \n"
+" Projections", None))
         self.plotOver.setToolTip(_translate("MainWindow", "Plot cut over existing plot (Must seleect a plot below)", None))
         self.plotOver.setText(_translate("MainWindow", "Plot Over", None))
         self.delta.setToolTip(_translate("MainWindow", "Step valaue for cut axis rebin", None))
@@ -400,6 +407,8 @@ class Ui_MainWindow(object):
         self.wkspList.setToolTip(_translate("MainWindow", "List of transformed workspaces", None))
         self.label_8.setText(_translate("MainWindow", "Max", None))
         self.DBWFac.setToolTip(_translate("MainWindow", "Mean square displacement [Angstrom]", None))
+        self.DeltaQ.setToolTip(_translate("MainWindow", "Minimum valaue for cut axis", None))
+        self.label_26.setText(_translate("MainWindow", "DeltaQ (optional)", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Visulisation", None))
         self.menuCalculations.setTitle(_translate("MainWindow", "Calculations", None))
         self.actionDensityOfstates.setText(_translate("MainWindow", "DensityOfstates", None))
