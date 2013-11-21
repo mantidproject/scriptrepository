@@ -54,10 +54,10 @@ def autoEi(WkspIn,BkgdGen=None,monspecin=None,BkgdLevel=None):
 	ei=maximal[max1,0]
 	print ei
 	#generate some rebin parameters
-	#deltaE is set at 50 points per resolution function of 1%Ei this is to make sofqw3 work. 
+	#deltaE is set at 10 points per resolution function of 2%Ei this is to make sofqw3 work. 
 	#There is an issue with the overlapping polygon rebin that results in bad output if the energy transfer vector is 
 	# is not over sampled
-	deltaEi=(ei*.01)/20.0
+	deltaEi=(ei*.02)/10.0
 	rebin=str(-ei*.5)+','+str(deltaEi)+','+str(ei*.95)
 	#print rebin
 	#print type(rebin)
