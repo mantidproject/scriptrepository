@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -152,7 +152,7 @@ name</string>
          </rect>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
@@ -631,7 +631,7 @@ formula unit</string>
         <property name="geometry">
          <rect>
           <x>3</x>
-          <y>380</y>
+          <y>410</y>
           <width>150</width>
           <height>32</height>
          </rect>
@@ -732,7 +732,7 @@ formula unit</string>
         <property name="geometry">
          <rect>
           <x>9</x>
-          <y>74</y>
+          <y>90</y>
           <width>101</width>
           <height>16</height>
          </rect>
@@ -877,14 +877,15 @@ formula unit</string>
        <widget class="QPushButton" name="calcProj">
         <property name="geometry">
          <rect>
-          <x>190</x>
-          <y>3</y>
-          <width>121</width>
-          <height>32</height>
+          <x>200</x>
+          <y>0</y>
+          <width>101</width>
+          <height>61</height>
          </rect>
         </property>
         <property name="text">
-         <string>calcProjections</string>
+         <string>Calculate 
+ Projections</string>
         </property>
        </widget>
        <widget class="QPushButton" name="plotOver">
@@ -959,9 +960,9 @@ formula unit</string>
         <property name="geometry">
          <rect>
           <x>9</x>
-          <y>100</y>
+          <y>110</y>
           <width>271</width>
-          <height>281</height>
+          <height>301</height>
          </rect>
         </property>
         <property name="toolTip">
@@ -1004,6 +1005,32 @@ formula unit</string>
          <string>Mean square displacement [Angstrom]</string>
         </property>
        </widget>
+       <widget class="QLineEdit" name="DeltaQ">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>80</y>
+          <width>81</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Minimum valaue for cut axis</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_26">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>60</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>DeltaQ (optional)</string>
+        </property>
+       </widget>
        <zorder>frame</zorder>
        <zorder>label_6</zorder>
        <zorder>label</zorder>
@@ -1044,6 +1071,8 @@ formula unit</string>
        <zorder>smooth</zorder>
        <zorder>label_8</zorder>
        <zorder>DBWFac</zorder>
+       <zorder>DeltaQ</zorder>
+       <zorder>label_26</zorder>
       </widget>
      </widget>
     </item>
