@@ -59,7 +59,7 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	argi['hardmaskPlus']=maskfile 
 	#argi['hardmaskOnly']=maskfile 
 	argi['diag_remove_zero']=False
-	argi['abs_units_van_range']=[-40,40]   
+	argi['abs_units_van_range']=[-0.5*ei,0.7*ei]   
 	argi['wb_integr_range'] = [20,100] 
 	argi['save_format']   = 'none'
 	## dgREDUCE old
