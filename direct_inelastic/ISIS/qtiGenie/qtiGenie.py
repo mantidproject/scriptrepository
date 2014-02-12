@@ -60,6 +60,8 @@ iliad=dgreduce.arb_units
 iliad_abs=dgreduce.abs_units
 iliad_help=dgreduce.help
 iliad_sum = dgreduce.sum_files
+iliad_reducer = dgreduce.getReducer
+
 #     iliad_set_calfile = dgreduce.set_cal_file
 os.chdir(save_dir)
 print 'Working directory set to: ',save_dir;
