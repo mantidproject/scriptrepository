@@ -1,5 +1,5 @@
 import sys
-from PyChopUI import Ui_MainWindow
+from MARIChopUI import Ui_MainWindow
 from PyQt4 import QtCore, uic,QtGui
 import time as time
 from mantidplotpy import *
