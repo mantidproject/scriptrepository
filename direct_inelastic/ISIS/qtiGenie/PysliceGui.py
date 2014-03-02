@@ -99,7 +99,7 @@ class MainWindow(QtGui.QMainWindow):
 		self.RMM=[]
 		self.sumRunsCheck=False
 		self.BkgdRange=[]
-		self.ui.mapfile.setText('mari_res2012')
+		self.ui.mapfile.setText('mari_res2013')
 		self.ui.MonSpecNumber.setText('2')
 		self.shortname=''
 		
@@ -119,7 +119,7 @@ class MainWindow(QtGui.QMainWindow):
 		if self.inst=='Mari':
 			self.shortname='MAR'
 			self.exten='.raw'
-			self.ui.mapfile.setText('mari_res2012')
+			self.ui.mapfile.setText('mari_res2013')
 	
 	def setNormMethod(self):
 	
@@ -203,11 +203,15 @@ class MainWindow(QtGui.QMainWindow):
  			Runs=range(int(tmp[0]),int(tmp[1])+1)
  		
  		if len(Run.split(','))==1 & len(Run.split(':'))==1:
- 			#for a single run return a 1 element list
- 			tmp=int(Run)
- 			Runs=[1]
- 			Runs[0]=tmp
- 			
+			if Run=='current':
+				Runs='current'
+			else:
+
+ 				#for a single run return a 1 element list
+ 				tmp=int(Run)
+ 				Runs=[1]
+ 				Runs[0]=tmp
+
  		print Runs, type(Run)
  		return WB,Runs
  	
@@ -301,6 +305,11 @@ class MainWindow(QtGui.QMainWindow):
 		WB,Runs=self.getRuns()
 		print Runs, type(Runs)
 		
+		if Runs=='current':
+			#get live data
+			StartLiveData(UpdateEvery='0',Instrument='MARI',AccumulationMethod="Replace", OutputWorkspace='CurrentRun')
+			Runs=['CurrentRun']
+
 		iliad_setup(self.shortname)
 		mapfile=str(self.ui.mapfile.text())
 		cal_file=self.shortname+WB+self.exten
