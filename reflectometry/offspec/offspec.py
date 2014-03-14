@@ -70,7 +70,7 @@ def addRuns(runlist,wname):
 			Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
 			ConjoinWorkspaces("wtemp"+'monreb',"wtemp"+'reb',CheckOverlapping=False)
 			RenameWorkspace("wtemp"+'monreb',OutputWorkspace="wtemp")
-			DeleteWorkspace(output+'_monitors')
+			DeleteWorkspace('wtemp'+'_monitors')
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
@@ -660,18 +660,22 @@ def nrSERGISFn(runList,nameList,P0runList,P0nameList,incidentAngles,SEConstants,
 #
 #===========================================================
 #
-def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,subbgd=0,btmbgd=[0,50],topbgd=[160,240],qgroup=0,dofloodnorm=1,diagnostics=0):
+def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,subbgd=0,btmbgd=[0,50],topbgd=[160,240],qgroup=0,dofloodnorm=1,usewkspname=0,diagnostics=0):
 	nlist=parseNameList(nameList)
 	#logger.notice("This is the sample nameslist:"+str(nlist))
-	rlist=parseRunList(runList)
+	if(usewkspname==0):
+		rlist=parseRunList(runList)
+	else:
+		rlist=parseNameList(runList)
 	#logger.notice("This is the sample runlist:"+str(rlist))
 	dlist=parseNameList(DBList)
 	#logger.notice("This is the Direct Beam nameslist:"+str(dlist))
 	incAngles=parseNameList(incidentAngles)
 	#logger.notice("This incident Angles are:"+str(incAngles))
 
-	for i in range(len(rlist)):
-		addRuns(rlist[i],nlist[i])
+	if(usewkspname==0):
+		for i in range(len(rlist)):
+			addRuns(rlist[i],nlist[i])
 	
 	mon_spec=int(gparams[3])-1
 	reb=gparams[0]+","+gparams[1]+","+gparams[2]
@@ -771,7 +775,8 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
 			DeleteWorkspace(i+"sum")
 			
 		k=k+1
-		DeleteWorkspace(i)
+		if(usewkspname==0):
+			DeleteWorkspace(i)
 		if(diagnostics==0):
 			DeleteWorkspace(i+"mon")
 			DeleteWorkspace(i+"det")
@@ -866,7 +871,7 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 				MultiplyRange(lnames[k],"0",str(a1),"0.0",OutputWorkspace=lnames[k])
 				WeightedMean(snames[k],lnames[k],OutputWorkspace=nlistComb[i]+'_'+str(k+1))
 				if(fitspline > 0):
-					SmoothData(nlistComb[i]+'_'+str(k+1),OutputWorkspace=nlistComb[i]+'_'+str(k+1))
+					SmoothData(nlistComb[i]+'_'+str(k+1),5,OutputWorkspace=nlistComb[i]+'_'+str(k+1))
 					SplineBackground(InputWorkspace=nlistComb[i]+'_'+str(k+1),NCoeff=fitspline,OutputWorkspace=nlistComb[i]+'_spline_'+str(k+1))
 				if (diagnostics=="0"):
 					DeleteWorkspace(snames[k]+"int")
@@ -880,7 +885,7 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 			MultiplyRange(nlistL[i]+"norm","0",str(a1),"0.0", OutputWorkspace=nlistL[i]+"norm")
 			WeightedMean(nlistS[i]+"norm",nlistL[i]+"norm", OutputWorkspace=nlistComb[i])
 			if(fitspline > 0):
-				SmoothData(nlistComb[i],OutputWorkspace=nlistComb[i])
+				SmoothData(nlistComb[i],5,OutputWorkspace=nlistComb[i])
 				SplineBackground(InputWorkspace=nlistComb[i],NCoeff=fitspline,OutputWorkspace=nlistComb[i]+'_spline')
 			if (diagnostics=="0"):
 				DeleteWorkspace(nlistS[i]+"int")
@@ -1231,10 +1236,13 @@ def nrPACorrection(UpUpWksp,UpDownWksp,DownUpWksp,DownDownWksp,calibration=0):
 #
 #===========================================================
 #
-def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,PNRwithPA,pnums,doCorrs,doLDCorrs="0",subbgd=0,calibration=0,diagnostics=0):
+def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,PNRwithPA,pnums,doCorrs,doLDCorrs="0",subbgd=0,calibration=0,usewkspname=0,diagnostics=0):
 	nlist=parseNameList(nameList)
 	logger.notice("This is the sample nameslist:"+str(nlist))
-	rlist=parseRunList(runList)
+	if(usewkspname==0):
+		rlist=parseRunList(runList)
+	else:
+		rlist=parseNameList(runList)
 	logger.notice("This is the sample runlist:"+str(rlist))
 	dlist=parseNameList(DBList)
 	logger.notice("This is the Direct Beam nameslist:"+str(dlist))
@@ -1248,8 +1256,9 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
 	else:
 		nper=2
 	
-	for i in range(len(rlist)):
-		addRuns(rlist[i],nlist[i])
+	if(usewkspname==0):
+		for i in range(len(rlist)):
+			addRuns(rlist[i],nlist[i])
 	
 	mon_spec=int(gparams[3])-1
 	minSp=int(minSpec)
@@ -1355,7 +1364,8 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
 			if (diagnostics == 0 and doLDCorrs != "0"):
 				DeleteWorkspace(i+"detnorm")
 		k=k+1
-		DeleteWorkspace(i)
+		if(usewkspname==0):
+			DeleteWorkspace(i)
 		if (subbgd==1):
 			DeleteWorkspace("wbgdtemp")
 #
