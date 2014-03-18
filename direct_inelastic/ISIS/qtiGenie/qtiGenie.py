@@ -7,10 +7,10 @@ import sys
 import time as time
 import dgreduce
 import numpy
-#try:
-#    import nxs
-#except ImportError:
-#    pass
+try:
+    import nxs
+except ImportError:
+    pass
 import inspect as insp        
 import PySlice2
 import PyChop
@@ -68,6 +68,63 @@ print 'Working directory set to: ',save_dir;
 
 #######################
 #######################
+def find_binning_range(energy,ebin,ls,lm2,mult,dt_DAE):
+    """ function finds the binning range used in multirep mode 
+        for merlin ls=11.8,lm2=10. mult=2.8868 dt_DAE=1;
+        for LET    ls=25,lm2=23.5 mult=4.1     dt_DAE=1.6;
+        all these values have to be already present in IDF and should be taken from there
+
+        # THIS FUNCTION SHOULD BE MADE GENERIG AND MOVED OUT OF HERE
+    """
+    energy=float(energy)
+
+    emin=(1.0-ebin[2])*energy   #minimum energy is with 80% energy loss
+    lam=(81.81/energy)**0.5
+    lam_max=(81.81/emin)**0.5
+    tsam=252.82*lam*ls   #time at sample
+    tmon2=252.82*lam*lm2 #time to monitor 6 on LET
+    tmax=tsam+(252.82*lam_max*mult) #maximum time to measure inelastic signal to
+    t_elastic=tsam+(252.82*lam*mult)   #maximum time of elastic signal
+    tbin=[int(tmon2),dt_DAE,int(tmax)]				
+    energybin=[float("{0: 6.4f}".format(elem*energy)) for elem in ebin]
+
+    return (energybin,tbin,t_elastic);
+#--------------------------------------------------------------------------------------------------------
+def find_background(ws_name,bg_range,dt_DAE):
+    """ Function to find background from multirep event workspace
+    dt_DAE = 1 for MERLIN and 1.6 for LET
+     should be precalculated or taken from IDF
+
+        # THIS FUNCTION SHOULD BE MADE GENERIC AND MOVED OUT OF HERE
+    """
+    bg_ws_name = 'bg';
+    delta=bg_range[1]-bg_range[0]
+    Rebin(InputWorkspace='w1',OutputWorkspace=bg_ws_name,Params=[bg_range[0],delta,bg_range[1]],PreserveEvents=False)	
+    v=(delta)/dt_DAE
+    CreateSingleValuedWorkspace(OutputWorkspace='d',DataValue=v)
+    Divide(LHSWorkspace=bg_ws_name,RHSWorkspace='d',OutputWorkspace=bg_ws_name)
+    return bg_ws_name;
+    
+    
+def find_chopper_peaks(monitor_ws_name,max_num_peaks=15,max_peak_intensity=250,peak_search_range=0.02):
+    """ Function finds the energy peaks generated on monitor workspace by chopper in mutlirep mode
+    """
+    
+    ei = [];
+    for x in range(0,max_num_peaks):
+        Max(InputWorkspace=monitor_ws_name,OutputWorkspace='maxval')
+        mv=mtd['maxval']
+        if mv.dataY(0)[0] >= max_peak_intensity:
+            min=mv.dataX(0)[0] -peak_search_range
+            max=mv.dataX(0)[1] +peak_search_range
+            RemoveBins(InputWorkspace=monitor_ws_name,OutputWorkspace=monitor_ws_name,XMin=min,XMax=max)
+            ei.append(mv.dataX(0)[0])
+    #sorts energies into order
+    ei.sort() 
+    
+    return ei;
+
+    
 
 def createqtiTable(*args):
 #create a qti table of length arg1 with name arg0

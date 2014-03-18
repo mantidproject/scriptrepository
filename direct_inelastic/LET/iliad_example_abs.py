@@ -24,7 +24,7 @@ config.appendDataSearchDir('/archive/NDXLET/Instrument/data/cycle_12_3')
 
 # this is the user input section
 wb=10431   # enter whitebeam run number here (cycle 2013/1)
-#run_no=[8570,8581] # event mode run numbers here or use next line for a continous sequence of runs i.e range(first run, last run +1)
+#run_no=[8570,8581] # event mode run numbers here or use next line for a continuous sequence of runs i.e range(first run, last run +1)
 #run_no=range(11376,11379)
 run_no=[11398]#range(11440,11516
 MonoVanRun=10433 # vanadium run in the same configuration as your sample
@@ -62,32 +62,18 @@ for run in run_no:     #loop around runs
         ##################################300
         # this section finds all the transmitted incident energies
         if len(ei) == 0:
-           for x in range(0,15):
-               Max(InputWorkspace='mon',OutputWorkspace='maxval')
-               mv=mtd['maxval']
-               if mv.dataY(0)[0] >= 250:
-                     min=mv.dataX(0)[0] -0.02
-                     max=mv.dataX(0)[1] +0.02
-                     RemoveBins(InputWorkspace='mon',OutputWorkspace='mon',XMin=min,XMax=max)
-                     ei.append(mv.dataX(0)[0])
-        ei.sort()     #sorts energies into order
+            ei = find_chopper_peaks('mon');
         print ei
         if run == run_no[0]:
-                        ei = [ '%.2f' % elem for elem in ei ]
+            ei = [ '%.2f' % elem for elem in ei ]
         print 'energies transmitted are:'
         print (ei)
  
-        for energy in ei:
-            energy=float(energy)
-            print (energy)
-            emin=0.2*energy   #minimum energy is with 80% energy loss
-            lam=(81.81/energy)**0.5
-            lam_max=(81.81/emin)**0.5
-            tsam=252.82*lam*25   #time at sample
-            tmon2=252.82*lam*23.5 #time to monitor 6 on LET
-            tmax=tsam+(252.82*lam_max*4.1) #maximum time to measure inelastic signal to
-            t_elastic=tsam+(252.82*lam*4.1)   #maximum time of elastic signal
-            tbin=[int(tmon2),1.6,int(tmax)]
+        
+        for ind,energy in enumerate(ei):
+            print "Reducing around energy: {0}".format(float(energy))
+            (energybin,tbin,t_elastic) = find_binning_range(energy,ebin,25.,23.5,4.1,1.6);
+
             Rebin(InputWorkspace='w1',OutputWorkspace='w1reb',Params=tbin,PreserveEvents='1')        
  
                     
