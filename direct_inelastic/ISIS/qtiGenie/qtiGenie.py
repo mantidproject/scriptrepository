@@ -68,7 +68,7 @@ print 'Working directory set to: ',save_dir;
 
 #######################
 #######################
-def find_binning_range(energy,ebin,ls,lm2,mult,dt_DAE):
+def find_binning_range(energy,ebin):
     """ function finds the binning range used in multirep mode 
         for merlin ls=11.8,lm2=10. mult=2.8868 dt_DAE=1;
         for LET    ls=25,lm2=23.5 mult=4.1     dt_DAE=1.6;
@@ -76,6 +76,21 @@ def find_binning_range(energy,ebin,ls,lm2,mult,dt_DAE):
 
         # THIS FUNCTION SHOULD BE MADE GENERIG AND MOVED OUT OF HERE
     """
+
+    InstrName =  config['default.instrument'][0:3];
+    if InstrName.find('LET')>-1:
+        ls  =25;
+        lm2 =23;
+        mult=4.1;
+        dt_DAE = 1.6
+    elif InstrName.find('MER')>-1:
+        ls =11.8;
+        lm2=10;
+        mult=2.8868;
+        dt_DAE = 1
+    else:
+       raise RuntimeError("Find_binning_range: unsupported/unknown instrument found")
+
     energy=float(energy)
 
     emin=(1.0-ebin[2])*energy   #minimum energy is with 80% energy loss
@@ -90,13 +105,21 @@ def find_binning_range(energy,ebin,ls,lm2,mult,dt_DAE):
 
     return (energybin,tbin,t_elastic);
 #--------------------------------------------------------------------------------------------------------
-def find_background(ws_name,bg_range,dt_DAE):
+def find_background(ws_name,bg_range):
     """ Function to find background from multirep event workspace
-    dt_DAE = 1 for MERLIN and 1.6 for LET
+     dt_DAE = 1 for MERLIN and 1.6 for LET
      should be precalculated or taken from IDF
 
         # THIS FUNCTION SHOULD BE MADE GENERIC AND MOVED OUT OF HERE
     """
+    InstrName =  config['default.instrument'][0:3];
+    if InstrName.find('LET')>-1:
+        dt_DAE = 1.6
+    elif InstrName.find('MER')>-1:
+        dt_DAE = 1
+    else:
+       raise RuntimeError("Find_binning_range: unsupported/unknown instrument found")
+
     bg_ws_name = 'bg';
     delta=bg_range[1]-bg_range[0]
     Rebin(InputWorkspace='w1',OutputWorkspace=bg_ws_name,Params=[bg_range[0],delta,bg_range[1]],PreserveEvents=False)	
@@ -106,8 +129,14 @@ def find_background(ws_name,bg_range,dt_DAE):
     return bg_ws_name;
     
     
-def find_chopper_peaks(monitor_ws_name,max_num_peaks=15,max_peak_intensity=250,peak_search_range=0.02):
+def find_chopper_peaks(monitor_ws_name,max_peak_intensity=250,peak_search_range=0.02,max_num_peaks=15):
     """ Function finds the energy peaks generated on monitor workspace by chopper in mutlirep mode
+    
+    Parameters:
+    monitor_ws_name    - name of the monitor workspace -- first spectra of this workspace will be analyzed
+    max_peak_intensity - what signal intensity (in counts) one still consider to be a peak
+    peak_search_range  - time range around a peak considered to belong to this peak. 
+    max_num_peaks      - maximal number of peaks to consider
     """
     
     ei = [];
