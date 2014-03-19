@@ -24,7 +24,7 @@ config.appendDataSearchDir(r'c:\Users\wkc26243\Documents\work\Libisis\Instrument
 # data (raw or nxs) run files -- values from data search directories can be modified here
 #config.appendDataSearchDir('/isisdatar55/NDXMERLIN/Instrument/data/cycle_13_3') 
 #config.appendDataSearchDir('/archive/NDXMERLIN/Instrument/data/cycle_13_3') 
-config.appendDataSearchDir(r'd:\Data\Mantid_Testing\14_03_14') 
+#config.appendDataSearchDir(r'd:\Data\Mantid_Testing\14_03_14') 
 
 ##############################################################################################################
 # USERS SECTION -- particular run parameters
@@ -48,9 +48,11 @@ params['check_background']=False;
 ##############################################################################################################
 # ABSOLUTE UNITS RELATED
 ##############################################################################################################
-MonoVanRun=17335  #  vanadium run in the same configuration as your sample used for absolute notmalization (None for no absolute nomalization)
+MonoVanRun=17335  #  vanadium run in the same configuration as your sample used for absolute normalization (None for no absolute normalization)
 params['sample_mass']=7.85     
 params['sample_rmm']=50.9415 # 50.9415 The rmm of Vanadium. Put correct value for sample here
+# New vanadium mass. This should move to IDF
+params['vanadium-mass']=7.85
 params['monovan_mapfile']='rings_125.map'  
 ##############################################################################################################
 # ILLIAD MULTIREP RUN: Instrument scientist specified parameters
@@ -62,33 +64,43 @@ params['det_cal_file']='det_corr_125.dat'  #det_cal_file must be specified if th
 #params['det_cal_file']='det_corrected7.nxs' # ASCII correction file provides different results on different OS for LET. Nexus solves this proble,
 params['hardmaskPlus']='hard_mask_sp.msk'
 #params['hardmaskOnly']=mask_file   # diag does not work well on LET. At present only use a hard mask RIB has created
-# New vanadium mass. This should move to IDF
-params['vanadium-mass']=7.85
 # does not work in event mode TODO: investigate
 params['diag_bleed_test']=False;
+# this parameter may need checking for an instrument with guides
+params['detector_van_range']=[0.5,200]
+params['norm_method']='current'
 
-# White beam
+
+
+#white beam
+loadFreshWB=True;
 if 'wb_wksp' in mtd:
-        wb_wksp=mtd['wb_wksp']
-else:  #only load whitebeam if not already there
-    wb_wksp=LoadRaw(Filename='MER00'+str(white_run),OutputWorkspace="wb_wksp",LoadMonitors='Exclude')
+    wb_wksp=mtd['wb_wksp']
+    if wb_wksp.getRunNumber()==wb:
+        loadFreshWB = False;
+        
+#only load whitebeam if not already there
+if loadFreshWB:  
+    wb_wksp=LoadRaw(Filename=wbFile,OutputWorkspace="wb_wksp",LoadMonitors='Exclude')
     
 
 for sample_run in run_no:
-      
+     
     fname='MER00'+str(sample_run)+'.nxs'
     print ' processing file ', fname
     #w1 = dgreduce.getReducer().load_data(run,'w1')
     Load(Filename=fname,OutputWorkspace='w1',LoadMonitors='1');
+    
 
     
     if remove_background:
-        find_background('w1',bg_range,1);
+        bg_ws_name=find_background('w1',bg_range);
 
      #############################################################################################
      # this section finds all the transmitted incident energies if you have not provided them
-     #if len(ei) == 0:  -- not tested here -- should be unit test for that. 
-           #ei = find_chopper_peaks('w1_monitors');       
+    if len(ei) == 0:
+        ei = find_chopper_peaks('w1_monitors');
+        print ei
     print 'Energies transmitted are:'
     print (ei)
 
@@ -98,9 +110,12 @@ for sample_run in run_no:
     #now loop around all energies for the run
     for ind,energy in enumerate(ei):
         print "Reducing around energy: {0}".format(float(energy))
-        (energybin,tbin,t_elastic) = find_binning_range(energy,ebin,11.8,10,2.8868,1);
+        (energybin,tbin,t_elastic) = find_binning_range(energy,ebin);
         print " Rebinning will be performed in the range: ",energybin
-        # if we calculate more then one energy, initial workspace will be used more then once
+        
+        # if we calculate more then one energy, initial workspace will be used more then once. Is this enough for that?    
+        #Rebin(InputWorkspace='w1',OutputWorkspace='w1reb',Params=tbin,PreserveEvents='1')                        
+        # safe option would be:
         if ind <len(ei)-1:
               CloneWorkspace(InputWorkspace = 'w1_storage',OutputWorkspace='w1')
               CloneWorkspace(InputWorkspace = 'w1_mon_storage',OutputWorkspace='w1_monitors')
@@ -110,14 +125,11 @@ for sample_run in run_no:
 
         if remove_background:
               w1=Rebin(InputWorkspace='w1',OutputWorkspace='w1',Params=tbin,PreserveEvents=False)            
-              Minus(LHSWorkspace='w1',RHSWorkspace='bg',OutputWorkspace='w1')
+              Minus(LHSWorkspace='w1',RHSWorkspace=bg_ws_name,OutputWorkspace='w1')
                
 
        ######################################################################
-       # ensure correct round-off procedure
-        params['monovan_integr_range']=[round(ebin[0]*energy,4),round(ebin[2]*energy,4)]; # integration range of the vanadium 
-        # range to check detector's efficiency using white beam vanadium . If wb is not in multirep mode, here should be optimal WB integration range, 
-        params['wb_integr_range']   = [-0.3*45,1.2*45.];
+        params['monovan_integr_range']=[energybin[0],energybin[2]]; # integration range of the absolute units vanadium 
 
        # absolute unit reduction -- if you provided MonoVan run or relative units if monoVan is not present
         out=iliad(wb_wksp,"w1",energy,energybin,mapping,MonoVanRun,**params)
@@ -125,3 +137,5 @@ for sample_run in run_no:
         ws_name = 'MER00{0}_absEi{1:4.1f}'.format(sample_run,energy);
         RenameWorkspace(InputWorkspace=out,OutputWorkspace=ws_name);
         SaveNXSPE(InputWorkspace=ws_name,Filename=ws_name+'.nxspe');
+
+
