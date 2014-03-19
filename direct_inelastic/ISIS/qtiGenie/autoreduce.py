@@ -1,9 +1,8 @@
-import os
 import sys
 import re
 sys.path.append("/opt/Mantid/bin")
-from mantid.simpleapi import *
-import mantid
+from qtiGenie import *
+
 
 # Crab information from autoreduction call
 #############################################
@@ -17,14 +16,20 @@ dataFileName = os.path.split(dataFile)[-1]
 dataFilePath = dataFile.replace(dataFileName, '')
 dataFileNameMinuxExt = dataFileName.split('.')[0]
 runNumber = int(re.findall('\d+', dataFileNameMinuxExt)[0])
+#################################################
+# Unix stuff
 InstrName = dataFilePath.lower().split('/ndx')[1].split('/')[0]
+#############################################
+# win specific changes
+# map mask and cal file, again the values from Mantid, data search directories can be modified here
+#config.appendDataSearchDir('c:\Users\wkc26243\Documents\work\Libisis\InstrumentFiles\let') 
 #InstrName ='LET'
 #############################################
+
 
 print 'data file path: ' + dataFilePath
 sys.path.append(dataFilePath)
 
-from qtiGenie import *
 iliad_setup(InstrName)
 
 # program to crunch down event mode from LET and produce output SPE files. Program can automatically find all incident energies in rep rate mode and write out spe files in the # form of LET'run no: +ei'.spe
