@@ -69,7 +69,7 @@ if 'wb_wksp' in mtd:
         loadFreshWB = False;        
 #only load whitebeam if not already there
 if loadFreshWB:  
-    wb_wksp=LoadRaw(Filename=wbFile,OutputWorkspace="wb_wksp",LoadMonitors='Exclude')    
+    wb_wksp=LoadRaw(Filename=str(white_run),OutputWorkspace="wb_wksp",LoadMonitors='Exclude')    
     #iliad_reducer().det_cal_file = 'det_LET_cycle133.dat'
     #wb_wksp = iliad_reducer().load_data('LET000'+str(wb)+'.raw','wb_wksp')
     #iliad_reducer().det_cal_file = wb_wksp;

@@ -80,7 +80,7 @@ def find_binning_range(energy,ebin):
     InstrName =  config['default.instrument'][0:3];
     if InstrName.find('LET')>-1:
         ls  =25;
-        lm2 =23;
+        lm2 =23.5;
         mult=4.1;
         dt_DAE = 1.6
     elif InstrName.find('MER')>-1:

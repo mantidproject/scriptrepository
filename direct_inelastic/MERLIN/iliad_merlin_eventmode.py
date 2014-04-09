@@ -30,8 +30,8 @@ config.appendDataSearchDir(r'c:\Users\wkc26243\Documents\work\Libisis\Instrument
 # USERS SECTION -- particular run parameters
 ##############################################################################################################
 white_run = 17186
-run_no=[17335] #[17314]           #event mode run numbers here or use next line for a continous sequence of runs i.e range(first run, last run +1)
-ei=[10,17,35,103]        # incident energies you want analysed
+run_no=[17335] #[17314]           #event mode run numbers here or use next line for a continuous sequence of runs i.e range(first run, last run +1)
+ei=[10,17,35,103]        # incident energies you want analyzed
 ebin=[-0.3,0.005,0.950]  #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
 #   Other positional  parameters
 # key-coded parameters
@@ -58,7 +58,7 @@ params['monovan_mapfile']='rings_125.map'
 # ILLIAD MULTIREP RUN: Instrument scientist specified parameters
 ##############################################################################################################
 # Instrument scientist specified parameters
-# map file to combime instrument spectra
+# map file to combine instrument spectra
 mapping ='rings_125.map'  # ring map file is used for powder.  if absent idf file value is used instead
 params['det_cal_file']='det_corr_125.dat'  #det_cal_file must be specified if the reduction sends out put to a workpsace
 #params['det_cal_file']='det_corrected7.nxs' # ASCII correction file provides different results on different OS for LET. Nexus solves this proble,
