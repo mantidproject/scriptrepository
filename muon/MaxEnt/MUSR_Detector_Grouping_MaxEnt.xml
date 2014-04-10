@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<detector-grouping instrument="MUSR" description="MUSR MaxEnt (64 detectors)"> 
+    <group name="01"> <ids val="1,2,39,40"/> </group>
+    <group name="02"> <ids val="3,4,37,38"/> </group>
+    <group name="03"> <ids val="5,6,35,36"/> </group>
+    <group name="04"> <ids val="7,8,33,34"/> </group>
+    <group name="05"> <ids val="9,10,63,64"/> </group>
+    <group name="06"> <ids val="11,12,61,62"/> </group>
+    <group name="07"> <ids val="13,14,59,60"/> </group>
+    <group name="08"> <ids val="15,16,57,58"/> </group>
+    <group name="09"> <ids val="17,18,55,56"/> </group>
+    <group name="10"> <ids val="19,20,53,54"/> </group>
+    <group name="11"> <ids val="21,22,51,52"/> </group>
+    <group name="12"> <ids val="23,24,49,50"/> </group>
+    <group name="13"> <ids val="25,26,47,48"/> </group>
+    <group name="14"> <ids val="27,28,45,46"/> </group>
+    <group name="15"> <ids val="29,30,43,44"/> </group>
+    <group name="16"> <ids val="31,32,41,42"/> </group>
+</detector-grouping> 
