@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<detector-grouping instrument="EMU" description="EMU Grouping File for MaxEnt (96 Detectors)">
+    <group name="1"> <ids val="10,11,12,13,14,15,16,17,18"/> </group>
+    <group name="2"> <ids val="7,8,9,19,20,21"/> </group>
+    <group name="3"> <ids val="4,5,6,22,23,24"/> </group>
+    <group name="4"> <ids val="1,2,3,25,26,27"/> </group>
+    <group name="5"> <ids val="28,29,30,46,47,48"/> </group>
+    <group name="6"> <ids val="31,32,33,43,44,45"/> </group>
+    <group name="7"> <ids val="34,35,36,37,38,39,40,41,42"/> </group>
+    <group name="8"> <ids val="82,83,84,85,86,87,88,89,90"/> </group>
+    <group name="9"> <ids val="79,80,81,91,92,93"/> </group>
+    <group name="10"> <ids val="76,77,78,94,95,96"/> </group>
+    <group name="11"> <ids val="49,50,51,73,74,75"/> </group>
+    <group name="12"> <ids val="52,53,54,70,71,72"/> </group>
+    <group name="13"> <ids val="55,56,57,67,68,69"/> </group>
+    <group name="14"> <ids val="58,59,60,61,62,63,64,65,66"/> </group>
+</detector-grouping>
