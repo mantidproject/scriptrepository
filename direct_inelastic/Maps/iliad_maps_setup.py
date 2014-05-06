@@ -32,7 +32,7 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	else:
 		abs_units=0
 		
-	maskfile='4to1_022.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
+	maskfile='4to1_135.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
 
 	#map file
 	mapfile='4to1' #single crystal mapping file
@@ -110,7 +110,7 @@ def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	else:
 		abs_units=0
 		
-	maskfile='4to1_022.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
+	maskfile='4to1_135.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
 
 	#map file
 	mapfile='parker_rings' #powder mapping file
