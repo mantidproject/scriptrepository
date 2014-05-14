@@ -27,7 +27,7 @@ config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_4')
 ##############################################################################################################
 white_run = 15961   # enter whitebeam run number here
 run_no=[15987] #[17314]  #event mode run numbers here or use next line for a continuous sequence of runs i.e range(first run, last run +1)
-ei=[3.4,8.]#[8]          # incident energies you want analyzed
+ei=[1.6,2.8,5.9,19.9]#[8]          # incident energies you want analyzed
 ebin=[-4,0.002,0.8]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
 #   Other positional  parameters
 # key-coded parameters
@@ -55,7 +55,7 @@ params['monovan_mapfile']='LET_rings_141.map'
 mapping ='LET_rings_141'  # ring map file is used for powder.  if absent idf file value is used instead
 params['det_cal_file']='det_LET_cycle141.dat'  #det_cal_file must be specified if the reduction sends out put to a workpsace
 #params['det_cal_file']='det_corrected7.nxs' # ASCII correction file provides different results on different OS for LET. Nexus solves this proble,
-params['hardmaskOnly']='hard_141_1.msk'   # diag does not work well on LET. At present only use a hard mask RIB has created
+params['hardmaskOnly']='hard_2014_1.msk'   # diag does not work well on LET. At present only use a hard mask RIB has created
 # does not work in event mode TODO: investigate
 params['diag_bleed_test']=False;
 # this parameter  need carefull checking and fine tunning for an instrument with guides
