@@ -16,15 +16,17 @@ if len(save_dir) ==0 :
     config['defaultsave.directory']=os.getcwd()
     
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
-config.appendDataSearchDir('c:\Users\wkc26243\Documents\work\Libisis\InstrumentFiles\let') 
+config.appendDataSearchDir('/home/let/Desktop/LET_maps') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
-config.appendDataSearchDir('/archive/NDXLET/Instrument/data/cycle_13_4') 
-config.appendDataSearchDir('/archive/NDXLET/Instrument/data/cycle_13_5') 
+config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_14_1') 
+config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_5') 
+config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_4') 
+
 ##############################################################################################################
 # USERS SECTION -- particular run parameters
 ##############################################################################################################
-white_run = 11869   # enter whitebeam run number here
-run_no=[14305] #[17314]  #event mode run numbers here or use next line for a continuous sequence of runs i.e range(first run, last run +1)
+white_run = 15961   # enter whitebeam run number here
+run_no=[15987] #[17314]  #event mode run numbers here or use next line for a continuous sequence of runs i.e range(first run, last run +1)
 ei=[3.4,8.]#[8]          # incident energies you want analyzed
 ebin=[-4,0.002,0.8]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
 #   Other positional  parameters
@@ -41,19 +43,19 @@ params['check_background']=False;
 ##############################################################################################################
 # ABSOLUTE UNITS RELATED
 ##############################################################################################################
-MonoVanRun=14319  #  vanadium run in the same configuration as your sample used for absolute normalization (None for no absolute normalization)
+MonoVanRun=None  #  vanadium run in the same configuration as your sample used for absolute normalization (None for no absolute normalization)
 params['sample_mass']=7.85     
 params['sample_rmm']=50.9415 # 50.9415 The rmm of Vanadium. Put correct value for sample here
-params['monovan_mapfile']='LET_rings_133.map'  
+params['monovan_mapfile']='LET_rings_141.map'  
 ##############################################################################################################
 # ILLIAD MULTIREP RUN: Instrument scientist specified parameters
 ##############################################################################################################
 # Instrument scientist specified parameters
 # map file to combine instrument spectra
-mapping ='LET_rings_133'  # ring map file is used for powder.  if absent idf file value is used instead
-params['det_cal_file']='det_LET_cycle133.dat'  #det_cal_file must be specified if the reduction sends out put to a workpsace
+mapping ='LET_rings_141'  # ring map file is used for powder.  if absent idf file value is used instead
+params['det_cal_file']='det_LET_cycle141.dat'  #det_cal_file must be specified if the reduction sends out put to a workpsace
 #params['det_cal_file']='det_corrected7.nxs' # ASCII correction file provides different results on different OS for LET. Nexus solves this proble,
-params['hardmaskOnly']=hard_133.msk   # diag does not work well on LET. At present only use a hard mask RIB has created
+params['hardmaskOnly']='hard_141_1.msk'   # diag does not work well on LET. At present only use a hard mask RIB has created
 # does not work in event mode TODO: investigate
 params['diag_bleed_test']=False;
 # this parameter  need carefull checking and fine tunning for an instrument with guides
@@ -76,7 +78,7 @@ if loadFreshWB:
     #LoadRaw(Filename=str(wb),OutputWorkspace="wb_wksp") # load whitebeam
                         
 for sample_run in run_no:     
-    fname='LET000'+str(run)+'.nxs'
+    fname='LET000'+str(sample_run)+'.nxs'
     print ' processing file ', fname
     #print ' Det Cal file:  ', iliad_reducer().det_cal_file;
     #w1 = iliad_reducer().load_data(run,'w1')
