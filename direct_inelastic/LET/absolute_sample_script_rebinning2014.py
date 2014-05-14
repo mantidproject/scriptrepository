@@ -6,21 +6,6 @@ LET TRANSIENT REDUCTION SCRIPT MARCH 2014;
 # Program can automatically find all incident energies in rep rate mode and write out spe files in the # form of LET'run no: +ei'.spe
 from qtiGenie import *
 iliad_setup('let')
-##############################################################################################################
-# mulitple PC convenience section. parameters from here can be usually set up from GUI
-##############################################################################################################
-#config['defaultsave.directory'] = 'd:/Data/isis/Let/2013_12'   
-# map mask and cal file, again the values from Mantid, data search directories can be modified here
-save_dir = config.getString('defaultsave.directory')
-if len(save_dir) ==0 :
-    config['defaultsave.directory']=os.getcwd()
-    
-# map mask and cal file, again the values from Mantid, data search directories can be modified here
-config.appendDataSearchDir('/home/let/Desktop/LET_maps') 
-# data (raw or nxs) run files -- values from data search directories can be modified here
-config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_14_1') 
-config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_5') 
-config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_4') 
 
 ##############################################################################################################
 # USERS SECTION -- particular run parameters
@@ -61,7 +46,25 @@ params['diag_bleed_test']=False;
 # this parameter  need carefull checking and fine tunning for an instrument with guides
 params['detector_van_range']=[2,7]
 params['norm_method']='current'
-
+##############################################################################################################
+# mulitple PC convenience section. parameters from here can be usually set up from GUI
+##############################################################################################################
+# map mask and cal file, again the values from Mantid, data search directories can be modified here
+save_dir = config.getString('defaultsave.directory')
+if len(save_dir) ==0 :
+    config['defaultsave.directory']=os.getcwd()
+    
+config['defaultsave.directory']='/home/let/Users/Tatiana/Tests/'    
+    
+# map mask and cal file, again the values from Mantid, data search directories can be modified here
+config.appendDataSearchDir('/home/let/Desktop/LET_maps') 
+# data (raw or nxs) run files -- values from data search directories can be modified here
+config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_14_1') 
+config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_5') 
+config.appendDataSearchDir('/isisdatar55/ndxlet/Instrument/data/cycle_13_4') 
+##############################################################################################################
+# EXECUTION
+##############################################################################################################
 # loads the whitebeam (or rather the long monovan ). Does it as a raw file to save time as the event mode is very large
 #white beam
 loadFreshWB=True;
@@ -131,6 +134,7 @@ for sample_run in run_no:
 
         ws_name = 'LET{0}_absEi{1:5.2f}'.format(sample_run,energy);
         RenameWorkspace(InputWorkspace=out,OutputWorkspace=ws_name);
+	
         SaveNXSPE(InputWorkspace=ws_name,Filename=ws_name+'.nxspe');
 
 elapsed = (time.clock() - start)	
