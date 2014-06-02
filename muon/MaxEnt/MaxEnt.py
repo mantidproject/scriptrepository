@@ -428,7 +428,7 @@ class MaxEnt(PythonAlgorithm):
         dead_phases_table_name = run_name + "; MaxEnt Deadtimes & Phases"
         dead_phases_table = CreateEmptyTableWorkspace(OutputWorkspace = dead_phases_table_name)
         for column_name in "Deadtimes In", "Deadtimes Out", "Phases In", "Phases Out":
-          dead_phases_table.addColumn("float", column_name)
+          dead_phases_table.addColumn("double", column_name)
         for row in zip(input_deadtimes, output_deadtimes, input_phases, output_phases):
             dead_phases_table.addRow(list(map(float, row)))
 
@@ -437,7 +437,7 @@ class MaxEnt(PythonAlgorithm):
         chisq_table = CreateEmptyTableWorkspace(OutputWorkspace = chisq_table_name)
         chisq_table.addColumn("int", "Cycle")
         for iteration in range(10):
-          chisq_table.addColumn("float", "Iter " + str(iteration + 1))
+          chisq_table.addColumn("double", "Iter " + str(iteration + 1))
         for cycle, data in enumerate(chi_sq):
             chisq_table.addRow([cycle + 1] + list(map(float,data)))
 
