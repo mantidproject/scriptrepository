@@ -461,8 +461,8 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 						p=a1.readY(l)[j]
 						e=a1.readE(l)[j]
 						if p > 0.0:
-							new_y[j]=log(p)/((lam*1.0e-9)**2)
-							new_e[j]=(e/p)/((lam*1.0e-9)**2)
+							new_y[j]=log(p)/((lam)**2)
+							new_e[j]=(e/p)/((lam)**2)
 						else:
 							new_y[j]=0.0
 							new_e[j]=0.0
