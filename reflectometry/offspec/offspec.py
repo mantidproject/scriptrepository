@@ -303,8 +303,11 @@ def removeoutlayer(wksp):
 			if (y<2):
 				a1.dataY(i)[j]=0.0;
 				a1.dataE(i)[j]=0.0;
-
-def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,downPeriod,existingP0,SEConstants,gparams,convertToSEL,lnPOverLam,diagnostics="0",removeoutlayer="0",floodfile="none",):
+#
+#===================================================================================================================
+#
+def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,downPeriod,existingP0,SEConstants,gparams,convertToSEL,lnPOverLam,diagnostics="None",removeoutlayer="0",floodfile="none"):
+	removeoutlayer=str(removeoutlayer)
 	nlist=parseNameList(nameList)
 	logger.notice("This is the sample nameslist:"+str(nlist))
 	rlist=parseRunList(runList)
@@ -353,8 +356,6 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 		if nspec > 4 and minSp != 3:
 			Divide(LHSWorkspace=i+"2ddet",RHSWorkspace=i+"mon",OutputWorkspace=i+"2dnorm")
 		DeleteWorkspace(i+"mon")
-		if (diagnostics == "0"):
-			DeleteWorkspace(i+"det")
 		DeleteWorkspace(i)
 		Minus(LHSWorkspace=i+"norm_"+upPeriod,RHSWorkspace=i+"norm_"+downPeriod,OutputWorkspace="num")
 		Plus(LHSWorkspace=i+"norm_2",RHSWorkspace=i+"norm_1",OutputWorkspace="den")
@@ -367,10 +368,9 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 			Plus(LHSWorkspace=i+"2dnorm_2",RHSWorkspace=i+"2dnorm_1",OutputWorkspace="den")
 			Divide(LHSWorkspace="num",RHSWorkspace="den",OutputWorkspace=i+"2dpol")
 			ReplaceSpecialValues(InputWorkspace=i+"2dpol",OutputWorkspace=i+"2dpol",NanValue=0.0,NaNError=0.0,InfinityValue=0.0,InfinityError=0.0)
-		#DeleteWorkspace(i+"norm_2")
-		#DeleteWorkspace(i+"norm_1")
 		DeleteWorkspace("num")
 		DeleteWorkspace("den")
+			
 		
 	if existingP0 != "2":
 		for i in P0nlist:
@@ -412,30 +412,36 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 	for i in nlist:
 		if lnPOverLam == "2":
 			CloneWorkspace(InputWorkspace=i+"SESANS",OutputWorkspace=i+"SESANS_P")
-		a1=mtd[i+"SESANS"]
-		x=n.array(a1.readX(0))
-                new_y = n.array(a1.dataY(0))
-                new_e = n.array(a1.dataE(0))
+			a1=mtd[i+"SESANS"]
+			x=n.array(a1.readX(0))
+			new_y = n.array(a1.dataY(0))
+			new_e = n.array(a1.dataE(0))
 
-		for j in range(len(x)-1):
-			lam=((a1.readX(0)[j]+a1.readX(0)[j+1])/2.0)/10.0
-			p=a1.readY(0)[j]
-			e=a1.readE(0)[j]
-			if lnPOverLam == "2":
+			for j in range(len(x)-1):
+				lam=((a1.readX(0)[j]+a1.readX(0)[j+1])/2.0)/10.0
+				p=a1.readY(0)[j]
+				e=a1.readE(0)[j]
 				if p > 0.0:
 					new_y[j]=log(p)/((lam)**2)
 					new_e[j]=(e/p)/((lam)**2)
 				else:
 					new_y[j]=0.0
 					new_e[j]=0.0
+
+		if convertToSEL == "2":
+			SEC=float(SEConstList[k])/100.0
+			ConvertUnits(i+"SESANS",'SpinEchoLength',EMode='Elastic',Efixed=SEC,OutputWorkspace=i+"SESANS")
+		'''
 		for j in range(len(x)):
 			if convertToSEL == "2":
+				
 				lam=a1.readX(0)[j]
 				x[j]=1.0e-2*float(SEConstList[k])*lam*lam
 				#print str(lam)+" "+str(1.0e-2*float(SEConstList[k])*lam*lam)
                 a1.setY(0, new_y)
                 a1.setE(0, new_e)
                 a1.setX(0, x)
+		'''
 		k=k+1
 
 	
@@ -444,35 +450,60 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 		for i in nlist:
 			if lnPOverLam == "2":
 				CloneWorkspace(InputWorkspace=i+"2dSESANS",OutputWorkspace=i+"2dSESANS_P")
-			a1=mtd[i+"2dSESANS"]
-			nspec=a1.getNumberHistograms()
-			for l in range(nspec):
-				x = n.array(a1.readX(l))
-				new_y = n.array(a1.readY(l))
-				new_e = n.array(a1.readE(l))
-				for j in range(len(x)-1):
-					lam=((a1.readX(l)[j]+a1.readX(l)[j+1])/2.0)/10.0
-					p=a1.readY(l)[j]
-					e=a1.readE(l)[j]
-					if lnPOverLam == "2":
+				a1=mtd[i+"2dSESANS"]
+				nspec=a1.getNumberHistograms()
+				for l in range(nspec):
+					x = n.array(a1.readX(l))
+					new_y = n.array(a1.readY(l))
+					new_e = n.array(a1.readE(l))
+					for j in range(len(x)-1):
+						lam=((a1.readX(l)[j]+a1.readX(l)[j+1])/2.0)/10.0
+						p=a1.readY(l)[j]
+						e=a1.readE(l)[j]
 						if p > 0.0:
 							new_y[j]=log(p)/((lam*1.0e-9)**2)
 							new_e[j]=(e/p)/((lam*1.0e-9)**2)
 						else:
 							new_y[j]=0.0
 							new_e[j]=0.0
-				for j in range(len(x)):
+					'''
+					for j in range(len(x)):
+						if convertToSEL == "2":
+							lam=a1.readX(l)[j]                                                
+							x[j]=1.0e-2*float(SEConstList[k])*lam*lam
+							#print str(lam)+" "+str(1.0e-2*float(SEConstList[k])*lam*lam)
 					if convertToSEL == "2":
-						lam=a1.readX(l)[j]                                                
-						x[j]=1.0e-2*float(SEConstList[k])*lam*lam
-						#print str(lam)+" "+str(1.0e-2*float(SEConstList[k])*lam*lam)
-				if convertToSEL == "2":
-					a1.setX(l, x)
+						a1.setX(l, x)
+					'''
 				if lnPOverLam == "2":
 					a1.setY(l, new_y)
 					a1.setE(l, new_e)
-			k=k+1
 
+			if convertToSEL == "2":
+				SEC=float(SEConstList[k])/100.0
+				ConvertUnits(i+"2dSESANS",'SpinEchoLength',EMode='Elastic',Efixed=SEC,AlignBins=1,OutputWorkspace=i+"2dSESANS")
+
+		k=k+1
+
+	if (diagnostics.upper() == "NONE"):
+		DeleteWorkspace(i+"2ddet")
+		DeleteWorkspace(i+"2dnorm")
+		DeleteWorkspace(i+"2dpol")
+		DeleteWorkspace(i+"2dSESANS")
+		DeleteWorkspace(i+"2dSESANS_P")
+		DeleteWorkspace(i+"norm")
+		DeleteWorkspace(i+"pol")
+		DeleteWorkspace(i+"SESANS_P")
+		DeleteWorkspace(i+"det")
+	elif (diagnostics.upper() == "BASIC"):
+		DeleteWorkspace(i+"pol")
+		DeleteWorkspace(i+"2dpol")
+		DeleteWorkspace(i+"det")
+		DeleteWorkspace(i+"2ddet")
+		DeleteWorkspace(i+"2dnorm")
+		DeleteWorkspace(i+"norm")
+	else:
+		pass
 #
 #===========================================================
 #
