@@ -427,6 +427,7 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 				else:
 					new_y[j]=0.0
 					new_e[j]=0.0
+			a1.setYUnitLabel("10<sup>18</sup> ln(P)/Wavelength<sup>2</sup>")
 
 		if convertToSEL == "2":
 			SEC=float(SEConstList[k])/100.0
