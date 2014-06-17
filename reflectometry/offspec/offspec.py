@@ -427,6 +427,8 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 				else:
 					new_y[j]=0.0
 					new_e[j]=0.0
+			a1.setY(0, new_y)
+			a1.setE(0, new_e)
 			a1.setYUnitLabel("10<sup>18</sup> ln(P)/Wavelength<sup>2</sup>")
 
 		if convertToSEL == "2":
@@ -476,7 +478,6 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 					if convertToSEL == "2":
 						a1.setX(l, x)
 					'''
-				if lnPOverLam == "2":
 					a1.setY(l, new_y)
 					a1.setE(l, new_e)
 
