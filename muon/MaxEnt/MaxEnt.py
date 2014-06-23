@@ -116,15 +116,15 @@ class MaxEnt(PythonAlgorithm):
  
     def category(self):
         return 'Muon'
+    
+    def summary(self):
+        return "Runs an underlying \"MaxEnt\" Fortran routine.  Please enter a run "\
+               "number.  All other fields are optional.\n\n"\
+               "Currently only single-period data is officially supported.  When "\
+               "given more than one period, this routine will simply take the first one."
 
     def PyInit(self):
         """ Alg initialisation. """
-        
-        self.setOptionalMessage(
-            "Runs an underlying \"MaxEnt\" Fortran routine.  Please enter a run "
-            "number.  All other fields are optional.\n\n"
-            "Currently only single-period data is officially supported.  When "
-            "given more than one period, this routine will simply take the first one.")
 
         self.declareProperty(name=RUN_NUM_PROP,
                              defaultValue="",
