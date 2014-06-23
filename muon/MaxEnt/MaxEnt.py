@@ -112,19 +112,25 @@ def run_from_script_dir(func):
 
     return change_dir_wrapper
 
+ALG_DOC_STR = "Runs an underlying \"MaxEnt\" Fortran routine.  Please enter a run "\
+              "number.  All other fields are optional.\n\n"\
+              "Currently only single-period data is officially supported.  When "\
+              "given more than one period, this routine will simply take the first one."
+
 class MaxEnt(PythonAlgorithm):
  
     def category(self):
         return 'Muon'
     
     def summary(self):
-        return "Runs an underlying \"MaxEnt\" Fortran routine.  Please enter a run "\
-               "number.  All other fields are optional.\n\n"\
-               "Currently only single-period data is officially supported.  When "\
-               "given more than one period, this routine will simply take the first one."
+        return ALG_DOC_STR
 
     def PyInit(self):
         """ Alg initialisation. """
+
+        # Make sure we are still backward-compatible with old versions of Mantid.
+        if getattr(self, "setOptionalMessage"):
+            self.setOptionalMessage(ALG_DOC_STR)
 
         self.declareProperty(name=RUN_NUM_PROP,
                              defaultValue="",
