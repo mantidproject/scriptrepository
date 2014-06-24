@@ -3,7 +3,7 @@ import os
 
 from mantid.simpleapi import *
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+SCRIPT_DIR = str(os.path.dirname(os.path.realpath(__file__)))
 
 class TestMaxEntMUSR(unittest.TestCase):
 
