@@ -2,6 +2,7 @@ from mantid.simpleapi import *
 from shutil import copyfile
 import nxs as nxs
 import os
+from ISISCommandInterface import *
 
 # Taken from the offspec scripts. It outputs strings but seems to work with addruns
 '''
@@ -67,12 +68,12 @@ def add_runs(runlist,pathout,instrument='LARMOR'):
 		return
 	pfix=instrument
 	runlist=parseRunList(runlist)
-	runlist=runlit[0]
+	runlist=runlist[0]
 	added=Load(runlist[0])
 	print "          uampHr = ", added.getRun().getProtonCharge()
 	
-	if(len(b)>1):
-		for i in range(1,len(b)):
+	if(len(runlist)>1):
+		for i in range(1,len(runlist)):
 			wtemp=Load(runlist[i])
 			print "          uampHr = ", wtemp.getRun().getProtonCharge()
 			added=added+wtemp
@@ -87,4 +88,32 @@ def add_runs(runlist,pathout,instrument='LARMOR'):
 	print "    total uampHr = ", added.getRun().getProtonCharge()
 	DeleteWorkspace("added")
 
-	
+def larmor1D(rsample,rcan,tsample,tdb,tcan,maskfile,wkspname,lmin=0.9,lmax=12.5):
+	LARMOR()
+	#Set reduction to 1D (note that if this is left out, 1D is the default)
+	Set1D()
+	MaskFile(maskfile)
+	# Assign run numbers (.nxs for nexus)
+	AssignSample(rsample+'.nxs')
+	AssignCan(rcan+'.nxs')
+	TransFit('Off',lambdamin=lmin,lambdamax=lmax)
+	TransmissionSample(tsample+'.nxs', tdb+'.nxs')
+	TransmissionCan(tcan+'.nxs', tdb+'.nxs')
+	reduced = WavRangeReduction(lmin, lmax, False)
+	if(len(wkspname) > 0):
+		a1=rsample.split('-')
+		wksproot=a1[0]
+		RenameWorkspace(wksproot+'rear_1D_'+str(lmin)+'_'+str(lmax),OutputWorkspace=wkspname)
+
+def calibrateTubes(wkspName,calibrationfile):
+   #
+   # pixel by pixel efficiency correction for the linear detector
+   #
+   flood_wksp = "Vanadium_tube_calib_1to1_May14"
+   if  flood_wksp not in mtd:
+		Load("Vanadium_tube_calib_1to1_May14.nxs",OutputWorkspace="Vanadium_tube_calib_1to1_May14")
+
+   CopyInstrumentParameters("Vanadium_tube_calib_1to1_May14",wkspName)
+   
+def sumtubes():
+	print "place holder"
