@@ -129,7 +129,7 @@ class MaxEnt(PythonAlgorithm):
         """ Alg initialisation. """
 
         # Make sure we are still backward-compatible with old versions of Mantid.
-        if getattr(self, "setOptionalMessage"):
+        if hasattr(self, "setOptionalMessage"):
             self.setOptionalMessage(ALG_DOC_STR)
 
         self.declareProperty(name=RUN_NUM_PROP,
