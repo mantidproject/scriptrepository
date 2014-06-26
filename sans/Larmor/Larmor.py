@@ -109,11 +109,74 @@ def calibrateTubes(wkspName,calibrationfile):
    #
    # pixel by pixel efficiency correction for the linear detector
    #
-   flood_wksp = "Vanadium_tube_calib_1to1_May14"
+   flood_wksp = "Vanadium_tube_calib_1to1_25062014"
    if  flood_wksp not in mtd:
-		Load("Vanadium_tube_calib_1to1_May14.nxs",OutputWorkspace="Vanadium_tube_calib_1to1_May14")
+		#Load("Vanadium_tube_calib_1to1_May14.nxs",OutputWorkspace="Vanadium_tube_calib_1to1_May14")
+		Load("Vanadium_tube_calib_1to1_25062014.nxs",OutputWorkspace="Vanadium_tube_calib_1to1_25062014")
 
-   CopyInstrumentParameters("Vanadium_tube_calib_1to1_May14",wkspName)
-   
-def sumtubes():
-	print "place holder"
+   CopyInstrumentParameters("Vanadium_tube_calib_1to1_25062014",wkspName)
+
+def virtualslitxml(ypos):
+	# Active detector length is ~640mm
+	pixelsize=0.640/500.0
+	shapexml='<cuboid id="shape">'
+	shapexml+='<left-front-bottom-point x="-0.4" y="'+str(ypos-0.5*pixelsize)+'" z="29.6"/>'
+	shapexml+='<left-front-top-point x="-0.4" y="'+str(ypos+0.5*pixelsize)+'" z="29.6"/>'
+	shapexml+='<left-back-bottom-point x="-0.4" y="'+str(ypos-0.5*pixelsize)+'" z="29.8"/>'
+	shapexml+='<right-front-bottom-point x="0.4" y="'+str(ypos-0.5*pixelsize)+'" z="29.6"/>'
+	shapexml+='</cuboid>'
+	return shapexml
+
+def createMapFile(rnum,fname):
+	'''
+	Generate the mapfile required for create1DPSD
+	e.g. createMapFile(1203,'w:\Users\Masks\Integrate_tubes_map_file.xml')
+	'''
+	w1=Load(str(rnum))
+	lm.calibrateTubes(w1,"")
+	det=CropWorkspace(w1,StartWorkspaceIndex=10)
+	f=open(fname,'w')
+	s='<?xml version="1.0" encoding="UTF-8" ?>\n'
+	f.write(s)
+	s='<detector-grouping>\n'
+	f.write(s)
+	for i in range(1,11):
+		s='<group name="m'+str(i)+'"><detids val="'+str(i)+'"/></group>\n'
+		f.write(s)
+	pixelsize=0.640/500.0
+	for i in range(500):
+		s='<group name="'+str(i)+'"> <detids val="'
+		shapexml=virtualslitxml(-0.32+i*pixelsize)
+		detlist=FindDetectorsInShape('det',shapexml)
+		for j in range(len(detlist)-1):
+			s+=str(detlist[j])+','
+		s+=str(detlist[len(detlist)-1])+'"/> </group>\n'
+		print s
+		f.write(s)
+	s='</detector-grouping>\n'
+	f.write(s)
+	f.close()
+
+def create1DPSD(rnum,lmin=1.0,lmax=12.0,Mapfile='w:\Users\Masks\Integrate_tubes_map_file.xml'):
+	'''
+	Sum the detector in horizontal stripes according to the setup within a mapfile
+	'''
+	w1=Load(str(rnum))
+	lm.calibrateTubes(w1,"")
+	w1=ConvertUnits(w1,'Wavelength',AlignBins=1)
+	w2=Integration(w1,RangeLower=lmin,RangeUpper=lmax)
+	w3=CropWorkspace(w2,StartWorkspaceIndex=0,EndWorkspaceIndex=0)
+	detgrp=GroupDetectors(w2,MapFile=Mapfile)
+	detgrp=CropWorkspace(detgrp,StartWorkspaceIndex=10)
+	w5=detgrp/w3
+	x=[]
+	y=[]
+	e=[]
+	pixelsize=0.64/500.0
+	for i in range(500):
+		x.append(-0.32-0.5*pixelsize+i*pixelsize)
+		y.append(w5.readY(i)[0])
+		e.append(w5.readE(i)[0])
+	x.append(-0.32-0.5*pixelsize+500*pixelsize)
+	CreateWorkspace(x,y,e,1,OutputWorkspace=str(rnum)+'_d_h')
+	return [x,y,e]
