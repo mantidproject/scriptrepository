@@ -246,7 +246,51 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q')
 				
+	def cutMatplotlib(self,direction,intMin,intMax,minX,delX,maxX,**kwargs):
+		
+		#keywords, wkspout= name of output
+		#		   wkspIn= input data
+		
+		#deal with the call type and where to get the output workspace name from
+		if kwargs.has_key('wkspout'):
+			cut_name=kwargs.get('wkspout')
+		else:
+			n,r=funcreturns.lhs_info('both')
+			cut_name=r[0]
+		
+		if direction == 'x':
+			if kwargs.has_key('wkspIn'):
+				wkspinName=kwargs.get('wkspIn')	
+				Rebin2D(InputWorkspace=wkspinName,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
+				
+			else:
+				Rebin2D(InputWorkspace=self.data,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
+		
+		if direction == 'y':
+			if kwargs.has_key('wkspin'):
+				wkspinName=kwargs.get('wkspin')	
+				Rebin2D(InputWorkspace=wkspinName,OutputWorkspace=cut_name,Axis1Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),Axis2Binning=str(minX)+','+str(delX)+','+str(maxX),UseFractionalArea='1')
+				Transpose(InputWorkspace=cut_name,OutputWorkspace=cut_name)
+			else:
+				Rebin2D(InputWorkspace=self.data,OutputWorkspace=cut_name,Axis1Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),Axis2Binning=str(minX)+','+str(delX)+','+str(maxX),UseFractionalArea='1')
+				Transpose(InputWorkspace=cut_name,OutputWorkspace=cut_name)
+		
+		ReplaceSpecialValues(InputWorkspace=cut_name,OutputWorkspace=cut_name,NaNValue='0',InfinityValue='0')
+		
+		
+		cutDataWorkSpace=mtd[cut_name]
+		evals=cutDataWorkSpace.extractE()
+		xvals=cutDataWorkSpace.extractX()
+		yvals=cutDataWorkSpace.extractY()
 
+		NewXvals=( xvals + numpy.roll(xvals,-1) )/2 # calculate the bin center 
+		NewXvals = numpy.delete(NewXvals,-1) # remove the last element which is junk
+		yvals=yvals[0]
+		evals=evals[0]
+		
+		output=[NewXvals,yvals,evals]
+		return output
+			
 	def xLims(self,*args):
 		if len(args) == 2:
 			min=args[0]
@@ -437,13 +481,12 @@ class data2D:
 				cut_name='Cut from '+str(self.wksp_name)+' integrating '+str(intMin)+' and '+str(intMax)+' A^-1'
 			
 			#axis2 is |Q|, axis1 is energy transfer
-			ReplaceSpecialValues(InputWorkspace=wksp,OutputWorkspace='tmp',NaNValue='0',InfinityValue='0')
-			if kwargs.has_key('shoelace'):
-				Rebin2D(InputWorkspace='tmp',OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
-			else:
-				Rebin2D(InputWorkspace='tmp',OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax))
 			
-			DeleteWorkspace('tmp')
+			if kwargs.has_key('shoelace'):
+				Rebin2D(InputWorkspace=wksp,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
+			else:
+				Rebin2D(InputWorkspace=wksp,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax))
+			ReplaceSpecialValues(InputWorkspace=cut_name,OutputWorkspace=cut_name,NaNValue='0',InfinityValue='0')
 			
 			if kwargs.has_key('over'):
 				if kwargs.has_key('Handle'):
