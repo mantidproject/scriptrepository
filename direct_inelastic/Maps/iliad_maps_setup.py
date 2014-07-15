@@ -16,7 +16,7 @@ def iliad_maps_setup():
 	# map mask and cal file, again the values from Mantid, data search directories can be modified here
 	config.appendDataSearchDir('/home/maps/mprogs/InstrumentFiles/maps') 
 	# data (raw or nxs) run files -- values from data search directories can be modified here
-	config.appendDataSearchDir('/isisdatar55/NDXMAPS/Instrument/data/cycle_12_3') 
+	config.appendDataSearchDir('/isisdatar55/NDXMAPS/Instrument/data/cycle_14_2') 
 
 def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	#instrument name:
@@ -32,7 +32,7 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	else:
 		abs_units=0
 		
-	maskfile='4to1_135.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
+	maskfile='4to1_142.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
 
 	#map file
 	mapfile='4to1' #single crystal mapping file
@@ -110,7 +110,7 @@ def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
 	else:
 		abs_units=0
 		
-	maskfile='4to1_135.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
+	maskfile='4to1_142.msk' #'testMask2.msk'#hard mask out the edges of detectors, which tend to be noisy
 
 	#map file
 	mapfile='parker_rings' #powder mapping file
