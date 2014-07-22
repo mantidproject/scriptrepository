@@ -693,7 +693,7 @@ def nrSERGISFn(runList,nameList,P0runList,P0nameList,incidentAngles,SEConstants,
 #
 #===========================================================
 #
-def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,subbgd=0,btmbgd=[0,50],topbgd=[160,240],qgroup=0,dofloodnorm=1,usewkspname=0,diagnostics=0):
+def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile,subbgd=0,btmbgd=[0,50],topbgd=[160,240],qgroup=0,dofloodnorm=1,usewkspname=0,sf=1.0,diagnostics=0):
 	nlist=parseNameList(nameList)
 	#logger.notice("This is the sample nameslist:"+str(nlist))
 	if(usewkspname==0):
@@ -806,7 +806,10 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
 			ConvertUnits(InputWorkspace=i+"norm",OutputWorkspace=i+"RvQ",Target="MomentumTransfer")
 			#floodnorm(i+"detnorm",floodfile)
 			DeleteWorkspace(i+"sum")
-			
+		
+		CreateSingleValuedWorkspace(sf,0.0,OutputWorkspace='sf')
+		Multiply(i+"RvQ",'sf',OutputWorkspace=i+'RvQ')
+		
 		k=k+1
 		if(usewkspname==0):
 			DeleteWorkspace(i)
