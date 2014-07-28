@@ -423,12 +423,31 @@ class MainWindow(QtGui.QMainWindow):
  			
  	def refreshlist(self): 
 		self.ui.WkspIn.clear() 
+		
  		self.currentWkspNames=mtd.getObjectNames()
+ 		
 		iter=0
-		for item in self.currentWkspNames: 
-			self.ui.WkspIn.insertItem(iter,item)
-			iter=iter+1
-			
+		#for item in self.currentWkspNames: 
+		#	self.ui.WkspIn.insertItem(iter,item)
+		#	iter=iter+1
+		#this finds only workspaces with the appropriate units for calc projections to mod q.
+		# the hack is to discount existing workspaces that are in e trans but have SQW in the name. 
+		#if the data2D class is changed such that the names for transformed workspaces are different this bit of the GUI will break
+		
+		allNames=mtd.getObjectNames()
+		for i in range(len(allNames)):
+			tmp=mtd[allNames[i]]
+			try:
+				if tmp.getAxis(0).getUnit().caption() == 'Energy transfer' and tmp.getName().find('SQW')==-1:
+					print allNames[i] +' is e trans'
+					self.ui.WkspIn.insertItem(iter,allNames[i])
+					iter=iter+1
+			except:
+				print allNames[i]  +' is not a matrix workspace'
+
+		
+		
+		
 	def cutMin(self):
 		self.cutMin=self.ui.cutMin.text()
 		#print self.cutMin
