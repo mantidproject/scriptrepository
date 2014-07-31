@@ -24,7 +24,7 @@ ei = [40,22,14] #,1.46]# # incident energies you want analysed,
 #ei=[5.8,15]           
 ebin=[-0.2,0.002,0.8]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
 mapping='one2one_125.map'  # or provide rings mapping file for powders (see the map used for WB grouping)
-file = 'Bjorn_mask.msk'    # standard hard mask file  for LET
+hm_file = 'Bjorn_mask.msk'    # standard hard mask file  for LET
 ##############################################################
 # Background  -- should be used for powders only
 remove_background=False;
@@ -45,7 +45,6 @@ argi['monovan_mapfile']='rings_125.map'
 config.appendDataSearchDir('/home/merlin/mprogs/InstrumentFiles/merlin') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
 config.appendDataSearchDir('/archive/ndxmerlin/Instrument/data/cycle_14_2') 
-
 config.appendDataSearchDir('/home/merlin/merlin_share')
 
 
@@ -123,7 +122,7 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
                 argi['det_cal_file']='det_corr_125.dat'
                 argi['detector_van_range']=[40,55]
                 argi['bkgd_range']=[int(t_elastic),int(tbin[2])]
-                argi['hardmaskOnly']=file		
+                argi['hardmaskOnly']=hm_file
                 argi['check_background']=False;
 
                 # abs units
