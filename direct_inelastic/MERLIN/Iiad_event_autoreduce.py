@@ -19,7 +19,7 @@ ei = [40,22,14] #,1.46]# # incident energies you want analysed,
 #ei=[5.8,15]           
 ebin=[-0.2,0.002,0.8]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
 mapping='one2one_125.map'  # or provide rings mapping file for powders (see the map used for WB grouping)
-file = 'Bjorn_mask.msk'    # standard hard mask file  for LET
+hm_file = 'Bjorn_mask.msk'    # standard hard mask file  for LET
 ##############################################################
 # Background  -- should be used for powders only
 remove_background=False;
@@ -85,7 +85,7 @@ for run in run_no:     #loop around runs
                   w1,w1_monitors=Load(Filename=interm_file,SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0',Precount=True)
                   run_count+=1
                   print "------------------------------------------------------------------------"
-		 
+ 
             AddSampleLog(Workspace='w1',LogName='run_number',LogText=str(run),LogType='Number') #only have to do this as run_number is passed to workspace for event files
 
             start = time.clock()
@@ -130,7 +130,7 @@ for run in run_no:     #loop around runs
                 argi['det_cal_file']='det_corr_125.dat'
                 argi['detector_van_range']=[40,55]
                 argi['bkgd_range']=[int(t_elastic),int(tbin[2])]
-                argi['hardmaskOnly']=file
+                argi['hardmaskOnly']=hm_file
                 argi['check_background']=False;
 
                 # abs units
