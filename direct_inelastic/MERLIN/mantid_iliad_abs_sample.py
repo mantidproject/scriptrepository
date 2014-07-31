@@ -7,8 +7,9 @@ from qtiGenie import *
 import datetime
 iliad_setup('merlin')
 
-# this is the user input section
-#############################################
+#############################################################################################################
+##            this is the user input section                                                               ##
+#############################################################################################################
 # where to save results (overwrites specified in Mantid, data search directories, if you want to use those one, comment two lines below here)
 #save_dir = '/home/xfz39506/RB1320468/'
 #config['defaultsave.directory']=save_dir
@@ -25,30 +26,34 @@ ei = [40,22,14] #,1.46]# # incident energies you want analysed,
 ebin=[-0.2,0.002,0.8]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
 mapping='one2one_125.map'  # or provide rings mapping file for powders (see the map used for WB grouping)
 hm_file = 'Bjorn_mask.msk'    # standard hard mask file  for LET
-##############################################################
+##############################################################################################################
 # Background  -- should be used for powders only
 remove_background=False;
 bg_range=[12000,19000] # range of times to take background in
-###################################################
-# Absolute Units Related
-###################################################
+#############################################################################################################
+##  Absolute Units Related. If MonoVanRun=None, relative units will be used.                               ##
+#############################################################################################################
 argi={}
 MonoVanRun=None #10433 # vanadium run in the same configuration as your sample. If none, relative units will be used
 
 argi['sample_mass']=1  #mass of your sample in g
-argi['sample_rmm'] =1 #Enter the correct relative molecular mass of your sample
+argi['sample_rmm'] =1 #Enter the correct relative molecular mass of scattering phase in your sample
 #argi['vanadium-mass']=7.85
 argi['monovan_mapfile']='rings_125.map'
 
-##############################################
-# map mask and cal file, again the values from Mantid, data search directories can be modified here or in Mantid DataSearch directories
+
+#############################################################################################################
+##     Settings below is usualy instrument scientist responsibility                                        ##
+#############################################################################################################
+# map mask and cal file, again the values from Mantid, 
+# data search directories can be modified here or in Mantid DataSearch directories
 config.appendDataSearchDir('/home/merlin/mprogs/InstrumentFiles/merlin') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
 config.appendDataSearchDir('/archive/ndxmerlin/Instrument/data/cycle_14_2') 
 config.appendDataSearchDir('/home/merlin/merlin_share')
 
 
-# loads the whitebeam (or rather the long monovan ). Does it as a raw file to save time as the e/Bjorn_maskvent mode is very large
+# loads the whitebeam (or rather the long monovan ). Does it as a raw file to save time as the event mode is very large
 present_run=-1
 if 'wb_wksp' in mtd:
     m=mtd['wb_wksp']
@@ -76,7 +81,7 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
             for ns in xrange(num_files2sum-1):
                 print " Adding run N {0} to run N {1}".format(runno[i+ns+1],runno[i]),
                 run = runno[irun+ns+1]
-                ws,ws_monitors= Load(Filename='MER0000'+str(run)+'.nxs',SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0')		
+                ws,ws_monitors= Load(Filename='MER0000'+str(run)+'.nxs',SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0')
                 w1 += ws
                 w1_mon += ws_monitors
                 print "got {0} events".format(w1.getNumberEvents())
