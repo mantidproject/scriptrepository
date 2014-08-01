@@ -70,10 +70,10 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
        run = run_no[irun];
        fname='MER0000'+str(run)+'.nxs'
        print ' processing file ', fname
-       if 'w1' in mtd:
-            m=mtd['w1']
-            present_run= m.getRunNumber()
-       print run, present_run
+       #if 'w1' in mtd:  # Uncomment this to save time and not to load existing workspace twice
+       #     m=mtd['w1']
+       #     present_run= m.getRunNumber()
+       #print run, present_run
        # Load single run or sum runs 
        if  present_run != run:
             w1, w1_monitors=Load(Filename=fname,LoadMonitors='1',MonitorsAsEvents='0')  
