@@ -439,8 +439,9 @@ class MainWindow(QtGui.QMainWindow):
 			tmp=mtd[allNames[i]]
 			try:
 				if tmp.getAxis(0).getUnit().caption() == 'Energy transfer' and tmp.getName().find('SQW')==-1:
-					print allNames[i] +' is e trans'
-					self.ui.WkspIn.insertItem(iter,allNames[i])
+					print allNames[i] +' has units of energy transfer'
+					if tmp.getNumberHistograms() > 1:
+						self.ui.WkspIn.insertItem(iter,allNames[i])
 					iter=iter+1
 			except:
 				print allNames[i]  +' is not a matrix workspace'
