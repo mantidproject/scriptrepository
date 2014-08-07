@@ -79,7 +79,7 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
             w1, w1_monitors=Load(Filename=fname,LoadMonitors='1',MonitorsAsEvents='0')  
             w1_mon=RenameWorkspace(w1_monitors)
             for ns in xrange(num_files2sum-1):
-                print " Adding run N {0} to run N {1}".format(runno[i+ns+1],runno[i]),
+                print " Adding run N {0} to run N {1}".format(runno[irun+ns+1],runno[irun]),
                 run = runno[irun+ns+1]
                 ws,ws_monitors= Load(Filename='MER0000'+str(run)+'.nxs',SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0')
                 w1 += ws
