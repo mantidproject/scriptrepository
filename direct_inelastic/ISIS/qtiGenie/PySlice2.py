@@ -1,6 +1,10 @@
 #from DirectEnergyConversion import *
 import time as time
-import dgreduce
+try:
+    import dgreduce    
+except ImportError:
+    import Direct.dgreduce as dgreduce
+
 import inspect
 import numpy
 try:

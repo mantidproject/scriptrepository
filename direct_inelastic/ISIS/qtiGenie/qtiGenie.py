@@ -2,10 +2,18 @@ from xml.dom import minidom
 from mantid.kernel import funcreturns
 from mantid.simpleapi import *
 from mantid import config
-from DirectEnergyConversion import *
+try:
+    from DirectEnergyConversion import *
+    import dgreduce 
+    old_mantid = True
+except ImportError:
+    from Direct.DirectEnergyConversion import *
+    import Direct.dgreduce as dgreduce
+    old_mantid = False    
+    
 import sys
 import time as time
-import dgreduce
+    
 import numpy
 #try:
 #    import nxs
@@ -58,8 +66,10 @@ qtg_par["instname"] = config['default.instrument'][0:3]
 iliad_setup=dgreduce.setup
 iliad=dgreduce.arb_units
 iliad_abs=dgreduce.abs_units
-iliad_help=dgreduce.help
-iliad_sum = dgreduce.sum_files
+if oldMantid:
+    iliad_help=dgreduce.help #-- use docstring
+    iliad_sum = dgreduce.sum_files  #-- not recommended 
+    
 iliad_reducer = dgreduce.getReducer
 
 #     iliad_set_calfile = dgreduce.set_cal_file

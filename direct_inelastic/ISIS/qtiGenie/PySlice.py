@@ -2,9 +2,16 @@
 from mantid.simpleapi import *
 from mantid.kernel import funcreturns
 from mantidplot import *
-from DirectEnergyConversion import *
+
+try:
+    from DirectEnergyConversion import *
+    import dgreduce    
+except ImportError:
+    from Direct.DirectEnergyConversion import *
+    import Direct.dgreduce as dgreduce
+
 import time as time
-import dgreduce
+
 import inspect
 import numpy
 
