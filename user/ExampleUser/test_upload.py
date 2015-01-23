@@ -2,4 +2,4 @@
 
 This is a full summary of the module
 """
-print "Hello, World!"
+print "Hello, World"
