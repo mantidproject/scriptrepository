@@ -66,8 +66,8 @@ qtg_par["instname"] = config['default.instrument'][0:3]
 iliad_setup=dgreduce.setup
 iliad=dgreduce.arb_units
 iliad_abs=dgreduce.abs_units
-if oldMantid:
-    iliad_help=dgreduce.help #-- use docstring
+if old_mantid:
+    iliad_help= dgreduce.help       #-- use docstring otherwise
     iliad_sum = dgreduce.sum_files  #-- not recommended 
     
 iliad_reducer = dgreduce.getReducer
