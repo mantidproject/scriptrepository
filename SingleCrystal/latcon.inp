@@ -1,0 +1,20 @@
+# Crystal class:
+# 1 = Triclinic
+# 2 = Monoclinic, b-unique
+# 3 = Orthorhombic
+# 4 = Tetragonal
+# 5 = Rhombohedral
+# 6 = Hexagonal
+# 7 = Cubic
+#
+2     # Crystal class: 
+10     # a: 
+10     # b: 
+10     # c: 
+90     # alpha: 
+90     # beta: 
+90     # gamma: 
+expname.integrate     # ISAW peaks or integrate file name: 
+5     # Minimum I/sigI (0 for no test): 
+0     # Minimum IPK (0 for no test): 
+0.5     # Minimum d-spacing: 
