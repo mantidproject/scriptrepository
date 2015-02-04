@@ -1,0 +1,17 @@
+/SNS/users/ajschultz/MaNDi/betadec14/     # Working directory
+betadec14_Niggli     # Experiment name
+0.41     # Total scattering linear absorption coefficent in units of cm^-1 (ignored if 'polyhedral')
+0.009     # True absorption linear absorption coefficent at 1.8 A in units of cm^-1 (ignored if 'polyhedral')
+0.1     # Radius of spherical crystal in units of cm (ignored if 'polyhedral')
+Spectrum_3844_3845.dat     # Name of spectrum file
+3.0     # Normalize spectra to this wavelength
+1     # Minimum I/sig(I) ratio
+6     # Width of border in which peaks are rejected
+1.0     # Minimum integrated intensity
+2.0     # Minimum d-spacing
+1     # Multiply FSQ and sig(FSQ) by this factor
+2.0     # Minimum wavelength
+4.0     # Maximum wavelength
+spherical     # 'spherical' or 'polyhedral' absorption correction
+betadec14_Niggli.mat     # UB matrix file
+MaNDi     # 'TOPAZ' or 'MaNDi' detector corrections
