@@ -1,4 +1,5 @@
 # Initial analysis to find peaks and to obtain lattice constants and UB matrix.
+#
 LoadEventNexusDialog(OutputWorkspace = 'Event_ws', FilterByTofMin=500, FilterByTofMax=16500, Precount=False, 
     Enable = 'OutputWorkspace, FilterByTofMin, FilterByTofMax')
 ConvertToDiffractionMDWorkspaceDialog(InputWorkspace='event_ws', OutputWorkspace='MD_ws', 
@@ -12,16 +13,21 @@ SaveIsawUBDialog(InputWorkspace = 'Peaks', Enable = 'InputWorkspace')
 SaveIsawPeaksDialog(InputWorkspace = 'Peaks', Enable = 'InputWorkspace')
 
 # Create MD workspace with Lorentz correction turned off for integration.
+#
 ConvertToDiffractionMDWorkspaceDialog(InputWorkspace='event_ws', OutputWorkspace='MD_ws', 
     OneEventPerBin=False, LorentzCorrection=False, SplitThreshold=50, MaxRecursionDepth=11, 
     Enable ='InputWorkspace, OutputWorkspace, LorentzCorrection')
     
 IntegratePeaksMDDialog(InputWorkspace = 'MD_ws', PeaksWorkspace = 'Peaks',  OutputWorkspace = 'IntegratedPeaks_MD', PeakRadius = 0.10, 
-    BackgroundInnerRadius = 0.10, BackgroundOuterRadius = 0.12, Cylinder = False)
+    BackgroundInnerRadius = 0.10, BackgroundOuterRadius = 0.12, Cylinder = False,
+    Enable = 'PeakRadius, BackgroundInnerRadius, BackgroundOuterRadius' )
+    
 SaveIsawPeaksDialog(InputWorkspace = 'IntegratedPeaks_MD', Enable = 'InputWorkspace')
     
 IntegratePeaksHybridDialog(InputWorkspace = 'MD_ws', PeaksWorkspace = 'Peaks', OutputWorkspace = 'IntegratedPeaks_Hybrid',
-    BackgroundOuterRadius = 0.15, OutputWorkspaces = 'MDHisto')
+    NumberOfBins = 20, BackgroundOuterRadius = 0.15, OutputWorkspaces = 'MDHisto',
+    Enable = 'NumberOfBins, BackgroundOuterRadius' )
+    
 SaveIsawPeaksDialog(InputWorkspace = 'IntegratedPeaks_Hybrid', Enable = 'InputWorkspace')
 
 # BinMDDialog(InputWorkspace = 'MD_ws', OutputWorkspace = 'BinMD_ws')
