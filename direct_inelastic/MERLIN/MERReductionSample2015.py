@@ -120,7 +120,9 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
       #return custom_name(self.reducer.prop_man)
       # use this method to use standard file name generating function
       return None    
-
+  def __init__(self,web_var=None):
+       """ sets properties defaults for the instrument with Name"""
+       ReductionWrapper.__init__(self,'MER',web_var)
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
@@ -138,7 +140,6 @@ def main(input_file=None,output_directory=None):
     # Define folder for web service to copy results to
     output_folder = ''
     return output_folder
-
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
