@@ -13,6 +13,7 @@ except:
     web_var = None
 
 class ReduceMER_MultiRep2015(ReductionWrapper):
+#------------------------------------------------------------------------------------#
    @MainProperties
    def def_main_properties(self):
        """ Define main properties used in reduction. These are the property 
@@ -21,20 +22,28 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
        prop = {}
 
        ei=[81,30,15] # multiple energies provided in the data file
-       ebin=[-0.1,0.005,0.95]    #binning of the energy for the spe file. The numbers are as a fraction of ei [from ,step, to ]
-       # the range of files to reduce. This range ignored when deployed from autoreduction, unless you going to sum these files
-       # used when you run reduction from PC
-       prop['sample_run'] = range(22413,22932)
-       prop['wb_run'] = 23012
+       ebin=[-0.1,0.005,0.95]    #binning of the energy for the spe file. 
+       # if energy is specified as a list (even with single value e.g. ei=[81])
+       # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
+	   # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
+	   #
        prop['incident_energy'] = ei
        prop['energy_bins'] = ebin
+	   #
+       # the range of files to reduce. This range ignored when deployed from autoreduction,
+       # unless you going to sum these files. 
+       # The range of numbers or run number is used when you run reduction from PC.
+       prop['sample_run'] = range(22413,22932) 
+       prop['wb_run'] = 23012
+       #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
-                                # list      
-      # Absolute units reduction properties.
+       #                        # list
+  
+       # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
        prop['monovan_run'] = 22932 # vanadium run in the same configuration as your sample
-       prop['sample_mass'] = 9 # mass of your sample 
-       prop['sample_rmm'] = 496.4 # molecular weight of scatterers in your sample
-       prop['sum_runs']=False
+       #prop['sample_mass'] = 9 # mass of your sample 
+       #prop['sample_rmm'] = 496.4 # molecular weight of scatterers in your sample
+
        return prop
 #------------------------------------------------------------------------------------#
    @AdvancedProperties
@@ -49,12 +58,13 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
       """
       prop = {}
       prop['map_file'] = 'one2one_125.map'
-      prop['det_cal_file'] = 'det_corrected7.nxs'
+      prop['det_cal_file'] = 'det_corr_125.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = False
-      prop['norm_method']='current'
+      prop['norm_method']='monitor-1'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [12000,19000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='Bjorn_mask.msk' # diag does not work well on MER. At present only use a hard mask RIB has created
+      #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
       prop['check_background']=False
 
@@ -62,7 +72,7 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
        # if two input files with the same name and  different extension found, what to prefer. 
       prop['data_file_ext']='.nxs' # for MER it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
-                                    
+      # Absolute units: map file to calculate monovan integrals                                                                      
       prop['monovan_mapfile'] = 'rings_125.map'
       prop['vanadium-mass']=7.85 # check this
       return prop
@@ -82,8 +92,8 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
    def validate_result(self,build_validation=False,Error=1.e-3,ToleranceRelErr=True):
       """ Change this method to verify different results     """
       # here we have: 
-      #  14305                    run number with known reduction result
-      # sample_map21384_ei450.nxs workspace for run above reduced earlier and we now 
+      #  22413                  run number with known reduction result
+      # MER22413Ei81meV_Abs.nxs workspace for run above reduced earlier and we now 
       # validate against
       # build_validation -- if true, build and save new workspace rather
       #then validating the old one
@@ -119,8 +129,9 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
       # below. 
       #return custom_name(self.reducer.prop_man)
       # use this method to use standard file name generating function
-      return None    
-  def __init__(self,web_var=None):
+      return None
+   #
+   def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MER',web_var)
 #------------------------------------------------------------------------------------#
@@ -129,7 +140,7 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
 def main(input_file=None,output_directory=None):
     """ This method is used to run code from web service
         and should not be touched unless you change the name of the
-        particular ReductionWrapper class (e.g. ReduceMAPS here)
+        particular ReductionWrapper class (e.g. ReduceMER_MultiRep2015 here)
 
         exception to change the output folder to save data to
     """
@@ -140,6 +151,7 @@ def main(input_file=None,output_directory=None):
     # Define folder for web service to copy results to
     output_folder = ''
     return output_folder
+#
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
