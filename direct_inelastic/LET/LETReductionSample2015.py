@@ -20,19 +20,23 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
        """ 
        prop = {}
 
-       ei=[3.4,8.] # multiple energies provided in the data file
-       ebin=[-4,0.002,0.8]    
-       # the range of files to reduce. This range ignored when deployed from autoreduction, unless you going to sum these files
-       # used when you run reduction from PC
-       prop['sample_run'] = range(18184,18196)
-       prop['wb_run'] = 17532
+
+       # multiple energies provided in the data file
        prop['incident_energy'] = [2.3,5.8]
        # if single energy is used as input, put it in brackets to treat energy bins as relative values
        # it will be considered absolute otherwise (min energy, dE step, max energy)
        prop['energy_bins'] = [-0.25,0.005,0.9] #binning of the energy for the spe file. 
+	   #
+       # the range of files to reduce. This range ignored when deployed from autoreduction,
+       # unless you going to sum these files. 
+       # The range of numbers or run number is used when you run reduction from PC.
+       prop['sample_run'] = range(18184,18196)
+       prop['wb_run'] = 17532
+       #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
-                                # list            
-      # Absolute units reduction properties.
+       #                        # list
+  
+       # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
        prop['monovan_run'] = None # vanadium run in the same configuration as your sample
        #prop['sample_mass'] = 1 #  # mass of your sample
        #prop['sample_rmm'] = 1 #  molecular weight of scatterers in your sample
@@ -95,7 +99,6 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
                                      Error,ToleranceRelErr)
       return rez,message
    #
-   #
    def set_custom_output_filename(self):
       """ define custom name of output files if standard one is not satisfactory 
           In addition to that, example of accessing reduction properties 
@@ -120,8 +123,8 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
       # below. 
       #return custom_name(self.reducer.prop_man)
       # use this method to use standard file name generating function
-      return None    
-    
+      return None
+    #
 
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
