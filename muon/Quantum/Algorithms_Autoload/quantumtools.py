@@ -30,8 +30,9 @@ def addZeeman(Ham,spin,B,gamma):
 	if(isinstance(gamma,numbers.Number)):
 		Ham[...]=Ham[...]+numpy.tensordot(spin,normalised(B),axes=[[0],[0]])*gamma*math.pi
 	else:
-		# gamma is a g-value tensor too. Calc...?
-		pass
+		# gamma is a g-value tensor (multiplied by |B|). Calc...?
+		eb=numpy.dot(gamma,normalised(B))
+		Ham[...]=Ham[...]+numpy.tensordot(spin,eb,axes=[[0],[0]])*math.pi
 	#print "modified to ",Ham
 #	return Ham
 
@@ -48,7 +49,8 @@ def addZeemanC(HamIn,HamOut,spin,B,gamma):
 		HamOut[...]=HamIn[...]+numpy.tensordot(spin,normalised(B),axes=[[0],[0]])*gamma*math.pi
 	else:
 		# gamma is a g-value tensor too. Calc...?
-		pass
+		eb=numpy.dot(gamma,normalised(B))
+		HamOut[...]=HamIn[...]+numpy.tensordot(spin,eb,axes=[[0],[0]])*math.pi
 	#print "modified to ",Ham
 #	return Ham
 
