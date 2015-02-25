@@ -174,7 +174,7 @@ def ParseAndIterateModel(pars):
 	# signs match sign of moment
 	PeriodicTable={
 	'Mu':(2,135.5),
-	'e':(2,-28025.0),
+	'e':(2,-28024.95266),
 	'H':(2,42.5764),
 	'D':(3,6.53573),
 	'3He':(2,-32.4352),
@@ -409,6 +409,12 @@ def ParseAndIterateModel(pars):
 					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],AxialHFT(val[0],val[1],val[2:5])) # A, D, and axis (3)
 				elif (len(val)==6):
 					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],numpy.array(((val[0],val[3],val[4]),(val[3],val[1],val[5]),(val[4],val[5],val[2]))) ) # Tensor for A, excluding duplicate terms. Axx, Ayy, Azz, Axy, Axz, Ayz
+				elif(len(val)==9):
+					# tensor with principal values and axes: A1,x1,y1,z1,A2,x2,y2,z2,A3. (x3,y3,z3 calculated, x2,y2,z2 adjusted if necessary, all axes will be normalised)
+					xyz1=normalised(val[1:4])
+					xyz3=normalised(numpy.cross(val[1:4],val[5:8]))
+					xyz2=normalised(numpy.cross(xyz3,val[1:4]))
+					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],val[0]*numpy.outer(xyz1,xyz1)+val[4]*numpy.outer(xyz2,xyz2)+val[8]*numpy.outer(xyz3,xyz3) )
 		elif(key[0:2]=="q("):
 			spj=key[2:].split(")")
 			ii,sp=EnumerateSites(slices,dynstates,spj[0])
@@ -429,6 +435,12 @@ def ParseAndIterateModel(pars):
 			# q(@site,spin)=6 component tensor hopefully with Tr()=0
 				elif(len(val)==6):
 					addQuadrupole(Hams[i],spmat[spin1],numpy.array([[val[0],val[3],val[4]],[val[3],val[1],val[5]],[val[4],val[5],val[2]]])) # full tensor
+				elif(len(val)==9):
+					# tensor with principal values and axes: nuq1,x1,y1,z1,nuq2,x2,y2,z2,nuq3. (x3,y3,z3 calculated, x2,y2,z2 adjusted if necessary, all axes will be normalised)
+					xyz1=normalised(val[1:4])
+					xyz3=normalised(numpy.cross(val[1:4],val[5:8]))
+					xyz2=normalised(numpy.cross(xyz3,val[1:4]))
+					addQuadrupole(Hams[i],spmat[spin1],val[0]*numpy.outer(xyz1,xyz1)+val[4]*numpy.outer(xyz2,xyz2)+val[8]*numpy.outer(xyz3,xyz3) )
 			
 			pass # quadrupole splitting. Specify site?
 		elif(key[0:2]=="r("):
@@ -441,11 +453,34 @@ def ParseAndIterateModel(pars):
 			spint=key[6:].split(")")
 			ii,sp=EnumerateSites(slices,dynstates,spint[0])
 			for i in ii:
-				gammas[i][labels[sp[0]]]=float(val[0])
+				if(len(val)==1):
+					gammas[i][labels[sp[0]]]=float(val[0])
+				elif(len(val)==6):
+					gammas[i][labels[sp[0]]]=numpy.array(((val[0],val[3],val[4]),(val[3],val[1],val[5]),(val[4],val[5],val[2])))
+				elif(len(val)==9):
+					xyz1=normalised(val[1:4])
+					xyz3=normalised(numpy.cross(val[1:4],val[5:8]))
+					xyz2=normalised(numpy.cross(xyz3,val[1:4]))
+					gammas[i][labels[sp[0]]]=val[0]*numpy.outer(xyz1,xyz1)+val[4]*numpy.outer(xyz2,xyz2)+val[8]*numpy.outer(xyz3,xyz3)
+		elif(key[0:2]=="g("): # as for gamma, but in units of Bohr magneton instead of MHz/T
+			muB=13996.24555 # Bohr magneton in MHz/T 
+			spint=key[2:].split(")")
+			ii,sp=EnumerateSites(slices,dynstates,spint[0])
+			for i in ii:
+				if(len(val)==1):
+					gammas[i][labels[sp[0]]]=float(val[0])*muB
+				elif(len(val)==6):
+					gammas[i][labels[sp[0]]]=numpy.array(((val[0],val[3],val[4]),(val[3],val[1],val[5]),(val[4],val[5],val[2])))*muB
+				elif(len(val)==9):
+					xyz1=normalised(val[1:4])
+					xyz3=normalised(numpy.cross(val[1:4],val[5:8]))
+					xyz2=normalised(numpy.cross(xyz3,val[1:4]))
+					gammas[i][labels[sp[0]]]=(val[0]*numpy.outer(xyz1,xyz1)+val[4]*numpy.outer(xyz2,xyz2)+val[8]*numpy.outer(xyz3,xyz3))*muB
 	# now all coords known, process to give dipolar. Sites?
 	for d in range(dssize):
-		if numpy.any(numpy.isnan(gammas[d])):
-			raise Exception("Not all gamma values are known")
+		for g in gammas[d]:
+			if (numpy.any(numpy.isnan(g))):
+				raise Exception("Not all gamma values are known")
 	for d in range(dssize):
 		for i in range(len(spins)):
 			for j in range(i+1,len(spins)):
@@ -1424,6 +1459,9 @@ def InsertFitPars(pars,fps):
 				#print "setting neg ",fpn," to ",fp
 			#else:
 				#print "setting pos ",fpn," to ",fp
+			if(fpn[0]=="^"):
+				fp=10.0**fps[i]
+				fpn=fpn[1:]
 			fpnp=fpn.split("[")
 			if(len(fpnp)==1):
 				# simple par=value, always overwrite
@@ -1449,21 +1487,21 @@ def InsertFitPars(pars,fps):
 
 class QuantumTableDrivenFunction1(IFunction1D):
 	def init(self):
-		self.declareAttribute("Table","Tab")
+		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
 		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
 		self.declareParameter("Baseline",0.0)
 
-	def setAttributeValue(self,name,value):
-		if name == "Table":
-			self._table = mtd[value]
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
 			
 	def function1D(self,xvals):
 		try:
 			P1=self.getParameterValue("P0")
 			scal=self.getParameterValue("Scale")
 			base=self.getParameterValue("Baseline")
-			pars=ParseTableWorkspaceToDict(self._table)
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
 			InsertFitPars(pars,(P1,))
 			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
 			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
@@ -1496,15 +1534,15 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction1)
 
 class QuantumTableDrivenFunction2(IFunction1D):
 	def init(self):
-		self.declareAttribute("Table","Tab")
+		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
 		self.declareParameter("P1",2.0)
 		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
 		self.declareParameter("Baseline",0.0)
 
-	def setAttributeValue(self,name,value):
-		if name == "Table":
-			self._table = mtd[value]
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
 			
 	def function1D(self,xvals):
 		try:
@@ -1512,7 +1550,7 @@ class QuantumTableDrivenFunction2(IFunction1D):
 			P2=self.getParameterValue("P1")
 			scal=self.getParameterValue("Scale")
 			base=self.getParameterValue("Baseline")
-			pars=ParseTableWorkspaceToDict(self._table)
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
 			InsertFitPars(pars,(P1,P2))
 			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
 			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
@@ -1545,16 +1583,16 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction2)
 
 class QuantumTableDrivenFunction3(IFunction1D):
 	def init(self):
-		self.declareAttribute("Table","Tab")
+		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
 		self.declareParameter("P1",2.0)
 		self.declareParameter("P2",3.0)
 		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
 		self.declareParameter("Baseline",0.0)
 
-	def setAttributeValue(self,name,value):
-		if name == "Table":
-			self._table = mtd[value]
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
 			
 	def function1D(self,xvals):
 		try:
@@ -1563,7 +1601,7 @@ class QuantumTableDrivenFunction3(IFunction1D):
 			P3=self.getParameterValue("P2")
 			scal=self.getParameterValue("Scale")
 			base=self.getParameterValue("Baseline")
-			pars=ParseTableWorkspaceToDict(self._table)
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
 			InsertFitPars(pars,(P1,P2,P3))
 			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
 			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
@@ -1594,9 +1632,60 @@ class QuantumTableDrivenFunction3(IFunction1D):
 
 FunctionFactory.subscribe(QuantumTableDrivenFunction3)
 
+class QuantumTableDrivenFunction3SD(IFunction1D):
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1plusP2",2.0)
+		self.declareParameter("P1minusP2",3.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P0=self.getParameterValue("P0")
+			P1p2=self.getParameterValue("P1plusP2")
+			P1m2=self.getParameterValue("P1minusP2")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+
+			axes,ybins,ebins = RunModelledSystem(pars)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction3SD)
+
 class QuantumTableDrivenFunction4(IFunction1D):
 	def init(self):
-		self.declareAttribute("Table","Tab")
+		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
 		self.declareParameter("P1",2.0)
 		self.declareParameter("P2",3.0)
@@ -1616,7 +1705,7 @@ class QuantumTableDrivenFunction4(IFunction1D):
 			P4=self.getParameterValue("P3")
 			scal=self.getParameterValue("Scale")
 			base=self.getParameterValue("Baseline")
-			pars=ParseTableWorkspaceToDict(self._table)
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
 			InsertFitPars(pars,(P1,P2,P3,P4))
 			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
 			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
@@ -1649,7 +1738,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction4)
 
 class QuantumTableDrivenFunction5(IFunction1D):
 	def init(self):
-		self.declareAttribute("Table","Tab")
+		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
 		self.declareParameter("P1",2.0)
 		self.declareParameter("P2",3.0)
@@ -1658,9 +1747,9 @@ class QuantumTableDrivenFunction5(IFunction1D):
 		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
 		self.declareParameter("Baseline",0.0)
 
-	def setAttributeValue(self,name,value):
-		if name == "Table":
-			self._table = mtd[value]
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
 			
 	def function1D(self,xvals):
 		try:
@@ -1671,7 +1760,7 @@ class QuantumTableDrivenFunction5(IFunction1D):
 			P5=self.getParameterValue("P4")
 			scal=self.getParameterValue("Scale")
 			base=self.getParameterValue("Baseline")
-			pars=ParseTableWorkspaceToDict(self._table)
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
 			InsertFitPars(pars,(P1,P2,P3,P4,P5))
 			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
 			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
@@ -1754,9 +1843,28 @@ class ReplaceFitParsInTable(PythonAlgorithm):
 				raise Exception("Didn't find a Quantum fit function")
 		pardict={}
 		for (pnam,val) in g.items():
-			if(pnam[0]=="P" and pnam[1:].isdigit()):
-				pnum=int(pnam[1:])
-				pardict[pnum]=float(val)
+			if(pnam[0]=="P" and pnam[1].isdigit()):
+				if(pnam[2:7]=="plusP"):
+					pnum1=int(pnam[1])
+					pnum2=int(pnam[7])
+					if(pnum1 in pardict and pnum2 in pardict):
+						pardict[pnum1]=pardict[pnum1]+float(val)/2.0
+						pardict[pnum2]=pardict[pnum2]+float(val)/2.0
+					else:
+						pardict[pnum1]=float(val)/2.0
+						pardict[pnum2]=float(val)/2.0
+				elif(pnam[2:8]=="minusP"):
+					pnum1=int(pnam[1])
+					pnum2=int(pnam[8])
+					if(pnum1 in pardict and pnum2 in pardict):
+						pardict[pnum1]=pardict[pnum1]+float(val)/2.0
+						pardict[pnum2]=pardict[pnum2]-float(val)/2.0
+					else:
+						pardict[pnum1]=float(val)/2.0
+						pardict[pnum2]=-float(val)/2.0
+				else:
+					pnum=int(pnam[1:])
+					pardict[pnum]=float(val)
 		if(min(pardict.keys())==0 and max(pardict.keys())==len(pardict)-1):
 			# good, conv to list
 			fps=[float("NaN")]*len(pardict)
