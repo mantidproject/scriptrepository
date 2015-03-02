@@ -72,6 +72,9 @@ class ReduceMAPS(ReductionWrapper):
       # there is currently bug in loadISISnexus, not loading monitors properly.
       #  When it fixed,  the value of this parameter will be irrelevant
       prop['load_monitors_with_workspace'] = True
+      # change this to correct value and verify that motor_log_names refers correct and existing 
+      # log name for crystal rotation to write correct psi value into nxspe files
+      prop['motor_offset']=None     
       return prop
       #
 #------------------------------------------------------------------------------------#
