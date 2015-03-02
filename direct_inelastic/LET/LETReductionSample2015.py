@@ -69,6 +69,9 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
       # raw file is written in histo, and nxs -- in event mode
       # Absolute units: map file to calculate monovan integrals                                   
       prop['monovan_mapfile'] = 'rings_103.map'
+      # change this to correct value and verify that motor_log_names refers correct and existing 
+      # log name for crystal rotation to write correct psi value into nxspe files
+      prop['motor_offset']=None     
       return prop
       #
 #------------------------------------------------------------------------------------#
