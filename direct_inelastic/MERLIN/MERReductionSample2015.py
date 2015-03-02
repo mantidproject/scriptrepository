@@ -75,6 +75,9 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
       # Absolute units: map file to calculate monovan integrals                                                                      
       prop['monovan_mapfile'] = 'rings_125.map'
       prop['vanadium-mass']=7.85 # check this
+      # change this to correct value and verify that motor_log_names refers correct and existing 
+      # log name for crystal rotation to write correct psi value into nxspe files
+      prop['motor_offset']=None
       return prop
       #
 #------------------------------------------------------------------------------------#
