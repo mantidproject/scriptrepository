@@ -1,4 +1,4 @@
-""" Sample MER reduction script """ 
+""" Sample MAPS reduction script """ 
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
 import os,sys
@@ -12,38 +12,33 @@ try:
 except:
     web_var = None
 
-class ReduceMER_MultiRep2015(ReductionWrapper):
+class ReduceMAPS(ReductionWrapper):
 #------------------------------------------------------------------------------------#
-   @MainProperties
+   @MainProperties	
    def def_main_properties(self):
        """ Define main properties used in reduction. These are the property 
            a user usually wants to change
        """ 
        prop = {}
-
-       ei=[81,30,15] # multiple energies provided in the data file
-       ebin=[-0.1,0.005,0.95]    #binning of the energy for the spe file. 
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = ei
-       prop['energy_bins'] = ebin
+       prop['incident_energy'] = 450
+       prop['energy_bins'] = [-50,2.5,425]
        #
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(22413,22932)
-       prop['wb_run'] = 23012
+       prop['sample_run'] = [21384,21385]
+       prop['wb_run'] = 21376
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
-  
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-       prop['monovan_run'] = 22932 # vanadium run in the same configuration as your sample
-       #prop['sample_mass'] = 9 # mass of your sample 
-       #prop['sample_rmm'] = 496.4 # molecular weight of scatterers in your sample
-
+       prop['monovan_run'] = 21803  #  vanadium run in the same configuration as your sample 
+       #prop['sample_mass'] = 41.104
+       #prop['sample_rmm'] = 398.9439
        return prop
 #------------------------------------------------------------------------------------#
    @AdvancedProperties
@@ -57,24 +52,26 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'one2one_125.map'
-      prop['det_cal_file'] = 'det_corr_125.dat' #'det_corrected7.nxs - testing'
-      prop['bleed'] = False
-      prop['norm_method']='monitor-1'
-      prop['detector_van_range']=[40,55]
-      prop['background_range'] = [12000,19000] # TOF range for the calculating flat background
-      prop['hardmaskOnly']='Bjorn_mask.msk' # diag does not work well on MER. At present only use a hard mask RIB has created
-      #prop['hard_mask_file'] = "Bjorn_mask.msk"
+      prop['map_file'] = "4to1.map"
+      prop['monovan_mapfile'] = "4to1_mid_lowang.map"
+      #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
+      prop['hard_mask_file'] = "4to1_142.msk"
+      prop['bkgd_range'] = [13000,19000]
 
-      prop['check_background']=False
-
-      prop['save_format'] = 'nxspe' #nxs,nxspe'
-       # if two input files with the same name and  different extension found, what to prefer. 
-      prop['data_file_ext']='.nxs' # for MER it may be choice between event and histo mode if 
-      # raw file is written in histo, and nxs -- in event mode
-      # Absolute units: map file to calculate monovan integrals                                                                      
-      prop['monovan_mapfile'] = 'rings_125.map'
-      prop['vanadium-mass']=7.85 # check this
+      prop['monovan_lo_frac'] = -0.5 # default is -0.6
+      #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
+      #prop['abs_units_van_range']=[-40,40] # specify energy range directly, to
+                                     #override relative default energy range
+      prop['diag_remove_zero'] = False
+      prop['wb_integr_range'] = [20,100] 
+      
+      #prop['det_cal_file'] = "11060" what about calibration?
+      prop['save_format'] = 'nxs'
+      #prop['data_file_ext']='.nxs' # if two input files with the same name and
+                                    #different extension found, what to prefer.
+      # there is currently bug in loadISISnexus, not loading monitors properly.
+      #  When it fixed,  the value of this parameter will be irrelevant
+      prop['load_monitors_with_workspace'] = True
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
       prop['motor_offset']=None
@@ -95,15 +92,15 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
    def validate_result(self,build_validation=False,Error=1.e-3,ToleranceRelErr=True):
       """ Change this method to verify different results     """
       # here we have: 
-      #  22413                  run number with known reduction result
-      # MER22413Ei81meV_Abs.nxs workspace for run above reduced earlier and we now 
+      #  21384                    run number with known reduction result
+      # sample_map21384_ei450.nxs workspace for run above reduced earlier and we now 
       # validate against
       # build_validation -- if true, build and save new workspace rather
       #then validating the old one
       run_dir = os.path.dirname(os.path.realpath(__file__))
       # this row defines location of the validation file in this script folder
-      validation_file = os.path.join(run_dir,"MER22413Ei81meV_Abs.nxs")
-      rez,message = ReductionWrapper.build_or_validate_result(self,22413,
+      validation_file = os.path.join(run_dir,"sample_map21384_ei450.nxs")
+      rez,message = ReductionWrapper.build_or_validate_result(self,21384,
                                      validation_file,build_validation,
                                      Error,ToleranceRelErr)
       return rez,message
@@ -136,25 +133,25 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
    #
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
-       ReductionWrapper.__init__(self,'MER',web_var)
+       ReductionWrapper.__init__(self,'MAP',web_var)
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 def main(input_file=None,output_dir=None):
     """ This method is used to run code from web service
         and should not be touched unless you change the name of the
-        particular ReductionWrapper class (e.g. ReduceMER_MultiRep2015 here)
+        particular ReductionWrapper class (e.g. ReduceMAPS here)
 
         exception to change the output folder to save data to
     """
     # note web variables initialization
-    rd = ReduceMER_MultiRep2015(web_var)
+    rd = ReduceMAPS(web_var)
     rd.reduce(input_file,output_dir)
     
     # Define folder for web service to copy results to
     output_folder = ''
     return output_folder
-#
+
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
@@ -163,22 +160,22 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/merlin'
+    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/maps'
     # folder where input data can be found
-    data_dir = 'd:/Data/Mantid_Testing/15_01_27/merlin'
+    #data_dir = 'd:/Data/Mantid_Testing/15_01_27/autoreduce_maps'
     # auxiliary folder with results
-    ref_data_dir = 'd:/Data/MantidSystemTests/Data' 
+    #ref_data_dir = 'd:/Data/MantidSystemTests/SystemTests/AnalysisTests/ReferenceResults' 
     # Set input search path to values, specified above
-    config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
+    #config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
     # folder to save resulting spe/nxspe files.
-    config['defaultsave.directory'] = data_dir 
+    #config['defaultsave.directory'] = data_dir 
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
-    rd = ReduceMER_MultiRep2015()
+    rd = ReduceMAPS()
     # set up advanced and main properties
     rd.def_advanced_properties()
     rd.def_main_properties()

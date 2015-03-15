@@ -1,10 +1,10 @@
 """ Sample LET reduction script """ 
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
-import os
+import os,sys
 #os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
- 
-
+sys.path.insert(0, "/opt/mantidnightly/bin") 
+from mantid import *
 from Direct.ReductionWrapper import *
 # necessary for web services to work.  Will go with factory implemented
 try:
@@ -12,7 +12,8 @@ try:
 except:
     web_var = None
 
-class ReduceLET_MultiRep2015(ReductionWrapper):
+class ReduceMER_MultiRep2015(ReductionWrapper):
+#------------------------------------------------------------------------------------#
    @MainProperties
    def def_main_properties(self):
        """ Define main properties used in reduction. These are the property 
@@ -23,10 +24,12 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
 
        # multiple energies provided in the data file
        prop['incident_energy'] = [2.3,5.8]
-       # if single energy is used as input, put it in brackets to treat energy bins as relative values
-       # it will be considered absolute otherwise (min energy, dE step, max energy)
+       # if energy is specified as a list (even with single value e.g. ei=[81])
+       # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
+       # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
+       #
        prop['energy_bins'] = [-0.25,0.005,0.9] #binning of the energy for the spe file. 
-	   #
+       #
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
@@ -71,7 +74,7 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
       prop['monovan_mapfile'] = 'rings_103.map'
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
-      prop['motor_offset']=None     
+      prop['motor_offset']=None
       return prop
       #
 #------------------------------------------------------------------------------------#
@@ -135,7 +138,7 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
-def main(input_file=None,output_directory=None):
+def main(input_file=None,output_dir=None):
     """ This method is used to run code from web service
         and should not be touched unless you change the name of the
         particular ReductionWrapper class (e.g. ReduceLET_MultiRep2015 here)
@@ -144,7 +147,7 @@ def main(input_file=None,output_directory=None):
     """
     # note web variables initialization
     rd = ReduceLET_MultiRep2015(web_var)
-    rd.reduce(input_file,output_directory)
+    rd.reduce(input_file,output_dir)
     
     # Define folder for web service to copy results to
     output_folder = ''
@@ -199,8 +202,7 @@ if __name__ == "__main__":
    # 
     rd.run_reduction()
 
-#### Validate results against known result, obtained earlier -- filename defined by ##
-    # get_validation_file_name method
+#### Validate reduction result against known result, obtained earlier  ###
 #    rez,mess=rd.validate_result()
 #    if not rez:
 #      raise RuntimeError("validation failed with error: {0}".format(mess))

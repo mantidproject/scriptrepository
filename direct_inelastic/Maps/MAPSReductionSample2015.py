@@ -1,10 +1,10 @@
 """ Sample MAPS reduction script """ 
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
-import os
-#os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+\
-#                     os.environ["PATH"]
-#
+import os,sys
+#os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
+sys.path.insert(0, "/opt/mantidnightly/bin") 
+from mantid import *
 from Direct.ReductionWrapper import *
 # necessary for web services to work.  Will go with factory implemented
 try:
@@ -22,11 +22,11 @@ class ReduceMAPS(ReductionWrapper):
        prop = {}
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
-	   # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
+       # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 450
        prop['energy_bins'] = [-50,2.5,425]
-	   #
+       #
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
@@ -74,7 +74,7 @@ class ReduceMAPS(ReductionWrapper):
       prop['load_monitors_with_workspace'] = True
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
-      prop['motor_offset']=None     
+      prop['motor_offset']=None
       return prop
       #
 #------------------------------------------------------------------------------------#
@@ -137,7 +137,7 @@ class ReduceMAPS(ReductionWrapper):
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
-def main(input_file=None,output_directory=None):
+def main(input_file=None,output_dir=None):
     """ This method is used to run code from web service
         and should not be touched unless you change the name of the
         particular ReductionWrapper class (e.g. ReduceMAPS here)
@@ -146,7 +146,7 @@ def main(input_file=None,output_directory=None):
     """
     # note web variables initialization
     rd = ReduceMAPS(web_var)
-    rd.reduce(input_file,output_directory)
+    rd.reduce(input_file,output_dir)
     
     # Define folder for web service to copy results to
     output_folder = ''
