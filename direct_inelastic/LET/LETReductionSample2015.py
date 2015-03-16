@@ -2,7 +2,7 @@
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
 import os,sys
-#os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
+os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
 sys.path.insert(0, "/opt/mantidnightly/bin") 
 from mantid import *
 from Direct.ReductionWrapper import *
@@ -12,7 +12,7 @@ try:
 except:
     web_var = None
 
-class ReduceMER_MultiRep2015(ReductionWrapper):
+class ReduceLET_MultiRep2015(ReductionWrapper):
 #------------------------------------------------------------------------------------#
    @MainProperties
    def def_main_properties(self):
@@ -23,7 +23,7 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
 
 
        # multiple energies provided in the data file
-       prop['incident_energy'] = [2.3,5.8]
+       prop['incident_energy'] = [2.3] #,5.8]
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
@@ -33,16 +33,16 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(18184,18196)
-       prop['wb_run'] = 17532
+       prop['sample_run'] = range(18417,18422)
+       prop['wb_run'] = 18422
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
   
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
        prop['monovan_run'] = None # vanadium run in the same configuration as your sample
-       #prop['sample_mass'] = 1 #  # mass of your sample
-       #prop['sample_rmm'] = 1 #  molecular weight of scatterers in your sample
+       #prop['sample_mass'] = 100 #  # mass of your sample
+       #prop['sample_rmm'] = 200 #  molecular weight of scatterers in your sample
        return prop
 #------------------------------------------------------------------------------------#
    @AdvancedProperties
@@ -70,8 +70,8 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
        # if two input files with the same name and  different extension found, what to prefer. 
       prop['data_file_ext']='.nxs' # for LET it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
-      # Absolute units: map file to calculate monovan integrals                                   
-      prop['monovan_mapfile'] = 'rings_103.map'
+      # Absolute units: map file to calculate monovan integrals
+      prop['monovan_mapfile'] = 'LET_rings_141.map'
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
       prop['motor_offset']=None
@@ -163,16 +163,16 @@ if __name__ == "__main__":
     # Folder where map and mask files are located:
     map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/let'
     # folder where input data can be found
-    data_dir = 'd:/Data/Mantid_Testing/15_01_27/LET/noev'
+    data_dir = 'd:/Data/Mantid_Testing/15_01_27/LET/data'
     # auxiliary folder with results
-    ref_data_dir = 'd:/Data/MantidSystemTests/Data' 
+    rez_dir = 'd:/Data/Mantid_Testing/15_01_27/LET'
     # Set input search path to values, specified above
-    config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
+    config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,rez_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
     # folder to save resulting spe/nxspe files.
-    config['defaultsave.directory'] = data_dir 
+    config['defaultsave.directory'] = rez_dir
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)

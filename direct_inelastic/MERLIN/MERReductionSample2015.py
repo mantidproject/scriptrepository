@@ -182,7 +182,6 @@ if __name__ == "__main__":
     # set up advanced and main properties
     rd.def_advanced_properties()
     rd.def_main_properties()
-
 #### uncomment rows below to generate web variables and save then to transfer to   ###
     ## web services.
     run_dir = os.path.dirname(os.path.realpath(__file__))
