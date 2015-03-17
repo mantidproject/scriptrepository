@@ -121,7 +121,7 @@ class ReduceMARIFromFile(ReductionWrapper):
 #-------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
-def main(input_file=None,output_directory=None):
+def main(input_file=None,output_dir=None):
     """ This method is used to run code from web service
         and should not be touched except changing the name of the
         particular ReductionWrapper class (e.g. ReduceMARI here)
@@ -133,7 +133,7 @@ def main(input_file=None,output_directory=None):
     """
     # note web variables initialization
     rd = ReduceMARIFromFile(web_var)
-    rd.reduce(input_file,output_directory)
+    rd.reduce(input_file,output_dir)
     # change to the name of the folder to save data to
     return ''
 
