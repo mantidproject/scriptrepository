@@ -1,5 +1,5 @@
 #pylint: disable=invalid-name
-import os
+import os,sys
 #os.environ["PATH"] =\
 #r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
 sys.path.insert(0, "/opt/mantidnightly/bin")
@@ -23,23 +23,23 @@ class ReduceMARIFromFile(ReductionWrapper):
         # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
-        prop['incident_energy'] = 12
-        prop['energy_bins'] = [-11,0.05,11]
+        prop['incident_energy'] = 10
+        prop['energy_bins'] = [-11,0.05,9]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] = 11001
-        prop['wb_run'] = 11060
+        prop['sample_run'] = 19683
+        prop['wb_run'] = 19585
 
         #
         prop['sum_runs'] = False # set to true to sum everything provided to sample_run
         #                        # list
         # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-        prop['monovan_run'] = 11015
+        prop['monovan_run'] = 19628
         prop['sample_mass'] = 10
-        prop['sample_rmm'] = 435.96
+        prop['sample_rmm'] = 10
         return prop
 
     @AdvancedProperties
@@ -53,11 +53,12 @@ class ReduceMARIFromFile(ReductionWrapper):
            to work properly
         """
         prop = {}
-        prop['map_file'] = "mari_res.map"
-        prop['monovan_mapfile'] = "mari_res.map"
+        prop['map_file'] = "mari_res2013.map"
+        prop['monovan_mapfile'] = "mari_res2013.map"
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        prop['hard_mask_file'] = "mar11015.msk"
-        prop['det_cal_file'] = 11060
+        prop['hard_mask_file'] = "mari_mask2014.msk"
+        prop['det_cal_file'] = 19585
+        prop['save_format'] = 'nxs'
         #
         #prop['wb_integr_range'] = [2,10]         
         #prop['data_file_ext']='.nxs' # if two input files with the same name and
@@ -67,7 +68,7 @@ class ReduceMARIFromFile(ReductionWrapper):
         prop['load_monitors_with_workspace'] = True
         # change this to correct value and verify that motor_log_names refers correct and existing 
         # log name for crystal rotation to write correct psi value into nxspe files
-        prop['motor_offset']=None     
+        prop['motor_offset']=None
         return prop
       #
     @iliad
@@ -121,7 +122,7 @@ class ReduceMARIFromFile(ReductionWrapper):
 #-------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
-def main(input_file=None,output_directory=None):
+def main(input_file=None,output_dir=None):
     """ This method is used to run code from web service
         and should not be touched except changing the name of the
         particular ReductionWrapper class (e.g. ReduceMARI here)
@@ -133,7 +134,7 @@ def main(input_file=None,output_directory=None):
     """
     # note web variables initialization
     rd = ReduceMARIFromFile(web_var)
-    rd.reduce(input_file,output_directory)
+    rd.reduce(input_file,output_dir)
     # change to the name of the folder to save data to
     return ''
 
@@ -145,9 +146,12 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/maps'
+    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/mari'
     # folder where input data can be found
-    #data_dir = 'd:/Data/Mantid_Testing/15_01_27/autoreduce_maps'
+    #data_dir = r'\\isis\inst$\NDXMARI\Instrument\data\cycle_14_2'
+    #config.appendDataSearchDir(map_mask_dir)
+    #config.appendDataSearchDir(data_dir)
+
     #root=os.path.dirname(os.path.realpath(__file__))
     #data_dir = os.path.join(root,r'data')
 
