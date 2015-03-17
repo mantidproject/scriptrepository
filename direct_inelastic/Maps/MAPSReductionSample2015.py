@@ -1,10 +1,10 @@
 """ Sample MAPS reduction script """ 
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
-import os,sys
-#os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
-sys.path.insert(0, "/opt/mantidnightly/bin") 
-from mantid import *
+import os
+#os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+\
+#                     os.environ["PATH"]
+#
 from Direct.ReductionWrapper import *
 # necessary for web services to work.  Will go with factory implemented
 try:
@@ -22,11 +22,11 @@ class ReduceMAPS(ReductionWrapper):
        prop = {}
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
-       # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
+	   # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 450
        prop['energy_bins'] = [-50,2.5,425]
-       #
+	   #
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
@@ -66,15 +66,12 @@ class ReduceMAPS(ReductionWrapper):
       prop['wb_integr_range'] = [20,100] 
       
       #prop['det_cal_file'] = "11060" what about calibration?
-      prop['save_format'] = 'nxs'
+      prop['save_format'] = 'nxspe'
       #prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
       # there is currently bug in loadISISnexus, not loading monitors properly.
       #  When it fixed,  the value of this parameter will be irrelevant
       prop['load_monitors_with_workspace'] = True
-      # change this to correct value and verify that motor_log_names refers correct and existing 
-      # log name for crystal rotation to write correct psi value into nxspe files
-      prop['motor_offset']=None
       return prop
       #
 #------------------------------------------------------------------------------------#
@@ -117,7 +114,7 @@ class ReduceMAPS(ReductionWrapper):
           """ 
           # Note -- properties have the same names  as the list of advanced and 
           # main properties
-          ei = prop_man.incident_energy
+          ei = round(prop_man.incident_energy)
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
@@ -137,7 +134,7 @@ class ReduceMAPS(ReductionWrapper):
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
-def main(input_file=None,output_dir=None):
+def main(input_file=None,output_directory=None):
     """ This method is used to run code from web service
         and should not be touched unless you change the name of the
         particular ReductionWrapper class (e.g. ReduceMAPS here)
@@ -146,7 +143,7 @@ def main(input_file=None,output_dir=None):
     """
     # note web variables initialization
     rd = ReduceMAPS(web_var)
-    rd.reduce(input_file,output_dir)
+    rd.reduce(input_file,output_directory)
     
     # Define folder for web service to copy results to
     output_folder = ''
