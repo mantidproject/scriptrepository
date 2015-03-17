@@ -80,7 +80,6 @@ class ReduceMARIFromFile(ReductionWrapper):
 
         outWS = ReductionWrapper.reduce(self,input_file,output_directory)
         #SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
-        # Does the possibility to return PATH where to copy from web-services exist?
         return outWS
 
     def validate_result(self,build_validation=False):
@@ -188,12 +187,12 @@ if __name__ == "__main__":
     # of workspace pointers.
     #red_ws = rd.run_reduction()
     # usual way to go is to reduce workspace and save it internally
-    #rd.run_reduction()
+    rd.run_reduction()
 
 
 #### Validate reduction result against known result, obtained earlier  ###
-    rez,mess=rd.validate_result()
-    if not rez:
-       raise RuntimeError("validation failed with error: {0}".format(mess))
-    else:
-       print "ALL Fine"
+#    rez,mess=rd.validate_result()
+#   if not rez:
+#       raise RuntimeError("validation failed with error: {0}".format(mess))
+#   else:
+#       print "ALL Fine"
