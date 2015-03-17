@@ -134,7 +134,7 @@ class ReduceMAPS(ReductionWrapper):
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------#
-def main(input_file=None,output_directory=None):
+def main(input_file=None,output_dir=None):
     """ This method is used to run code from web service
         and should not be touched unless you change the name of the
         particular ReductionWrapper class (e.g. ReduceMAPS here)
@@ -143,7 +143,7 @@ def main(input_file=None,output_directory=None):
     """
     # note web variables initialization
     rd = ReduceMAPS(web_var)
-    rd.reduce(input_file,output_directory)
+    rd.reduce(input_file,output_dir)
     
     # Define folder for web service to copy results to
     output_folder = ''
