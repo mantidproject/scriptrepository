@@ -66,7 +66,7 @@ class ReduceMAPS(ReductionWrapper):
       prop['wb_integr_range'] = [20,100] 
       
       #prop['det_cal_file'] = "11060" what about calibration?
-      prop['save_format'] = 'nxspe'
+      prop['save_format'] = 'nxspe' # nxs or spe
       #prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
       # there is currently bug in loadISISnexus, not loading monitors properly.
@@ -114,7 +114,7 @@ class ReduceMAPS(ReductionWrapper):
           """ 
           # Note -- properties have the same names  as the list of advanced and 
           # main properties
-          ei = round(prop_man.incident_energy)
+          ei = prop_man.incident_energy
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
@@ -157,18 +157,18 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/maps'
+    map_mask_dir = '/usr/local/mprogs/Libisis/InstrumentFiles/maps'
     # folder where input data can be found
-    data_dir = 'd:/Data/Mantid_Testing/15_01_27/autoreduce_maps'
+    data_dir = '/home/maps/maps_data'
     # auxiliary folder with results
-    ref_data_dir = 'd:/Data/MantidSystemTests/SystemTests/AnalysisTests/ReferenceResults' 
+    ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
     # Set input search path to values, specified above
     config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
     # folder to save resulting spe/nxspe files.
-    config['defaultsave.directory'] = data_dir 
+    config['defaultsave.directory'] = '/home/maps/maps_users/Ewings/HoraceWorkshop/Fe_data/' #data_dir 
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
