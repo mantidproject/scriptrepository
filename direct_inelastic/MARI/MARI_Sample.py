@@ -1,7 +1,7 @@
 #pylint: disable=invalid-name
 import os,sys
-#os.environ["PATH"] =\
-#r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
+os.environ["PATH"] =\
+r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
 sys.path.insert(0, "/opt/mantidnightly/bin")
 
 """ Sample MARI reduction scrip used in testing ReductionWrapper """
@@ -101,19 +101,19 @@ class ReduceMARIFromFile(ReductionWrapper):
             """
             # Note -- properties have the same names as the list of advanced and
             # main properties
-            ei = prop_man.incident_energy
+            ei = PropertyManager.incident_energy.get_current()
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
-            name = "RUN{0}atEi{1:<4.1f}meV_One2One".format(run_num ,ei)
+            name = "RUN{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
             return name
 
         # Uncomment this to use custom filename function
         # Note: the properties are stored in prop_man class accessed as
         # below.
-        #return custom_name(self.reducer.prop_man)
+        return custom_name(self.reducer.prop_man)
         # use this method to use standard file name generating function
-        return None
+        #return None
 
 
     def __init__(self,web_var=None):
@@ -146,18 +146,18 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/mari'
+    map_mask_dir = '/usr/local/mprogs/InstrumentFiles/maps'
     # folder where input data can be found
-    #data_dir = r'\\isis\inst$\NDXMARI\Instrument\data\cycle_14_2'
-    #config.appendDataSearchDir(map_mask_dir)
-    #config.appendDataSearchDir(data_dir)
+    data_dir = r'\\isis\inst$\NDXMARI\Instrument\data\cycle_14_2'
+    config.appendDataSearchDir(map_mask_dir)
+    config.appendDataSearchDir(data_dir)
 
-    #root=os.path.dirname(os.path.realpath(__file__))
-    #data_dir = os.path.join(root,r'data')
+    root=os.path.dirname(os.path.realpath(__file__))
+    data_dir = os.path.join(root,r'data')
 
-    #config.appendDataSearchDir(root)
-    #config.appendDataSearchDir(data_dir)
-    #config['defaultsave.directory']=root
+    config.appendDataSearchDir(root)
+    config.appendDataSearchDir(data_dir)
+    config['defaultsave.directory']=root
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
     rd = ReduceMARIFromFile()
