@@ -120,11 +120,11 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
           """ 
           # Note -- properties have the same names  as the list of advanced and 
           # main properties
-          ei = prop_man.incident_energy
+          ei = PropertyManager.incident_energy.get_current()
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
-          name = "RUN{0}atEi{1:<4.1f}meV_One2One".format(run_num ,ei)
+          name = "RUN{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
           return name
        
       # Uncomment this to use custom filename function
@@ -163,18 +163,18 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/merlin'
+    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/merlin'
     # folder where input data can be found
-    data_dir = 'd:/Data/Mantid_Testing/15_01_27/merlin'
+    #data_dir = 'd:/Data/Mantid_Testing/15_01_27/merlin'
     # auxiliary folder with results
-    ref_data_dir = 'd:/Data/MantidSystemTests/Data' 
+    #ref_data_dir = 'd:/Data/MantidSystemTests/Data' 
     # Set input search path to values, specified above
-    config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
+    #config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
     # folder to save resulting spe/nxspe files.
-    config['defaultsave.directory'] = data_dir 
+    #config['defaultsave.directory'] = data_dir 
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
