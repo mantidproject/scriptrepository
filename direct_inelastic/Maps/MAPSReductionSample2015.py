@@ -22,11 +22,11 @@ class ReduceMAPS(ReductionWrapper):
        prop = {}
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
-	   # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
+       # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
        prop['incident_energy'] = 450
        prop['energy_bins'] = [-50,2.5,425]
-	   #
+
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
@@ -114,11 +114,11 @@ class ReduceMAPS(ReductionWrapper):
           """ 
           # Note -- properties have the same names  as the list of advanced and 
           # main properties
-          ei = prop_man.incident_energy
+          ei = PropertyManager.incident_energy.get_current()
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
-          name = "RUN{0}atEi{1:<4.1f}meV_One2One".format(run_num ,ei)
+          name = "RUN{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
           return name
        
       # Uncomment this to use custom filename function
@@ -161,9 +161,9 @@ if __name__ == "__main__":
     # folder where input data can be found
     data_dir = '/home/maps/maps_data'
     # auxiliary folder with results
-    ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
+    #ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
     # Set input search path to values, specified above
-    config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,map_mask_dir,ref_data_dir))
+    config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
