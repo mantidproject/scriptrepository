@@ -492,17 +492,23 @@ def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,do
 		DeleteWorkspace(i+"2dnorm")
 		DeleteWorkspace(i+"2dpol")
 		DeleteWorkspace(i+"2dSESANS")
-		DeleteWorkspace(i+"2dSESANS_P")
 		DeleteWorkspace(i+"norm")
 		DeleteWorkspace(i+"pol")
-		DeleteWorkspace(i+"SESANS_P")
 		DeleteWorkspace(i+"det")
+		if lnPOverLam == "2":
+			DeleteWorkspace(i+"2dSESANS_P")
+			DeleteWorkspace(i+"SESANS_P")
 	elif (diagnostics.upper() == "BASIC"):
 		DeleteWorkspace(i+"pol")
 		DeleteWorkspace(i+"2dpol")
 		DeleteWorkspace(i+"det")
 		DeleteWorkspace(i+"2ddet")
 		DeleteWorkspace(i+"2dnorm")
+		DeleteWorkspace(i+"norm")
+	elif (diagnostics.upper() == "VIEW2D"):
+		DeleteWorkspace(i+"pol")
+		DeleteWorkspace(i+"det")
+		DeleteWorkspace(i+"2ddet")
 		DeleteWorkspace(i+"norm")
 	else:
 		pass
