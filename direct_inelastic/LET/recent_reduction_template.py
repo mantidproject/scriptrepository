@@ -117,7 +117,7 @@ class ReduceLET_MultiRep2015(ReductionWrapper):
           """ 
           # Note -- properties have the same names  as the list of advanced and 
           # main properties
-          ei = prop_man.incident_energy
+          ei = PropertyManager.incident_energy.get_current()
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
