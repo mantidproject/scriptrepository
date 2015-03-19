@@ -120,11 +120,11 @@ class ReduceMER_MultiRep2015(ReductionWrapper):
           """ 
           # Note -- properties have the same names  as the list of advanced and 
           # main properties
-          ei = prop_man.incident_energy
+          ei = PropertyManager.incident_energy.get_current()
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
-          name = "RUN{0}atEi{1:<4.1f}meV_One2One".format(run_num ,ei)
+          name = "RUN{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
           return name
        
       # Uncomment this to use custom filename function
