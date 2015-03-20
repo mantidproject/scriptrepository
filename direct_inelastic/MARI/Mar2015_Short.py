@@ -1,7 +1,7 @@
 import os
 #os.environ["PATH"] =\
 #r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
-""" Sample MARI reduction scrip used in testing ReductionWrapper No Web)""" 
+""" Sample MARI reduction script used  only locally)""" 
 from Direct.ReductionWrapper import *
 
 class ReduceMARIFromFile(ReductionWrapper):
@@ -9,7 +9,7 @@ class ReduceMARIFromFile(ReductionWrapper):
     def def_main_properties(self):
         """ Define main properties used in reduction """ 
         prop = {}
-        prop['sample_run'] = [19184]
+        prop['sample_run'] = [19184,19185]
         prop['incident_energy'] = 15
         prop['energy_bins'] = [-10,0.03,15]
 
@@ -35,7 +35,7 @@ class ReduceMARIFromFile(ReductionWrapper):
         prop['det_cal_file'] = 'MAR18622.raw'
         prop['save_format'] = 'nxspe,spe'
         #Default for MARI
-        #prop['data_file_ext']='.nxs' # if two input files with the same name and
+        #prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
         return prop
       #
@@ -54,13 +54,14 @@ class ReduceMARIFromFile(ReductionWrapper):
 #-------------------------------------------------------------------------------------------------#
 
 if __name__ == "__main__":
+    #data_dir = r'd:\Data\Mantid_Testing\15_03_01\data'
+    #output_dir = r'd:\Data\Mantid_Testing\15_03_01'
+    #config.setDataSearchDirs('{0};{1}'.format(data_dir,maps_dir,output_dir))
+    maps_dir = r'/usr/local/mprogs/InstrumentFiles/mari'
+    config.appendDataSearchDir(maps_dir)
 
-    maps_dir = r'c:\Users\wkc26243\Documents\work\InstrumentFiles\mari'
-    data_dir = r'd:\Data\Mantid_Testing\15_03_01\data'
-    output_dir = r'd:\Data\Mantid_Testing\15_03_01'
-    config.setDataSearchDirs('{0};{1};{2}'.format(data_dir,maps_dir,output_dir))
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
-    config['defaultsave.directory'] = output_dir  # folder to save resulting spe/nxspe files.  Defaults are in
+    #config['defaultsave.directory'] = output_dir  # folder to save resulting spe/nxspe files.  Defaults are in
 
     # execute stuff from Mantid
     rd = ReduceMARIFromFile()
