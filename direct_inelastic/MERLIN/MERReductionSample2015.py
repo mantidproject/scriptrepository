@@ -163,7 +163,8 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/merlin'
+    map_mask_dir = '/usr/local/mprogs/InstrumentFiles/merlin'
+    config.appendDataSearchDir(map_mask_dir)
     # folder where input data can be found
     #data_dir = 'd:/Data/Mantid_Testing/15_01_27/merlin'
     # auxiliary folder with results
