@@ -38,8 +38,8 @@ class ReduceMARIFromFile(ReductionWrapper):
         #                        # list
         # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
         prop['monovan_run'] = 19628
-        prop['sample_mass'] = 10
-        prop['sample_rmm'] = 10
+        #prop['sample_mass'] = 10
+        #prop['sample_rmm'] = 10
         return prop
 
     @AdvancedProperties
@@ -90,9 +90,10 @@ class ReduceMARIFromFile(ReductionWrapper):
         return rez,message
 
     def set_custom_output_filename(self):
-        """ define custom name of output files if standard one is not satisfactory
-          In addition to that, example of accessing reduction properties
-          Changing them if necessary
+        """define custom name of output files if standard one is not satisfactory
+        
+          In addition to that, example of accessing complex reduction properties
+          Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
         """
         def custom_name(prop_man):
             """Sample function which builds filename from
