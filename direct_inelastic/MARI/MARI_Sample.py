@@ -2,17 +2,12 @@
 import os,sys
 #os.environ["PATH"] =\
 #r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
-#sys.path.insert(0, "/opt/mantidnightly/bin")
 
 """ Sample MARI reduction scrip used in testing ReductionWrapper """
+from mantid import *
 from Direct.ReductionWrapper import *
-try:
-    import reduce_vars as web_var
-except:
-    web_var = None
 
-
-class ReduceMARIFromFile(ReductionWrapper):
+class MARIReduction(ReductionWrapper):
     @MainProperties
     def def_main_properties(self):
         """Define main properties used in reduction. These are the property
@@ -120,24 +115,6 @@ class ReduceMARIFromFile(ReductionWrapper):
     def __init__(self,web_var=None):
         """ sets properties defaults for the instrument with Name"""
         ReductionWrapper.__init__(self,'MAR',web_var)
-#-------------------------------------------------------------------------------------------------#
-#-------------------------------------------------------------------------------------------------#
-#-------------------------------------------------------------------------------------------------#
-def main(input_file=None,output_dir=None):
-    """ This method is used to run code from web service
-        and should not be touched except changing the name of the
-        particular ReductionWrapper class (e.g. ReduceMARI here)
-
-        You can also change the output folder to save data to
-        where web services will copy data
-
-        This method will go when web service implements proper factory
-    """
-    # note web variables initialization
-    rd = ReduceMARIFromFile(web_var)
-    rd.reduce(input_file,output_dir)
-    # change to the name of the folder to save data to
-    return ''
 
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
@@ -161,7 +138,7 @@ if __name__ == "__main__":
     #config['defaultsave.directory']=root
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
-    rd = ReduceMARIFromFile()
+    rd = MARIReduction()
     rd.def_advanced_properties()
     rd.def_main_properties()
 
