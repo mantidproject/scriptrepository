@@ -1,18 +1,14 @@
 #pylint: disable=invalid-name
-import os
+import os,sys
 #os.environ["PATH"] =\
 #r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
-sys.path.insert(0, "/opt/mantidnightly/bin")
+#sys.path.insert(0, "/opt/mantidnightly/bin")
 
 """ Sample MARI reduction scrip used in testing ReductionWrapper """
+from mantid import *
 from Direct.ReductionWrapper import *
-try:
-    import reduce_vars as web_var
-except:
-    web_var = None
 
-
-class ReduceMARIFromFile(ReductionWrapper):
+class MARIReduction(ReductionWrapper):
     @MainProperties
     def def_main_properties(self):
         """Define main properties used in reduction. These are the property
@@ -23,23 +19,23 @@ class ReduceMARIFromFile(ReductionWrapper):
         # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
-        prop['incident_energy'] = 12
-        prop['energy_bins'] = [-11,0.05,11]
+        prop['incident_energy'] = 10
+        prop['energy_bins'] = [-11,0.05,9]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] = 11001
-        prop['wb_run'] = 11060
+        prop['sample_run'] = 19683
+        prop['wb_run'] = 19585
 
         #
         prop['sum_runs'] = False # set to true to sum everything provided to sample_run
         #                        # list
         # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-        prop['monovan_run'] = 11015
-        prop['sample_mass'] = 10
-        prop['sample_rmm'] = 435.96
+        prop['monovan_run'] = 19628
+        #prop['sample_mass'] = 10
+        #prop['sample_rmm'] = 10
         return prop
 
     @AdvancedProperties
@@ -53,11 +49,12 @@ class ReduceMARIFromFile(ReductionWrapper):
            to work properly
         """
         prop = {}
-        prop['map_file'] = "mari_res.map"
-        prop['monovan_mapfile'] = "mari_res.map"
+        prop['map_file'] = "mari_res2013.map"
+        prop['monovan_mapfile'] = "mari_res2013.map"
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        prop['hard_mask_file'] = "mar11015.msk"
-        prop['det_cal_file'] = 11060
+        prop['hard_mask_file'] = "mari_mask2014.msk"
+        prop['det_cal_file'] = 19585
+        prop['save_format'] = 'nxspe'
         #
         #prop['wb_integr_range'] = [2,10]         
         #prop['data_file_ext']='.nxs' # if two input files with the same name and
@@ -67,7 +64,7 @@ class ReduceMARIFromFile(ReductionWrapper):
         prop['load_monitors_with_workspace'] = True
         # change this to correct value and verify that motor_log_names refers correct and existing 
         # log name for crystal rotation to write correct psi value into nxspe files
-        prop['motor_offset']=None     
+        prop['motor_offset']=None
         return prop
       #
     @iliad
@@ -89,9 +86,10 @@ class ReduceMARIFromFile(ReductionWrapper):
         return rez,message
 
     def set_custom_output_filename(self):
-        """ define custom name of output files if standard one is not satisfactory
-          In addition to that, example of accessing reduction properties
-          Changing them if necessary
+        """define custom name of output files if standard one is not satisfactory
+        
+          In addition to that, example of accessing complex reduction properties
+          Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
         """
         def custom_name(prop_man):
             """Sample function which builds filename from
@@ -104,38 +102,20 @@ class ReduceMARIFromFile(ReductionWrapper):
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
-            name = "RUN{0}atEi{1:<4.1f}meV_One2One".format(run_num ,ei)
+            name = "MAR{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
             return name
 
         # Uncomment this to use custom filename function
         # Note: the properties are stored in prop_man class accessed as
         # below.
-        #return lambda custom_name(self.reducer.prop_man)
+        return lambda : custom_name(self.reducer.prop_man)
         # use this method to use standard file name generating function
-        return None
+        #return None
 
 
     def __init__(self,web_var=None):
         """ sets properties defaults for the instrument with Name"""
         ReductionWrapper.__init__(self,'MAR',web_var)
-#-------------------------------------------------------------------------------------------------#
-#-------------------------------------------------------------------------------------------------#
-#-------------------------------------------------------------------------------------------------#
-def main(input_file=None,output_dir=None):
-    """ This method is used to run code from web service
-        and should not be touched except changing the name of the
-        particular ReductionWrapper class (e.g. ReduceMARI here)
-
-        You can also change the output folder to save data to
-        where web services will copy data
-
-        This method will go when web service implements proper factory
-    """
-    # note web variables initialization
-    rd = ReduceMARIFromFile(web_var)
-    rd.reduce(input_file,output_dir)
-    # change to the name of the folder to save data to
-    return ''
 
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
@@ -145,10 +125,13 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    #map_mask_dir = 'c:/Users/wkc26243/Documents/work/Libisis/InstrumentFiles/maps'
+    map_mask_dir = '/usr/local/mprogs/InstrumentFiles/maps'
     # folder where input data can be found
-    #data_dir = 'd:/Data/Mantid_Testing/15_01_27/autoreduce_maps'
-    #root=os.path.dirname(os.path.realpath(__file__))
+    #data_dir = r'\\isis\inst$\NDXMARI\Instrument\data\cycle_14_2'
+    config.appendDataSearchDir(map_mask_dir)
+    #config.appendDataSearchDir(data_dir)
+
+    root=os.path.dirname(os.path.realpath(__file__))
     #data_dir = os.path.join(root,r'data')
 
     #config.appendDataSearchDir(root)
@@ -156,7 +139,7 @@ if __name__ == "__main__":
     #config['defaultsave.directory']=root
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
-    rd = ReduceMARIFromFile()
+    rd = MARIReduction()
     rd.def_advanced_properties()
     rd.def_main_properties()
 
