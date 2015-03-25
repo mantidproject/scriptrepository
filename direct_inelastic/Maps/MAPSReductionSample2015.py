@@ -5,14 +5,10 @@ import os
 #os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+\
 #                     os.environ["PATH"]
 #
+from mantid import *
 from Direct.ReductionWrapper import *
-# necessary for web services to work.  Will go with factory implemented
-try:
-    import reduce_vars as web_var
-except:
-    web_var = None
 
-class ReduceMAPS(ReductionWrapper):
+class MAPSReduction(ReductionWrapper):
 #------------------------------------------------------------------------------------#
    @MainProperties	
    def def_main_properties(self):
@@ -131,23 +127,6 @@ class ReduceMAPS(ReductionWrapper):
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MAP',web_var)
-#------------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------------#
-def main(input_file=None,output_dir=None):
-    """ This method is used to run code from web service
-        and should not be touched unless you change the name of the
-        particular ReductionWrapper class (e.g. ReduceMAPS here)
-
-        exception to change the output folder to save data to
-    """
-    # note web variables initialization
-    rd = ReduceMAPS(web_var)
-    rd.reduce(input_file,output_dir)
-    
-    # Define folder for web service to copy results to
-    output_folder = ''
-    return output_folder
 
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
@@ -172,7 +151,7 @@ if __name__ == "__main__":
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
-    rd = ReduceMAPS()
+    rd = MAPSReduction()
     # set up advanced and main properties
     rd.def_advanced_properties()
     rd.def_main_properties()
