@@ -7,8 +7,8 @@ from PyQt4 import QtCore, uic,QtGui
 from mantid.simpleapi import *
 #from DirectEnergyConversion import *
 import time as time
-from mantidplotpy import *
-import dgreduce
+#from mantidplotpy import *
+#import dgreduce
 import inspect
 import numpy
 from mantidplot import *
