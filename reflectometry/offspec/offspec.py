@@ -28,13 +28,16 @@ def addRuns(runlist,wname):
     ##fname=str.replace(fname,'.nxs','.raw')
     #Load(fname,output)
 	# Try loading the data, if it is event mode then splice the monitors onto detector data set.
-	Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors=True)
+	Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors="1")
 	if isinstance(mtd[output],IEventWorkspace):
 		Rebin(output,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb')
 		Rebin(output+'_monitors','5.0,20.0,100000.0',OutputWorkspace=output+'monreb')
 		ConjoinWorkspaces(output+'monreb',output+'reb',CheckOverlapping=False)
 		RenameWorkspace(output+'monreb',OutputWorkspace=output)
 		DeleteWorkspace(output+'_monitors')
+	else:
+		ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
+		RenameWorkspace(output+'_monitors',OutputWorkspace=output)
   else:
     #dae="ndx"+config['default.instrument'].lower()
 	# Live data doesn't return an event mode data set.. only histograms
