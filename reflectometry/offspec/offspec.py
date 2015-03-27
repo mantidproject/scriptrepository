@@ -75,8 +75,8 @@ def addRuns(runlist,wname):
 			RenameWorkspace("wtemp"+'monreb',OutputWorkspace="wtemp")
 			DeleteWorkspace('wtemp'+'_monitors')
 		else:
-			ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
-			RenameWorkspace(output+'_monitors',OutputWorkspace=output)
+			ConjoinWorkspaces('wtemp_monitors','wtemp',CheckOverlapping=False)
+			RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
