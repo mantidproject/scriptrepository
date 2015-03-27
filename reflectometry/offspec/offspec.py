@@ -67,13 +67,16 @@ def addRuns(runlist,wname):
         #fname=fname.lower()
         ##fname=str.replace(fname,'.nxs','.raw')
         #Load(fname,"wtemp")
-		Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors=True)
+		Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors="1")
 		if isinstance(mtd["wtemp"],IEventWorkspace):
 			Rebin("wtemp",'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb')
 			Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
 			ConjoinWorkspaces("wtemp"+'monreb',"wtemp"+'reb',CheckOverlapping=False)
 			RenameWorkspace("wtemp"+'monreb',OutputWorkspace="wtemp")
 			DeleteWorkspace('wtemp'+'_monitors')
+		else:
+			ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
+			RenameWorkspace(output+'_monitors',OutputWorkspace=output)
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
