@@ -81,8 +81,8 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1):
 		RenameWorkspace('addedmonreb',OutputWorkspace='added')
 		DeleteWorkspace('added_monitors')
 	else:
-		ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
-		RenameWorkspace(output+'_monitors',OutputWorkspace=output)
+		ConjoinWorkspaces('added_monitors','added',CheckOverlapping=False)
+		RenameWorkspace('added_monitors',OutputWorkspace='added')
 
 	
 	if(len(runlist)>1):
