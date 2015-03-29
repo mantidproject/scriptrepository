@@ -94,9 +94,9 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1):
 				ConjoinWorkspaces('wtempmonreb','wtempreb',CheckOverlapping=False)
 				RenameWorkspace('wtempmonreb',OutputWorkspace='wtemp')
 				DeleteWorkspace('wtemp_monitors')
-            else:
-                ConjoinWorkspaces('wtemp_monitors','wtemp',CheckOverlapping=False)
-                RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')
+			else:
+				ConjoinWorkspaces('wtemp_monitors','wtemp',CheckOverlapping=False)
+				RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')
             
 			#print "          uampHr = ", wtemp.getRun().getProtonCharge()
 			Plus('added','wtemp',OutputWorkspace='added')
