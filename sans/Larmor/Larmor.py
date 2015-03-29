@@ -80,6 +80,10 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1):
 		ConjoinWorkspaces('addedmonreb','addedreb',CheckOverlapping=False)
 		RenameWorkspace('addedmonreb',OutputWorkspace='added')
 		DeleteWorkspace('added_monitors')
+	else:
+		ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
+		RenameWorkspace(output+'_monitors',OutputWorkspace=output)
+
 	
 	if(len(runlist)>1):
 		for i in range(1,len(runlist)):
@@ -90,6 +94,10 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1):
 				ConjoinWorkspaces('wtempmonreb','wtempreb',CheckOverlapping=False)
 				RenameWorkspace('wtempmonreb',OutputWorkspace='wtemp')
 				DeleteWorkspace('wtemp_monitors')
+            else:
+                ConjoinWorkspaces('wtemp_monitors','wtemp',CheckOverlapping=False)
+                RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')
+            
 			#print "          uampHr = ", wtemp.getRun().getProtonCharge()
 			Plus('added','wtemp',OutputWorkspace='added')
 		DeleteWorkspace("wtemp")
