@@ -27,7 +27,7 @@ class MERLINRecuction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(23901,23941) # 'MER23700.n001'
+       prop['sample_run'] = range(24191,24193) # 'MER23700.n001'
        prop['wb_run'] = '23684.raw'
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -54,13 +54,16 @@ class MERLINRecuction(ReductionWrapper):
       prop['map_file'] = 'one2one_143.map'
       prop['det_cal_file'] = 'det_corr_143.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = False
-      prop['norm_method']='monitor-2'
+      prop['norm_method']='current'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='MER23698.msk' # diag does not work well on MER. At present only use a hard mask RIB has created
       #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
-      prop['check_background']=False
+      prop['check_background']=True
+      #prop['ei-mon2-spec']=69641
+      #prop[fix_ei]=True
+      
 
       prop['save_format'] = 'nxspe' #nxs,nxspe'
        # if two input files with the same name and  different extension found, what to prefer. 
@@ -170,7 +173,7 @@ if __name__ == "__main__":
     #  If this file is not present and this value is 0,reduction fails 
     #  if this value >0 the reduction wait until file appears on the data 
     #  search path checking after time specified below.
-    rd.wait_for_file = 0  # waiting time interval
+    rd.wait_for_file = 1000  # waiting time interval
 
 ####get reduction parameters from properties above, override what you want locally ###
    # and run reduction. Overriding would have form:
