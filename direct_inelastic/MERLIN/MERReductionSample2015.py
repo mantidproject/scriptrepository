@@ -15,7 +15,7 @@ class MERLINRecuction(ReductionWrapper):
        """ 
        prop = {}
 
-       ei=[150,64,36] # multiple energies provided in the data file
+       ei=[50.1, 21.9,12.2] #[150,64,36] # multiple energies provided in the data file
        ebin=[-0.25,0.005,0.85]    #binning of the energy for the spe file. 
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
@@ -27,7 +27,7 @@ class MERLINRecuction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(24191,24193) # 'MER23700.n001'
+       prop['sample_run'] = 24207 #range(24191,24193) # 'MER23700.n001'
        prop['wb_run'] = '23684.raw'
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -51,7 +51,7 @@ class MERLINRecuction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'one2one_143.map'
+      prop['map_file'] = 'rings_143.map'
       prop['det_cal_file'] = 'det_corr_143.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = False
       prop['norm_method']='current'
