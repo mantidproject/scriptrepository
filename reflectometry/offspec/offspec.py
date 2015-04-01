@@ -175,9 +175,12 @@ def floodnorm(wkspName,floodfile):
 	
    flood_wksp = "ld240flood"
    if  flood_wksp not in mtd:
-	   LoadNexusProcessed(Filename=flood_file,OutputWorkspace=flood_wksp)
+	   LoadNexusProcessed(Filename=flood_file,OutputWorkspace=flood_wksp, LoadHistory=False, FastMultiPeriod=False)
 
+   CloneWorkspace(flood_wksp,'floodreb')
+   RebinToWorkspace('floodreb',wkspName)
    Divide(LHSWorkspace=wkspName, RHSWorkspace=flood_wksp, OutputWorkspace=wkspName)
+   DeleteWorkspace('floodreb')
 #
 #===================================================================================================================
 #
