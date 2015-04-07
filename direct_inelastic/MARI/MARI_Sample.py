@@ -18,21 +18,21 @@ class MARIReduction(ReductionWrapper):
         # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
-        prop['incident_energy'] = 10
-        prop['energy_bins'] = [-11,0.05,9]
+        prop['incident_energy'] = 750
+        prop['energy_bins'] = [-100,2,740]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] = 19683
-        prop['wb_run'] = 19585
+        prop['sample_run'] = 19841
+        prop['wb_run'] = 19717
 
         #
         prop['sum_runs'] = False # set to true to sum everything provided to sample_run
         #                        # list
         # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-        prop['monovan_run'] = 19628
+        prop['monovan_run'] = None
         #prop['sample_mass'] = 10
         #prop['sample_rmm'] = 10
         return prop
@@ -51,8 +51,8 @@ class MARIReduction(ReductionWrapper):
         prop['map_file'] = "mari_res2013.map"
         prop['monovan_mapfile'] = "mari_res2013.map"
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        prop['hard_mask_file'] = "mari_mask2014.msk"
-        prop['det_cal_file'] = 19585
+        prop['hard_mask_file'] = "mari_mask2015.msk"
+        prop['det_cal_file'] = 19717
         prop['save_format'] = 'nxspe'
         #
         #prop['wb_integr_range'] = [2,10]         
@@ -124,10 +124,10 @@ if __name__ == "__main__":
     # It can be done here or from Mantid GUI:
     #      File->Manage user directory ->Browse to directory
     # Folder where map and mask files are located:
-    map_mask_dir = '/usr/local/mprogs/InstrumentFiles/maps'
+    #map_mask_dir = '/usr/local/mprogs/InstrumentFiles/maps'
     # folder where input data can be found
     #data_dir = r'\\isis\inst$\NDXMARI\Instrument\data\cycle_14_2'
-    config.appendDataSearchDir(map_mask_dir)
+    #config.appendDataSearchDir(map_mask_dir)
     #config.appendDataSearchDir(data_dir)
 
     root=os.path.dirname(os.path.realpath(__file__))
