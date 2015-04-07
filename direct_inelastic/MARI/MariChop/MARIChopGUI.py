@@ -2,8 +2,8 @@ import sys
 from MARIChopUI import Ui_MainWindow
 from PyQt4 import QtCore, uic,QtGui
 import time as time
-from mantidplotpy import *
-import dgreduce
+#from mantidplotpy import *
+#import dgreduce
 import inspect
 import numpy
 from mantidplot import *
@@ -81,7 +81,8 @@ class MainWindow(QtGui.QMainWindow):
 			eeps=range(int(eps_min),int(eps_max),1)
 			dat=list(van)
 			dat.reverse()
-			CreateWorkspace(OutputWorkspace='Energy transfer resolution at'+str(freq)+'Hz',DataX=eeps,DataY=dat,DataE=list(van*0),VerticalAxisValues="data",WorkspaceTitle='Resolution at'+str(self.ei)+'meV',UnitX='Energy Transfer [meV]',YUnitLabel='resolution [meV]')
+#			CreateWorkspace(OutputWorkspace='Energy transfer resolution at'+str(freq)+'Hz',DataX=eeps,DataY=dat,DataE=list(van*0),VerticalAxisValues="data",WorkspaceTitle='Resolution at'+str(self.ei)+'meV',UnitX='Energy Transfer [meV]',YUnitLabel='resolution [meV]')
+			CreateWorkspace(OutputWorkspace='Energy transfer resolution at'+str(freq)+'Hz',DataX=eeps,DataY=dat,DataE=list(van*0),WorkspaceTitle='Resolution at'+str(self.ei)+'meV',UnitX='Energy Transfer [meV]',YUnitLabel='resolution [meV]')
 			WkspNames.append('Energy transfer resolution at'+str(freq)+'Hz')
 			speed.append(freq)
 			incidentFlux.append(flux.item())
