@@ -28,16 +28,20 @@ def addRuns(runlist,wname):
     ##fname=str.replace(fname,'.nxs','.raw')
     #Load(fname,output)
 	# Try loading the data, if it is event mode then splice the monitors onto detector data set.
-	Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors="1")
-	if isinstance(mtd[output],IEventWorkspace):
-		Rebin(output,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb')
-		Rebin(output+'_monitors','5.0,20.0,100000.0',OutputWorkspace=output+'monreb')
-		ConjoinWorkspaces(output+'monreb',output+'reb',CheckOverlapping=False)
-		RenameWorkspace(output+'monreb',OutputWorkspace=output)
-		DeleteWorkspace(output+'_monitors')
-	else:
-		ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
-		RenameWorkspace(output+'_monitors',OutputWorkspace=output)
+	try:
+		Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors="Include")
+	except:
+		if isinstance(mtd[output],IEventWorkspace):
+			Rebin(output,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb')
+			Rebin(output+'_monitors','5.0,20.0,100000.0',OutputWorkspace=output+'monreb')
+			ConjoinWorkspaces(output+'monreb',output+'reb',CheckOverlapping=False)
+			RenameWorkspace(output+'monreb',OutputWorkspace=output)
+			DeleteWorkspace(output+'_monitors')
+		else:
+			raise Exception("Mantid data loading is broken, go find help.")
+#	else:
+#		ConjoinWorkspaces(output+'_monitors',output,CheckOverlapping=False)
+#		RenameWorkspace(output+'_monitors',OutputWorkspace=output)
   else:
     #dae="ndx"+config['default.instrument'].lower()
 	# Live data doesn't return an event mode data set.. only histograms
@@ -67,7 +71,18 @@ def addRuns(runlist,wname):
         #fname=fname.lower()
         ##fname=str.replace(fname,'.nxs','.raw')
         #Load(fname,"wtemp")
-		Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors="1")
+		try:
+			Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors="Include")
+		except:
+			if isinstance(mtd["wtemp"],IEventWorkspace):
+				Rebin("wtemp",'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb')
+				Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
+				ConjoinWorkspaces("wtemp"+'monreb',"wtemp"+'reb',CheckOverlapping=False)
+				RenameWorkspace("wtemp"+'monreb',OutputWorkspace="wtemp")
+				DeleteWorkspace('wtemp'+'_monitors')
+			else:
+				raise Exception("Mantid data loading is broken, go find help.")
+		'''Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors="1")
 		if isinstance(mtd["wtemp"],IEventWorkspace):
 			Rebin("wtemp",'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb')
 			Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
@@ -76,7 +91,7 @@ def addRuns(runlist,wname):
 			DeleteWorkspace('wtemp'+'_monitors')
 		else:
 			ConjoinWorkspaces('wtemp_monitors','wtemp',CheckOverlapping=False)
-			RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')
+			RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')'''
       else:
 		#dae="ndx"+config['default.instrument'].lower()
 		dae="ndxoffspec"
@@ -178,10 +193,14 @@ def floodnorm(wkspName,floodfile):
 	   LoadNexusProcessed(Filename=flood_file,OutputWorkspace=flood_wksp)
 	   ConvertUnits(flood_wksp,'Wavelength',OutputWorkspace=flood_wksp)
 
-   CloneWorkspace(flood_wksp,OutputWorkspace='floodreb')
-   RebinToWorkspace('floodreb',wkspName,OutputWorkspace='floodreb')
+   print flood_wksp
+   print wkspName
+   #CloneWorkspace(flood_wksp,OutputWorkspace='floodreb') #Rebin to Workspace crashed when clone workspace before, maybe it needed a fresh outputname??? njs
+   floodtemp=mtd[flood_wksp]*1.0
+   RebinToWorkspace(floodtemp,wkspName,OutputWorkspace='floodreb')
    Divide(LHSWorkspace=wkspName, RHSWorkspace='floodreb', OutputWorkspace=wkspName)
    DeleteWorkspace('floodreb')
+   DeleteWorkspace('floodtemp')
 #
 #===================================================================================================================
 #
@@ -882,6 +901,7 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
 			ReplaceSpecialValues(i+"norm","0.0","0.0","0.0","0.0",OutputWorkspace=i+"norm")
 		else:
 			CropWorkspace(InputWorkspace=i,OutputWorkspace=i+"det",StartWorkspaceIndex=4,EndWorkspaceIndex=243)
+			print i+"det"
 			floodnorm(i+"det",floodfile)
 			GroupDetectors(i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-5,int(maxSpec)-5+1),KeepUngroupedSpectra="0")
 			Divide(i+"sum",i+"mon",OutputWorkspace=i+"norm")
