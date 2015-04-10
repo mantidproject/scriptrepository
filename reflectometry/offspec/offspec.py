@@ -31,6 +31,7 @@ def addRuns(runlist,wname):
 	try:
 		Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors="Include")
 	except:
+		Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors=1)
 		if isinstance(mtd[output],IEventWorkspace):
 			Rebin(output,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb')
 			Rebin(output+'_monitors','5.0,20.0,100000.0',OutputWorkspace=output+'monreb')
@@ -74,6 +75,7 @@ def addRuns(runlist,wname):
 		try:
 			Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors="Include")
 		except:
+			Load(str(runlist[i]),OutputWorkspace="wtemp",LoadMonitors=1)
 			if isinstance(mtd["wtemp"],IEventWorkspace):
 				Rebin("wtemp",'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb')
 				Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
