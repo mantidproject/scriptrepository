@@ -5,8 +5,8 @@ import os,sys
 #os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
 from mantid import *
 from Direct.ReductionWrapper import *
-
-class MERLINRecuction(ReductionWrapper):
+# this exact name is necessary for web services to work until we implement factory
+class MERLINReduction(ReductionWrapper):
 #------------------------------------------------------------------------------------#
    @MainProperties
    def def_main_properties(self):
@@ -51,10 +51,10 @@ class MERLINRecuction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'rings_143.map'
+      prop['map_file'] = 'one2one_143.map'
       prop['det_cal_file'] = 'det_corr_143.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = False
-      prop['norm_method']='current'
+      prop['norm_method']='monitor-1'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='MER23698.msk' # diag does not work well on MER. At present only use a hard mask RIB has created
@@ -75,6 +75,11 @@ class MERLINRecuction(ReductionWrapper):
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
       prop['motor_offset']=None
+      #
+      prop['monovan_lo_frac']=-0.4
+      prop['monovan_hi_frac']= 0.4
+      #RAE added
+      prop['bleed_maxrate']=0.005
       return prop
       #
 #------------------------------------------------------------------------------------#
@@ -89,21 +94,6 @@ class MERLINRecuction(ReductionWrapper):
       #SaveNexus(ws,Filename = 'MARNewReduction.nxs')
       return ws
    #
-   def validate_result(self,build_validation=False,Error=1.e-3,ToleranceRelErr=True):
-      """ Change this method to verify different results     """
-      # here we have: 
-      #  22413                  run number with known reduction result
-      # MER22413Ei81meV_Abs.nxs workspace for run above reduced earlier and we now 
-      # validate against
-      # build_validation -- if true, build and save new workspace rather
-      #then validating the old one
-      run_dir = os.path.dirname(os.path.realpath(__file__))
-      # this row defines location of the validation file in this script folder
-      validation_file = os.path.join(run_dir,"MER22413Ei81meV_Abs.nxs")
-      rez,message = ReductionWrapper.build_or_validate_result(self,22413,
-                                     validation_file,build_validation,
-                                     Error,ToleranceRelErr)
-      return rez,message
    #
    def set_custom_output_filename(self):
       """ define custom name of output files if standard one is not satisfactory 
@@ -121,7 +111,7 @@ class MERLINRecuction(ReductionWrapper):
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
-          name = "MER{0}atEi{1:<3.2f}meV_Test1".format(run_num ,ei)
+          name = "MER{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
           return name
        
       # Uncomment this to use custom filename function
@@ -131,6 +121,13 @@ class MERLINRecuction(ReductionWrapper):
       # use this method to use standard file name generating function
       #return None
    #
+   def validation_file_place(self):
+      """Redefine this to the place, where validation file, used in conjunction with
+         'validate_run' property, located. Here it defines the place to this script folder.
+          but if this function is disabled, by default it looks for/places it 
+          in a default save directory"""
+      return os.path.split(os.path.realpath(__file__))[0]
+   
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MER',web_var)
@@ -159,7 +156,7 @@ if __name__ == "__main__":
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
-    rd = MERLINRecuction()
+    rd = MERLINReduction()
     # set up advanced and main properties
     rd.def_advanced_properties()
     rd.def_main_properties()
@@ -170,10 +167,25 @@ if __name__ == "__main__":
     rd.save_web_variables(file)
 
 #### Set up time interval (sec) for reducer to check for input data file.         ####
-    #  If this file is not present and this value is 0,reduction fails 
+    #  If data file is not present and this value is 0,reduction fails 
     #  if this value >0 the reduction wait until file appears on the data 
-    #  search path checking after time specified below.
-    rd.wait_for_file = 1000  # waiting time interval
+    #  search path checking regularly after time interval specified below.
+    rd.wait_for_file = 0  # waiting time interval (in sec)
+   
+### Define a run number to validate reduction against future changes    #############
+    # After reduction works well and all settings are done and verified, 
+    # take a run number with good reduced results and build validation
+    # for this result. 
+    # Then place the validation run together with this reduction script.
+    # Next time, the script will run reduction and compare the reduction results against
+    # the results obtained earlier.
+    #rd.validate_run_number = 21968  # Enabling this property disables normal reduction
+    # and forces reduction to reduce run specified here and compares results against
+    # validation file, processed earlier or calculate this file if run for the first time.
+    #This would ensure that reduction script have not changed,
+    #allow to identify the reason for changes if it was changed 
+    # and would allow to recover the script,used to produce initial reduction
+    #if changes are unacceptable.
 
 ####get reduction parameters from properties above, override what you want locally ###
    # and run reduction. Overriding would have form:
@@ -182,12 +194,6 @@ if __name__ == "__main__":
    # or 
    ## rd.reducer.prop_man.sum_runs = False
    # 
+    
     rd.run_reduction()
 
-#### Validate results against known result, obtained earlier -- filename defined by ##
-    # get_validation_file_name method
-#    rez,mess=rd.validate_result()
-#    if not rez:
-#      raise RuntimeError("validation failed with error: {0}".format(mess))
-#   else:
-#     print "ALL Fine" 
