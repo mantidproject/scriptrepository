@@ -27,7 +27,7 @@ class MERLINReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = 24207 #range(24191,24193) # 'MER23700.n001'
+       prop['sample_run'] = range(24003,24011) # 'MER23700.n001'
        prop['wb_run'] = '23684.raw'
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -54,13 +54,13 @@ class MERLINReduction(ReductionWrapper):
       prop['map_file'] = 'one2one_143.map'
       prop['det_cal_file'] = 'det_corr_143.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = False
-      prop['norm_method']='monitor-1'
+      prop['norm_method']='monitor-2'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='MER23698.msk' # diag does not work well on MER. At present only use a hard mask RIB has created
       #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
-      prop['check_background']=True
+      prop['check_background']=False
       #prop['ei-mon2-spec']=69641
       #prop[fix_ei]=True
       
