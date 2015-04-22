@@ -4,6 +4,7 @@ import os,sys
 #r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
 
 """ Sample MARI reduction scrip used in testing ReductionWrapper """
+from numpy import *
 from mantid import *
 from Direct.ReductionWrapper import *
 
@@ -75,7 +76,14 @@ class MARIReduction(ReductionWrapper):
         """
 
         outWS = ReductionWrapper.reduce(self,input_file,output_directory)
-        #SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
+        run_num = PropertyManager.sample_run.run_number()		
+        RenameWorkspace(outWS,OutputWorkspace='MAR{0}Reduced'.format(run_num))		
+        ei = PropertyManager.incident_energy.get_current()		
+        q_max = 1.3*sqrt(ei)		
+        q_bins = '0,'+str(q_max/100.)+','+str(q_max)		
+        SofQW3(InputWorkspace='MAR{0}Reduced'.format(run_num),OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',QAxisBinning=q_bins,Emode='Direct')
+        Transpose(InputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW')
+		#SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
         return outWS
 
     def validate_result(self,build_validation=False):
@@ -101,7 +109,7 @@ class MARIReduction(ReductionWrapper):
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
-            name = "MAR{0}atEi{1:<3.2f}meV_One2One".format(run_num ,ei)
+            name = "MAR{0}atEi{1:<3.2f}meV".format(run_num ,ei)
             return name
 
         # Uncomment this to use custom filename function
@@ -178,3 +186,5 @@ if __name__ == "__main__":
 #       raise RuntimeError("validation failed with error: {0}".format(mess))
 #   else:
 #       print "ALL Fine"
+
+
