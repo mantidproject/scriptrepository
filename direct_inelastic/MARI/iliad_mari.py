@@ -12,16 +12,16 @@ rd.def_main_properties()
 #Filename?
 rd.set_custom_output_filename()
 
-def iliad_mari(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
+def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm):
 
-    rd.reducer.prop_man.map_file='mari_res2013.map'
+    rd.reducer.prop_man.map_file="mari_res2013.map"
     rd.reducer.prop_man.hard_mask_file = "mari_mask2015.msk"
     
     rd.reducer.prop_man.incident_energy=ei
     
     rd.reducer.prop_man.sample_run = runno
     rd.reducer.prop_man.wb_run=wbvan
-    rd.reducer.prop_man.energy_bins=rebin_pars
+    rd.reducer.prop_man.energy_bins=[-ei,ei/100.,0.95*ei]
     
     if ( sam_rmm!=0 and sam_mass!=0 ) :
         abs_units=1
@@ -35,6 +35,4 @@ def iliad_mari(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm):
      
     rd.reducer.prop_man.save_file_name='mar'+str(runno)+'_ei'+str(int(round(ei)))
     rd.run_reduction()
-    wksp=mtd['ws']
-    RenameWorkspace(InputWorkspace='wksp',OutputWorkspace='mar'+str(runno)+'_ei'+str(int(round(ei))))
     
