@@ -16,7 +16,7 @@ class MERLINReduction(ReductionWrapper):
        """ 
        prop = {}
 
-       ei=[50.1, 21.9,12.2] #[150,64,36] # multiple energies provided in the data file
+       ei=[160]#[80.1, 29.6,15.2] #[150,64,36] # multiple energies provided in the data file
        ebin=[-0.25,0.005,0.85]    #binning of the energy for the spe file. 
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
@@ -28,10 +28,10 @@ class MERLINReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = 24207 #range(24191,24193) # 'MER23700.n001'
+       prop['sample_run'] = 'MER25028.s02' #range(24191,24193) # 'MER23700.n001'
        prop['wb_run'] = '23684.raw'
        #
-       prop['sum_runs'] = False # set to true to sum everything provided to sample_run
+       prop['sum_runs'] = False#True # set to true to sum everything provided to sample_run
        #                        # list
   
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
@@ -61,14 +61,14 @@ class MERLINReduction(ReductionWrapper):
       prop['hardmaskOnly']='MER23698.msk' # diag does not work well on MER. At present only use a hard mask RIB has created
       #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
-      prop['check_background']=True
+      prop['check_background']=False
       #prop['ei-mon2-spec']=69641
       #prop[fix_ei]=True
       
 
       prop['save_format'] = None #'nxspe' #nxs,nxspe'
        # if two input files with the same name and  different extension found, what to prefer. 
-      prop['data_file_ext']='.nxs' # for MER it may be choice between event and histo mode if 
+      prop['data_file_ext']='.raw' # for MER it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
       # Absolute units: map file to calculate monovan integrals                                                                      
       prop['monovan_mapfile'] = 'rings_143.map'
@@ -98,14 +98,16 @@ class MERLINReduction(ReductionWrapper):
       energies = self.reducer.prop_man.incident_energy
       for ind,res in enumerate(results):
             ei = energies[ind]
-            filename = "LET{0}_{1:<3.2f}meV.nxspe".format(run_num ,ei)
+            filename = "MER{0}_{1:<3.2f}meV.nxspe".format(run_num ,ei)
             file = os.path.join('/stagingarea',filename)
-            print 'Saving file to {0}'.format(file)
+            print 'Saving file to {0}'.format(filename)
 
-            SaveNexus(res,Filename = file)
+            RenameWorkspace(res,OutputWorkspace=filename)
+            SaveNXSPE(res,Filename = file)
             t_folder = config['defaultsave.directory']
             targ_path = os.path.join(t_folder,filename)
             shutil.move(file,targ_path)     
+            DeleteWorkspace(filename)
       return None
    #
    #
