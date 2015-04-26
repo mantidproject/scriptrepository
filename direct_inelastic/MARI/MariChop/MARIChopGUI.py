@@ -2,8 +2,8 @@ import sys
 from MARIChopUI import Ui_MainWindow
 from PyQt4 import QtCore, uic,QtGui
 import time as time
-from mantidplotpy import *
-import dgreduce
+#from mantidplotpy import *
+#import dgreduce
 import inspect
 import numpy
 from mantidplot import *
@@ -81,15 +81,15 @@ class MainWindow(QtGui.QMainWindow):
 			eeps=range(int(eps_min),int(eps_max),1)
 			dat=list(van)
 			dat.reverse()
-			CreateWorkspace(OutputWorkspace='Energy transfer resolution at'+str(freq)+'Hz',DataX=eeps,DataY=dat,DataE=list(van*0),VerticalAxisValues="data",WorkspaceTitle='Resolution at'+str(self.ei)+'meV',UnitX='Energy Transfer [meV]',YUnitLabel='resolution [meV]')
+			CreateWorkspace(OutputWorkspace='Energy transfer resolution at'+str(freq)+'Hz',DataX=eeps,DataY=dat,DataE=list(van*0),WorkspaceTitle='Resolution at'+str(self.ei)+'meV',UnitX='Energy Transfer [meV]',YUnitLabel='resolution [meV]')
 			WkspNames.append('Energy transfer resolution at'+str(freq)+'Hz')
 			speed.append(freq)
 			incidentFlux.append(flux.item())
 			percent.append((van_el/self.ei)*100)
 			
 		GroupWorkspaces(OutputWorkspace='EnergyTransfer',InputWorkspaces=WkspNames)
-		CreateWorkspace(OutputWorkspace="Resolution",DataX=speed,DataY=percent,DataE=(percent*0),VerticalAxisValues="data",WorkspaceTitle=self.chop+' chopper at '+str(self.ei)+'meV Resolution in % of'+str(self.ei)+'meV',UnitX='Chopper Frequency',YUnitLabel='Elastic line resolution % of Ei')
-		CreateWorkspace(OutputWorkspace="Flux",DataX=speed,DataY=incidentFlux,DataE=(percent*0),VerticalAxisValues="data",WorkspaceTitle='Flux for '+self.chop+' chopper at '+str(self.ei)+'meV',UnitX='Chopper Frequency',YUnitLabel='Incident Flux n/s/cm^-2')
+		CreateWorkspace(OutputWorkspace="Resolution",DataX=speed,DataY=percent,DataE=(percent*0),WorkspaceTitle=self.chop+' chopper at '+str(self.ei)+'meV Resolution in % of'+str(self.ei)+'meV',UnitX='Chopper Frequency',YUnitLabel='Elastic line resolution % of Ei')
+		CreateWorkspace(OutputWorkspace="Flux",DataX=speed,DataY=incidentFlux,DataE=(percent*0),WorkspaceTitle='Flux for '+self.chop+' chopper at '+str(self.ei)+'meV',UnitX='Chopper Frequency',YUnitLabel='Incident Flux n/s/cm^-2')
 
 def qapp():
 	if QtGui.QApplication.instance():
