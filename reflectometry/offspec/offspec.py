@@ -1151,7 +1151,13 @@ def nrPNRCorrection(UpWksp,DownWksp,calibration=0):
 		calpha=[0.957789,0.019995,-0.002697,0.000099]
 		cAp=[0.986906,-0.013945,0.002480,-0.000161]
 		cPp=[0.999517,-0.013878,0.001680,-0.000043]
-
+	elif (calibration == 4):
+	# Constants Based on Runs 19628-19656 and 19660-19670 analyser -0.1deg
+	# RF Flippers on polariser and analyser side Feb 2013
+		crho=[0.969730,0.009514,-0.000385,-0.000114]
+		calpha=[0.967523,0.010840,-0.000579,0.0000067]
+		cAp=[0.951974,-0.008976,0.002515,-0.000247]
+		cPp=[0.934684,0.011656,-0.0025,0.000]
 	Ip = mtd[UpWksp]
 	Ia = mtd[DownWksp]
 	CloneWorkspace(Ip,OutputWorkspace="PCalpha")
