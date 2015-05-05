@@ -66,40 +66,60 @@ def parseRunList(istring):
 SANS add runs from RKH
 '''
 
-def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1):
+def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1,eventbinning=0):
 	if(os.path.isdir(pathout)=='False'):
 		return
 	pfix=instrument
 	runlist=parseRunList(runlist)
+	print "runlist=",runlist
 	runlist=runlist[0]
 	Load(runlist[0],LoadMonitors='1',OutputWorkspace='added')
 	#print "          uampHr = ", added.getRun().getProtonCharge()
 	if isinstance(mtd['added'],IEventWorkspace):
-		Rebin('added','5.0,100.0,100000.0',PreserveEvents=False,OutputWorkspace='addedreb')
-		Rebin('added_monitors','5.0,100.0,100000.0',OutputWorkspace='addedmonreb')
-		ConjoinWorkspaces('addedmonreb','addedreb',CheckOverlapping=False)
-		RenameWorkspace('addedmonreb',OutputWorkspace='added')
-		DeleteWorkspace('added_monitors')
+	  if(eventbinning==1):
+	    #Rebin('added','5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace='addedreb')
+	    #Rebin('added_monitors','5.0,20.0,100000.0',OutputWorkspace='addedmonreb')
+	    #ConjoinWorkspaces('addedmonreb','addedreb',CheckOverlapping=False)
+	    #RenameWorkspace('addedmonreb',OutputWorkspace='added')
+	    #DeleteWorkspace('added_monitors')
+	    pass        
+	  else:
+	    Rebin('added','5.0,100.0,100000.0',PreserveEvents=False,OutputWorkspace='addedreb')
+	    Rebin('added_monitors','5.0,100.0,100000.0',OutputWorkspace='addedmonreb')
+	    ConjoinWorkspaces('addedmonreb','addedreb',CheckOverlapping=False)
+	    RenameWorkspace('addedmonreb',OutputWorkspace='added')
+	    DeleteWorkspace('added_monitors')
 	else:
-		ConjoinWorkspaces('added_monitors','added',CheckOverlapping=False)
-		RenameWorkspace('added_monitors',OutputWorkspace='added')
+		pass
+		#ConjoinWorkspaces('added_monitors','added',CheckOverlapping=False)
+		#RenameWorkspace('added_monitors',OutputWorkspace='added')
 
 	
 	if(len(runlist)>1):
 		for i in range(1,len(runlist)):
+			#print "adding run ",str(i)        
 			Load(runlist[i],LoadMonitors='1',OutputWorkspace='wtemp')
 			if isinstance(mtd['wtemp'],IEventWorkspace):
-				Rebin('wtemp','5.0,100.0,100000.0',PreserveEvents=False,OutputWorkspace='wtempreb')
-				Rebin('wtemp_monitors','5.0,100.0,100000.0',OutputWorkspace='wtempmonreb')
-				ConjoinWorkspaces('wtempmonreb','wtempreb',CheckOverlapping=False)
-				RenameWorkspace('wtempmonreb',OutputWorkspace='wtemp')
-				DeleteWorkspace('wtemp_monitors')
+			  if(eventbinning==1):
+			    #Rebin('wtemp','5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace='wtempreb')
+			    #Rebin('wtemp_monitors','5.0,20.0,100000.0',OutputWorkspace='wtempmonreb')
+			    #ConjoinWorkspaces('wtempmonreb','wtempreb',CheckOverlapping=False)
+			    #RenameWorkspace('wtempmonreb',OutputWorkspace='wtemp')
+			    #DeleteWorkspace('wtemp_monitors')
+			    pass
+			  else:
+			    Rebin('wtemp','5.0,100.0,100000.0',PreserveEvents=False,OutputWorkspace='wtempreb')
+			    Rebin('wtemp_monitors','5.0,100.0,100000.0',OutputWorkspace='wtempmonreb')
+			    ConjoinWorkspaces('wtempmonreb','wtempreb',CheckOverlapping=False)
+			    RenameWorkspace('wtempmonreb',OutputWorkspace='wtemp')
+			    DeleteWorkspace('wtemp_monitors')
 			else:
+				#pass
 				ConjoinWorkspaces('wtemp_monitors','wtemp',CheckOverlapping=False)
 				RenameWorkspace('wtemp_monitors',OutputWorkspace='wtemp')
-            
 			#print "          uampHr = ", wtemp.getRun().getProtonCharge()
 			Plus('added','wtemp',OutputWorkspace='added')
+			#Plus('added_monitors','wtemp_monitors',OutputWorkspace='added_monitors')
 		DeleteWorkspace("wtemp")
 	
 	if savewksp==1:
@@ -110,44 +130,72 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1):
 		print "writing file:   "+pathout+pfix+fpad+runlist[0]+"-add.nxs"
 		SaveNexusProcessed("added",pathout+pfix+fpad+runlist[0]+"-add.nxs")
 		added=mtd['added']
-		print "    total uampHr = ", added.getRun().getProtonCharge()
+		#print "    total uampHr = ", added.getRun().getProtonCharge()
+    
+	retwksp=''
 	if keepwksp==0:
-		DeleteWorkspace("added")
-		retwksp=''
+	    try:
+	        DeleteWorkspace("added")
+	        DeleteWorkspace("added_monitors")
+	    except:
+	        pass
 	else:
-		RenameWorkspace("added",OutputWorkspace=runlist[0]+'-add')
-		retwksp=runlist[0]+'-add'
+	    try:
+	        RenameWorkspace("added",OutputWorkspace=runlist[0]+'-add')
+	        RenameWorkspace("added_monitors",OutputWorkspace=runlist[0]+'_monitors-add')
+	        retwksp=[runlist[0]+'-add',runlist[0]+'_monitors-add']
+	    except:
+	        pass
 	return retwksp
 
-def larmor1D(rsample,rcan,tsample,tdb,tcan,maskfile,wkspname,lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,diagnostics=0):
+def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,diagnostics=0,periods=[-1,-1,-1,-1,-1,-1]):
+    '''
+    periods array is defined in order sample sans, can sans, sample trans, sample db, can trans, can db
+    if tdbcan is not defined then tdb is used
+    '''
     LARMOR()
     #Set reduction to 1D (note that if this is left out, 1D is the default)
     Set1D()
     MaskFile(maskfile)
     # Assign run numbers (.nxs for nexus)
-    AssignSample(rsample+'.nxs')
+    if(periods[0]>0):
+        AssignSample(rsample+'.nxs',period=periods[0])
+    else:
+        AssignSample(rsample+'.nxs')
     a1=rsample.split('-')
     sroot=a1[0]
     if(setthickness!=0):
         ReductionSingleton().get_sample().geometry.thickness=thickness
     if(len(rcan)>0):
-        AssignCan(rcan+'.nxs')
+        if(periods[1]>0):
+            AssignCan(rcan+'.nxs',period=periods[1])
+        else:
+            AssignCan(rcan+'.nxs')
         a1=rcan.split('-')
         croot=a1[0]
     TransFit('Off',lambdamin=lmin,lambdamax=lmax)
     if(len(tsample)>0):
-        TransmissionSample(tsample+'.nxs', tdb+'.nxs')
+        TransmissionSample(tsample+'.nxs', tdb+'.nxs',period_t=periods[2],period_d=periods[3])
         a1=tsample.split('-')
         tsroot=a1[0]
         a1=tdb.split('-')
         tdbroot=a1[0]
     if(len(tcan)>0):
-        TransmissionCan(tcan+'.nxs', tdb+'.nxs')
+        if(len(tdbcan)>0):
+            TransmissionCan(tcan+'.nxs', tdbcan+'.nxs',period_t=periods[4],period_d=periods[5])
+        else:
+            TransmissionCan(tcan+'.nxs', tdb+'.nxs',period_t=periods[4],period_d=periods[5])
         a1=tdb.split('-')
         tdbroot=a1[0]
         a1=tcan.split('-')
         tcroot=a1[0]
     reduced = WavRangeReduction(lmin, lmax, False)
+    if(periods[0]>0):
+        sroot=sroot+'p'+str(periods[0])
+        croot=croot+'p'+str(periods[0])
+        tsroot=tsroot+'p'+str(periods[0])
+        tcroot=tsroot+'p'+str(periods[0])
+        tdbroot=tsroot+'p'+str(periods[0])
     if(len(wkspname) > 0):
         RenameWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax),OutputWorkspace=wkspname)
     if(diagnostics==0):
@@ -165,17 +213,19 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,maskfile,wkspname,lmin=0.9,lmax=12.5,
             except:
                 pass
             
-def calibrateTubes(wkspName,calibrationfile='Vanadium_tube_calib_1to1_30062014.nxs'):
+def calibrateTubes(wkspName,calibrationfile='8tubeCalibration_25-03-2015_r2284-2296.nxs'):
    #
    # pixel by pixel efficiency correction for the linear detector
    #
-   flood_wksp = "Vanadium_tube_calib_1to1_30062014"
+   
+   flood_wksp = "8tubeCalibration_25-03-2015_r2284-2296"
    if  flood_wksp not in mtd.getObjectNames():
 		#Load("Vanadium_tube_calib_1to1_May14.nxs",OutputWorkspace="Vanadium_tube_calib_1to1_May14")
 		#Load("Vanadium_tube_calib_1to1_25062014.nxs",OutputWorkspace="Vanadium_tube_calib_1to1_25062014")
-		Load(calibrationfile,OutputWorkspace="Vanadium_tube_calib_1to1_30062014")
+		#Load(calibrationfile,OutputWorkspace="Vanadium_tube_calib_1to1_30062014")
+		Load(calibrationfile,OutputWorkspace="8tubeCalibration_25-03-2015_r2284-2296")
 
-   CopyInstrumentParameters("Vanadium_tube_calib_1to1_30062014",wkspName)
+   CopyInstrumentParameters("8tubeCalibration_25-03-2015_r2284-2296",wkspName)
 
 def virtualslitxml(ypos):
 	# Active detector length is ~640mm
@@ -246,23 +296,31 @@ def create1DPSD(rnum,lmin=0.8,lmax=13.0,Mapfile='w:\Users\Masks\Integrate_tubes_
 
 def createDBFile(rnumsans,filename,path='W:/Users/Masks/',monitor=0,diagnostics=0):
     # direct beam file is simply the ratio of an upstream monitor to the main detector
-	sanswksp=add_runs(rnumsans,'',instrument='LARMOR',keepwksp=1,savewksp=0)
+    sanswksp=add_runs(rnumsans,'',instrument='LARMOR',keepwksp=1,savewksp=0)
+    
+    if (len(sanswksp) > 1):
+        EBSANS=mtd[sanswksp[0]]
+        EBSANS=ConvertUnits(EBSANS,'Wavelength',AlignBins=1)
+        EBSANS=Rebin(EBSANS,'0.0,0.04,16.0')
+        EBSANSsum=SumSpectra(EBSANS)
+        EBSANS=mtd[sanswksp[1]]
+        EBSANS=ConvertUnits(EBSANS,'Wavelength',AlignBins=1)
+        EBSANS=Rebin(EBSANS,'0.0,0.04,16.0')
+        EBSANSm1=SumSpectra(EBSANS,StartWorkspaceIndex=monitor-1,EndWorkspaceIndex=monitor-1)
+    else:
+        EBSANS=mtd[sanswksp]
+        EBSANS=ConvertUnits(EBSANS,'Wavelength',AlignBins=1)
+        EBSANS=Rebin(EBSANS,'0.0,0.04,16.0')
+        EBSANSsum=SumSpectra(EBSANS,StartWorkspaceIndex=11)
+        EBSANSm1=SumSpectra(EBSANS,StartWorkspaceIndex=monitor-1,EndWorkspaceIndex=monitor-1)
 
-	EBSANS=mtd[sanswksp]
+    EBSANSnorm=0.1*EBSANSsum/EBSANSm1
 
-	EBSANS=ConvertUnits(EBSANS,'Wavelength',AlignBins=1)
-	EBSANS=Rebin(EBSANS,'0.0,0.04,16.0')
-
-	EBSANSsum=SumSpectra(EBSANS,StartWorkspaceIndex=11)
-	EBSANSm1=SumSpectra(EBSANS,StartWorkspaceIndex=monitor-1,EndWorkspaceIndex=monitor-1)
-
-	EBSANSnorm=0.1*EBSANSsum/EBSANSm1
-
-	EBSANSnorm_cut=Rebin(EBSANSnorm,'0.9,0.082,12.9')
+    EBSANSnorm_cut=Rebin(EBSANSnorm,'0.9,0.082,12.9')
 	
-	SaveRKH(EBSANSnorm_cut,path+filename,Append=0)
-	RenameWorkspace(EBSANSnorm_cut,OutputWorkspace=filename)
-	if diagnostics == 0:
+    SaveRKH(EBSANSnorm_cut,path+filename,Append=0)
+    RenameWorkspace(EBSANSnorm_cut,OutputWorkspace=filename)
+    if diagnostics == 0:
 		DeleteWorkspace(EBSANS)
 		DeleteWorkspace(EBTRANS)
 		DeleteWorkspace(EBSANSsum)
