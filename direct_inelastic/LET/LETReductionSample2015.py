@@ -80,25 +80,21 @@ class LETReduction(ReductionWrapper):
           Overload only if custom reduction is needed or 
           special features are requested
       """
-      ws = ReductionWrapper.reduce(self,input_file,output_directory)
-      #SaveNexus(ws,Filename = 'MARNewReduction.nxs')
-      return ws
-   #
-   def validate_result(self,build_validation=False,Error=1.e-3,ToleranceRelErr=True):
-      """ Change this method to verify different results     """
-      # here we have: 
-      #  18184                    run number with known reduction result
-      # LET18184Ei2d30meV_Abs.nxs workspace for run above reduced earlier and we now 
-      # validate against
-      # build_validation -- if true, build and save new workspace rather
-      #then validating the old one
-      run_dir = os.path.dirname(os.path.realpath(__file__))
-      # this row defines location of the validation file in this script folder
-      validation_file = os.path.join(run_dir,"LET18184Ei2d30meV_Abs.nxs")
-      rez,message = ReductionWrapper.build_or_validate_result(self,18184,
-                                     validation_file,build_validation,
-                                     Error,ToleranceRelErr)
-      return rez,message
+      results = ReductionWrapper.reduce(self,input_file,output_directory)
+      #
+      run_num = PropertyManager.sample_run.run_number()  
+      energies = self.reducer.prop_man.incident_energy
+      for ind,res in enumerate(results): 
+            ei = energies[ind]
+            filename = "LET{0}_{1:<3.2f}meV.nxspe".format(run_num ,ei) 
+            file = os.path.join('/stagingarea',filename)
+            print 'Saving file to {0}'.format(file)
+
+            SaveNexus(res,Filename = file)
+            t_folder = config['defaultsave.directory']
+            targ_path = os.path.join(t_folder,filename)
+            shutil.move(file,targ_path)      
+      return None
    #
    def set_custom_output_filename(self):
       """ define custom name of output files if standard one is not satisfactory 
@@ -126,7 +122,15 @@ class LETReduction(ReductionWrapper):
       # use this method to use standard file name generating function
       #return None
     #
+   #
+   def validation_file_place(self):
+      """Redefine this to the place, where validation file, used in conjunction with
+         'validate_run' property, located. Here it defines the place to this script folder.
+          but if this function is disabled, by default it looks for/places it 
+          in a default save directory"""
+      return os.path.split(os.path.realpath(__file__))[0]
 
+    
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'LET',web_var)
@@ -171,18 +175,28 @@ if __name__ == "__main__":
     #  search path checking after time specified below.
     rd.wait_for_file = 0  # waiting time interval in seconds
 
+### Define a run number to validate reduction against future changes    #############
+    # After reduction works well and all settings are done and verified, 
+    # take a run number with good reduced results and build validation
+    # for this result. 
+    # Then place the validation run together with this reduction script.
+    # Next time, the script will run reduction and compare the reduction results against
+    # the results obtained earlier.
+    #rd.validate_run_number = 21968  # Enabling this property disables normal reduction
+    # and forces reduction to reduce run specified here and compares results against
+    # validation file, processed earlier or calculate this file if run for the first time.
+    #This would ensure that reduction script have not changed,
+    #allow to identify the reason for changes if it was changed 
+    # and would allow to recover the script,used to produce initial reduction
+    #if changes are unacceptable.
+
 ####get reduction parameters from properties above, override what you want locally ###
    # and run reduction. Overriding would have form:
    # rd.reducer.prop_man.property_name (from the dictionary above) = new value e.g. 
    # rd.reducer.prop_man.energy_bins = [-40,2,40]
    # or 
-   # rd.reducer.prop_man.sum_runs = False
+   ## rd.reducer.prop_man.sum_runs = False
+   # 
    # 
     rd.run_reduction()
 
-#### Validate reduction result against known result, obtained earlier  ###
-#    rez,mess=rd.validate_result()
-#    if not rez:
-#      raise RuntimeError("validation failed with error: {0}".format(mess))
-#   else:
-#     print "ALL Fine" 
