@@ -58,8 +58,8 @@ class MERLINReduction(ReductionWrapper):
       prop = {}
       prop['map_file'] = 'one2one_143.map'
       prop['det_cal_file'] = 'det_corr_143.dat' #'det_corrected7.nxs - testing'
-      prop['bleed'] = False
-      prop['norm_method']='monitor-2'
+      prop['bleed'] = True
+      prop['norm_method']='current' #'monitor-1', 'monitor-2'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='MER23698.msk' # Use diag (hardmaskPlus option) to enhance hard masks
@@ -116,7 +116,7 @@ class MERLINReduction(ReductionWrapper):
           # sample run is more then just list of runs, so we use 
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
-          name = "MER{0}_{1:<3.2f}meV_One2One".format(run_num ,ei)
+          name = "MER{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
           return name
        
       # Uncomment this to use custom filename function
