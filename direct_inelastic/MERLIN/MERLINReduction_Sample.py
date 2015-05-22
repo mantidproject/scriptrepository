@@ -101,27 +101,28 @@ class MERLINReduction(ReductionWrapper):
    #
    #
    def set_custom_output_filename(self):
-      """ define custom name of output files if standard one is not satisfactory 
-          In addition to that, example of accessing reduction properties 
-          Changing them if necessary
-      """ 
+        """define custom name of output files if standard one is not satisfactory
+        
+          In addition to that, example of accessing complex reduction properties
+          Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
+        """
       def custom_name(prop_man):
-          """ sample function which builds filename from 
-              incident energy and run number and adds some auxiliary information 
+            """Sample function which builds filename from
+              incident energy and run number and adds some auxiliary information
               to it.
-          """ 
-          # Note -- properties have the same names  as the list of advanced and 
+            """
+            # Note -- properties have the same names as the list of advanced and
           # main properties
           ei = PropertyManager.incident_energy.get_current()
-          # sample run is more then just list of runs, so we use 
+          # sample run is more then just list of runs, so we use
           # the formalization below to access its methods
           run_num = PropertyManager.sample_run.run_number()
           name = "MER{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
           return name
-       
+
       # Uncomment this to use custom filename function
       # Note: the properties are stored in prop_man class accessed as
-      # below. 
+        # below.
       return lambda : custom_name(self.reducer.prop_man)
       # use this method to use standard file name generating function
       #return None
@@ -173,8 +174,8 @@ if __name__ == "__main__":
     rd.save_web_variables(file)
 
 #### Set up time interval (sec) for reducer to check for input data file.         ####
-    #  If this file is not present and this value is 0,reduction fails 
-    #  if this value >0 the reduction waits until file appears on the data 
+    #  If this file is not present and this value is 0,reduction fails
+    #  if this value >0 the reduction waits until file appears on the data
     #  search path checking after time specified below.
     rd.wait_for_file = 0  # waiting time interval in seconds
 
