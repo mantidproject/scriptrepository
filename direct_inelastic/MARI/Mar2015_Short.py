@@ -1,4 +1,6 @@
 import os
+os.environ["PATH"] =r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
+
 """ Sample MARI reduction script used  only locally)""" 
 from Direct.ReductionWrapper import *
 
@@ -6,8 +8,8 @@ class ReduceMARIFromFile(ReductionWrapper):
     @MainProperties
     def def_main_properties(self):
         """ Define main properties used in reduction """ 
-        prop = {}
-        prop['sample_run'] = [19184,19185]
+        prop = {} 
+        prop['sample_run'] = ['MAR11001'] #[19184,19185]
         prop['incident_energy'] = 15
         prop['energy_bins'] = [-10,0.03,15]
 
