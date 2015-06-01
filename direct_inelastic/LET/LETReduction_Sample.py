@@ -70,6 +70,8 @@ class LETReduction(ReductionWrapper):
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
       prop['motor_offset']=None
+      # vanadium  mass valid from cycle 2013/5
+      prop['vanadium-mass']=8.47
       #
       prop['monovan_lo_frac']=-0.4
       prop['monovan_hi_frac']= 0.4
