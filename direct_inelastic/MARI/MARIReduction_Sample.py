@@ -20,14 +20,14 @@ class MARIReduction(ReductionWrapper):
         # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
-        prop['incident_energy'] = 750
-        prop['energy_bins'] = [-100,2,740]
+        prop['incident_energy'] = 25
+        prop['energy_bins'] = [-20,0.05,24]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] = 19841
+        prop['sample_run'] = 'live'
         prop['wb_run'] = 19717
 
         #
@@ -77,9 +77,10 @@ class MARIReduction(ReductionWrapper):
         outWS = ReductionWrapper.reduce(self,input_file,output_directory)
         run_num = PropertyManager.sample_run.run_number()		
         RenameWorkspace(outWS,OutputWorkspace='MAR{0}Reduced'.format(run_num))		
-        ei = PropertyManager.incident_energy.get_current()		
+        ei = PropertyManager.incident_energy.get_current()
+        q_min = 0.04*sqrt(ei)		
         q_max = 1.3*sqrt(ei)		
-        q_bins = '0,'+str(q_max/100.)+','+str(q_max)		
+        q_bins = str(q_min)+','+str(q_max/285.)+','+str(q_max)		
         SofQW3(InputWorkspace='MAR{0}Reduced'.format(run_num),OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',QAxisBinning=q_bins,Emode='Direct')
         Transpose(InputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW')
 		#SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
