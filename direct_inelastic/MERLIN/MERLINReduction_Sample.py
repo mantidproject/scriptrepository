@@ -17,8 +17,9 @@ class MERLINReduction(ReductionWrapper):
 #---------------------------------------------------------------------------#
 #------------- To change for users ---------------------------------------#
 #---------------------------------------------------------------------------#
+
       # multiple energies provided in the data file
-       ei=[50.1, 21.9,12.2] #[150,64,36] # multiple energies provided in the data file
+       ei=[40,14] #[150,64,36] # multiple energies provided in the data file
        ebin=[-0.25,0.005,0.85]    #binning of the energy for the spe file. 
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
@@ -32,7 +33,7 @@ class MERLINReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(24003,24011) # 'MER23700.n001'
+       prop['sample_run'] = 25092 #range(24003,24011) # 'MER23700.n001'
        prop['wb_run'] = '23684.raw'
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -90,35 +91,35 @@ class MERLINReduction(ReductionWrapper):
 #------------------------------------------------------------------------------------#
    @iliad
    def reduce(self,input_file=None,output_directory=None):
-      """ Method executes reduction over single file
+        """ Method executes reduction over single file
 
           Overload only if custom reduction is needed or 
           special features are requested
-      """
-      results = ReductionWrapper.reduce(self,input_file,output_directory)
-      #SaveNexus(ws,Filename = 'MARNewReduction.nxs')
-      return results
-   #
-   #
+         """
+        results = ReductionWrapper.reduce(self,input_file,output_directory)
+         #SaveNexus(ws,Filename = 'MARNewReduction.nxs')
+        return results
+        #
+        #
    def set_custom_output_filename(self):
-        """define custom name of output files if standard one is not satisfactory
+      """define custom name of output files if standard one is not satisfactory
         
           In addition to that, example of accessing complex reduction properties
           Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
-        """
+      """
       def custom_name(prop_man):
             """Sample function which builds filename from
               incident energy and run number and adds some auxiliary information
               to it.
             """
             # Note -- properties have the same names as the list of advanced and
-          # main properties
-          ei = PropertyManager.incident_energy.get_current()
-          # sample run is more then just list of runs, so we use
-          # the formalization below to access its methods
-          run_num = PropertyManager.sample_run.run_number()
-          name = "MER{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
-          return name
+            # main properties
+            ei = PropertyManager.incident_energy.get_current()
+            # sample run is more then just list of runs, so we use
+            # the formalization below to access its methods
+            run_num = PropertyManager.sample_run.run_number()
+            name = "MER{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
+            return name
 
       # Uncomment this to use custom filename function
       # Note: the properties are stored in prop_man class accessed as
