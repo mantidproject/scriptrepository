@@ -1,7 +1,6 @@
 # latcon.py
-""" latcon.py
-Program to refine just the unit cell lattice constants but not the 
-orientation matrix."""
+# Program to refine just the unit cell lattice constants but not the 
+# orientation matrix.
 
 # A. Schultz
 # January 2015
@@ -15,10 +14,81 @@ orientation matrix."""
 # 6 = Hexagonal
 # 7 = Cubic
 
+from Tkinter import *
+import tkSimpleDialog
+
 import sys
 import numpy
 from scipy.optimize import leastsq
 
+class MyDialog(tkSimpleDialog.Dialog):
+
+    def body(self, master):
+    
+        Message(master, 
+            text = (
+                "Initial values are obtained from latcon.inp if it exists."
+                + "\nNew latcon.inp and latcon.out files will be written."
+                + "\nCrystal class:"
+                + "\n1 = Triclinic"
+                + "\n2 = Monoclinic, b-unique"
+                + "\n3 = Orthorhombic"
+                + "\n4 = Tetragonal"
+                + "\n5 = Rhombohedral"
+                + "\n6 = Hexagonal"
+                + "\n7 = Cubic"),
+            aspect = 200, background = 'yellow').grid(row=0, columnspan=2)
+            
+        # Read user input starting parameters
+        parameters = []
+        try:
+            user_input = open('latcon.inp', 'r')
+            while True:
+                lineString = user_input.readline()
+                lineList = lineString.split()
+                if len( lineList ) == 0: break
+                if lineList[0] == '#': continue
+                parameters.append(lineList[0])
+            user_input.flush()
+            user_input.close()
+        except IOError:
+            for i in range(11):
+                parameters.append('')
+                
+        self.label_text = []
+        self.label_text.append( "Crystal class: " )
+        self.label_text.append( "a: " )
+        self.label_text.append( "b: " )
+        self.label_text.append( "c: " )
+        self.label_text.append( "alpha: " )
+        self.label_text.append( "beta: " )
+        self.label_text.append( "gamma: " )
+        self.label_text.append( "ISAW peaks or integrate file name: " )
+        self.label_text.append( "Minimum I/sigI (0 for no test): " )
+        self.label_text.append( "Minimum IPK (0 for no test): " )
+        self.label_text.append( "Minimum d-spacing: " )
+
+        for i in range( len( self.label_text) ):
+            j = i+1
+            Label(master, text = self.label_text[i]).grid(row = j, column = 0, sticky = E)
+        
+        # Populate entry boxes with default values
+        self.entry = []
+        number_of_params = len( parameters )
+        for i in range(number_of_params):
+            self.entry.append( Entry( master, width = 30) )
+            self.entry[i].insert( 0, parameters[i] )
+            j = i+1
+            self.entry[i].grid( row = j, column = 1, sticky = W )
+               
+        
+    def apply(self):
+    
+        self.result = []
+        for i in range ( len(self.entry) ):
+            self.result.append( self.entry[i].get() )
+
+            
 def get_errors(popt, pcov):
     """ Calculate esd's from covariance matrix."""
     num_variables = len(popt)
@@ -33,57 +103,56 @@ def get_errors(popt, pcov):
           error.append( 0.00 )
     return error
 
-#
-# Get the user input file name from the command line
-#
-if (len(sys.argv) < 2):
-    print "You MUST give the user input file name on the command line"
-    exit(0)
-config_file = sys.argv[1]
+#------------------ Begin ------------------
+
+root = Tk()
+root.withdraw()
+root.title("latcon input")
+d = MyDialog(root) 
 
 output = open( 'latcon.out', 'w' )
 output.write( 'User input:\n' )
 
 # Get user input
-user_input = open( config_file, 'r')
-while True:
-    lineString = user_input.readline()
-    output.write( lineString )
-    lineList = lineString.split()
-    if lineList[0] != '#': break
-crystal_system = lineList[0]
+crystal_system = d.result[0]
+a0 = float( d.result[1] )
+b0 = float( d.result[2] )
+c0 = float( d.result[3] )
+alpha0 = float( d.result[4] )
+beta0 = float( d.result[5] )
+gamma0 = float( d.result[6] )
+filename = d.result[7]
+min_I_sigI = float( d.result[8] )
+ipkmin = int( d.result[9] )
+dmin = float( d.result[10] )
 
-lineString = user_input.readline()
-output.write( lineString )
-lineList = lineString.split()
-a0 = float( lineList[0] )
-b0 = float( lineList[1] )
-c0 = float( lineList[2] )
-alpha0 = float( lineList[3] )
-beta0 = float( lineList[4] )
-gamma0 = float( lineList[5] )
+# Write or over-write latcon.inp file
+user_input = open( 'latcon.inp', 'w' )
+user_input.write( 
+        "# Crystal class:"
+        + "\n# 1 = Triclinic"
+        + "\n# 2 = Monoclinic, b-unique"
+        + "\n# 3 = Orthorhombic"
+        + "\n# 4 = Tetragonal"
+        + "\n# 5 = Rhombohedral"
+        + "\n# 6 = Hexagonal"
+        + "\n# 7 = Cubic"
+        + "\n#\n"        )
+output.write( 
+        "# Crystal class:"
+        + "\n# 1 = Triclinic"
+        + "\n# 2 = Monoclinic, b-unique"
+        + "\n# 3 = Orthorhombic"
+        + "\n# 4 = Tetragonal"
+        + "\n# 5 = Rhombohedral"
+        + "\n# 6 = Hexagonal"
+        + "\n# 7 = Cubic"
+        + "\n#\n"        )
 
-lineString = user_input.readline()
-output.write( lineString )
-lineList = lineString.split()
-peaks_or_integrate_filename = lineList[0]
-input = open( peaks_or_integrate_filename, 'r' )
+for i in range( len( d.result ) ):
+    user_input.write( d.result[i] + '     # ' + d.label_text[i] + '\n' )
+    output.write( d.result[i] + '     # ' + d.label_text[i] + '\n' )
 
-lineString = user_input.readline()
-output.write( lineString )
-lineList = lineString.split()
-min_I_sigI = float( lineList[0] )
-
-lineString = user_input.readline()
-output.write( lineString )
-lineList = lineString.split()
-ipkmin = int( lineList[0] )
-
-lineString = user_input.readline()
-output.write( lineString )
-lineList = lineString.split()
-dmin = float( lineList[0] )
-# End reading user input
 
 output.write('\n----------------------------')
 output.write('\nResults:\n')
@@ -93,6 +162,7 @@ k_array = []
 l_array = []
 dsp_obs = []
 # Begin reading the peaks.
+input = open( filename, 'r' )
 while True:
 
     lineString = input.readline()
@@ -521,10 +591,11 @@ if crystal_system == '7':           # cubic
     
 ########################################################################    
 
+output.write( '\n' )
+
 print '\nResults saved to latcon.out file.'
 print '\nAll done!'    
 
-    
     
     
 
