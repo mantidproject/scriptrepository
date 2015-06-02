@@ -20,14 +20,14 @@ class MARIReduction(ReductionWrapper):
         # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
-        prop['incident_energy'] = 25
-        prop['energy_bins'] = [-20,0.05,24]
+        prop['incident_energy'] = 110
+        prop['energy_bins'] = [-20,0.2,100]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] = 'live'
+        prop['sample_run'] = 19891
         prop['wb_run'] = 19717
 
         #
@@ -115,12 +115,12 @@ class MARIReduction(ReductionWrapper):
         #return None
    #
    #
-   def validation_file_place(self):
-      """Redefine this to the place, where validation file, used in conjunction with
+    def validation_file_place(self):
+        """Redefine this to the place, where validation file, used in conjunction with
          'validate_run' property, located. Here it defines the place to this script folder.
           but if this function is disabled, by default it looks for/places it 
-          in a default save directory"""
-      return os.path.split(os.path.realpath(__file__))[0]
+         in a default save directory"""
+        return os.path.split(os.path.realpath(__file__))[0]
    
     def __init__(self,web_var=None):
         """ sets properties defaults for the instrument with Name"""
