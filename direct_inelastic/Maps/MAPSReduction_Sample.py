@@ -81,24 +81,24 @@ class MAPSReduction(ReductionWrapper):
    #
    #
    def set_custom_output_filename(self):
-        """define custom name of output files if standard one is not satisfactory
+      """define custom name of output files if standard one is not satisfactory
         
           In addition to that, example of accessing complex reduction properties
           Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
-        """
+      """
       def custom_name(prop_man):
             """Sample function which builds filename from
               incident energy and run number and adds some auxiliary information
               to it.
             """
             # Note -- properties have the same names as the list of advanced and
-          # main properties
-          ei = PropertyManager.incident_energy.get_current()
-          # sample run is more then just list of runs, so we use
-          # the formalization below to access its methods
-          run_num = PropertyManager.sample_run.run_number()
-          name = "MAR{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
-          return name
+            # main properties
+            ei = PropertyManager.incident_energy.get_current()
+            # sample run is more then just list of runs, so we use
+            # the formalization below to access its methods
+            run_num = PropertyManager.sample_run.run_number()
+            name = "MAR{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
+            return name
        
       # Uncomment this to use custom filename function
       # Note: the properties are stored in prop_man class accessed as
