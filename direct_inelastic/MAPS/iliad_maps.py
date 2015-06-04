@@ -1,4 +1,4 @@
-import  MAPSReductionSample2015 as mpr
+import  MAPSReduction_Sample as mpr
 from mantid.simpleapi import *
 from mantid import config
 

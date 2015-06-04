@@ -33,7 +33,7 @@ monovan=[]
 
 ##If a list of ei is given, then can run a for-loop as below (ensure the array of ei, run numbers and rebin parameters are all the same length)
 for i in range(len(runno)):
-iliad_maps_crystal(runno[i],ei[i],wbvan,rebin_pars[i],monovan,sam_mass,sam_rmm)
+    iliad_maps_crystal(runno[i],ei[i],wbvan,rebin_pars[i],monovan,sam_mass,sam_rmm)
 	
 ##You can also specify things like the rebinning parameters and ei inside the for-loop if you have lots of runs with the same configuration
 ##And there are plenty of other ways of doing this...
