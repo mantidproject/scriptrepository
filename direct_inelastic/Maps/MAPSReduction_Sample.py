@@ -20,19 +20,19 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 450
-       prop['energy_bins'] = [-50,2.5,425]
+       prop['incident_energy'] = 40
+       prop['energy_bins'] =[-4,0.2,36]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = [21384,21385]
-       prop['wb_run'] = 21376
+       prop['sample_run'] ='MAP0000.raw' #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
+       prop['wb_run'] = 21914
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
-       prop['monovan_run'] = 21803  #  vanadium run in the same configuration as your sample 
+       prop['monovan_run'] = None #21803  #  vanadium run in the same configuration as your sample 
        #prop['sample_mass'] = 41.104
        #prop['sample_rmm'] = 398.9439
        return prop
@@ -51,7 +51,7 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "4to1.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
       #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_142.msk"
+      prop['hard_mask_file'] = "4to1_143.msk"
       prop['bkgd_range'] = [13000,19000]
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
@@ -63,7 +63,7 @@ class MAPSReduction(ReductionWrapper):
       
       #prop['det_cal_file'] = "11060" what about calibration?
       prop['save_format'] = 'nxspe' # nxs or spe
-      #prop['data_file_ext']='.nxs' # if two input files with the same name and
+      prop['data_file_ext']='.raw' # if two input files with the same name and
                                     #different extension found, what to prefer.
       return prop
       #
@@ -97,7 +97,7 @@ class MAPSReduction(ReductionWrapper):
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
-            name = "MAR{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
+            name = "MAP{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
             return name
        
       # Uncomment this to use custom filename function
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     # data search path
     #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
     # folder to save resulting spe/nxspe files.
-    config['defaultsave.directory'] = '/home/maps/maps_users/Ewings/HoraceWorkshop/Fe_data/' #data_dir 
+    config['defaultsave.directory'] = '/home/maps/maps_users/Hutchings/March2015/SPE' #data_dir 
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)
