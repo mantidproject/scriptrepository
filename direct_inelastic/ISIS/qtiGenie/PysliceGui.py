@@ -84,7 +84,7 @@ class MainWindow(QtGui.QMainWindow):
 		self.EiVal=[]
 		self.MonitorSpec=False
 		self.MonitorSpectrumNumber=[]
-		self.Normalisation='Current'
+		self.Normalisation='current'
 		self.CurrentMapFile=''
 		
 		self.DetVanNum=''
@@ -310,7 +310,7 @@ class MainWindow(QtGui.QMainWindow):
 			StartLiveData(UpdateEvery='0',Instrument='MARI',AccumulationMethod="Replace", OutputWorkspace='CurrentRun')
 			Runs=['CurrentRun']
 
-		iliad_setup(self.shortname)
+		dgreduce.setup(self.shortname)
 		mapfile=str(self.ui.mapfile.text())
 		cal_file=self.shortname+WB+self.exten
 		

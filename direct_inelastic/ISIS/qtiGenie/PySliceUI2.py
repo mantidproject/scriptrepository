@@ -346,8 +346,8 @@ class Ui_MainWindow(object):
         self.FixEi.setText(_translate("MainWindow", "FixEi", None))
         self.FixMonitorSpectrum.setText(_translate("MainWindow", "Monitor\n"
 "Spec", None))
-        self.NormMethod.setItemText(0, _translate("MainWindow", "Current", None))
-        self.NormMethod.setItemText(1, _translate("MainWindow", "Monitor-1", None))
+        self.NormMethod.setItemText(0, _translate("MainWindow", "current", None))
+        self.NormMethod.setItemText(1, _translate("MainWindow", "monitor-1", None))
         self.label_23.setText(_translate("MainWindow", "Normalisation", None))
         self.label_24.setText(_translate("MainWindow", "MapFile", None))
         self.InstName.setItemText(0, _translate("MainWindow", "Select Inst", None))
