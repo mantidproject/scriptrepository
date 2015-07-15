@@ -1,6 +1,6 @@
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
-## Version 1.0, January 2015
+## Version 1.01, July 2015
 import numpy
 import math
 import time
@@ -1360,6 +1360,7 @@ def EvaluateSlicedDynamic(BigHams,BigStart,BigDetect,slices,times,lam=1.0/2.1970
 	# times is array of m+1 data points wanted (need not coincide with time boundaries in any way! Last can be Inf)
 	# return m y-values (averaged within bins of times, weighted by mulife)
 	ns=len(BigHams)
+	print "Ham length=",ns," and slice times are ",slices
 	yvals=numpy.zeros(len(times)-1,dtype=float)
 	weightacc=numpy.zeros(len(times)-1,dtype=float) # debug only
 	nextrho=BigStart
@@ -1373,10 +1374,11 @@ def EvaluateSlicedDynamic(BigHams,BigStart,BigDetect,slices,times,lam=1.0/2.1970
 		it2=bisect.bisect_left(times,slices2[i+1])
 		# points from it1 to it2, plus slice ends
 		times2=times[it1:it2]
-		if(it2<len(times) and slices2[i+1]>times2[-1]+1.E-12):
+		print "slice ",i," times2=",times2
+		if(it2<len(times) and (len(times2)==0 or slices2[i+1]>times2[-1]+1.E-12)):
 			times2=numpy.append(times2,slices2[i+1]) # this slice does not go to tmax, so add boundary
 			it2=it2+1
-		if(it1>0 and slices2[i]<times2[0]-1.E-12):
+		if(it1>0 and (len(times2)==0 or slices2[i]<times2[0]-1.E-12)):
 			times2=numpy.insert(times2,0,slices2[i]) # this slice starts after tmin, add boundary
 			it1=it1-1
 		weights=numpy.ones(len(times2)-1)
