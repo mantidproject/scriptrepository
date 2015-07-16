@@ -1,6 +1,6 @@
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
-## Version 1.0, January 2015
+## Version 1.01, July 2015
 import numpy
 import math
 import time
@@ -70,8 +70,8 @@ def ParseStringToDict(st,di0={}):
 	# A(*)=44 looks up A() entries and overwrites those which match...No, should expand later.
 	# comment lines start with "#"
 	
-	textlists=("measure","spins","detectspin","initialspin","tzero","recycle","brf")
-	freetext=("fitfunction","loop0par","loop1par","fit0par","fit1par","fit2par","fit3par") # do not parse at all (are on one line)
+	textlists=("measure","spins","detectspin","initialspin","tzero","recycle","brf","morespin")
+	freetext=("fitfunction","loop0par","loop1par","fit0par","fit1par","fit2par","fit3par","fit4par","fit5par","fit6par") # do not parse at all (are on one line)
 	di=dict(di0) # copy
 	for sl in st.splitlines():
 		if(len(sl.strip()) > 0 and sl.strip()[0] != "#"):
@@ -86,7 +86,8 @@ def ParseStringToDict(st,di0={}):
 					if(len(kvl)<2):
 						raise Exception("Bad line in model string")
 					val=kvl[-1].split(",")
-					if(kvl[0] not in textlists):
+					kvl0s=kvl[0].split("(")[0]
+					if(kvl0s not in textlists):
 						#print "would like to float ",val," from ",sl
 						val=map(float,val)
 					#print "value is ",val
@@ -542,6 +543,16 @@ def ParseAndIterateModel(pars):
 			else:
 				raise Exception("expected tf B, spin [,detect [,RF]]")
 			iterator=NullIter
+		elif(key[0:9]=="bmagGauss"): # must check for this before bmag, which is a substring!
+			ii,sp=EnumerateSites(slices,0,key[9:])
+			#print "key=",key," to ",ii," and ",sp," into Hams of len ",len(Hams)
+			for i in ii:
+				if(len(val)==1):
+					Bmag[i,:]=[float(val[0])/10000.0,0.0,0.0]
+				elif(len(val)==3):
+					Bmag[i,:]=map(lambda x: float(x)/10000.0,val)
+				else:
+					raise Exception("bmagGauss should be a single number or a 3-vector")
 		elif(key[0:4]=="bmag"):
 			ii,sp=EnumerateSites(slices,0,key[4:])
 			#print "key=",key," to ",ii," and ",sp," into Hams of len ",len(Hams)
@@ -552,16 +563,6 @@ def ParseAndIterateModel(pars):
 					Bmag[i,:]=map(float,val)
 				else:
 					raise Exception("bmag should be a single number or a 3-vector")
-		elif(key[0:9]=="bmagGauss"):
-			ii,sp=EnumerateSites(slices,0,key[9:])
-			#print "key=",key," to ",ii," and ",sp," into Hams of len ",len(Hams)
-			for i in ii:
-				if(len(val)==1):
-					Bmag[i,:]=[float(val[0]/10000.0),0.0,0.0]
-				elif(len(val)==3):
-					Bmag[i,:]=map(lambda x: float(x)/10000.0,val)
-				else:
-					raise Exception("bmagGauss should be a single number or a 3-vector")
 		# RF mode
 		# brf <mag> <freq> [ <phase> [ <ellipticity> [ <rrf> ]]]
 		# ellipticity=0: linear, +1: rotating "with" precession about B0, -1: rotating "opposite" to B0 (assuming bmag>0 and gamma>0)
@@ -707,6 +708,46 @@ def ParseAndIterateModel(pars):
 		except:
 			detspin=0
 		rho0 = createInitialDensMat(spmat[rho0spin],beam)
+		if("morespin" in pars):
+			morespinlist=pars["morespin"]
+			while(len(morespinlist)>=2):
+				# morespin <spin>,x,y,z,... or <spin>,<axis> where axis="beam","field","detector","rf"
+				# or <spin1>,TS,<spin2>  where TS="T" or "S" (singlet/triplet)
+				morespin=labels[morespinlist[0]]
+				try:
+					moreaxis=numpy.array(map(float,morespinlist[1:4]))
+					morespinlist=morespinlist[4:]
+				except:
+					if(morespinlist[1]=="beam"):
+						moreaxis=beam
+					elif(morespinlist[1]=="field"):
+						moreaxis=fieldax
+					elif(morespinlist[1]=="detector"):
+						moreaxis=detector
+					elif(morespinlist[1]=="rf"):
+						moreaxis=rfcoil
+					elif(morespinlist[1]=="t"):
+						moreaxis=None
+						moretriplet=True
+						morespin2=labels[morespinlist[2]]
+						morespinlist=morespinlist[1:] # additional trim as well as the following 2
+					elif(morespinlist[1]=="s"):
+						moreaxis=None
+						moretriplet=False
+						morespin2=labels[morespinlist[2]]
+						morespinlist=morespinlist[1:] # additional trim as well as the following 2
+					else:
+						raise Exception("Unknown axis for polarising the ",morespinlist[0])
+					morespinlist=morespinlist[2:]
+				if(moreaxis is not None):
+					rhomore=createInitialDensMat(spmat[morespin],moreaxis)
+				else:
+					Edot=numpy.dot(spmat[morespin,0],spmat[morespin2,0])+numpy.dot(spmat[morespin,1],spmat[morespin2,1])+numpy.dot(spmat[morespin,2],spmat[morespin2,2])
+					if(triplet):
+						rhomore=Edot/3.0+numpy.identity(N)
+					else: # singlet
+						rhomore=numpy.identity(N)-Edot
+				rho0=numpy.dot(rho0,rhomore)*spmat.shape[-1]
 		scint = createDetectorOp(spmat[detspin],detector)
 		if(numpy.any(rfomega)):
 			# generate HamRFs
@@ -1286,6 +1327,7 @@ def RunModelledSystem(pars0,prog=None):
 				else:
 					tzeros=None
 				if(Dynamic):
+					# print "evaluating dynamic, Hams=",Hams," and slices=",slicetimes
 					yvals1=EvaluateSlicedDynamic(Hams,rho0,scint,slicetimes,timebins,1.0/mulife,tzeros)
 					# pass # implement EvaluateSlicedDynamic
 				elif(numpy.any(rfomegas)):
@@ -1736,6 +1778,59 @@ class QuantumTableDrivenFunction4(IFunction1D):
 
 FunctionFactory.subscribe(QuantumTableDrivenFunction4)
 
+class QuantumTableDrivenFunction4SD(IFunction1D):
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1plusP2",2.0)
+		self.declareParameter("P1minusP2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P0=self.getParameterValue("P0")
+			P1p2=self.getParameterValue("P1plusP2")
+			P1m2=self.getParameterValue("P1minusP2")
+			P3=self.getParameterValue("P3")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2,P3))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+
+			axes,ybins,ebins = RunModelledSystem(pars)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction4SD)
+
 class QuantumTableDrivenFunction5(IFunction1D):
 	def init(self):
 		#self.declareAttribute("Table","Tab")
@@ -1791,6 +1886,122 @@ class QuantumTableDrivenFunction5(IFunction1D):
 
 FunctionFactory.subscribe(QuantumTableDrivenFunction5)
 
+class QuantumTableDrivenFunction6(IFunction1D):
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1",2.0)
+		self.declareParameter("P2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("P4",5.0)
+		self.declareParameter("P5",6.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P1=self.getParameterValue("P0")
+			P2=self.getParameterValue("P1")
+			P3=self.getParameterValue("P2")
+			P4=self.getParameterValue("P3")
+			P5=self.getParameterValue("P4")
+			P6=self.getParameterValue("P5")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P1,P2,P3,P4,P5,P6))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+
+			axes,ybins,ebins = RunModelledSystem(pars)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction6)
+
+class QuantumTableDrivenFunction7(IFunction1D):
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1",2.0)
+		self.declareParameter("P2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("P4",5.0)
+		self.declareParameter("P5",6.0)
+		self.declareParameter("P6",7.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P1=self.getParameterValue("P0")
+			P2=self.getParameterValue("P1")
+			P3=self.getParameterValue("P2")
+			P4=self.getParameterValue("P3")
+			P5=self.getParameterValue("P4")
+			P6=self.getParameterValue("P5")
+			P7=self.getParameterValue("P6")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P1,P2,P3,P4,P5,P6,P7))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+
+			axes,ybins,ebins = RunModelledSystem(pars)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction7)
+
 class ReplaceFitParsInTable(PythonAlgorithm):
 	def category(self):
 		return 'Muon\Quantum'
@@ -1842,7 +2053,7 @@ class ReplaceFitParsInTable(PythonAlgorithm):
 			if(not(selGroup)):
 				raise Exception("Didn't find a Quantum fit function")
 		pardict={}
-		for (pnam,val) in g.items():
+		for (pnam,val) in selGroup.items():
 			if(pnam[0]=="P" and pnam[1].isdigit()):
 				if(pnam[2:7]=="plusP"):
 					pnum1=int(pnam[1])
