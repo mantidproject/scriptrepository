@@ -68,10 +68,11 @@ class ConvertAsciiMultiPeriod(PythonAlgorithm):
 				ws=wstuple[0] # first period if there are some
 				Deads=wstuple[4]
 				Groups=wstuple[5]
+				L=len(ws)
 			except:
-				ws=[wstuple[0]] # plain run
-				Deads=wstuple[4]
-				Groups=wstuple[5]
+				ws=(wstuple[0],) # plain run
+				Deads=(wstuple[4],)
+				Groups=(wstuple[5],)
 			prog_reporter.report("Processing")
 			nper=len(ws)
 			outArray=numpy.zeros([len(ws[0].dataY(0)),nper*4+1])
