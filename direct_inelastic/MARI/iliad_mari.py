@@ -1,4 +1,4 @@
-import  MARI_Sample as mpr
+import  MARIReduction_Sample as mpr
 from mantid.simpleapi import *
 from mantid import config
 
