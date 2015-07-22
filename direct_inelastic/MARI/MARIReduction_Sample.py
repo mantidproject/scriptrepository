@@ -20,14 +20,18 @@ class MARIReduction(ReductionWrapper):
         # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
-        prop['incident_energy'] = 110
-        prop['energy_bins'] = [-20,0.2,100]
+        #prop['incident_energy'] = 50
+        #prop['energy_bins'] = [-20,0.1,49]
+	prop['incident_energy'] = 6.0
+	prop['energy_bins'] = [-10,0.03,5.7]
+		#prop['incident_energy'] = 10
+        #prop['energy_bins'] = [-10,0.05,9]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] = 19891
+        prop['sample_run'] =[20181, 20182, 20183] #20176 #[20171, 20174]
         prop['wb_run'] = 19717
 
         #
@@ -50,6 +54,7 @@ class MARIReduction(ReductionWrapper):
            to work properly
         """
         prop = {}
+#		prop['sum_runs']=False #True
         prop['map_file'] = "mari_res2013.map"
         prop['monovan_mapfile'] = "mari_res2013.map"
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
@@ -65,7 +70,7 @@ class MARIReduction(ReductionWrapper):
         # log name for crystal rotation to write correct psi value into nxspe files
         prop['motor_offset']=None
         return prop
-      #
+      # 
     @iliad
     def reduce(self,input_file=None,output_directory=None):
         """Method executes reduction over single file
@@ -73,20 +78,19 @@ class MARIReduction(ReductionWrapper):
           Overload only if custom reduction is needed or 
           special features are requested
         """
-
-        outWS = ReductionWrapper.reduce(self,input_file,output_directory)
+        output = ReductionWrapper.reduce(self,input_file,output_directory)
         run_num = PropertyManager.sample_run.run_number()		
-        RenameWorkspace(outWS,OutputWorkspace='MAR{0}Reduced'.format(run_num))		
+        NewName = 'MAR{0}Reduced'.format(run_num)
+        RenameWorkspace(output,OutputWorkspace=NewName )		
         ei = PropertyManager.incident_energy.get_current()
         q_min = 0.04*sqrt(ei)		
         q_max = 1.3*sqrt(ei)		
         q_bins = str(q_min)+','+str(q_max/285.)+','+str(q_max)		
-        SofQW3(InputWorkspace='MAR{0}Reduced'.format(run_num),OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',QAxisBinning=q_bins,Emode='Direct')
+        SofQW3(InputWorkspace=NewName ,OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',QAxisBinning=q_bins,Emode='Direct')
         Transpose(InputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW')
 		#SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
-        return outWS
-
-
+        return mtd[NewName]
+		
     def set_custom_output_filename(self):
         """define custom name of output files if standard one is not satisfactory
         
