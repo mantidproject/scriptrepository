@@ -91,8 +91,8 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1,eventbinn
 	    DeleteWorkspace('added_monitors')
 	else:
 		pass
-		#ConjoinWorkspaces('added_monitors','added',CheckOverlapping=False)
-		#RenameWorkspace('added_monitors',OutputWorkspace='added')
+		ConjoinWorkspaces('added_monitors','added',CheckOverlapping=False)
+		RenameWorkspace('added_monitors',OutputWorkspace='added')
 
 	
 	if(len(runlist)>1):
@@ -148,7 +148,7 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1,eventbinn
 	        pass
 	return retwksp
 
-def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,diagnostics=0,periods=[-1,-1,-1,-1,-1,-1]):
+def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,diagnostics=0,periods=[-1,-1,-1,-1,-1,-1],dirname='c:/Data/Processed/',saveFile=1):
     '''
     periods array is defined in order sample sans, can sans, sample trans, sample db, can trans, can db
     if tdbcan is not defined then tdb is used
@@ -200,8 +200,38 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
         RenameWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax),OutputWorkspace=wkspname)
     if(diagnostics==0):
         DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_incident_monitor')
+        DeleteWorkspace(sroot+'_sans_nxs')
         if(len(tsample)>0):
-            DeleteWorkspace(tsroot+'_trans_nxs')
+            try:
+                DeleteWorkspace(tsroot+'_trans_nxs')
+            except:
+                pass
+            try:
+                DeleteWorkspace(tsroot+'_trans_sample_'+str(lmin)+'_'+str(lmax)+'_unfitted')
+            except:
+                pass
+        if(len(rcan)>0):
+            DeleteWorkspace(croot+'_sans_nxs')
+            DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_can_tmp_incident_monitor')
+        if(len(tcan)>0):
+            DeleteWorkspace(tcroot+'_trans_nxs')
+            try:
+                DeleteWorkspace(tsroot+'_trans_can_'+str(lmin)+'_'+str(lmax)+'_unfitted')
+            except:
+                pass
+        if(len(tsample)>0 or len(tcan)>0):
+            try:
+                DeleteWorkspace(tdbroot+'_trans_nxs')
+            except:
+                pass
+    elif(diagnostics==1):
+        DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_incident_monitor')
+        DeleteWorkspace(sroot+'_sans_nxs')
+        if(len(tsample)>0):
+            try:
+                DeleteWorkspace(tsroot+'_trans_nxs')
+            except:
+                pass
         if(len(rcan)>0):
             DeleteWorkspace(croot+'_sans_nxs')
             DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_can_tmp_incident_monitor')
@@ -212,6 +242,12 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
                 DeleteWorkspace(tdbroot+'_trans_nxs')
             except:
                 pass
+    
+    # save to file but make sure we don't have any : characters in the filename as windows doesn't like it
+    wkspname1=string.replace(wkspname,':','_')
+    SaveRKH(wkspname,dirname+'r'+rsample+'_'+wkspname1+'.txt',Append=0)
+    # return a handle to the final named workspace  
+    return mtd[wkspname]
             
 def calibrateTubes(wkspName,calibrationfile='8tubeCalibration_25-03-2015_r2284-2296.nxs'):
    #
