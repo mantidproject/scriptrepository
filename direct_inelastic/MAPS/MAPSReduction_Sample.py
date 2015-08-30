@@ -133,12 +133,12 @@ if __name__ == "__main__":
     # auxiliary folder with results
     #ref_data_dir = '/isisdatar55/ndxmaps/Instrument/data/cycle_09_05' 
     # Set input search path to values, specified above
-    config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
+    #config.setDataSearchDirs('{0};{1}'.format(data_dir,map_mask_dir))
     # use appendDataSearch directory to add more locations to existing Mantid 
     # data search path
-    #config.appendDataSearchDir('d:/Data/Mantid_GIT/Test/AutoTestData')
+    #config.appendDataSearchDir('{0};{1}'.format(data_dir,map_mask_dir))
     # folder to save resulting spe/nxspe files.
-    config['defaultsave.directory'] = '/home/maps/maps_users/Hutchings/March2015/SPE' #data_dir 
+    #config['defaultsave.directory'] = '/home/maps/maps_users/Hutchings/March2015/SPE' #data_dir 
 
 ###### Initialize reduction class above and set up reduction properties.        ######
 ######  Note no web_var in constructor.(will be irrelevant if factory is implemented)

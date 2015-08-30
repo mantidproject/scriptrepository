@@ -22,9 +22,9 @@ class MARIReduction(ReductionWrapper):
         #
         #prop['incident_energy'] = 50
         #prop['energy_bins'] = [-20,0.1,49]
-	prop['incident_energy'] = 6.0
-	prop['energy_bins'] = [-10,0.03,5.7]
-		#prop['incident_energy'] = 10
+        prop['incident_energy'] = 6.0
+        prop['energy_bins'] = [-10,0.03,5.7]
+        #prop['incident_energy'] = 10
         #prop['energy_bins'] = [-10,0.05,9]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
@@ -54,7 +54,7 @@ class MARIReduction(ReductionWrapper):
            to work properly
         """
         prop = {}
-#		prop['sum_runs']=False #True
+#       prop['sum_runs']=False #True
         prop['map_file'] = "mari_res2013.map"
         prop['monovan_mapfile'] = "mari_res2013.map"
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
@@ -90,7 +90,7 @@ class MARIReduction(ReductionWrapper):
         Transpose(InputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW')
 		#SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
         return mtd[NewName]
-		
+
     def set_custom_output_filename(self):
         """define custom name of output files if standard one is not satisfactory
         
