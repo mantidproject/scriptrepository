@@ -11,8 +11,9 @@ rd=mpr.MAPSReduction()
 rd.def_advanced_properties()
 rd.def_main_properties()
 
-#Filename?
-rd.set_custom_output_filename()
+##Filename -- this generates dynamic name  at dats save point 
+# -- the method should be modified in MAPSReduction_Sample
+#rd.set_custom_output_filename()
 
 def iliad_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
 

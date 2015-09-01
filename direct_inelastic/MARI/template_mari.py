@@ -21,5 +21,5 @@ monovan=0
 sam_mass=0
 sam_rmm=0
 
-iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm)
+iliad_mar(runno,ei,wbvan,monovan,sam_mass,sam_rmm)
 

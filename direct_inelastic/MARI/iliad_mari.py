@@ -10,10 +10,10 @@ rd = mpr.MARIReduction()
 rd.def_advanced_properties()
 rd.def_main_properties()
 
-#Filename?
-rd.set_custom_output_filename()
+#Filename -- this generates dynamic name -- the method should be modified in MARIReduction_Sample
+#rd.set_custom_output_filename()
 
-def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
+def iliad_mar(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
 
     rd.reducer.prop_man.map_file="mari_res2013.map"
     rd.reducer.prop_man.hard_mask_file = "mari_mask2015.msk"
