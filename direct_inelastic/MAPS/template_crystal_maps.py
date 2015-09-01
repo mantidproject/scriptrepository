@@ -33,7 +33,7 @@ sam_rmm=0
 bg_range=[13000,19000]
 
 #Process data as single crystal (4-to-1 detector mapping)
-iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range)
+iliad_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range)
 
 #Process data as powder (rings mapping)
-iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range)
+iliad_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range)

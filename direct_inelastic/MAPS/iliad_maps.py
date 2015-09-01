@@ -14,7 +14,7 @@ rd.def_main_properties()
 #Filename?
 rd.set_custom_output_filename()
 
-def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
+def iliad_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
 
     rd.reducer.prop_man.map_file='4to1.map'
     rd.reducer.prop_man.hard_mask_file = "4to1_151.msk"
@@ -40,7 +40,7 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_ran
     rd.reducer.prop_man.save_file_name='map'+str(runno)+'_ei'+str(int(round(ei)))
     rd.run_reduction()
     
-def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
+def iliad_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
     
     rd.reducer.prop_man.map_file='parker_rings.map'
     rd.reducer.prop_man.hard_mask_file = "4to1_151.msk"
