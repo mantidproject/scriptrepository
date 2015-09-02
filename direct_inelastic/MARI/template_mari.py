@@ -6,6 +6,7 @@ import datetime
 
 # Run number and Ei
 runno=[19891]
+sum_runs=False
 ei=110
 
 # White vanadium run number
@@ -21,5 +22,6 @@ monovan=0
 sam_mass=0
 sam_rmm=0
 
-iliad_mar(runno,ei,wbvan,monovan,sam_mass,sam_rmm)
+
+iliad_mar(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs)
 
