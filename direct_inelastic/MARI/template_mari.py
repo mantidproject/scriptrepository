@@ -10,9 +10,9 @@ sum_runs=False
 ei=110
 
 # White vanadium run number
-wbvan=19717
+wbvan=20465
 # Default save directory
-config['defaultsave.directory'] = '/home/mari/Users/MARI_team'          #data_dir 
+config['defaultsave.directory'] = 'home_folder'          #data_dir 
 
 # Absolute normalisation parameters
 #monovan=21803
