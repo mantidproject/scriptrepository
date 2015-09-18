@@ -12,7 +12,7 @@ ei=110
 # White vanadium run number
 wbvan=20465
 # Default save directory
-config['defaultsave.directory'] = 'home_folder'          #data_dir 
+config['defaultsave.directory'] = 'home_folder/rb_directory'          #data_dir 
 
 # Absolute normalisation parameters
 #monovan=21803
