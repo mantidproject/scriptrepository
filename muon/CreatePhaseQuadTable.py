@@ -1,9 +1,11 @@
 ## CreatePhaseQuadTable - make a blank Mantid table for Phase Quad algorithm
 ## Author: James Lord
-## Version 1.0, January 2015
+## Version 2.0, September 2015
+## now sets Efficiency column (to expected asymmetry) and sets dead time=0
 from mantid.api import *
 from mantid.kernel import *
 from mantid.simpleapi import *
+import math
 
 class CreatePhaseQuadTable(PythonAlgorithm):
 	def category(self):
@@ -11,6 +13,7 @@ class CreatePhaseQuadTable(PythonAlgorithm):
 
 	def PyInit(self):
 		self.declareProperty("Instrument","MUSR")
+		self.declareProperty("FieldAxis","z",StringListValidator(["x","y","z"]))
 		self.declareProperty(ITableWorkspaceProperty('TableName','Table1',Direction.Output))
 		
 	def PyExec(self):
@@ -35,9 +38,21 @@ class CreatePhaseQuadTable(PythonAlgorithm):
 		Tab3.addColumn("double","phase")
 		Tab3.addColumn("double","dead")
 
+		ax=self.getProperty("FieldAxis").value
+
 		for i in range(nr):
-			phi=dws.getDetector(i).getPhi()
-			Tab3.addRow([True,0.2,phi,0.01])
+			det=dws.getDetector(i).getPos()-dws.getInstrument().getSample().getPos()
+			r=math.sqrt(det.X()**2+det.Y()**2+det.Z()**2)
+			if(ax=="x"):
+				phi=math.atan2(det.Z(),det.Y())
+				ampl=math.sqrt(det.Z()**2+det.Y()**2)/r
+			elif(ax=="y"):
+				phi=math.atan2(det.X(),det.Z())
+				ampl=math.sqrt(det.X()**2+det.Z()**2)/r
+			else: # z
+				phi=math.atan2(det.Y(),det.X())
+				ampl=math.sqrt(det.Y()**2+det.X()**2)/r
+			Tab3.addRow([True,ampl,phi,0.0])
 
 		self.setProperty("TableName",Tab3)
 		del Tab3
