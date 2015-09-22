@@ -366,7 +366,7 @@ def removeoutlayer(wksp):
 #
 #===================================================================================================================
 #
-def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,downPeriod,existingP0,SEConstants,gparams,convertToSEL,lnPOverLam,dofloodnorm=True,diagnostics="None",removeoutlayers="0",floodfile=''):
+def nrSESANSFn(runList,nameList,P0runList,P0nameList,minSpec,maxSpec,upPeriod,downPeriod,existingP0,SEConstants,gparams,convertToSEL,lnPOverLam,dofloodnorm=True,diagnostics="None",removeoutlayers=False,floodfile=''):
     stripoutlayer=str(removeoutlayers)
     nlist=parseNameList(nameList)
     logger.notice("This is the sample nameslist:"+str(nlist))
