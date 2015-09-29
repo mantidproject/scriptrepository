@@ -1,7 +1,8 @@
 # Initial analysis to find peaks and to obtain lattice constants and UB matrix.
 #
-LoadEventNexusDialog(OutputWorkspace = 'Event_ws', FilterByTofMin=500, FilterByTofMax=16500, Precount=False, 
-    Enable = 'OutputWorkspace, FilterByTofMin, FilterByTofMax')
+LoadEventNexusDialog(Filename = '/SNS/MANDI/IPTS-8776/data/MANDI_4362_event.nxs',
+    OutputWorkspace = 'Event_ws', FilterByTofMin=500, FilterByTofMax=16500, Precount=False, 
+    Enable = 'Filename, OutputWorkspace, FilterByTofMin, FilterByTofMax')
 ConvertToDiffractionMDWorkspaceDialog(InputWorkspace='event_ws', OutputWorkspace='MD_ws', 
     OneEventPerBin=False, LorentzCorrection=True, SplitThreshold=50, MaxRecursionDepth=11, 
     Enable ='InputWorkspace, OutputWorkspace, LorentzCorrection')
