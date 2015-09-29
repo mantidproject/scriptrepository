@@ -51,7 +51,7 @@ class MyDialog(tkSimpleDialog.Dialog):
             Label(master, text = self.label_text[i]).grid(row = j, column = 0, sticky = E)               
             self.entry.append( Entry( master, width = 30) )
             if i == 3: self.entry[i].insert( 0, 0 )
-            if i == 4: self.entry[i].insert( 0, 'C:\\ISAW\\Databases\\' )
+            if i == 4: self.entry[i].insert( 0, '/SNS/software/ISAW/Databases/' )
             self.entry[i].grid( row = j, column = 1, sticky = W )
         
     def apply(self):
