@@ -1,4 +1,4 @@
-#pylint: disable=invalid-name
+﻿#pylint: disable=invalid-name
 """ Sample MARI reduction script """
 import os,sys
 #os.environ["PATH"] =\
@@ -14,6 +14,10 @@ class MARIReduction(ReductionWrapper):
     def def_main_properties(self):
         """Define main properties used in reduction. These are the property
            a user usually wants to change
+		   
+		   MARI Instrument scientist beware!!!!
+		   -- the properties set up here may be owerridden in iliad_mari if you use it or 
+		   in section name=='__main__' below if you do not use iliad_mari
         """
         prop = {}
         # if energy is specified as a list (even with single value e.g. ei=[81])
@@ -52,6 +56,10 @@ class MARIReduction(ReductionWrapper):
            separation between simple and advanced properties depends
            on scientist, experiment and user.   All are necessary for reduction 
            to work properly
+		   
+		   MARI Instrument scientist beware!!!!
+		   -- the properties set up here may be owerridden in iliad_mari if you use it or 
+		   in section name=='__main__' below if you do not use iliad_mari		   
         """
         prop = {}
 #       prop['sum_runs']=False #True
@@ -129,6 +137,48 @@ class MARIReduction(ReductionWrapper):
     def __init__(self,web_var=None):
         """ sets properties defaults for the instrument with Name"""
         ReductionWrapper.__init__(self,'MAR',web_var)
+#------------------------------------------------------------------------------		
+rd = MARIReduction()
+# set up advanced and main properties
+rd.def_advanced_properties()
+rd.def_main_properties()
+
+#Filename -- this generates dynamic name -- the method should be modified in MARIReduction_Sample
+#rd.set_custom_output_filename()
+
+def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
+    """Helper function, which allow to run MARIReduction in simple way
+	inputs: 
+	    runno -- one or list of run numbers to process
+	    ei    -- incident energy
+	    wbvan --  white beam vanadium run number or file name of the vanadium
+        monovan-- monochromatic vanadium run number or file name
+        sam_mass - mass of the sample under investigation
+        sam_rmm  --rmm of sample under investigation
+        sum_runs -- if true, all runs provided in runno list should be added together
+	"""
+
+    rd.reducer.prop_man.map_file="mari_res2013.map"
+    rd.reducer.prop_man.hard_mask_file = "mari_mask2015.msk"
+    
+    rd.reducer.prop_man.incident_energy=ei
+    rd.reducer.prop_man.sum_runs= sum_runs
+    rd.reducer.prop_man.sample_run = runno
+    rd.reducer.prop_man.wb_run=wbvan
+    rd.reducer.prop_man.energy_bins=[-0.5*ei,ei/200.,0.97*ei]
+    
+    if ( sam_rmm!=0 and sam_mass!=0 ) :
+        abs_units=1
+        rd.reducer.prop_man.sample_mass=sam_mass
+        rd.reducer.prop_man.sample_rmm=sam_rmm
+        rd.reducer.prop_man.monovan_run=monovan
+    else:
+        abs_units=0
+        rd.reducer.prop_man.monovan_run=None
+        
+     
+    rd.reducer.prop_man.save_file_name='mar'+str(runno)+'_ei'+str(int(round(ei)))
+    rd.run_reduction()
 
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
@@ -200,4 +250,3 @@ if __name__ == "__main__":
     # usual way to go is to reduce workspace and save it internally
    
     rd.run_reduction()
-

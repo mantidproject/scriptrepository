@@ -1,5 +1,5 @@
-from mantid import config
-from iliad_mari import *
+﻿from mantid import config
+from MARIReduction_Sample import *
 import time
 import os
 import datetime
@@ -23,5 +23,5 @@ sam_mass=0
 sam_rmm=0
 
 
-iliad_mar(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs)
+iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs)
 
