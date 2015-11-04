@@ -51,20 +51,20 @@ class LETReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'LET_one2one_143.map'
-      prop['det_cal_file'] = 'det_LET_cycle143.dat'
+      prop['map_file'] = 'LET_one2one_153.map'
+      prop['det_cal_file'] = 'det_corrected_cycle153.dat'
       prop['bleed'] = False
       prop['norm_method']='current'
       prop['detector_van_range']=[4.8,5.2]
       prop['background_range'] = [92000,98000] # TOF range for the calculating flat background
-      prop['hardmaskOnly']='hard_2014_3_9Tmagnet_0to90.msk' # Use diag (hardmaskPlus option) to enhance hard masks
+      prop['hardmaskOnly']='hard_2015_1_9Tmagnet_0to90.msk' # Use diag (hardmaskPlus option) to enhance hard masks
       prop['check_background']=False
       prop['save_format'] = 'nxspe'
       # if two input files with the same name and  different extension found, what to prefer. 
       prop['data_file_ext']='.nxs' # for LET it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
       # Absolute units: map file to calculate monovan integrals
-      prop['monovan_mapfile'] = 'LET_rings_143.map'
+      prop['monovan_mapfile'] = 'LET_rings_153.map'
 #
       prop['load_monitors_with_workspace']=False
       # change this to correct value and verify that motor_log_names refers correct and existing 
