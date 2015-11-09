@@ -1,10 +1,6 @@
-﻿#pylint: disable=invalid-name
+#pylint: disable=invalid-name
 """ Sample MARI reduction script """
 import os,sys
-#os.environ["PATH"] =\
-#r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
-
-""" Sample MARI reduction scrip used in testing ReductionWrapper """
 from numpy import *
 from mantid import *
 from Direct.ReductionWrapper import *
@@ -14,10 +10,10 @@ class MARIReduction(ReductionWrapper):
     def def_main_properties(self):
         """Define main properties used in reduction. These are the property
            a user usually wants to change
-		   
-		   MARI Instrument scientist beware!!!!
-		   -- the properties set up here may be owerridden in iliad_mari if you use it or 
-		   in section name=='__main__' below if you do not use iliad_mari
+    
+        MARI Instrument scientist beware!!!!
+        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or 
+            in section __name__=='__main__' below if you do not use iliad_mari
         """
         prop = {}
         # if energy is specified as a list (even with single value e.g. ei=[81])
@@ -56,10 +52,10 @@ class MARIReduction(ReductionWrapper):
            separation between simple and advanced properties depends
            on scientist, experiment and user.   All are necessary for reduction 
            to work properly
-		   
-		   MARI Instrument scientist beware!!!!
-		   -- the properties set up here may be owerridden in iliad_mari if you use it or 
-		   in section name=='__main__' below if you do not use iliad_mari		   
+
+        MARI Instrument scientist beware!!!!
+        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or 
+            in section __name__=='__main__' below if you do not use iliad_mari
         """
         prop = {}
 #       prop['sum_runs']=False #True
@@ -87,18 +83,23 @@ class MARIReduction(ReductionWrapper):
           special features are requested
         """
         output = ReductionWrapper.reduce(self,input_file,output_directory)
-        run_num = PropertyManager.sample_run.run_number()		
-        NewName = 'MAR{0}Reduced'.format(run_num)
-        RenameWorkspace(output,OutputWorkspace=NewName )		
-        ei = PropertyManager.incident_energy.get_current()
-        q_min = 0.04*sqrt(ei)		
-        q_max = 1.3*sqrt(ei)		
-        q_bins = str(q_min)+','+str(q_max/285.)+','+str(q_max)		
-        SofQW3(InputWorkspace=NewName ,OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',QAxisBinning=q_bins,Emode='Direct')
-        Transpose(InputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW',OutputWorkspace='MAR{0}Reduced'.format(run_num)+'_SQW')
-		#SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
+        # Autoreduction returns workspace list, so for compartibility with autoreduction 
+        # we better process any output as reduction list
+        if not isinstance(output,list):
+            output = [output]
+        run_num = PropertyManager.sample_run.run_number()
+        for ws in output: # For MARI its currently only one
+            NewName = 'MAR{0}Reduced'.format(run_num)
+            RenameWorkspace(ws,OutputWorkspace=NewName )
+            ei = PropertyManager.incident_energy.get_current()
+            q_min = 0.04*sqrt(ei)
+            q_max = 1.3*sqrt(ei)
+            q_bins = str(q_min)+','+str(q_max/285.)+','+str(q_max)
+            SofQW3(InputWorkspace=NewName ,OutputWorkspace=NewName+'_SQW',QAxisBinning=q_bins,Emode='Direct')
+            Transpose(InputWorkspace=NewName+'_SQW',OutputWorkspace=NewName+'_SQW')
+        #SaveNexus(outWS,Filename = 'MARNewReduction.nxs')
         return mtd[NewName]
-
+    #
     def set_custom_output_filename(self):
         """define custom name of output files if standard one is not satisfactory
         
@@ -148,15 +149,15 @@ rd.def_main_properties()
 
 def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
     """Helper function, which allow to run MARIReduction in simple way
-	inputs: 
-	    runno -- one or list of run numbers to process
-	    ei    -- incident energy
-	    wbvan --  white beam vanadium run number or file name of the vanadium
+    inputs: 
+        runno -- one or list of run numbers to process
+        ei    -- incident energy
+        wbvan --  white beam vanadium run number or file name of the vanadium
         monovan-- monochromatic vanadium run number or file name
         sam_mass - mass of the sample under investigation
         sam_rmm  --rmm of sample under investigation
         sum_runs -- if true, all runs provided in runno list should be added together
-	"""
+    """
 
     rd.reducer.prop_man.map_file="mari_res2013.map"
     rd.reducer.prop_man.hard_mask_file = "mari_mask2015.msk"

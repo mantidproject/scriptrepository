@@ -1,4 +1,4 @@
-﻿from mantid import config
+from mantid import config
 from MARIReduction_Sample import *
 import time
 import os
@@ -12,7 +12,7 @@ ei=110
 # White vanadium run number
 wbvan=20465
 # Default save directory
-config['defaultsave.directory'] = 'home_folder/rb_directory'          #data_dir 
+config['defaultsave.directory'] = '/instrument/MARI/RBNumber/USER_RB_FOLDER' #data_dir 
 
 # Absolute normalisation parameters
 #monovan=21803

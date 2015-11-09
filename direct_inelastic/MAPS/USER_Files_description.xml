@@ -14,16 +14,14 @@
     The values of these variables are taken from archive for current cycle and user
   -->
  <!--Simple file copying -->  
-  <file_to_copy file_name="MAPSReduction_Sample.py" copy_as="MAPSReduction_$cycleID$.py"/>
+  <file_to_copy file_name="MAPSReductionSample2015.py" copy_as="MAPSReductionSample2015.py"/>
 
  <!--Advanced file copying 
     Variables have to be either strings or strings with variables, described above
   -->    
-  <file_to_copy file_name="iliad_maps.py" copy_as="iliad_maps_$cycleID$.py">
-    <replace var  ="MAPSReduction_Sample" by_var="MAPSReduction_$cycleID$"/>
+  <file_to_copy file_name="iliad_maps.py" copy_as="iliad_maps.py">
   </file_to_copy>
-  <file_to_copy file_name="template_crystal_maps.py" copy_as="template_maps_all_$cycleID$.py">
-    <replace var  ="iliad_maps" by_var="iliad_maps_$cycleID$"/>
+  <file_to_copy file_name="template_crystal_maps.py" copy_as="template_maps_$cycleID$.py">
   </file_to_copy>
  
 

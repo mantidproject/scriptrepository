@@ -1,4 +1,4 @@
-import  MAPSReduction_Sample as mpr
+import  MAPSReductionSample2015 as mpr
 from mantid.simpleapi import *
 from mantid import config
 
@@ -11,14 +11,18 @@ rd=mpr.MAPSReduction()
 rd.def_advanced_properties()
 rd.def_main_properties()
 
-##Filename -- this generates dynamic name  at dats save point 
-# -- the method should be modified in MAPSReduction_Sample
-#rd.set_custom_output_filename()
+#Ensure that default is not to sum runs
+rd.reducer.prop_man.sum_runs=False
 
-def iliad_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
+#Filename?
+rd.set_custom_output_filename()
+
+def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
 
     rd.reducer.prop_man.map_file='4to1.map'
-    rd.reducer.prop_man.hard_mask_file = "4to1_151.msk"
+    rd.reducer.prop_man.hard_mask_file = "4to1_153.msk"
+    #rd.reducer.prop_man.hard_mask_file = "4to1_143.msk"
+    rd.reducer.prop_man.van_mass=30.1
     
     rd.reducer.prop_man.incident_energy=ei
     
@@ -38,13 +42,32 @@ def iliad_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
         rd.reducer.prop_man.monovan_run='None'
         
      
-    rd.reducer.prop_man.save_file_name='map'+str(runno)+'_ei'+str(int(round(ei)))
-    rd.run_reduction()
+    if isinstance(runno,(int,long)):
+        runno=[runno]   
     
-def iliad_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
+    if  len(runno)==1:
+        runstring=str(runno)
+        runstring=runstring.strip('[]')
+        rd.reducer.prop_man.save_file_name='map'+runstring+'_ei'+str(int(round(ei)))
+        rd.reducer.prop_man.sum_runs=False
+    else:
+        firstbit='map'
+        lastbit='_ei'+str(int(round(ei)))
+        middlebit=''
+        for i in range(len(runno)):
+            middlebit=middlebit+'_'+str(runno[i]).strip('[]')
+        rd.reducer.prop_man.sum_runs=True
+        rd.reducer.prop_man.save_file_name=firstbit+middlebit+lastbit
+        
+     #    
+    rd.run_reduction()   
+        
     
-    rd.reducer.prop_man.map_file='parker_rings.map'
-    rd.reducer.prop_man.hard_mask_file = "4to1_151.msk"
+def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
+    
+    #rd.reducer.prop_man.map_file='parker_rings.map'
+    rd.reducer.prop_man.map_file='MAPS_rings.map'
+    rd.reducer.prop_man.hard_mask_file = "4to1_153.msk"
     
     rd.reducer.prop_man.incident_energy=ei
     
@@ -53,6 +76,7 @@ def iliad_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
     rd.reducer.prop_man.energy_bins=rebin_pars
     
     rd.reducer.prop_man.bkgd_range=bg_range
+    rd.reducer.prop_man.save_format = 'nxspe' 
     
     if ( sam_rmm!=0 and sam_mass!=0 ) :
         abs_units=1
@@ -62,16 +86,21 @@ def iliad_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range):
     else:
         abs_units=0
         rd.reducer.prop_man.monovan_run='None'
-
+    
+    if isinstance(runno,(int,long)):
+        runno=[runno]   
+    
     if  len(runno)==1:
-        rd.reducer.prop_man.save_file_name='map'+str(runno)+'_ei'+str(int(round(ei)))+'_powder'
+        runstring=str(runno)
+        runstring=runstring.strip('[]')
+        rd.reducer.prop_man.save_file_name='map'+runstring+'_ei'+str(int(round(ei)))+'_powder'
         rd.reducer.prop_man.sum_runs=False
     else:
         firstbit='map'
         lastbit='_ei'+str(int(round(ei)))+'_powder'
         middlebit=''
         for i in range(len(runno)):
-            middlebit=middlebit+'_'+str(runno[i])
+            middlebit=middlebit+'_'+str(runno[i]).strip('[]')
         rd.reducer.prop_man.sum_runs=True
         rd.reducer.prop_man.save_file_name=firstbit+middlebit+lastbit
     #    

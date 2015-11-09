@@ -21,8 +21,7 @@
   -->    
   <file_to_copy file_name="template_mari.py" copy_as="reduce_mari.py">
     <replace var  ="MARIReduction_Sample" by_var="MARIReduction_$cycleID$"/>  
-    <replace var  ="home_folder" by_var="/home/$userID$"/>
-    <replace var  ="rb_directory" by_var="$rb_folder$"/>	
+    <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>
   </file_to_copy>
   
 

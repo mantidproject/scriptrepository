@@ -1,4 +1,4 @@
-"""
+﻿"""
 Script to perform absolute units data reduction for MARI
 """
 from qtiGenie import *
@@ -58,21 +58,17 @@ argi['sample_rmm']   =sam_rmm
 
 
 for i in range(len(runno)):
-        #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],rebin_pars,mapfile,mv_mapfile,**argi)
-        # this does absolute units normalization as far as monovan is not None. Uses default map file, provided in MAPS_Parameters.xml file. Any changes from defaults should be provided here or above as parameters
-        w1=dgreduce.arb_units(wbvan,runno[i],ei,rebin_pars,None,monovan,**argi)
-        #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,**argi)
-        #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,bkgd_range=[13000,19000],\
-        #                     hardmaskPlus=maskfile,diag_remove_zero=False,save_format='none')
+   #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],rebin_pars,mapfile,mv_mapfile,**argi)
+   # this does absolute units normalization as far as monovan is not None. Uses default map file, provided in MAPS_Parameters.xml file. Any changes from defaults should be provided here or above as parameters
+   w1=dgreduce.arb_units(wbvan,runno[i],ei,rebin_pars,None,monovan,**argi)
+   #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,**argi)
+   #w1=iliad_abs(wbvan,runno[i],monovan,wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars).strip('[]'),mapfile,mv_mapfile,bkgd_range=[13000,19000],\
+   #                     hardmaskPlus=maskfile,diag_remove_zero=False,save_format='none')
 
         
-    #Alternative (abs units):
-    #w1=iliad_abs(wbvan,runno[i],monovan[i],wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars[i]).strip('[]'),mapfile,mapfile,bkgd_range=[14000,19000],hardmaskPlus=maskfile,diag_remove_zero=False)
-    save_file=inst+str(runno[i])+'_ei'+str(ei[i])  
-    SaveNXSPE(w1,save_file+'Abs_DgrdOld.nxspe')
-    #SaveNexus(w1,save_file+'newDgrd_NewQTG_NewDirectConv.nxs')	
-    DeleteWorkspace(w1)
-
-
-
-
+  #Alternative (abs units):
+   #w1=iliad_abs(wbvan,runno[i],monovan[i],wbvan,sam_rmm,sam_mass,ei[i],str(rebin_pars[i]).strip('[]'),mapfile,mapfile,bkgd_range=[14000,19000],hardmaskPlus=maskfile,diag_remove_zero=False)
+   #save_file=inst+str(runno[i])+'_ei'+str(ei[i])  
+   SaveNXSPE(w1,save_file+'Abs_DgrdOld.nxspe')
+   #SaveNexus(w1,save_file+'newDgrd_NewQTG_NewDirectConv.nxs')	
+   DeleteWorkspace(w1)
