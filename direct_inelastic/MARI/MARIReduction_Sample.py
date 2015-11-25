@@ -1,4 +1,4 @@
-#pylint: disable=invalid-name
+﻿#pylint: disable=invalid-name
 """ Sample MARI reduction script """
 import os,sys
 from numpy import *
@@ -22,7 +22,7 @@ class MARIReduction(ReductionWrapper):
         #
         #prop['incident_energy'] = 50
         #prop['energy_bins'] = [-20,0.1,49]
-        prop['incident_energy'] = 6.0
+        prop['incident_energy'] = 8.
         prop['energy_bins'] = [-10,0.03,5.7]
         #prop['incident_energy'] = 10
         #prop['energy_bins'] = [-10,0.05,9]
@@ -31,7 +31,7 @@ class MARIReduction(ReductionWrapper):
         # unless you going to sum these files. 
         # The range of numbers or run number is used when you run reduction from PC.
 
-        prop['sample_run'] =[20181, 20182, 20183] #20176 #[20171, 20174]
+        prop['sample_run'] =[20564] #20181, 20182, 20183] #20176 #[20171, 20174]
         prop['wb_run'] = 19717
 
         #
@@ -73,6 +73,9 @@ class MARIReduction(ReductionWrapper):
         # change this to correct value and verify that motor_log_names refers correct and existing 
         # log name for crystal rotation to write correct psi value into nxspe files
         prop['motor_offset']=None
+        prop['check_background']=True
+        prop['bkgd-range-min']=18000
+        prop['bkgd-range-max']=19995
         return prop
       # 
     @iliad
@@ -88,10 +91,10 @@ class MARIReduction(ReductionWrapper):
         if not isinstance(output,list):
             output = [output]
         run_num = PropertyManager.sample_run.run_number()
-        for ws in output: # For MARI its currently only one
-            NewName = 'MAR{0}Reduced'.format(run_num)
+        for ws in output:
+            ei = ws.run().getProperty('Ei').value            
+            NewName = 'MAR{0}Reduced#{1:4.2f}_noRbg'.format(run_num,ei)
             RenameWorkspace(ws,OutputWorkspace=NewName )
-            ei = PropertyManager.incident_energy.get_current()
             q_min = 0.04*sqrt(ei)
             q_max = 1.3*sqrt(ei)
             q_bins = str(q_min)+','+str(q_max/285.)+','+str(q_max)
@@ -139,14 +142,6 @@ class MARIReduction(ReductionWrapper):
         """ sets properties defaults for the instrument with Name"""
         ReductionWrapper.__init__(self,'MAR',web_var)
 #------------------------------------------------------------------------------		
-rd = MARIReduction()
-# set up advanced and main properties
-rd.def_advanced_properties()
-rd.def_main_properties()
-
-#Filename -- this generates dynamic name -- the method should be modified in MARIReduction_Sample
-#rd.set_custom_output_filename()
-
 def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
     """Helper function, which allow to run MARIReduction in simple way
     inputs: 
@@ -158,10 +153,14 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
         sam_rmm  --rmm of sample under investigation
         sum_runs -- if true, all runs provided in runno list should be added together
     """
+    rd = MARIReduction()
+    # set up advanced and main properties
+    rd.def_advanced_properties()
+    rd.def_main_properties()
 
     rd.reducer.prop_man.map_file="mari_res2013.map"
     rd.reducer.prop_man.hard_mask_file = "mari_mask2015.msk"
-    
+
     rd.reducer.prop_man.incident_energy=ei
     rd.reducer.prop_man.sum_runs= sum_runs
     rd.reducer.prop_man.sample_run = runno
