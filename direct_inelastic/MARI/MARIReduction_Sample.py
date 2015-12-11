@@ -92,8 +92,8 @@ class MARIReduction(ReductionWrapper):
             output = [output]
         run_num = PropertyManager.sample_run.run_number()
         for ws in output:
-            ei = ws.run().getProperty('Ei').value            
-            NewName = 'MAR{0}Reduced#{1:4.2f}_noRbg'.format(run_num,ei)
+            ei = PropertyManager.incident_energy.get_current()
+            NewName = 'MAR{0}Reduced#{1:4.2f}'.format(run_num,ei)
             RenameWorkspace(ws,OutputWorkspace=NewName )
             q_min = 0.04*sqrt(ei)
             q_max = 1.3*sqrt(ei)
