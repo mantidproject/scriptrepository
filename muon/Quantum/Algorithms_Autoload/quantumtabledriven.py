@@ -1,6 +1,6 @@
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
-## Version 1.01, July 2015
+## Version 1.02, December 2015
 import numpy
 import math
 import time
@@ -1148,7 +1148,7 @@ def PreParseLoop(pars,hadaxis0,prog=None):
 	for loopctr in range(2):
 		if("loop"+str(loopctr)+"par" in pars and "loop"+str(loopctr)+"range" in pars):
 			axctr=axctr+1
-			while(len(pars["axis"+str(axctr)])>1):
+			while((loopctr>0 or not(hadaxis0)) and len(pars["axis"+str(axctr)])>1):
 				axctr=axctr+1
 				if(axctr>=2):
 					raise Exception("Too many nested loops")
@@ -1259,6 +1259,8 @@ def RunModelledSystem(pars0,prog=None):
 		mulife=2.19703
 	for (loopvar,dest) in ParseAndIterateLoop(pars0):
 		#print "dest for this iteration will be ",dest
+		#print "pars to set for this iteration: ",loopvar
+		#print "pars0 insode loop: ",pars0
 		pars=pars0.copy()
 		for (k,v) in loopvar.items():
 			pars[k]=v
