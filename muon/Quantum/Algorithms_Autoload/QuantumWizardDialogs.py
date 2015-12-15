@@ -1,5 +1,5 @@
 ## Wizard scripts
-## version 1.01 July 2015
+## version 1.02 December 2015
 
 from mantid.api import *
 from mantid.kernel import *
