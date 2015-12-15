@@ -1,6 +1,6 @@
 ## QuantumWizardScript - a user friendly interface to Quantum, a program for solving spin evolution of the muon
 ## Author: James Lord
-## Version 1.0, January 2015
+## Version 1.02, December 2015
 from mantid.api import *
 from mantid.kernel import *
 from mantid.simpleapi import *
