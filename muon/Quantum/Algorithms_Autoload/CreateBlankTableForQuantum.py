@@ -1,6 +1,6 @@
 ## CreateBlankTableForQuantum - make a blank Mantid table with 2 text columns and about 30 rows
 ## Author: James Lord
-## Version 1.01, July 2015
+## Version 1.02, December 2015
 from mantid.api import *
 from mantid.kernel import *
 from mantid.simpleapi import *
