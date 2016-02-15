@@ -61,6 +61,7 @@ class MARIReduction(ReductionWrapper):
 #       prop['sum_runs']=False #True
         prop['map_file'] = "mari_res2013.map"
         prop['monovan_mapfile'] = "mari_res2013.map"
+        
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
         prop['hard_mask_file'] = "mari_mask2015.msk"
         prop['det_cal_file'] = 19717
@@ -116,18 +117,17 @@ class MARIReduction(ReductionWrapper):
             """
             # Note -- properties have the same names as the list of advanced and
             # main properties
+            # Note: the properties are stored in prop_man class and accessed as
+            # below. 
             ei = PropertyManager.incident_energy.get_current()
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
             name = "MAR{0}_Ei{1:<3.2f}meV".format(run_num ,ei)
             return name
-
-        # Uncomment this to use custom filename function
-        # Note: the properties are stored in prop_man class accessed as
-        # below.
+        # Uncomment this to use custom filename function        
         return lambda : custom_name(self.reducer.prop_man)
-        # use this method to use standard file name generating function
+        # Uncomment this to use standard file name generating function
         #return None
    #
    #
@@ -142,42 +142,61 @@ class MARIReduction(ReductionWrapper):
         """ sets properties defaults for the instrument with Name"""
         ReductionWrapper.__init__(self,'MAR',web_var)
 #------------------------------------------------------------------------------		
-def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False):
-    """Helper function, which allow to run MARIReduction in simple way
-    inputs: 
-        runno -- one or list of run numbers to process
-        ei    -- incident energy
-        wbvan --  white beam vanadium run number or file name of the vanadium
-        monovan-- monochromatic vanadium run number or file name
-        sam_mass - mass of the sample under investigation
-        sam_rmm  --rmm of sample under investigation
+def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
+    """Helper function, which allow to run MARIReduction in old iliad way
+     inputs: 
+        runno       -- one or list of run numbers to process
+        ei            -- incident energy or list of incident energies
+        wbvan      --  white beam vanadium run number or file name of the vanadium
+        monovan  -- monochromatic vanadium run number or file name
+        sam_mass-- mass of the sample under investigation
+        sam_rmm -- rmm of sample under investigation
         sum_runs -- if true, all runs provided in runno list should be added together
+        **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
+                         written in the form property=value
+        NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
+                  and def_main properties functions. They of course may be overwritten here. 
     """
     rd = MARIReduction()
-    # set up advanced and main properties
+    # set up advanced and main properties, specified in code above
     rd.def_advanced_properties()
     rd.def_main_properties()
-
-    rd.reducer.prop_man.map_file="mari_res2013.map"
-    rd.reducer.prop_man.hard_mask_file = "mari_mask2015.msk"
-
-    rd.reducer.prop_man.incident_energy=ei
-    rd.reducer.prop_man.sum_runs= sum_runs
-    rd.reducer.prop_man.sample_run = runno
-    rd.reducer.prop_man.wb_run=wbvan
-    rd.reducer.prop_man.energy_bins=[-0.5*ei,ei/200.,0.97*ei]
+    prop_man = rd.reducer.prop_man
+    
+    #assign input arguments:
+    prop_man.incident_energy=ei
+    prop_man.sum_runs        = sum_runs
+    prop_man.sample_run      = runno
+    prop_man.wb_run            = wbvan
+     # string representation and explicit .raw extension are needed when wb run has nxs extension. Only raw files on MARI contain calibration info
+    prop_man.det_cal_file      = 'MAR'+str(wbvan)+'.raw'
+    prop_man.energy_bins=[-0.5*ei,ei/200.,0.97*ei]
     
     if ( sam_rmm!=0 and sam_mass!=0 ) :
-        abs_units=1
-        rd.reducer.prop_man.sample_mass=sam_mass
-        rd.reducer.prop_man.sample_rmm=sam_rmm
-        rd.reducer.prop_man.monovan_run=monovan
+        prop_man.sample_mass=sam_mass
+        prop_man.sample_rmm=sam_rmm
+        prop_man.monovan_run=monovan
     else:
-        abs_units=0
-        rd.reducer.prop_man.monovan_run=None
-        
+        prop_man.monovan_run=None
+    #
+    for key,val in kwargs.items():
+        if key == 'save_file_name':
+            if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
+                  print "**************************************************************************************"
+                  print "*** WARNING: you can not set up single file name for list of files or list of energies"
+                  print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
+                  print "*** to calculate file name as function of each incident energy and run number."
+                  print "**************************************************************************************"                  
+                  continue
+         if key == 'wait_for_file':
+             rd.wait_for_file = kwargs['wait_for_file']
+             continue
+         
+        setattr(prop_man,key,val);          
+    rd.reducer.prop_man = prop_man
+          
      
-    rd.reducer.prop_man.save_file_name='mar'+str(runno)+'_ei'+str(int(round(ei)))
+    #rd.reducer.prop_man.save_file_name='mar'+str(runno)+'_ei'+str(int(round(ei)))
     rd.run_reduction()
 
 if __name__ == "__main__":

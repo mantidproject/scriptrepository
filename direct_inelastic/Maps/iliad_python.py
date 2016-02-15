@@ -1,5 +1,7 @@
 """
 Script to perform absolute units data reduction for MAPS
+Outdated file kept here for historical reasons. 
+qtiGenie is not needed any more to do data reduction
 """
 from qtiGenie import *
 from mantid.simpleapi import *

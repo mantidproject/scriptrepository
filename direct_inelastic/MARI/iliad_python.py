@@ -1,5 +1,9 @@
 ﻿"""
 Script to perform absolute units data reduction for MARI
+
+This is old script left here for historical reasons. 
+qtiGenie is not used for reduction any more. 
+
 """
 from qtiGenie import *
 from mantid.simpleapi import *

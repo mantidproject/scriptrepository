@@ -2,8 +2,6 @@
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
 import os
-#os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+\
-#                     os.environ["PATH"]
 #
 from mantid import *
 from Direct.ReductionWrapper import *
@@ -51,7 +49,7 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "4to1.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
       #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_143.msk"
+      prop['hard_mask_file'] = "4to1_153.msk"
       prop['bkgd_range'] = [13000,19000]
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
@@ -91,20 +89,26 @@ class MAPSReduction(ReductionWrapper):
               incident energy and run number and adds some auxiliary information
               to it.
             """
+            map_file = prop_man.map_file
+            if 'rings' in map_file:
+                ftype = '_powder'
+            else:
+                ftype = ''             
+
             # Note -- properties have the same names as the list of advanced and
             # main properties
             ei = PropertyManager.incident_energy.get_current()
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
-            name = "MAP{0}_Ei{1:<3.2f}meV_One2One".format(run_num ,ei)
+            name = "map{0}_ei{1:<3.0f}meV{2}".format(run_num ,ei,ftype)
             return name
        
       # Uncomment this to use custom filename function
       # Note: the properties are stored in prop_man class accessed as
         # below.
       return lambda : custom_name(self.reducer.prop_man)
-      # use this method to use standard file name generating function
+      # Uncomment this to use standard file name generating function
       #return None
    #
    #
@@ -118,6 +122,94 @@ class MAPSReduction(ReductionWrapper):
    def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MAP',web_var)
+#---------------------------------------------------------------------------------------------------------------------------
+# settings necessary to use in old iliad interface.  Comment ehse to use this reduction file only
+rd = MAPSReduction()  
+rd.def_advanced_properties()
+rd.def_main_properties()
+
+def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
+    """Helper function, allowing to run MAPS_Reduction in old functional (iliad) form
+      
+        Data reduced as crystal
+        The script assumes that crystal map and mask files and set up in the advanced properties. 
+        Check iliad_powder and iliad_crystal interoperations if this changes
+        
+     inputs: 
+        runno       -- one or list of run numbers to process
+        ei            -- incident energy or list of incident energies
+        wbvan      --  white beam vanadium run number or file name of the vanadium
+        rebin_pars -- the parameters, which define final file binning 
+        monovan  -- monochromatic vanadium run number or file name
+        sam_mass-- mass of the sample under investigation
+        sam_rmm -- rmm of sample under investigation
+        sum_runs -- if true, all runs provided in runno list should be added together
+        **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
+                         written in the form property=value
+        NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
+                  and def_main properties functions. They of course may be overwritten here. 
+    """       
+    prop_man = rd.reducer.prop_man
+    
+    #assign input arguments:
+    prop_man.incident_energy=ei
+    prop_man.sum_runs        = sum_runs
+    prop_man.sample_run      = runno
+    prop_man.wb_run            = wbvan
+    #
+    prop_man.energy_bins=rebin_pars
+    
+    if ( sam_rmm!=0 and sam_mass!=0 ) :
+        prop_man.sample_mass=sam_mass
+        prop_man.sample_rmm=sam_rmm
+        prop_man.monovan_run=monovan
+    else:
+        prop_man.monovan_run=None
+     #-----------------------------------------
+    for key,val in kwargs.items():
+        if key == 'save_file_name':
+            if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
+                  print "**************************************************************************************"
+                  print "*** WARNING: you can not set up single file name for list of files or list of energies"
+                  print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
+                  print "*** to calculate file name as function of each incident energy and run number."
+                  print "**************************************************************************************"                  
+                  continue
+        if key == 'wait_for_file':
+            rd.wait_for_file = kwargs['wait_for_file']
+            continue                 
+        setattr(prop_man,key,val)        
+    rd.reducer.prop_man = prop_man
+    
+    #    
+    rd.run_reduction()   
+        
+
+def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs):
+    """Helper function, which allow to run MARI_Reduction in functional form
+    
+        Data reduced as powder
+        The script assumes that crystal map and mask files and set up in the advanced properties. 
+        Check iliad_powder and iliad_crystal interoperations if this changes
+    
+    inputs: 
+        runno       -- one or list of run numbers to process
+        ei            -- incident energy or list of incident energies
+        wbvan      --  white beam vanadium run number or file name of the vanadium
+        monovan  -- monochromatic vanadium run number or file name
+        sam_mass-- mass of the sample under investigation
+        sam_rmm -- rmm of sample under investigation
+        sum_runs -- if true, all runs provided in runno list should be added together
+        **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
+                         written in the form property=value
+        NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
+                  and def_main properties functions. They of course may be overwritten here. 
+    """
+    
+    #rd.reducer.prop_man.map_file='parker_rings.map'
+    rd.reducer.prop_man.map_file='MAPS_rings.map'
+    iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs)
+       
 
 if __name__ == "__main__":
 #------------------------------------------------------------------------------------#
