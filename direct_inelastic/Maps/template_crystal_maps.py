@@ -14,7 +14,7 @@ except:
 
 
 
-#config['defaultsave.directory'] = '/instrument/MAPS/RBNumber/USER_RB_FOLDER' #data_dir 
+config['defaultsave.directory'] = '/instrument/MAPS/RBNumber/USER_RB_FOLDER' #data_dir 
 
 #run number
 runno=21385
