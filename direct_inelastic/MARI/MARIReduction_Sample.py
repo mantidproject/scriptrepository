@@ -188,7 +188,7 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
                   print "*** to calculate file name as function of each incident energy and run number."
                   print "**************************************************************************************"                  
                   continue
-         if key == 'wait_for_file':
+        if key == 'wait_for_file':
              rd.wait_for_file = kwargs['wait_for_file']
              continue
          
