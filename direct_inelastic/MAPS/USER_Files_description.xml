@@ -19,7 +19,7 @@
  <!--Advanced file copying 
     Variables have to be either strings or strings with variables, described above
   -->    
-  <file_to_copy file_name="template_crystal_maps.py" copy_as="template_maps_$cycleID$.py">
+  <file_to_copy file_name="template_maps.py" copy_as="template_maps_$cycleID$.py">
         <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>  
   </file_to_copy>
  
