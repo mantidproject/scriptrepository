@@ -18,14 +18,14 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = 40
-       prop['energy_bins'] =[-4,0.2,36]
+       prop['incident_energy'] = [610]
+       prop['energy_bins'] =[-0.1,0.05,0.9]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] ='MAP0000.raw' #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
-       prop['wb_run'] = 21914
+       prop['sample_run'] =24556 #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
+       prop['wb_run'] = 24550
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
@@ -49,8 +49,8 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "4to1.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
       #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_153.msk"
-      prop['bkgd_range'] = [13000,19000]
+      prop['hard_mask_file'] = "4to1_154.msk"
+      prop['bkgd_range'] = [15000,19000]
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
@@ -61,7 +61,7 @@ class MAPSReduction(ReductionWrapper):
       
       #prop['det_cal_file'] = "11060" what about calibration?
       prop['save_format'] = 'nxspe' # nxs or spe
-      prop['data_file_ext']='.raw' # if two input files with the same name and
+      prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
       return prop
       #
