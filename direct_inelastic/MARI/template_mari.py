@@ -18,7 +18,7 @@ sum_runs=False
 ei=30
 
 # White vanadium run number
-wbvan=20649
+wbvan=21334
 # Default save directory
 config['defaultsave.directory'] = '/instrument/MARI/RBNumber/USER_RB_FOLDER' #data_dir 
 
