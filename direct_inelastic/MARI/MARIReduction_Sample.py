@@ -76,7 +76,7 @@ class MARIReduction(ReductionWrapper):
         prop['motor_offset']=None
         prop['check_background']=True
         prop['bkgd-range-min']=18000
-        prop['bkgd-range-max']=19995
+        prop['bkgd-range-max']=19000
         return prop
       # 
     @iliad
@@ -93,7 +93,8 @@ class MARIReduction(ReductionWrapper):
             output = [output]
         run_num = PropertyManager.sample_run.run_number()
         for ws in output:
-            ei = PropertyManager.incident_energy.get_current()
+            #ei = PropertyManager.incident_energy.get_current()
+            ei = ws.getEFixed(1)
             NewName = 'MAR{0}Reduced#{1:4.2f}'.format(run_num,ei)
             RenameWorkspace(ws,OutputWorkspace=NewName )
             q_min = 0.04*sqrt(ei)
@@ -170,7 +171,8 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
     prop_man.wb_run            = wbvan
      # string representation and explicit .raw extension are needed when wb run has nxs extension. Only raw files on MARI contain calibration info
     prop_man.det_cal_file      = 'MAR'+str(wbvan)+'.raw'
-    prop_man.energy_bins=[-0.5*ei,ei/200.,0.97*ei]
+    if ei != 'auto':
+        prop_man.energy_bins=[-0.5*ei,ei/200.,0.97*ei]
     
     if ( sam_rmm!=0 and sam_mass!=0 ) :
         prop_man.sample_mass=sam_mass
