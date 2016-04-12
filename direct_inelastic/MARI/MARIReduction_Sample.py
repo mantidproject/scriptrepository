@@ -32,7 +32,7 @@ class MARIReduction(ReductionWrapper):
         # The range of numbers or run number is used when you run reduction from PC.
 
         prop['sample_run'] =[20564] #20181, 20182, 20183] #20176 #[20171, 20174]
-        prop['wb_run'] = 19717
+        prop['wb_run'] = 21334
 
         #
         prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -63,8 +63,8 @@ class MARIReduction(ReductionWrapper):
         prop['monovan_mapfile'] = "mari_res2013.map"
         
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        prop['hard_mask_file'] = "mari_mask2015.msk"
-        prop['det_cal_file'] = 19717
+        prop['hard_mask_file'] = "mari_mask2015_3.msk"
+        prop['det_cal_file'] = 'MAR21334.raw'
         prop['save_format'] = 'nxspe'
         #
         #prop['wb_integr_range'] = [2,10]         
