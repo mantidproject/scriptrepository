@@ -33,8 +33,8 @@ class MERLINReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = 25092 #range(24003,24011) # 'MER23700.n001'
-       prop['wb_run'] = '23684.raw'
+       prop['sample_run'] = 30352 #range(24003,24011) # 'MER23700.n001'
+       prop['wb_run'] = '30351.raw'
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
@@ -57,13 +57,13 @@ class MERLINReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'one2one_143.map'
-      prop['det_cal_file'] = 'det_corr_143.dat' #'det_corrected7.nxs - testing'
+      prop['map_file'] = 'one2one_161.map'
+      prop['det_cal_file'] = 'det_corr_161.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = True
       prop['norm_method']='current' #'monitor-1', 'monitor-2'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
-      prop['hardmaskOnly']='MER23698.msk' # Use diag (hardmaskPlus option) to enhance hard masks
+      prop['hardmaskOnly']='mask_16_1.msk' # Use diag (hardmaskPlus option) to enhance hard masks
       #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
       prop['check_background']=False
@@ -76,7 +76,7 @@ class MERLINReduction(ReductionWrapper):
       prop['data_file_ext']='.nxs' # for MER it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
       # Absolute units: map file to calculate monovan integrals                                                                      
-      prop['monovan_mapfile'] = 'rings_143.map'
+      prop['monovan_mapfile'] = 'rings_161.map'
       prop['vanadium-mass']=7.85 # check this
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
