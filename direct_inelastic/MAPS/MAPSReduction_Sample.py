@@ -101,7 +101,7 @@ class MAPSReduction(ReductionWrapper):
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
             run_num = PropertyManager.sample_run.run_number()
-            name = "map{0}_ei{1:<3.0f}meV{2}".format(run_num ,ei,ftype)
+            name = "map{0}_ei{1:_<3.0f}meV{2}".format(run_num ,ei,ftype)
             return name
        
       # Uncomment this to use custom filename function
