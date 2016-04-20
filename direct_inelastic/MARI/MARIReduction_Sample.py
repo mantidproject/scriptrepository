@@ -63,7 +63,7 @@ class MARIReduction(ReductionWrapper):
         prop['monovan_mapfile'] = "mari_res2013.map"
         
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        prop['hard_mask_file'] = "mari_mask2015_3.msk"
+        prop['hard_mask_file'] = "mari_mask2016_1.msk"
         prop['det_cal_file'] = 'MAR21334.raw'
         prop['save_format'] = 'nxspe'
         #
@@ -74,7 +74,7 @@ class MARIReduction(ReductionWrapper):
         # change this to correct value and verify that motor_log_names refers correct and existing 
         # log name for crystal rotation to write correct psi value into nxspe files
         prop['motor_offset']=None
-        prop['check_background']=True
+        prop['check_background']=False
         prop['bkgd-range-min']=18000
         prop['bkgd-range-max']=19000
         return prop
