@@ -14,7 +14,7 @@ import os
 
 
 class LinearDetector():
-    def __init__(self, minspec, maxspec, floodfile, name = 'lineardetector', nickname = 'LD', btm_background = False, top_background = False, pixelsize=0):
+    def __init__(self, minspec, maxspec, floodfile, name = 'lineardetector', nickname = 'LD', btm_background = False, top_background = False, pixelsize=0, idf = None):
         self.minspec =  minspec
         self.maxspec = maxspec
         self.nspec = maxspec - minspec+1
@@ -31,12 +31,16 @@ class LinearDetector():
     def croptodetector(self, inputworkspace, suffix = 'det'):
         CropWorkspace(InputWorkspace=inputworkspace,OutputWorkspace=inputworkspace+suffix,StartWorkspaceIndex=self.minspec-1,EndWorkspaceIndex=self.maxspec-1)
         return inputworkspace+suffix #Workspace name of cropped workspace
-        
+
+old_detector = LinearDetector(minspec = 5, maxspec = 244, floodfile = "LD240flood_preMarch2012.nxs", name = 'Old_LD', nickname = 'oldLD', btm_background = (0, 50), top_background = (160, 240), pixelsize = 1.2e-3)        
 wsf_detector = LinearDetector(minspec = 6, maxspec = 772, floodfile = "WSF_Flood.nxs", name = 'WSD_LD', nickname = 'wsf', btm_background = (275, 300), top_background = (480, 500), pixelsize = 0.5e-3)
 wsf_detector.centrespectrum =  (wsf_detector.nspec+1)/2.0+wsf_detector.minspec#there is one empty pixel in s5 which we need in the idf but don't count as minspec
+wsf_detector.idf = "C:/mantidinstall/instrument/OFFSPEC_Definition_wsf.xml"
+babylarmor = LinearDetector(minspec = 4, maxspec = 125, floodfile = '', name = 'Baby_Larmor', nickname = 'bLar', pixelsize = 8e-3)       
+
 current_detector = wsf_detector
 
-babylarmor = LinearDetector(minspec = 4, maxspec = 125, floodfile = '', name = 'Baby_Larmor', nickname = 'bLar', pixelsize = 8e-3)       
+
 
 def addRuns(runlist,wname):
   #DeleteWorkspace(str(wname))
@@ -225,12 +229,17 @@ def floodnorm(wkspName,floodfile='',floodopt='default'):
    flood_wksp = current_detector.nickname + "_flood"
    if  flood_wksp not in mtd:
        LoadNexusProcessed(Filename=flood_file,OutputWorkspace=flood_wksp)
+       if current_detector.idf:
+        print "change idf"
+        LoadInstrument(flood_wksp, Filename = current_detector.idf)
+       ConvertUnits(flood_wksp, Target='Wavelength', OutputWorkspace =  flood_wksp)
         
-   floodtemp=mtd[flood_wksp]*1.0 # copy wksp
-   RebinToWorkspace(floodtemp,wkspName,OutputWorkspace='floodreb')
-   Divide(LHSWorkspace=wkspName, RHSWorkspace='floodreb', OutputWorkspace=wkspName)
-   DeleteWorkspace('floodreb')
-   DeleteWorkspace('floodtemp')
+   #floodtemp=mtd[flood_wksp]*1.0 # copy wksp
+   #RebinToWorkspace(floodtemp,wkspName,OutputWorkspace='floodreb')
+   #Divide(LHSWorkspace=wkspName, RHSWorkspace='floodreb', OutputWorkspace=wkspName)
+   Divide(LHSWorkspace=wkspName, RHSWorkspace=flood_wksp, OutputWorkspace=wkspName)
+   #DeleteWorkspace('floodreb')
+   #DeleteWorkspace('floodtemp')
    
 #===================================================================================================================
 #
@@ -698,7 +707,9 @@ def nrSERGISFn(runList,nameList,P0runList,P0nameList,incidentAngles,SEConstants,
             else:
                 current_detector.croptodetector(wksp)
                 # move the first spectrum in the list onto the beam centre so that when the bench is rotated it's in the right place
-                MoveInstrumentComponent(wksp+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
+                if nspec < 400:
+                    MoveInstrumentComponent(i+"det","DetectorBench",Y=str((125.0-float(minSpec))*1.2e-3))
+                #MoveInstrumentComponent(wksp+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
                 # add a bit to the angle to put the first spectrum of the group in the right place
                 a1=2.0*float(incAngles[k])+atan((float(minSpec)-float(specChan))*current_detector.pixelsize/3.63)*180.0/pi
                 #print str(2.0*float(incAngles[k]))+" "+str(atan((float(minSpec)-float(specChan))*1.2e-3/3.63)*180.0/pi)+" "+str(a1)
@@ -826,10 +837,14 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
             if dofloodnorm:
                 floodnorm(i+"det",floodfile,floodopt=dofloodnorm)
             # move the first spectrum in the list onto the beam centre so that when the bench is rotated it's in the right place
+            if nspec < 400:
+                MoveInstrumentComponent(i+"det","DetectorBench",Y=str((125.0-float(minSpec))*1.2e-3))
             #MoveInstrumentComponent(i+"det","DetectorBench",Y=str((125.0-float(minSpec))*curent_detector.pixelsize))
-            MoveInstrumentComponent(i+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
+            #MoveInstrumentComponent(i+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
             #add a bit to the angle to put the first spectrum of the group in the right place
-            a1=2.0*float(incAngles[k])+atan((float(minSpec)-float(specChan))*current_detector.pixelsize/3.63)*180.0/pi
+                a1=2.0*float(incAngles[k])+atan((float(minSpec)-float(specChan))*current_detector.pixelsize/3.63)*180.0/pi
+            else:
+                a1=2.0*float(incAngles[k])+atan((float(specChan)-403.0)*current_detector.pixelsize/3.63)*180.0/pi
             #print str(2.0*float(incAngles[k]))+" "+str(atan((float(minSpec)-float(specChan))*current_detector.pixelsize/3.63)*180.0/pi)+" "+str(a1)
             RotateInstrumentComponent(i+"det","DetectorBench",X="-1.0",Angle=str(a1))
             if (subbgd==1):
@@ -848,7 +863,7 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
 # Experimental convert to Q before summing 
             if (qgroup==1):
                 Rebin(InputWorkspace=i+"det",OutputWorkspace=i+"det",Params=reb)
-                CropWorkspace(InputWorkspace=i+"det",OutputWorkspace=i+"detQ",StartWorkspaceIndex=int(minSpec)-current_detector.minspec,EndWorkspaceIndex=int(maxSpec)-current_detector.maxspec)
+                CropWorkspace(InputWorkspace=i+"det",OutputWorkspace=i+"detQ",StartWorkspaceIndex=int(minSpec)-current_detector.minspec,EndWorkspaceIndex=int(maxSpec)-current_detector.minspec)
                 ConvertUnits(InputWorkspace=i+"detQ",OutputWorkspace=i+"detQ",Target="MomentumTransfer",AlignBins="1")
                 GroupDetectors(i+"detQ",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(maxSpec)-int(minSpec)+1),KeepUngroupedSpectra="0")
                 ConvertUnits(InputWorkspace=i+"sum",OutputWorkspace=i+"sum",Target="Wavelength",AlignBins="1")
@@ -862,7 +877,8 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
                 CropWorkspace(InputWorkspace=i,OutputWorkspace=i+"mon",StartWorkspaceIndex=mon_spec,EndWorkspaceIndex=mon_spec)
                 Rebin(InputWorkspace=i+"mon",OutputWorkspace=i+"mon",Params=reb)
                 Rebin(InputWorkspace=i+"det",OutputWorkspace=i+"det",Params=reb)
-                GroupDetectors(InputWorkspace=i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-5,int(maxSpec)-5+1),KeepUngroupedSpectra="0")
+                #GroupDetectors(InputWorkspace=i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-5,int(maxSpec)-5+1),KeepUngroupedSpectra="0")
+                GroupDetectors(InputWorkspace=i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-6,int(maxSpec)-6+1),KeepUngroupedSpectra="0")
             Divide(LHSWorkspace=i+"sum",RHSWorkspace=i+"mon",OutputWorkspace=i+"norm")
             Divide(LHSWorkspace=i+"det",RHSWorkspace=i+"mon",OutputWorkspace=i+"detnorm")
             if dlist[k]  == "none":
@@ -879,6 +895,7 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
                 DeleteWorkspace(i+'normPLC')
                 DeleteWorkspace(i+'normt1')
             else:
+                #CloneWorkspace(InputWorkspace=i+'norm', OutputWorkspace=i+'norm2')
                 Divide(LHSWorkspace=i+"norm",RHSWorkspace=dlist[k],OutputWorkspace=i+"norm")
                 ReplaceSpecialValues(InputWorkspace=i+"norm",OutputWorkspace=i+"norm",NanValue=0.0,NaNError=0.0,InfinityValue=0.0,InfinityError=0.0)
                 Divide(LHSWorkspace=i+"detnorm",RHSWorkspace=dlist[k],OutputWorkspace=i+"detnorm")
@@ -1284,6 +1301,12 @@ def nrPACorrection(UpUpWksp,UpDownWksp,DownUpWksp,DownDownWksp,calibration=0):
         calpha=[0.957789,0.019995,-0.002697,0.000099]
         cAp=[0.986906,-0.013945,0.002480,-0.000161]
         cPp=[0.999517,-0.013878,0.001680,-0.000043]
+	# elif (calibration == 4):
+    # Constants run in November 2015
+        # crho=[0.969730,0.009514,-0.000385,-0.000114]
+        # calpha=[0.967523,0.010840,-0.000579,0.0000067]
+        # cAp=[0.951974,-0.008976,0.002515,-0.000247]
+        # cPp=[0.934684,0.011656,-0.0025,0.000]
     
     Ipp = mtd[UpUpWksp]
     Ipa = mtd[UpDownWksp]
@@ -1434,7 +1457,9 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
         else:
             current_detector.croptodetector(wksp)
             # move the first spectrum in the list onto the beam centre so that when the bench is rotated it's in the right place
-            MoveInstrumentComponent(wksp+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
+            if nspec < 400:
+                MoveInstrumentComponent(i+"det","DetectorBench",Y=str((125.0-float(minSpec))*1.2e-3))
+            #MoveInstrumentComponent(wksp+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
             # add a bit to the angle to put the first spectrum of the group in the right place
             a1=2.0*float(incAngles[k])+atan((float(minSpec)-float(specChan))*current_detector.pixelsize/3.63)*180.0/pi
             #print str(2.0*float(incAngles[k]))+" "+str(atan((float(minSpec)-float(specChan))*1.2e-3/3.63)*180.0/pi)+" "+str(a1)
