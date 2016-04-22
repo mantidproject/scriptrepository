@@ -957,15 +957,15 @@ def achop(ei,omega):
     #for j in range(numpy.size(ei)):
     groot=0
     if (gamm >= 4.00):
-        f1=0
+        f1=0.0
         print 'no transmission at ', ei, 'meV at ',omega/(2*math.pi), 'Hz'
     else:
         ierr=0
-    if gamm <= 1.00:
-        f1=1.00-(gamm**2)/6.00
-    else:
-        groot=math.sqrt(gamm)
-        f1=groot*((groot-2.00)**2)*(groot+4.00)/6.00
+        if gamm <= 1.00:
+            f1=1.00-(gamm**2)/6.00
+        else:
+            groot=math.sqrt(gamm)
+            f1=groot*((groot-2.00)**2)*(groot+4.00)/6.00
 
 
 
