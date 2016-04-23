@@ -16,12 +16,12 @@ class LETReduction(ReductionWrapper):
 #------------- To change for users ---------------------------------------#
 #---------------------------------------------------------------------------#
       # multiple energies provided in the data file
-       prop['incident_energy'] = [2]
+       prop['incident_energy'] =[8.96,3.69,2,1.25]
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['energy_bins'] = [-0.1,0.0025,0.6] #binning of the energy for the spe file. 
+       prop['energy_bins'] = [-1.5,0.0025,0.9] #binning of the energy for the spe file. 
        #prop['energy_bins'] = [-2.5,0.01,4.9] #binning of the energy for the spe file. 
        #
        # the range of files to reduce.
@@ -29,7 +29,7 @@ class LETReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = 26771 # 'LET18547.n001'
+       prop['sample_run'] = range(26772, 26811) # 'LET18547.n001'
        prop['wb_run'] = 25653   # monovan run number 
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -51,14 +51,14 @@ class LETReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'LET_one2one_153.map'
+      prop['map_file'] = 'LET_rings_153.map'
       prop['det_cal_file'] = 'det_corrected_cycle153.dat'
       prop['bleed'] = False
       prop['norm_method']='current'
       prop['detector_van_range']=[4.8,5.2]
-      prop['background_range'] = [92000,98000] # TOF range for the calculating flat background
+      prop['background_range'] = [75000,99000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='hard_2015_4_9T_0to90_test.msk' # Use diag (hardmaskPlus option) to enhance hard masks
-      prop['check_background']=False
+      prop['check_background']=True
       prop['save_format'] = 'nxspe'
       # if two input files with the same name and  different extension found, what to prefer. 
       prop['data_file_ext']='.nxs' # for LET it may be choice between event and histo mode if 
@@ -72,7 +72,7 @@ class LETReduction(ReductionWrapper):
       prop['motor_offset']=None
       # vanadium  mass valid from cycle 2013/5
       prop['vanadium-mass']=8.47
-      #
+      prop['fixei']='True'
       prop['monovan_lo_frac']=-0.4
       prop['monovan_hi_frac']= 0.4
       #RAE added
@@ -87,6 +87,9 @@ class LETReduction(ReductionWrapper):
           Overload only if custom reduction is needed or 
           special features are requested
       """
+      print 'Input file: ',input_file
+      if input_file:
+          self.reducer.prop_man.sample_run = input_file
       ws = PropertyManager.sample_run.get_workspace()
       wsf = filter_ts1_pulses(ws)
       self.reducer.prop_man.sample_run = wsf
@@ -135,7 +138,7 @@ class LETReduction(ReductionWrapper):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'LET',web_var)
        
-def filter_ts1_pulses(ws,peak_period=20000,peak_res = 300):
+def filter_ts1_pulses(ws,peak_period=20000,peak_res = 30):
     """ Function filters (removes) events occuring with periodicity cpecified by  peak_period value
         and within time interval peak_res (from each event period start)
         Time intervals are in units of uSec.
@@ -154,7 +157,7 @@ def filter_ts1_pulses(ws,peak_period=20000,peak_res = 300):
     r_min = xmin
     print "Splitting input workspace {0} into {1} time intervals excluding specified periods".format(ws.name(),nb)
     for ind,x_min in enumerate(bin_ranges):
-        r_max = x_min + peak_period-10
+        r_max = x_min + peak_period-1
         if r_max > xmax:
             r_max = xmax
         if r_max<=r_min:
