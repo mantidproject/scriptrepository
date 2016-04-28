@@ -29,6 +29,7 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 		self.declareProperty(WorkspaceProperty("OutputWS","",Direction.Output),"Summary rates versus time")
 		self.declareProperty("IntegrateTimeFrom",0.0)
 		self.declareProperty("IntegrateTimeTo",32.0)		
+		self.declareProperty("NormaliseByCurrent",False)
 
 	def category(self):
 		return "Muon"
@@ -70,6 +71,8 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 		# arrays
 		# loop and load files. Absolute numbers for now.
 		gotToCurrentRun=False
+		prog_reporter = Progress(self,start=0.0,end=1.0,nreports=lastnum+1-firstnum)
+
 		for ff in range(firstnum,lastnum+1):
 			if(file1 != file9):
 				thispath=file1[:j1]+str(ff).zfill(i1-j1)+file1[i1:]
@@ -82,10 +85,12 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 				thispath=file1[:j1]+"auto_A.tmp" # should really try all of them and pick newest!
 				wstuple=LoadMuonNexus(filename=thispath,OutputWorkspace="__CopyLogsTmp")
 				gotToCurrentRun=True
-			if(len(wstuple)==5):
+			print len(wstuple)
+			if(len(wstuple)<=6):
 				ws=wstuple[0] # plain run
 			else:
 				ws=wstuple[5] # first period, should overlap with same log data in each
+			prog_reporter.report("Loading")
 			if(gotToCurrentRun and int(ws.getRun().getProperty("run_number").value) != ff):
 				print "temporary file is for the previous run, probably no new one started"
 				break
@@ -96,9 +101,23 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 					temps[i]=numpy.zeros(0)
 				#begin=datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value,"%Y-%m-%dT%H:%M:%S")[0:6]))
 				begin=datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value,"%Y-%m-%dT%H:%M:%S")[0:3])) # start of day
+				nbc=self.getProperty("NormaliseByCurrent").value
+				if(nbc):
+					nbclog=None
+					for nbclog0 in ["Beam_Current","Beamlog_TS1_Current","beamlog_current"]: # consistency would be nice!
+						if(ws.getRun().hasProperty(nbclog0)):
+							nbclog=nbclog0
+					if(nbclog is None):
+						raise Exception("Beam current doesn't seem to be logged on this instrument under any of the names I know")
 			ws2=Integration(ws,tfrom,tto)
+			if(nbc):
+				bclog=ws.getRun().getProperty(nbclog).value
+				bcon=numpy.extract(bclog>100.0,bclog) # exclude beam-off and base rate
+				bc=numpy.mean(bcon) # accidentally includes beam current before run
+			else:
+				bc=1.0
 			for ss in range(ws2.getNumberHistograms()):
-				temps[ss]=numpy.append(temps[ss],ws2.readY(ss)[0]/ws.getRun().getProperty("goodfrm").value)
+				temps[ss]=numpy.append(temps[ss],ws2.readY(ss)[0]/ws.getRun().getProperty("goodfrm").value/bc)
 			times[-1]=((datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value,"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds())/3600
 			times=numpy.append(times,((datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_end").value,"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds())/3600)
 			print "finished file ",thispath
