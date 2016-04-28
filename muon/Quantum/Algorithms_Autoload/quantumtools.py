@@ -16,6 +16,11 @@ numpy.set_printoptions(linewidth=100)
 def normalised(vec):
 	# intended for 3 element 1d vectors
 	r=numpy.linalg.norm(vec)
+	#if(len(vec) !=3 or (not numpy.isfinite(vec).all()) or r==0):
+	#	print "bad vector: ",vec
+	#	raise Exception("Normalising bad vector")
+	if(r==0):
+		raise Exception("Normalising a zero vector!")
 	return vec/r
 
 def addZeeman(Ham,spin,B,gamma):
@@ -68,10 +73,10 @@ def createSpinMat(spins):
 	# fill me (exact copy of Fortran QUANTUM including possible scale errors)
 	for thissp in range(Nsp):
 		for lowerIz in range(numpy.prod(spins[0:thissp],dtype=numpy.int)):
-			for upperIz in range(lowerIz,N,numpy.prod(spins[0:thissp+1])):
+			for upperIz in range(lowerIz,N,numpy.prod(spins[0:thissp+1],dtype=numpy.int)):
 				for thisIz in range(spins[thissp]):
-					thisIndI=upperIz+thisIz*numpy.prod(spins[0:thissp])
-					thisIndJ=upperIz+(thisIz+1)*numpy.prod(spins[0:thissp])
+					thisIndI=upperIz+thisIz*numpy.prod(spins[0:thissp],dtype=numpy.int)
+					thisIndJ=upperIz+(thisIz+1)*numpy.prod(spins[0:thissp],dtype=numpy.int)
 					# element [thissp,alpha,thisIndI,thisIndJ] flips spin from thisIz to thisJz leaving others alone
 					spmat[thissp,2,thisIndI,thisIndI]=spins[thissp]-1-2*thisIz # Sz diagonal
 					if(thisIz<spins[thissp]-1):
@@ -266,6 +271,68 @@ def solveDensityMat(Ham,start,detect,timeend=float("Inf"),tzeros=None):
 		rho3=numpy.tensordot(rho3a,evecstar,(1,1))
 		return (omega,ccos,csin,rho3)
 
+def solveDensityMatComplex(Ham,start,detect,timeend=float("Inf"),tzeros=None):
+	# as for SolveDensityMat but detect=(|d1> + j |d2>) and return signed frequency components
+	# start with density matrix "start"
+	# returns (omega,cos,sin) each is array of coefficients
+	# with optional param timeend, return (omega,cos,sin,rho(timeend)) for use with pulsed mode, and with tzeros too, smooth rho for variable slice length
+	eval,evec=numpy.linalg.eigh(Ham)
+	evecstar=numpy.conj(evec)
+	# transform rho into basis set of evec
+	#* rho2=numpy.einsum('ji,jk,kl',evecstar,start,evec)
+	rho1a=numpy.dot(start,evec) # start[j,k]*evec[k.l]
+	rho2=numpy.tensordot(evecstar,rho1a,(0,0) )
+	#print "rho2"
+	#print rho2
+	# likewise detector operator (CHECK conjg, etc)
+	#* detect2=numpy.einsum('ji,jk,kl',evecstar,detect,evec)
+	detect1a=numpy.dot(detect,evec,rho1a) # reuse rho1a, it's the right shape
+	detect2=numpy.tensordot(evecstar,detect1a,(0,0) )
+	#print "detect2"
+	#print detect2
+	#print numpy.dot(numpy.diag(rho2),numpy.diag(detect2))
+	# detectedfreqs Eval(i)-Eval(j) ampl rhoij*Sji
+	# detected const dot(diag(rho),diag(s))
+	n=Ham.shape[0]
+	nc=n*(n-1)+1 # both diagonals
+	omega=numpy.empty(nc,dtype=float)
+	ccos=numpy.empty(nc,dtype=complex)
+	#csin=numpy.empty(nc,dtype=complex)
+	omega[0]=0.0
+	ccos[0]=(numpy.dot(numpy.diag(rho2),numpy.diag(detect2)))
+	#csin[0]=0.0
+	(ii1,jj1)=numpy.tril_indices(n,-1)
+	(ii2,jj2)=numpy.triu_indices(n,1)
+	ii=numpy.concatenate((ii1,ii2))
+	jj=numpy.concatenate((jj1,jj2))
+	omega[1:]=eval[ii]-eval[jj]
+	rd1=rho2[ii,jj]*detect2[jj,ii]
+	#rd2=rho2[jj,ii]*detect2[ii,jj]
+	ccos[1:]=rd1 #+rd2
+	#csin[1:]=0 # numpy.imag(rd1)-numpy.imag(rd2) # check signs!
+	#print "Eigenvectors"
+	#print evec
+	#print "Eigenvalues"
+	#print eval
+	if(math.isinf(timeend)):
+		return (omega*(-1.j),ccos,[])
+	else:
+		# calc rho at time=timeend
+		# rho2 is in eigenvectors
+		# rho2(t) = rho2 * phase factors
+		# rho(std basis) by multiplying by Evec^-1
+		phases=numpy.exp(1.j*eval*timeend)
+		iphases=1./phases
+		rho2=rho2*phases*iphases[:,numpy.newaxis]
+		if(tzeros is not None):
+			freqs=1.j*(eval-eval[:,numpy.newaxis])
+			ConvolveTimeResDynListed(freqs,rho2,tzeros) # use Dynamic form to deal with complex coeffs
+		#rho2[ii,jj]=rho2[ii,jj]*phases[ii]*iphases[jj]
+		#rho2[jj,ii]=rho2[jj,ii]*phases[jj]*iphases[ii]
+		rho3a=numpy.dot(evec,rho2)
+		rho3=numpy.tensordot(rho3a,evecstar,(1,1))
+		return (omega*(-1.j),ccos,[],rho3)
+
 def evaluateIntoBinsOldLoops(omega,ccos,csin,lam,times):
 	# times = array length n+1 of time bin boundaries
 	# returns array length n of values, averaged across bins
@@ -321,8 +388,8 @@ def evaluateIntoBins(omega,ccos,csin,lam,times):
 			if(omega[j]==0):
 				ybins=ybins+ccos[j]
 			else:
-				c0=numpy.cos(omega[j]*times)
-				s0=numpy.sin(omega[j]*times)
+				c0=numpy.cos(numpy.nan_to_num(omega[j]*times))
+				s0=numpy.sin(numpy.nan_to_num(omega[j]*times))
 				c1=c0[:-1]
 				s1=s0[:-1]
 				c2=numpy.nan_to_num(c0[1:]*et2)
@@ -588,6 +655,63 @@ def randomRF(N):
 		z3=(x*y2-y*x2)
 		r=math.sqrt(x3**2+y3**2+z3**2)
 		yield ([x,y,z],[x,y,z],[x3/r,y3/r,z3/r],[x3/r,y3/r,z3/r])
+
+def uniformPQ(N):
+	for i in range(N):
+		# field axis
+		z=(2*i+0.5)/N-1
+		phi=i*2*math.pi/math.e
+		s=math.sqrt(1-z*z)
+		cp=math.cos(phi)
+		x=cp*s
+		sp=math.sin(phi)
+		y=sp*s
+		# rf and detector axis rotated faster round field axis (relative to phi2=0 pointing at z axis)
+		# "x" axis for rotating vector along tangent:
+		z2=s
+		x2=-cp*z
+		y2=-sp*z
+		# "y" axis
+		# z3=0
+		x3=sp
+		y3=-cp
+		phi2=i*2*math.pi*math.e
+		cp2=math.cos(phi2)
+		sp2=math.sin(phi2)
+		x4=x2*cp2+x3*sp2
+		y4=y2*cp2+y3*sp2
+		z4=z2*cp2
+		# 4th perp axis (note sign)
+		x5=y4*z-z4*y
+		y5=z4*x-x4*z
+		z5=x4*y-y4*x
+		yield ([x,y,z],[x4,y4,z4],[x5,y5,z5],[x4,y4,z4])
+
+def randomPQ(N):
+	for i in range(N):
+		# first axis for B, beam
+		z=numpy.random.random()*2-1
+		phi=numpy.random.random()*2*math.pi
+		s=math.sqrt(1-z*z)
+		x=math.cos(phi)*s
+		y=math.sin(phi)*s
+		# second random axis
+		z2=numpy.random.random()*2-1
+		phi2=numpy.random.random()*2*math.pi
+		s2=math.sqrt(1-z2*z2)
+		x2=math.cos(phi2)*s2
+		y2=math.sin(phi2)*s2
+		# third axis perpendicular to 1st for RF, det
+		x3=(y*z2-z*y2)
+		y3=(z*x2-x*z2)
+		z3=(x*y2-y*x2)
+		r=math.sqrt(x3**2+y3**2+z3**2)
+		# 4th perp axis (note sign)
+		x4=y3*z-z3*y
+		y4=z3*x-x3*z
+		z4=x3*y-y3*x
+		rr=math.sqrt(x4**2+y4**2+z4**2)
+		yield ([x,y,z],[x3/r,y3/r,z3/r],[x4/rr,y4/rr,z4/rr],[x3/r,y3/r,z3/r])
 
 def uniformTF(N):
 	for i in range(N):
@@ -945,7 +1069,7 @@ def solveDynamicResult(BigHam,BigStart,BigDetect,timeend=float("Inf"),tzeros=Non
 	# rho[i,j](t)=Evecmat[i,j:n]*exp(Eval(n)*t)*Evrho[n]
 	# S(t)=Trace(rho[i,j](t)*S[i,j]) = Sum(rho[i,j] S[j,i])
 	# = Trace(Evecmat[i,j,n]*S*[i,j]) * Eamp(n) * exp(Eval(n)*t)
-	Eamp=Evrho* numpy.dot(BigDetect.conjugate(),evec) 
+	Eamp=(Evrho* numpy.dot(BigDetect.conjugate(),evec)).conjugate() # bug fix!
 	#Eamp=numpy.zeros(nn,dtype=complex) # complex
 	#for ij in range(nn):
 	#	for kl in range(nn):
@@ -986,6 +1110,33 @@ def EvaluateDynamicIntoBins(eval,ampl,lamMu,times):
 
 	return ybins
 
+def EvaluateDynamicIntoBinsComplex(eval,ampl,lamMu,times):
+	# fill time bins, lamb=relaxation value lamMu=muon lifetime weighting
+	# complex output version
+	# y(t) = sum(n) ampl(n)*exp(eval(n)*t)
+	# bin from t1 to t2:
+	# AveAmpl(t1,t2)=sum(n) integral[t1:t2](ampl(n)*exp(eval(n)*t)*exp(-lamMu*t))
+	# NEARLY same as EvaluateIntoBins except different lambda for each coefficient = Re(eval(n))-lamMu and omega=Im(eval(n))
+	# but don't normalise out all of lam!
+	# times = array length n+1 of time bin boundaries
+	# returns array length n of values, averaged across bins
+	# lam = 1/lifetime to weight by, if bins are large (or only one big one for integral counting - times [0,inf] is OK)
+	# = integral (cos(w*t))exp(-lam*t)]t1:t2 / integral exp(-lam*t)]t1:t2
+	# = (-lam* sin(w*t) exp(-lam*t) + w* cos(w*t) exp*(-lam*t) )/(lam^2+w^2)
+	# improved version using time arrays internally (best for time series from fairly simple models)
+	ybins=numpy.zeros(len(times)-1)
+#	for i in range(len(times)-1):
+	lam=eval-lamMu
+	et0=numpy.exp(-lamMu*times)
+	sf=-lamMu/(et0[1:]-et0[:-1])
+	for j in range(len(lam)):
+		cs0=numpy.exp(lam[j]*times)/lam[j]
+		cs1=cs0[:-1]
+		cs2=numpy.nan_to_num(cs0[1:]) # avoid domain problems with [..,inf] integral counting, would be multiplied by 0 anyway
+		ybins=ybins+ampl[j]*(cs2-cs1)*sf
+#		ybins=ybins+numpy.real((ampl[j]*(omega[j]*(s2-s1 )-lam[j]*(c2-c1 )) +csin[j]*(omega[j]*(-c2+c1 )-lam[j]*(s2-s1 )) )/sf /(lam[j]*lam[j]+omega[j]*omega[j]))
+
+	return ybins
 
 def solveRFDensityMat(Ham0,Ham1,Ham1i,omegaRF,start,detect,detecti,RRFharmonic,tsliceIn=None,timeend=float("Inf"),tzeros=None):
 	# RF mode (high freq, low B1 limit)
