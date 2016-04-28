@@ -174,9 +174,9 @@ def ParseAndIterateModel(pars):
 	# one 100% isotope with I=0: no need for A. Also default for those with abundance > 90%
 	# signs match sign of moment
 	PeriodicTable={
-	'Mu':(2,135.5),
-	'e':(2,-28024.95266),
-	'H':(2,42.5764),
+	'Mu':(2,135.5342), # Mantid standard value from PhysicalConstants.h
+	'e':(2,-28024.95164), # from NIST physical constants tables
+	'H':(2,42.5764), # others from CRC handbook pp 9-85 to 9-87
 	'D':(3,6.53573),
 	'3He':(2,-32.4352),
 	'6Li':(3,6.2660),
@@ -367,7 +367,6 @@ def ParseAndIterateModel(pars):
 				else:
 					raise Exception("Atom "+atom+" is not in the table")
 
-	
 	spmat=createSpinMat(spins)
 	if(dynstates>0 or dssize>1):
 		Hams=[]
@@ -406,6 +405,8 @@ def ParseAndIterateModel(pars):
 					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],val[0]) # single A (isotropic)
 				elif (len(val)==2):
 					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],AxialHFT(val[0],val[1],(0.0,0.0,1.0))) # A and D, axis along z by default
+				elif (len(val)==3):
+					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],numpy.array(((val[0]-val[1]/2+val[2]/2,0.0,0.0),(0.0,val[0]-val[1]/2-val[2]/2,0.0),(0.0,0.0,val[0]+val[1]))) ) # A,D,E as in old Quantum, fixed axes for powder use
 				elif (len(val)==5):
 					addHyperfine(Hams[i],spmat[spin1],spmat[spin2],AxialHFT(val[0],val[1],val[2:5])) # A, D, and axis (3)
 				elif (len(val)==6):
@@ -485,7 +486,7 @@ def ParseAndIterateModel(pars):
 	for d in range(dssize):
 		for i in range(len(spins)):
 			for j in range(i+1,len(spins)):
-				if(coords[d][i] != None and coords[d][j] != None):
+				if(coords[d][i] is not None and coords[d][j] is not None):
 					addDipolar(Hams[d],spmat[i],spmat[j],coords[d][i],gammas[d][i],coords[d][j],gammas[d][j])
 	# now process orientation string
 	Bmag=numpy.zeros([slices,3]) # 0.0
@@ -516,6 +517,12 @@ def ParseAndIterateModel(pars):
 		elif(key=="tfrandom"):
 			IterArgs=int(val[0])
 			iterator=randomTF
+		elif(key=="pquniform"):
+			IterArgs=int(val[0])
+			iterator=uniformPQ
+		elif(key=="pqrandom"):
+			IterArgs=int(val[0])
+			iterator=randomPQ
 		elif(key=="lf"):
 			IterArgs=numpy.array(val) # 3-vec for orientation
 			iterator=NullIter
@@ -588,9 +595,7 @@ def ParseAndIterateModel(pars):
 					rfelip[i]=0.0
 				if(len(val)>4):
 					rrf=int(val[4])
-				else:
-					rrf=0
-		
+			
 		# dynamic params:
 		# Relax(@state,spin)=lambda (or Relax(lambda) for all)
 		# Convert(from,to)=lambda
@@ -766,11 +771,13 @@ def ParseAndIterateModel(pars):
 					if(rfelip[k]!=0):
 						addZeeman(HamsRF[k],spmat[i],rfcoil2,rfbmag[k]*gammas[k][i]*rfelip[k]*math.sin(rfphase[k]))
 						addZeeman(HamsRFi[k],spmat[i],rfcoil2,-rfbmag[k]*gammas[k][i]*rfelip[k]*math.cos(rfphase[k]))
-			if(rrf!=0):
-				detector2=numpy.cross(detector,fieldax)
-				scinti=createDetectorOp(spmat[detspin],detector2)
-			else:
-				scinti=None
+		if(rrf!=0 or pars.get("phasequad",(0,))[0]):
+			detector2=numpy.cross(detector,fieldax)
+			scinti=createDetectorOp(spmat[detspin],detector2)
+		else:
+			scinti=None
+		if((scinti is not None) and not(numpy.any(rfomega))):
+			scint=scint+(1.j)*scinti
 		if(dynstates==0):
 			# process (static)
 			Hams1=numpy.array(Hams)
@@ -837,6 +844,13 @@ def processor_TimeSpectra(pars,ybins,ebins,dest,asym):
 	# copy spectrum. "dest" is an integer
 	ybins[dest,:]=asym[:]
 	ebins[dest,:]=0.0
+
+def processor_TimeSpectraPQ(pars,ybins,ebins,dest,asym):
+	# copy spectra. "dest" is an integer
+	ybins[dest,:]=asym[:].real
+	ebins[dest,:]=0.0
+	ybins[dest+1,:]=asym[:].imag
+	ebins[dest+1,:]=0.0
 
 def processor_IntegralAsym(pars,ybins,ebins,dest,asym):
 	# just copy integral asymmetry. "dest" must be a tuple
@@ -908,7 +922,7 @@ def processor_moments(pars,ybins,ebins,dest,bigomega,bigccos,bigcsin,numave):
 	sum2=0.0
 	#sum00=0
 	if(len(bigcsin)==0):
-		# results from Dynamic calc
+		# results from Dynamic calc or PQ mode
 		for i in range(len(bigomega)):
 			f=(bigomega[i]).imag
 			if(f>f1 and f<f2):
@@ -952,6 +966,7 @@ def processor_freqspec(pars,ybins,ebins,dest,bigomega,bigccos,bigcsin,numave):
 	# frequency spectrum (binned) from coefficients.
 	# ignore phases and relaxation for now!
 	# freq limits as for moments. Shift versus B if requested, if so the X axis for display is not shifted (0 means Larmor freq)
+	# respect sign of omega in PQ mode
 	f1s=pars["minfreq"]
 	if(len(f1s)==2):
 		f1=(float(f1s[0])+float(pars["bmag"][0])*float(f1s[1])) * 2.0*math.pi
@@ -966,14 +981,15 @@ def processor_freqspec(pars,ybins,ebins,dest,bigomega,bigccos,bigcsin,numave):
 	yacc=numpy.zeros(nfbins)
 	fs=nfbins/(f2-f1)
 	if(len(bigcsin)==0):
-		# results from Dynamic calc
+		# results from Dynamic calc, or plain calc in PQ mode
+		# note Dynamic single det mode gives paired equal and opposite freqs
 		for i in range(len(bigomega)):
 			f=(bigomega[i]).imag
 			fi=int(math.floor((f-f1)*fs))
 			if(fi>=0 and fi<nfbins):
 				yacc[fi]=yacc[fi]+abs(bigccos[i])
 	else:
-		# results from plain or RF
+		# results from plain or RF, non-PQ
 		for i in range(len(bigomega)):
 			f=abs(bigomega[i])
 			fi=int(math.floor((f-f1)*fs))
@@ -995,6 +1011,51 @@ def processor_breitrabi(pars,ybins,ebins,dest,bigomega,bigccos,bigcsin,numave):
 	offset=numpy.average(tmpybins)
 	ybins[:,dest]=(offset-numpy.sort(tmpybins))/(numave*2.0*math.pi) # should never actually use averaging with B-R diag!
 	ebins[:,dest]=0.0
+
+def PreParseLoop(pars,hadaxis0,prog=None):
+	# identify loops and measure lengths
+	# keywords: loop0par = param,
+	# loop0range=start,end,nsteps
+	# rewrites param=xi into pars
+	# multiple scans in parallel
+	# use loop0par=param1;param2;param3 and loop0range=start1,end1,start2,end2,Nsteps
+	# first loop is used for axis coords
+	# Log scale if Npoints is negative. Can scan completely-negative region
+	# loop1 likewise
+	# only 1 loop max if Fitting or if Time Spectra
+	# no loops at all is valid - single point / single bin / single spectrum WS may result
+	# specials for angle, or A or D with anisotropic HFC, or 1 coord of position? put param[i], will find line and insert
+	# what if both refer to same line eg. scanning X and Y components of r?
+	# normally line need not exist before.
+	# fills pars["axis0"]
+	axctr=-1
+	progLen=1
+	for loopctr in range(2):
+		if("loop"+str(loopctr)+"par" in pars and "loop"+str(loopctr)+"range" in pars):
+			axctr=axctr+1
+			while((loopctr>0 or not(hadaxis0)) and len(pars["axis"+str(axctr)])>1):
+				axctr=axctr+1
+				if(axctr>=2):
+					raise Exception("Too many nested loops")
+			lr=pars["loop"+str(loopctr)+"range"]
+			lpn=pars["loop"+str(loopctr)+"par"].split(";")
+			lpn=map(str.strip,lpn)
+			nv=len(lpn)
+			if(len(lr) != 2*nv+1):
+				raise Exception("mismatch between loop parameters and ranges")
+			for i in range(nv):
+				pars["_loopvar"+str(axctr+i*100)]=lpn[i]
+				if("axis"+str(axctr+i*100) in pars and hadaxis0):
+					pass # in use as fit function, values already set
+				elif(lr[-1]<0):
+					pars["axis"+str(axctr+i*100)] = numpy.logspace(0.0, math.log10(lr[2*i+1]/lr[2*i]),-int(lr[-1]),endpoint=True,base=10.0)*lr[2*i]
+				else:
+					pars["axis"+str(axctr+i*100)] = numpy.linspace(lr[2*i],lr[2*i+1],int(lr[-1]))
+			pars["axis"+str(axctr)+"name"]=(lpn[0],) # pars["loop"+str(loopctr)+"par"]
+			pars["_axis"+str(axctr)+"ID"]=(axctr,) # was loopctr. Now redundant param?
+			progLen=progLen*abs(int(lr[-1]))
+	if(prog is not None):
+		prog.resetNumSteps(progLen,0.0,1.0)
 
 def ParseMeasureType(pars,prog=None):
 	# extract loop params and measurements
@@ -1036,6 +1097,18 @@ def ParseMeasureType(pars,prog=None):
 		pars["axis0name"]=("Time","microsecond") # ("Time","\xB5s")
 		method=2 # accumulate average P(t)
 		processor=processor_TimeSpectra
+	elif (mtype=="phasequad"):
+		# expect pars starttime=0, endtime=20,ntbins=1000
+		if "endtime" not in pars:
+			pars["endtime"]=(20.0,)
+		if "ntbins" not in pars:
+			pars["ntbins"]=(1000,)
+		pars["axis0name"]=("Time","microsecond") # ("Time","\xB5s")
+		pars["axis1name"]=("Detectors",)
+		pars["axis1"]=["0","90"]
+		method=2 # accumulate average P(t)
+		pars["phasequad"]=(1,)
+		processor=processor_TimeSpectraPQ
 	elif (mtype=="fit"):
 		# expect par starttime=0, endtime=20,ntbins=1000
 		if "endtime" not in pars:
@@ -1094,13 +1167,13 @@ def ParseMeasureType(pars,prog=None):
 		pars["axis0"]=numpy.linspace(pars["minfreq"][0],pars["maxfreq"][0],pars["ntbins"][0]+1,endpoint=True) # these will be bin boundaries, maybe ref to Larmor freq
 		pars["axis0name"]=("Frequency","MHz")
 		pars["axis0extra"]=(1,) # binned data
-	if(mtype=="timespectra" and hadaxis0):
+	if((mtype=="timespectra" or mtype=="phasequad") and hadaxis0):
 		timebins=pars["axis0"] # passed in from fit function
 	elif(pars["ntbins"][0]==1):
 		timebins=numpy.array([pars["starttime"][0],pars["endtime"][0]],dtype=numpy.float) # exact ends
 	else:
 		timebins=numpy.linspace(pars["starttime"][0],pars["endtime"][0],pars["ntbins"][0]+1,endpoint=True) # these will be bin boundaries
-	if(mtype=="timespectra" and not(hadaxis0)):
+	if((mtype=="timespectra" or mtype=="phasequad")and not(hadaxis0)):
 		pars["axis0"]=timebins
 		pars["axis0extra"]=(1,) # X has one more point than Y and E; WS to be created later.
 	elif (mtype=="fit"):
@@ -1126,51 +1199,6 @@ def ParseMeasureType(pars,prog=None):
 	x0axis=pars["axis0"]
 	x1axis=pars["axis1"]
 	return (ybins,ebins,timebins,x0axis,x1axis,method,processor,tidyup)
-
-def PreParseLoop(pars,hadaxis0,prog=None):
-	# identify loops and measure lengths
-	# keywords: loop0par = param,
-	# loop0range=start,end,nsteps
-	# rewrites param=xi into pars
-	# multiple scans in parallel
-	# use loop0par=param1;param2;param3 and loop0range=start1,end1,start2,end2,Nsteps
-	# first loop is used for axis coords
-	# Log scale if Npoints is negative. Can scan completely-negative region
-	# loop1 likewise
-	# only 1 loop max if Fitting or if Time Spectra
-	# no loops at all is valid - single point / single bin / single spectrum WS may result
-	# specials for angle, or A or D with anisotropic HFC, or 1 coord of position? put param[i], will find line and insert
-	# what if both refer to same line eg. scanning X and Y components of r?
-	# normally line need not exist before.
-	# fills pars["axis0"]
-	axctr=-1
-	progLen=1
-	for loopctr in range(2):
-		if("loop"+str(loopctr)+"par" in pars and "loop"+str(loopctr)+"range" in pars):
-			axctr=axctr+1
-			while((loopctr>0 or not(hadaxis0)) and len(pars["axis"+str(axctr)])>1):
-				axctr=axctr+1
-				if(axctr>=2):
-					raise Exception("Too many nested loops")
-			lr=pars["loop"+str(loopctr)+"range"]
-			lpn=pars["loop"+str(loopctr)+"par"].split(";")
-			lpn=map(str.strip,lpn)
-			nv=len(lpn)
-			if(len(lr) != 2*nv+1):
-				raise Exception("mismatch between loop parameters and ranges")
-			for i in range(nv):
-				pars["_loopvar"+str(axctr+i*100)]=lpn[i]
-				if("axis"+str(axctr+i*100) in pars and hadaxis0):
-					pass # in use as fit function, values already set
-				elif(lr[-1]<0):
-					pars["axis"+str(axctr+i*100)] = numpy.logspace(0.0, math.log10(lr[2*i+1]/lr[2*i]),-int(lr[-1]),endpoint=True,base=10.0)*lr[2*i]
-				else:
-					pars["axis"+str(axctr+i*100)] = numpy.linspace(lr[2*i],lr[2*i+1],int(lr[-1]))
-			pars["axis"+str(axctr)+"name"]=(lpn[0],) # pars["loop"+str(loopctr)+"par"]
-			pars["_axis"+str(axctr)+"ID"]=(axctr,) # was loopctr. Now redundant param?
-			progLen=progLen*abs(int(lr[-1]))
-	if(prog is not None):
-		prog.resetNumSteps(progLen,0.0,1.0)
 		
 def ParseAndIterateLoop(pars):
 	# return addition to pars which sets loop position (as dict)
@@ -1253,6 +1281,7 @@ def RunModelledSystem(pars0,prog=None):
 	#print "ebins has shape",ebins.shape
 
 	Dynamic = ("dynamic" in pars0)
+	PQ=pars0.get("phasequad",(0,))[0]
 	if("mulife" in pars0):
 		mulife=float(pars0["mulife"][0])
 	else:
@@ -1283,7 +1312,10 @@ def RunModelledSystem(pars0,prog=None):
 					csin=[] # unused as ccos is complex
 				else:
 					if(rfomega==0):
-						omega,ccos,csin=solveDensityMat(Ham,rho0,scint)
+						if(PQ):
+							omega,ccos,csin=solveDensityMatComplex(Ham,rho0,scint)
+						else:
+							omega,ccos,csin=solveDensityMat(Ham,rho0,scint)
 					else:
 						omega,ccos,csin=solveRFDensityMat(Ham,HamRF,HamRFi,rfomega,rho0,scint,scinti,rrf,tsliceIn=pars.get("rfslices",(None,))[0])
 						
@@ -1309,11 +1341,17 @@ def RunModelledSystem(pars0,prog=None):
 						#print "]"
 						if("tzero" in pars):
 							ConvolveTimeResDynListed(omega,ccos,pars["tzero"])
-						yvals1=EvaluateDynamicIntoBins(omega,ccos,1.0/mulife,timebins) # lam=1.0/2.197
+						if(PQ):
+							yvals1=EvaluateDynamicIntoBinsComplex(omega,ccos,1.0/mulife,timebins) # lam=1.0/2.197
+						else:
+							yvals1=EvaluateDynamicIntoBins(omega,ccos,1.0/mulife,timebins) # lam=1.0/2.197
 					else:
 						if("tzero" in pars):
 							ConvolveTimeResolutionListed(omega,ccos,csin,pars["tzero"])
-						yvals1=evaluateIntoBins(omega,ccos,csin,1.0/mulife,timebins) # lam=1.0/2.197
+						if(PQ):
+							yvals1=EvaluateDynamicIntoBinsComplex(omega,ccos,1.0/mulife,timebins) # lam=1.0/2.197
+						else:
+							yvals1=evaluateIntoBins(omega,ccos,csin,1.0/mulife,timebins) # lam=1.0/2.197
 					if (yvals is None):
 						yvals=yvals1
 						numave=1
@@ -1467,16 +1505,16 @@ class QuantumTableDrivenSimulation(PythonAlgorithm):
 			#for i in range(ns):
 			#	na.setValue(i,e1)
 			#	e1=e1+sys.float_info.epsilon
+			yvar,yunit=GetUserAxisName(pars.get("axis1name"))
+			if(yvar==""):
+				na.setUnit(yunit)
+			else:
+				lbl=na.setUnit("Label")
+				lbl.setLabel(yvar,yunit)
 		else:
 			na = TextAxis.create(ns)
 			for i in range(ns):
 				na.setLabel(i,str(axes[1][i]))
-		yvar,yunit=GetUserAxisName(pars.get("axis1name"))
-		if(yvar==""):
-			na.setUnit(yunit)
-		else:
-			lbl=na.setUnit("Label")
-			lbl.setLabel(yvar,yunit)
 		ws.replaceAxis(1,na)
 		xvar,xunit=GetUserAxisName(pars.get("axis0name"))
 		if(xvar==""):
@@ -1530,6 +1568,9 @@ def InsertFitPars(pars,fps):
 				pars[fpnp[0]]=d2
 
 class QuantumTableDrivenFunction1(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1567,7 +1608,7 @@ class QuantumTableDrivenFunction1(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1577,6 +1618,9 @@ class QuantumTableDrivenFunction1(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction1)
 
 class QuantumTableDrivenFunction2(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1616,7 +1660,7 @@ class QuantumTableDrivenFunction2(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1626,6 +1670,9 @@ class QuantumTableDrivenFunction2(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction2)
 
 class QuantumTableDrivenFunction3(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1667,7 +1714,7 @@ class QuantumTableDrivenFunction3(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1677,6 +1724,9 @@ class QuantumTableDrivenFunction3(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction3)
 
 class QuantumTableDrivenFunction3SD(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1718,7 +1768,7 @@ class QuantumTableDrivenFunction3SD(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1728,6 +1778,9 @@ class QuantumTableDrivenFunction3SD(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction3SD)
 
 class QuantumTableDrivenFunction4(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1771,7 +1824,7 @@ class QuantumTableDrivenFunction4(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1781,6 +1834,9 @@ class QuantumTableDrivenFunction4(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction4)
 
 class QuantumTableDrivenFunction4SD(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1824,7 +1880,7 @@ class QuantumTableDrivenFunction4SD(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1834,6 +1890,9 @@ class QuantumTableDrivenFunction4SD(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction4SD)
 
 class QuantumTableDrivenFunction5(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1879,7 +1938,7 @@ class QuantumTableDrivenFunction5(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1889,6 +1948,9 @@ class QuantumTableDrivenFunction5(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction5)
 
 class QuantumTableDrivenFunction6(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1936,7 +1998,7 @@ class QuantumTableDrivenFunction6(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1946,6 +2008,9 @@ class QuantumTableDrivenFunction6(IFunction1D):
 FunctionFactory.subscribe(QuantumTableDrivenFunction6)
 
 class QuantumTableDrivenFunction7(IFunction1D):
+	def category(self):
+		return 'Muon'
+
 	def init(self):
 		#self.declareAttribute("Table","Tab")
 		self.declareParameter("P0",1.0)
@@ -1995,7 +2060,7 @@ class QuantumTableDrivenFunction7(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars)
+			axes,ybins,ebins = RunModelledSystem(pars,None)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
