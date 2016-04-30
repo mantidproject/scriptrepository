@@ -49,7 +49,7 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "4to1.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
       #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_154.msk"
+      prop['hard_mask_file'] = "4to1_161.msk"
       prop['bkgd_range'] = [15000,19000]
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
