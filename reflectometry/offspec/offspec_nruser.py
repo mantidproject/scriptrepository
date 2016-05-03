@@ -22,8 +22,8 @@ lmin, lmax = 2.2, 12.0 #Determine at what wavelength to crop the workspace, shou
 
 The functions provided in here are:
 
-PNRreduce(runs, name, angles=pnrangles, qlimits = pnrqlimits, scalefactor=pnrscalefactor, diagnostics = False)
-PAreduce(runs, name, angles=paangles, qlimits = paqlimits, scalefactor=pascalefactor, diagnostics = False)
+NRreduce(runs, name, angles=pnrangles, qlimits = pnrqlimits, scalefactor=pnrscalefactor, diagnostics = False)
+OFSreduce(runs, name, withpol = False, angle = None, qlimits = None, Nqx = None, Nqz = None)
 
 where runs is a list of strings containing the runnumbers for each angle, for example:
 runs = ["36422","36423+36424","36425-36430"]
@@ -61,8 +61,8 @@ nrbackground=False
 
 ofangle = 0.7
 ofqlimits = '-5e-4,5e-4,0.02,0.1'
-ofNqx = 200
-ofNqz = 200
+ofNqx = 500
+ofNqz = 500
 
 kinetic_scalefactor = nrscalefactor
 kinetic_angle = 0.7
@@ -122,8 +122,8 @@ def OFSreduce(runs, name, withpol = False, angle = None, qlimits = None, Nqx = N
     if not Nqx: Nqx = ofNqx
     if not Nqz: Nqz = ofNqz
     print angle
-    of.DSqxqz(runs,name,angle=angle,qxqzlimits=qlimits,binning=binningpars,Nqx=Nqx,Nqz=Nqz,withpol=withpol, dspec=detectorlimits['specular'], dmin=detectorlimits['low'], dmax=detectorlimits['high'])    
-    
+    #of.DSqxqz(runs,name,angle=angle,qxqzlimits=qlimits,binning=binningpars,Nqx=Nqx,Nqz=Nqz,withpol=withpol, dspec=detectorlimits['specular'], dmin=detectorlimits['low'], dmax=detectorlimits['high'])    
+    of.DSqxqz(runs,name,angle=angle,qxqzlimits=qlimits,binning=binningpars,Nqx=Nqx,Nqz=Nqz,withpol=withpol) 
  
 def time_resolve(run, name, start = 0, angle=None, tslice=None,nslices = None ,sarray=[], dlimits = None, diagnostics = False):  
     if not angle:
