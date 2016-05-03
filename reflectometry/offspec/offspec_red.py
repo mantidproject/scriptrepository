@@ -105,7 +105,7 @@ def check_is_host_at_isis():
         return False
     
 old_detector = LinearDetector(specular = 114, minspec = 5, maxspec = 244, floodfile = "LD240flood_premarch2012.nxs", detectorposition = 3.63, name = 'Old_LD', nickname = 'oldLD', btm_background = (10, 50), top_background = (160, 230), pixelsize = 1.2e-3)        
-wsf_detector = LinearDetector(specular = 404, minspec = 6, maxspec = 772, floodfile = "WSF_Flood.nxs", detectorposition = 3.46, name = 'WSD_LD', nickname = 'wsf', btm_background = (290, 350), top_background = (470, 550), pixelsize = 0.5e-3)
+wsf_detector = LinearDetector(specular = 404, minspec = 6, maxspec = 772, floodfile = "WSF_Flood.nxs", detectorposition = 3.46, name = 'WSD_LD', nickname = 'wsf', btm_background = (440,500), top_background = (440, 500), pixelsize = 0.5e-3)
 # position= 3.46 new best guess after Tommy's LC experiment December 2015
 wsf_detector.idf = "C:/mantidinstall/instrument/OFFSPEC_Definition.xml"
 old_detector.idf = "C:/MantidInstall/Instrument/Offspec_Definition.xml"
@@ -397,7 +397,7 @@ def floodnorm(wkspName,floodfile='',floodopt='default'):
    else:
       flood_file = floodfile
    
-   print "using flood normalisation file "+flood_file
+   #print "using flood normalisation file "+flood_file
     
    flood_wksp = current_detector.nickname + "_flood"
    if  flood_wksp not in mtd:
