@@ -217,7 +217,7 @@ def DSqxqz(run,wksp,angle=1.2,qxqzlimits='-5e-4,5e-4,0.02,0.1',binning=["1.5","0
         nr.nrPNRFn(run,wksp,str(halftheta),'none',nr.current_detector.specular,nr.current_detector.specular,nr.current_detector.specular,binning,floodfile="",PNRwithPA=True,pnums =["1","2","3","4"],doCorrs=False)
         periods = ("_1", "_2", "_3", "_4")
     else:
-        nr.nrNRFn(run,wksp,str(halftheta),'none',nr.current_detector.specular,nr.current_detector.specular,snr.current_detector.specular,binning,"",dofloodnorm=True)
+        nr.nrNRFn(run,wksp,str(halftheta),'none',nr.current_detector.specular,nr.current_detector.specular,nr.current_detector.specular,binning,"",dofloodnorm=True)
         periods = ("",)
     # Delete the norm and RvQ workspaces as they have the wrong angle
     DeleteWorkspace(wksp+'RvQ')
