@@ -1,4 +1,6 @@
 from math import *
+#last modified: 12/5/2016
+#by: njs
 from mantid.simpleapi import *
 from mantid.api import WorkspaceGroup
 from mantid.api import IEventWorkspace 
@@ -906,7 +908,7 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
                 GroupWorkspaces(InputWorkspaces=i+"normcorr_"+pnums[0]+","+i+"normcorr_"+pnums[1]+","+i+"normcorr_"+pnums[2]+","+i+"normcorr_"+pnums[3]+"",OutputWorkspace=i+"normcorr")
                 ConvertUnits(InputWorkspace=i+"normcorr",OutputWorkspace=i+"normcorrRvQ",Target="MomentumTransfer")
                 if (nspec > 4 and doLDCorrs != "0"):
-                    calibration.correctPA(i+"detnorm_"+pnums[0],i+"detnorm_"+pnums[1],i+"detnorm_"+pnums[2],i+"detnorm_"+pnums[3],calibration=calibration)
+                    calibration.correctPA(i+"detnorm_"+pnums[0],i+"detnorm_"+pnums[1],i+"detnorm_"+pnums[2],i+"detnorm_"+pnums[3])
                     for j in range(4):
                         RenameWorkspace(InputWorkspace=i+"detnorm"+"_"+pnums[j]+"corr",OutputWorkspace=i+"detnormcorr"+"_"+pnums[j])
                     GroupWorkspaces(InputWorkspaces=i+"detnormcorr_"+pnums[0]+","+i+"detnormcorr_"+pnums[1]+","+i+"detnormcorr_"+pnums[2]+","+i+"detnormcorr_"+pnums[3]+"",OutputWorkspace=i+"detnormcorr")
