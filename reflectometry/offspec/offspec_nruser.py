@@ -32,6 +32,8 @@ name is the name of your resulting workspace/file
 '''
 import offspec_red as nr
 reload(nr)
+#last modified: 12/05/2016
+#by: njs
 import numpy as np
 from math import *
 from mantid.simpleapi import *
