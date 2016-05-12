@@ -54,6 +54,8 @@ Reduces offspcular data
 '''
 import offspec_red as nr
 reload(nr)
+#last modified: 12/05/2016
+#by: njs
 import numpy as np
 import itertools
 #from math import *
@@ -108,7 +110,7 @@ def print_calibrations():
     print "========================================\n"
     
 
-def PNRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = None, diagnostics = False):
+def PNRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = None, specular = None, diagnostics = False):
     if not angles:
         angles=pnrangles
     if not qlimits:
@@ -123,7 +125,7 @@ def PNRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = 
     tocombineup = ""
     tocombinedown = ""
     for run, angle, wname, thisspecular in zip(runs,angles,wkspnames,specular):
-        print run,angle,name+wname
+        print "Runs: "+run+", angle: "+ str(angle)+", specular:"+str(thisspecular)+", name:"+name+str(wname)
         nr.nrPNRFn(run,name+wname,str(angle),dbpnr,thisspecular,detectorlimits['low'],detectorlimits['high'],binningpars,floodfile="",qgroup=pnrqgroup,PNRwithPA=False,pnums=["1","2"],doCorrs=True, calibration = calibration, subbgd=bckg, diagnostics=diagnostics)
         qmin = fourpi*np.sin(angle*deg2rad)/lmax
         qmax = fourpi*np.sin(angle*deg2rad)/lmin
