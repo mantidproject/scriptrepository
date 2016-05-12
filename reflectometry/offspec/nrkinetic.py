@@ -1,5 +1,7 @@
 import offspec_red as nr
 reload(nr)
+#last modified: 12/05/2016
+#by: njs
 from math import *
 import numpy as np
 import os,sys,re, time
