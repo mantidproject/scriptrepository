@@ -4,6 +4,10 @@
 '''
 from copy import copy
 
+# Data directory
+datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/BASIS/models/StretchedExpFT"     #update this with your own directory
+#datadir = "/SNS/users/jbq/test"  #update this with your own directory
+
 # Fitting model. In this case:
 #  A * Resolution + Convolution( Resolution, StretchedExFT ) + LinearBackground
 #
@@ -18,12 +22,9 @@ fitstring_template ='name=TabulatedFunction,Workspace=resolution,'+\
         '(composite=Convolution,FixResolution=true,NumDeriv=true;'+\
         'name=TabulatedFunction,Workspace=resolution,WorkspaceIndex=iQ,'+\
         'Scaling=1,Shift=0.0,XScaling=1;'+\
-        'name=StretchedExpFT,Origin=0.0,height=f1.f1.height,'+\
-        'tau=f1.f1.tau,beta=f1.f1.beta);'+\
+        'name=StretchedExpFT,Center=0.0,Height=f1.f1.Height,'+\
+        'Tau=f1.f1.Tau,Beta=f1.f1.Beta);'+\
         'name=LinearBackground,A0=0.0,A1=0.0'
-
-# Data directory
-datadir = '/SNS/users/jbq/test'     #update this with your own directory
 
 # Load the data. We assume the format is DAVE group file.
 #  Use the "LoadDaveGrp" algorithm
@@ -55,9 +56,9 @@ maxE =  0.1
 # Initial guess for the lowest Q. A guess can be obtained by
 # running MantidPlot interactively just for the first Q
 initguess = { 'f0.Scaling'   :   0.03,  # intensity of the elastic line
-              'f1.f1.height' :   0.06,  # intensity of the quasielastic line
-              'f1.f1.tau'    : 400.0,   # tau or relaxation time
-              'f1.f1.beta'   :   0.8,   # exponent
+              'f1.f1.Height' :   1.0,   # intensity of the quasielastic line
+              'f1.f1.Tau'    : 400.0,   # tau or relaxation time
+              'f1.f1.Beta'   :   1.0,   # exponent
 }
 
 names = initguess.keys()  # Store the names of the parameters in a list
@@ -119,7 +120,7 @@ for iq in range(nq):
         # thus a better initial guess is to divide the
         # tau from the previous Q by some number (here 2.0)
         # as the initial guess for the next Q
-        initguess['f1.f1.tau' ] = initguess['f1.f1.tau' ]  / 2.0
+        initguess['f1.f1.Tau' ] = initguess['f1.f1.Tau' ]  / 2.0
 
         # The workspaces resulting from the current fit
         # will be overwritten in the next iteration. This is OK,
@@ -135,7 +136,7 @@ for iq in range(nq):
 
 # Save some selected parameters to a string.
 # Remember that only the selected spectra contain data.
-buffer = '#  Q    Chi2   tau(ps) beta\n'
+buffer = '#  Q    Chi2   Tau(ps) Beta\n'
 print buffer
 for iq in range( nq ):
         if iq not in selected_wi:
@@ -144,8 +145,8 @@ for iq in range( nq ):
         result = results[ iq ]
         line = '{0} {1:6.2f} {2:7.2f}  {3:5.3f}\n'.format( result['qvalue'],
                                                            chi2[ iq ],
-                                                           result['f1.f1.tau'],
-                                                           result['f1.f1.beta'])
+                                                           result['f1.f1.Tau'],
+                                                           result['f1.f1.Beta'])
         print line
         buffer += line
 
