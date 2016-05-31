@@ -28,7 +28,7 @@ fitstring_template ='name=TabulatedFunction,Workspace=resolution,'+\
 
 # Load the data. We assume the format is DAVE group file.
 #  Use the "LoadDaveGrp" algorithm
-LoadDaveGrp( Filename = '{0}/BASIS_17706_1run_divided.dat'.format( datadir ),
+LoadDaveGrp( Filename = '{0}/data.dat'.format( datadir ),
             OutputWorkspace = 'data', XAxisUnits = 'DeltaE', IsMicroEV = 1 )
 
 # Alternatively, we use the "LoadNexus" algorithm if we have the reduced data
@@ -37,7 +37,7 @@ LoadDaveGrp( Filename = '{0}/BASIS_17706_1run_divided.dat'.format( datadir ),
 #             OutputWorkspace = 'data' )
 
 # Load the resolution
-LoadDaveGrp( Filename = '{0}/BASIS_17713_1run_divided.dat'.format( datadir ),
+LoadDaveGrp( Filename = '{0}/resolution.dat'.format( datadir ),
              OutputWorkspace = 'resolution',
              XAxisUnits = 'DeltaE',
              IsMicroEV = 1 )
