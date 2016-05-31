@@ -142,13 +142,14 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1,eventbinn
 	else:
 	    try:
 	        RenameWorkspace("added",OutputWorkspace=runlist[0]+'-add')
+	        retwksp=[runlist[0]+'-add']
 	        RenameWorkspace("added_monitors",OutputWorkspace=runlist[0]+'_monitors-add')
 	        retwksp=[runlist[0]+'-add',runlist[0]+'_monitors-add']
 	    except:
 	        pass
 	return retwksp
 
-def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,diagnostics=0,periods=[-1,-1,-1,-1,-1,-1],dirname='c:/Data/Processed/',saveFile=1):
+def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,setwidth=0,width=6.0,setheight=0,height=8.0,diagnostics=0,periods=[-1,-1,-1,-1,-1,-1],dirname='c:/Data/Processed/',saveFile=1):
     '''
     periods array is defined in order sample sans, can sans, sample trans, sample db, can trans, can db
     if tdbcan is not defined then tdb is used
@@ -166,6 +167,10 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
     sroot=a1[0]
     if(setthickness!=0):
         ReductionSingleton().get_sample().geometry.thickness=thickness
+    if(setwidth!=0):
+        ReductionSingleton().get_sample().geometry.width=width
+    if(setheight!=0):
+        ReductionSingleton().get_sample().geometry.height=height
     if(len(rcan)>0):
         if(periods[1]>0):
             AssignCan(rcan+'.nxs',period=periods[1])
@@ -173,7 +178,7 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
             AssignCan(rcan+'.nxs')
         a1=rcan.split('-')
         croot=a1[0]
-    TransFit('Off',lambdamin=lmin,lambdamax=lmax)
+    TransFit('On',lambdamin=lmin,lambdamax=lmax)
     if(len(tsample)>0):
         TransmissionSample(tsample+'.nxs', tdb+'.nxs',period_t=periods[2],period_d=periods[3])
         a1=tsample.split('-')
@@ -242,10 +247,11 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
                 DeleteWorkspace(tdbroot+'_trans_nxs')
             except:
                 pass
-    
-    # save to file but make sure we don't have any : characters in the filename as windows doesn't like it
-    wkspname1=string.replace(wkspname,':','_')
-    SaveRKH(wkspname,dirname+'r'+rsample+'_'+wkspname1+'.txt',Append=0)
+    if saveFile==1:
+        # save to file but make sure we don't have any : characters in the filename as windows doesn't like it
+        wkspname1=string.replace(wkspname,':','_')
+        SaveRKH(wkspname,dirname+'r'+rsample+'_'+wkspname1+'.txt',Append=0)
+        SaveCanSAS1D(wkspname,dirname+'r'+rsample+'_'+wkspname1+'.xml',RadiationSource='Spallation Neutron Source',Append=0)
     # return a handle to the final named workspace  
     return mtd[wkspname]
             
