@@ -38,8 +38,7 @@ fitstring_template = """
    ties=(f1.Center=f0.Centre)
   )
 );
-name=LinearBackground,A0=0,A1=0
-"""
+name=LinearBackground,A0=0,A1=0"""
 '''
 fitstring_template = fitstring_template.strip(" \t\n\r")  # remove whitespaces and such
 print fitstring_template
