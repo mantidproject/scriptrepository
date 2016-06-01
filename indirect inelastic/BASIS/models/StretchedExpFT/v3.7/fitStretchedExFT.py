@@ -9,22 +9,40 @@ datadir = "/SNS/users/jbq/repositories/mantidproject/scriptrepository/indirect i
 #datadir = "/SNS/users/jbq/test"  #update this with your own directory
 
 # Fitting model. In this case:
-#  A * Resolution + Convolution( Resolution, StretchedExFT ) + LinearBackground
+# Convolution( Resolution, Delta + StretchedExFT ) + LinearBackground
 #
 # Below is the model cast as a template string suitable for the
 # Fit algoritm of Mantid. You can obtain similar string by setting up a model
 # in the "fit wizard" of MantidPlot and then
 # "Manage Setup" --> "Copy to Clipboard". This actions will save the model
 #  as a string which you can later paste onto this script.
-fitstring_template ='name=TabulatedFunction,Workspace=resolution,'+\
-        'WorkspaceIndex=iQ,Scaling=f0.Scaling,Shift=0.0,XScaling=1,'+\
-        'ties=(XScaling=1);'+\
-        '(composite=Convolution,FixResolution=true,NumDeriv=true;'+\
-        'name=TabulatedFunction,Workspace=resolution,WorkspaceIndex=iQ,'+\
-        'Scaling=1,Shift=0.0,XScaling=1;'+\
-        'name=StretchedExpFT,Center=0.0,Height=f1.f1.Height,'+\
-        'Tau=f1.f1.Tau,Beta=f1.f1.Beta);'+\
-        'name=LinearBackground,A0=0.0,A1=0.0'
+fitstring_template = """
+(composite=Convolution,FixResolution=true,NumDeriv=true;
+  name=TabulatedFunction,Workspace=resolution,WorkspaceIndex=0,Scaling=1,Shift=0,XScaling=1;
+  (name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height);
+   name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Center=0,
+   constraints=(0<Height,0<Tau,0<Beta);
+   ties=(f1.Center=f0.Centre)
+  )
+);
+name=LinearBackground,A0=0,A1=0"""
+
+'''
+# If you want this model with beta fixed to one, use this template string instead
+fitstring_template = """
+(composite=Convolution,FixResolution=true,NumDeriv=true;
+  name=TabulatedFunction,Workspace=resolution,WorkspaceIndex=0,Scaling=1,Shift=0,XScaling=1;
+  (name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height);
+   name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1,Center=0,
+   constraints=(0<Height,0<Tau),ties=(Beta=1);
+   ties=(f1.Center=f0.Centre)
+  )
+);
+name=LinearBackground,A0=0,A1=0
+"""
+'''
+fitstring_template = fitstring_template.strip(" \t\n\r")  # remove whitespaces and such
+print fitstring_template
 
 # Load the data. We assume the format is DAVE group file.
 #  Use the "LoadDaveGrp" algorithm
@@ -55,10 +73,10 @@ maxE =  0.1
 
 # Initial guess for the lowest Q. A guess can be obtained by
 # running MantidPlot interactively just for the first Q
-initguess = { 'f0.Scaling'   :   0.03,  # intensity of the elastic line
-              'f1.f1.Height' :   1.0,   # intensity of the quasielastic line
-              'f1.f1.Tau'    : 400.0,   # tau or relaxation time
-              'f1.f1.Beta'   :   1.0,   # exponent
+initguess = { 'f0.f1.f0.Height' :   0.1,   # intensity of the elastic line
+              'f0.f1.f1.Height' :   1.0,   # intensity of the quasielastic line
+              'f0.f1.f1.Tau'    : 500.0,   # tau or relaxation time
+              'f0.f1.f1.Beta'   :   1.0,   # exponent
 }
 
 names = initguess.keys()  # Store the names of the parameters in a list
@@ -120,7 +138,7 @@ for iq in range(nq):
         # thus a better initial guess is to divide the
         # tau from the previous Q by some number (here 2.0)
         # as the initial guess for the next Q
-        initguess['f1.f1.Tau' ] = initguess['f1.f1.Tau' ]  / 2.0
+        initguess['f0.f1.f1.Tau' ] = initguess['f0.f1.f1.Tau' ]  / 2.0
 
         # The workspaces resulting from the current fit
         # will be overwritten in the next iteration. This is OK,
@@ -145,8 +163,8 @@ for iq in range( nq ):
         result = results[ iq ]
         line = '{0} {1:6.2f} {2:7.2f}  {3:5.3f}\n'.format( result['qvalue'],
                                                            chi2[ iq ],
-                                                           result['f1.f1.Tau'],
-                                                           result['f1.f1.Beta'])
+                                                           result['f0.f1.f1.Tau'],
+                                                           result['f0.f1.f1.Beta'])
         print line
         buffer += line
 
