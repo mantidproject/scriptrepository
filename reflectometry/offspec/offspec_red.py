@@ -1,6 +1,7 @@
 from math import *
 #last modified: 12/5/2016
 #by: njs
+#New pol_correction for November 2015 added by JFKC 8/6/16
 from mantid.simpleapi import *
 from mantid.api import WorkspaceGroup
 from mantid.api import IEventWorkspace 
@@ -125,7 +126,8 @@ pulseend = 20.0
 
 
 if check_is_host_at_isis():
-	currentRun = CurrentRun("//ndloffspec1/L/RawData/")
+	currentRun = NotAtHome()
+    #CurrentRun("//ndloffspec1/L/RawData/")
 else:
 	currentRun = NotAtHome()
 
@@ -274,6 +276,9 @@ february2013_2 = PolarisationCalibration('february2013_2', rhocoefficients=[0.94
 february2013_1 = PolarisationCalibration('february2013_1', rhocoefficients=[0.955384,0.021501,-0.002962,0.000112], alphacoefficients=[0.944022,0.025639,-0.0035,0.000145],  Apcoefficients=[0.980605,-0.002201,-0.00097,0.000014], Ppcoefficients=[0.992212,-0.009161,0.000601,0.000025], runs =  [i for i in range(19628,19671)], comment = "analyser -0.1deg RF Flippers on polariser and analyser side Feb 2013")
 
 november2015 = PolarisationCalibration('november2015', rhocoefficients=[0.944514,0.026548,-0.003837,0.000168], alphacoefficients=[0.944022,0.025639,-0.0035,0.000145], Apcoefficients=[0.980605,-0.002201,-0.00097,0.000014], Ppcoefficients=[0.992212,-0.009161,0.000601,0.000025], runs =  [i for i in range(36680,36695)], comment = "analyser -0.1deg RF Flippers on polariser and analyser side 0.5MHz November 2015")
+
+november2015_2 = PolarisationCalibration('november2015_2', rhocoefficients=[0.702221,0.229436,-0.067308,0.009353,-0.000619,0.000016], alphacoefficients=[0.697757,0.230859,-0.067212,0.009276,-0.000610,0.000015], Apcoefficients=[1.065455,-0.067522,0.017810,-0.002430,0.000147,-3.298886e-6], Ppcoefficients=[1.030972,-0.046076,0.014934,-0.002600,0.000226,-7.240769e-06], runs =  [i for i in range(36680,36695)], comment = "analyser -0.1deg RF Flippers on polariser and analyser side 0.5MHz November 2015")
+
 
 february2016 = PolarisationCalibration('february2016', rhocoefficients=[0.998515,-0.001878,-0.000902,0.000057], alphacoefficients=[1.020642,-0.008133,0.000511,-0.000008346674], Apcoefficients=[0.959164,0.000919,-0.000169,-0.00004], Ppcoefficients=[-0.470963,2.055378,-1.193303,0.363635,-0.0063189,0.006286,-0.000333], runs=[i for i in range(37660,37709)], comment= "RF system removed, Drabkin incident between MagA and B and double Vs between C and D, analyser at nominal -0.1")
 
