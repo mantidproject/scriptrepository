@@ -56,6 +56,7 @@ import offspec_red as nr
 reload(nr)
 #last modified: 12/05/2016
 #by: njs
+#Modified PA reduce to use scalefactor even when only one angle is used (normally done in NRcombine Fn)
 import numpy as np
 import itertools
 #from math import *
@@ -191,6 +192,7 @@ def PAreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = N
         nr.NRCombineDatafn(tocombinedu,name+"DU","2",a1[0],a1[1],"0",qlimits,str(scalefactor),"2",diagnostics=diagnostics)
         nr.NRCombineDatafn(tocombinedd,name+"DD","2",a1[0],a1[1],"0",qlimits,str(scalefactor),"2",diagnostics=diagnostics)
         Plus(name+"UD", name+"DU", OutputWorkspace = name+"FL")
+        mtd[name+'FL'] = mtd[name+'FL']/2.0
         GroupWorkspaces(name+"UU,"+name+"UD,"+name+"DU,"+name+"DD,"+name+"FL", OutputWorkspace = name)
         plotSpectrum([name+"UU",name+"DD"],0,1)
         for dataset, ending in zip((name+'UU', name+'UD', name+'DU', name+'DD', name+'FL'), ('.uu', '.ud', '.du', '.dd', '.flip')):
@@ -203,6 +205,8 @@ def PAreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = N
         Rebin(tocombinedd,paqlimits[0]+","+paqlimits[1]+","+paqlimits[2],OutputWorkspace=name+"DD")
         Plus(name+"UD", name+"DU", OutputWorkspace = name+"FL")
         mtd[name+'FL'] = mtd[name+'FL']/2.0
+        for i in ["UU","UD","DU","DD","FL"]:
+            mtd[name+i] = mtd[name+i]/scalefactor
         GroupWorkspaces(name+"UU,"+name+"UD,"+name+"DU,"+name+"DD,"+name+"FL", OutputWorkspace = name)
         plotSpectrum([name+"UU",name+"DD"],0,1)
     for dataset, ending in zip((name+'UU', name+'UD', name+'DU', name+'DD', name+'FL'), ('.uu', '.ud', '.du', '.dd', '.flip')):
