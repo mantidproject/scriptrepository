@@ -858,8 +858,8 @@ def buildDynamicHam(Hams):
 		for i in range(nqs):
 			for j in range(nqs):
 				for kl in range(nqs):
-					BigHam[h+i+j*nqs,h+kl+j*nqs] += HamI[i,kl]*1j
-					BigHam[h+i+j*nqs,h+i+kl*nqs] -= HamI[kl,j]*1j
+					BigHam[h+i+j*nqs,h+kl+j*nqs] -= HamI[i,kl]*1j # sign flip to fix handedness bug properly
+					BigHam[h+i+j*nqs,h+i+kl*nqs] += HamI[kl,j]*1j
 		h=h+SmallHamSize
 	return (BigHam,SmallHamSize,nhams)
 	
@@ -1069,7 +1069,7 @@ def solveDynamicResult(BigHam,BigStart,BigDetect,timeend=float("Inf"),tzeros=Non
 	# rho[i,j](t)=Evecmat[i,j:n]*exp(Eval(n)*t)*Evrho[n]
 	# S(t)=Trace(rho[i,j](t)*S[i,j]) = Sum(rho[i,j] S[j,i])
 	# = Trace(Evecmat[i,j,n]*S*[i,j]) * Eamp(n) * exp(Eval(n)*t)
-	Eamp=(Evrho* numpy.dot(BigDetect.conjugate(),evec)).conjugate() # bug fix!
+	Eamp=(Evrho* numpy.dot(BigDetect.conjugate(),evec)) # no longer needs .conjugate() - erroneous bug fix!
 	#Eamp=numpy.zeros(nn,dtype=complex) # complex
 	#for ij in range(nn):
 	#	for kl in range(nn):
