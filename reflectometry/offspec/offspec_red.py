@@ -1,7 +1,5 @@
 from math import *
-#last modified: 12/5/2016
-#by: njs
-#New pol_correction for November 2015 added by JFKC 8/6/16
+#27/06 njs: add check on latest run files and change data loader frfom Load to LoadISISNexus
 from mantid.simpleapi import *
 from mantid.api import WorkspaceGroup
 from mantid.api import IEventWorkspace 
@@ -76,9 +74,12 @@ class CurrentRun():
             
     def get_lastRun(self):
         currentCycleData = os.listdir(self.localdata+self.currentcycle)
-        lastRunFilename = currentCycleData[-1]
-        lastRun = self._extractRunFromName(lastRunFilename)
-        return lastRun
+        while currentCycleData:
+            lastRunFilename = currentCycleData.pop()
+            if lastRunFilename.endswith('.nxs'):
+                lastRun = self._extractRunFromName(lastRunFilename)
+                return lastRun
+
     
     def set_lastRun(self):
         self.lastRun = self.get_lastRun()
@@ -126,8 +127,11 @@ pulseend = 20.0
 
 
 if check_is_host_at_isis():
-	currentRun = NotAtHome()
-    #CurrentRun("//ndloffspec1/L/RawData/")
+    try:
+        currentRun = CurrentRun("//ndloffspec1/L/RawData/")
+    except:
+        currentRun = CurrentRun("//isis/inst$/NDXOFFSPEC/Instrument/data/")
+        print "ndloffspec is missing, using the archive."
 else:
 	currentRun = NotAtHome()
 
@@ -295,7 +299,7 @@ PolarisationCalibration.set_current_calibration('march2016')
     
     
 def load_eventmode(run, outputworkspace="wtemp"):
-    Load(str(run),OutputWorkspace=outputworkspace,LoadMonitors=1)
+    LoadISISNexus(str(run),OutputWorkspace=outputworkspace,LoadMonitors=1)
     Rebin(outputworkspace,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=outputworkspace+'reb')
     Rebin(outputworkspace+'_monitors','5.0,20.0,100000.0',OutputWorkspace=outputworkspace+'monreb')
     ConjoinWorkspaces(outputworkspace+'monreb',outputworkspace+'reb',CheckOverlapping=True)
@@ -313,7 +317,7 @@ def addRuns(runlist,wname):
     runis, run = currentRun.get_currentRun(run)
     if runis == "old":
         try:
-            Load(str(run),OutputWorkspace="wtemp",LoadMonitors="Include")
+            LoadISISNexus(str(run),OutputWorkspace="wtemp",LoadMonitors="Include")
         except:
             load_eventmode(run, outputworkspace="wtemp")
     elif runis == "current":
