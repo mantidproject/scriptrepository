@@ -1567,6 +1567,27 @@ def InsertFitPars(pars,fps):
 				#print "setting complex par ",lpnp[0],"=",d2
 				pars[fpnp[0]]=d2
 
+def RunModelledSystemCached(pars,key,cache={},counter=[0]):
+	# keep cache of old "key" values and their results
+	# in principle could key on most or all of "pars" but that may be too slow to check for a match, and some irrelevant stuff in there
+	#content of cache is [ybins,lastTimeUsed]
+	# don't store Axes and error values as they're not used in the fit anyway (but return if available)
+	# pass None as progress indicator, as Fits do anyway
+	counter[0]+=1
+	if key in cache:
+		pt=cache[key]
+		pt[1]=counter[0]
+		return None,pt[0],None
+	else:
+		if(len(cache)>200):
+			# clear some cache entries, least recently used
+			stale=sorted(cache.items(),key=lambda x: x[1][1])
+			for obsolete in stale[0:50]:
+				del cache[obsolete[0]]
+		ax,yb,eb=RunModelledSystem(pars,None)
+		cache[key]=[yb,counter[0]]
+		return ax,yb,eb
+
 class QuantumTableDrivenFunction1(IFunction1D):
 	def category(self):
 		return 'Muon'
@@ -1608,7 +1629,9 @@ class QuantumTableDrivenFunction1(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1660,7 +1683,9 @@ class QuantumTableDrivenFunction2(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,P2),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1714,7 +1739,9 @@ class QuantumTableDrivenFunction3(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,P2,P3),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1768,7 +1795,9 @@ class QuantumTableDrivenFunction3SD(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1824,7 +1853,9 @@ class QuantumTableDrivenFunction4(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,P2,P3,P4),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1879,8 +1910,10 @@ class QuantumTableDrivenFunction4SD(IFunction1D):
 
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
-
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			
+			# cache control
+			key=((P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2,P3),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1938,7 +1971,9 @@ class QuantumTableDrivenFunction5(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,P2,P3,P4,P5),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -1946,6 +1981,66 @@ class QuantumTableDrivenFunction5(IFunction1D):
 			return numpy.array([1.E30]*len(xvals))
 
 FunctionFactory.subscribe(QuantumTableDrivenFunction5)
+
+class QuantumTableDrivenFunction5SD(IFunction1D):
+	def category(self):
+		return 'Muon'
+
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1plusP2",2.0)
+		self.declareParameter("P1minusP2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("P4",4.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P0=self.getParameterValue("P0")
+			P1p2=self.getParameterValue("P1plusP2")
+			P1m2=self.getParameterValue("P1minusP2")
+			P3=self.getParameterValue("P3")
+			P4=self.getParameterValue("P4")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2,P3,P4))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+			
+			# cache control
+			key=((P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2,P3,P4),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction5SD)
 
 class QuantumTableDrivenFunction6(IFunction1D):
 	def category(self):
@@ -1998,7 +2093,9 @@ class QuantumTableDrivenFunction6(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,P2,P3,P4,P5,P6),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
@@ -2006,6 +2103,68 @@ class QuantumTableDrivenFunction6(IFunction1D):
 			return numpy.array([1.E30]*len(xvals))
 
 FunctionFactory.subscribe(QuantumTableDrivenFunction6)
+
+class QuantumTableDrivenFunction6SD(IFunction1D):
+	def category(self):
+		return 'Muon'
+
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1plusP2",2.0)
+		self.declareParameter("P1minusP2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("P4",4.0)
+		self.declareParameter("P5",4.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P0=self.getParameterValue("P0")
+			P1p2=self.getParameterValue("P1plusP2")
+			P1m2=self.getParameterValue("P1minusP2")
+			P3=self.getParameterValue("P3")
+			P4=self.getParameterValue("P4")
+			P5=self.getParameterValue("P5")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2,P3,P4,P5))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+			
+			# cache control
+			key=((P0,(P1p2+P1m2)/2,(P1p2-P1m2)/2,P3,P4,P5),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction6SD)
 
 class QuantumTableDrivenFunction7(IFunction1D):
 	def category(self):
@@ -2060,7 +2219,9 @@ class QuantumTableDrivenFunction7(IFunction1D):
 			else:
 				raise Exception("Can't fit with measure type"+pars["measure"][0])
 
-			axes,ybins,ebins = RunModelledSystem(pars,None)
+			# cache control
+			key=((P1,P2,P3,P4,P5,P6,P7),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
 			
 			return ybins[0,:]*scal+base
 		except Exception as e:
