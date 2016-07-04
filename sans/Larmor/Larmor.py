@@ -202,10 +202,19 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
         tcroot=tsroot+'p'+str(periods[0])
         tdbroot=tsroot+'p'+str(periods[0])
     if(len(wkspname) > 0):
-        RenameWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax),OutputWorkspace=wkspname)
+        try:
+            RenameWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax),OutputWorkspace=wkspname)
+        except:
+            pass
     if(diagnostics==0):
-        DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_incident_monitor')
-        DeleteWorkspace(sroot+'_sans_nxs')
+        try:
+            DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_incident_monitor')
+        except:
+            pass
+        try:
+            DeleteWorkspace(sroot+'_sans_nxs')
+        except:
+            pass
         if(len(tsample)>0):
             try:
                 DeleteWorkspace(tsroot+'_trans_nxs')
@@ -216,10 +225,19 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
             except:
                 pass
         if(len(rcan)>0):
-            DeleteWorkspace(croot+'_sans_nxs')
-            DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_can_tmp_incident_monitor')
+            try:
+                DeleteWorkspace(croot+'_sans_nxs')
+            except:
+                pass
+            try:
+                DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_can_tmp_incident_monitor')
+            except:
+                pass
         if(len(tcan)>0):
-            DeleteWorkspace(tcroot+'_trans_nxs')
+            try:
+                DeleteWorkspace(tcroot+'_trans_nxs')
+            except:
+                pass
             try:
                 DeleteWorkspace(tsroot+'_trans_can_'+str(lmin)+'_'+str(lmax)+'_unfitted')
             except:
@@ -230,16 +248,28 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
             except:
                 pass
     elif(diagnostics==1):
-        DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_incident_monitor')
-        DeleteWorkspace(sroot+'_sans_nxs')
+        try:
+            DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_incident_monitor')
+        except:
+            pass
+        try:
+            DeleteWorkspace(sroot+'_sans_nxs')
+        except:
+            pass
         if(len(tsample)>0):
             try:
                 DeleteWorkspace(tsroot+'_trans_nxs')
             except:
                 pass
         if(len(rcan)>0):
-            DeleteWorkspace(croot+'_sans_nxs')
-            DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_can_tmp_incident_monitor')
+            try:
+                DeleteWorkspace(croot+'_sans_nxs')
+            except:
+                pass
+            try:    
+                DeleteWorkspace(sroot+'rear_1D_'+str(lmin)+'_'+str(lmax)+'_can_tmp_incident_monitor')
+            except:
+                pass
         if(len(tcan)>0):
             DeleteWorkspace(tcroot+'_trans_nxs')
         if(len(tsample)>0 or len(tcan)>0):
@@ -252,9 +282,55 @@ def larmor1D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmi
         wkspname1=string.replace(wkspname,':','_')
         SaveRKH(wkspname,dirname+'r'+rsample+'_'+wkspname1+'.txt',Append=0)
         SaveCanSAS1D(wkspname,dirname+'r'+rsample+'_'+wkspname1+'.xml',RadiationSource='Spallation Neutron Source',Append=0)
-    # return a handle to the final named workspace  
-    return mtd[wkspname]
-            
+    
+
+def larmor2D(rsample,rcan,tsample,tdb,tcan,tdbcan="",maskfile="",wkspname="",lmin=0.9,lmax=12.5,setthickness=0,thickness=1.0,setwidth=0,width=6.0,setheight=0,height=8.0,diagnostics=0,periods=[-1,-1,-1,-1,-1,-1],dirname='c:/Data/Processed/',saveFile=1):
+    '''
+    periods array is defined in order sample sans, can sans, sample trans, sample db, can trans, can db
+    if tdbcan is not defined then tdb is used
+    '''
+    LARMOR()
+    #Set reduction to 1D (note that if this is left out, 1D is the default)
+    Set2D()
+    MaskFile(maskfile)
+    # Assign run numbers (.nxs for nexus)
+    if(periods[0]>0):
+        AssignSample(rsample+'.nxs',period=periods[0])
+    else:
+        AssignSample(rsample+'.nxs')
+    a1=rsample.split('-')
+    sroot=a1[0]
+    if(setthickness!=0):
+        ReductionSingleton().get_sample().geometry.thickness=thickness
+    if(setwidth!=0):
+        ReductionSingleton().get_sample().geometry.width=width
+    if(setheight!=0):
+        ReductionSingleton().get_sample().geometry.height=height
+    if(len(rcan)>0):
+        if(periods[1]>0):
+            AssignCan(rcan+'.nxs',period=periods[1])
+        else:
+            AssignCan(rcan+'.nxs')
+        a1=rcan.split('-')
+        croot=a1[0]
+    TransFit('On',lambdamin=lmin,lambdamax=lmax)
+    if(len(tsample)>0):
+        TransmissionSample(tsample+'.nxs', tdb+'.nxs',period_t=periods[2],period_d=periods[3])
+        a1=tsample.split('-')
+        tsroot=a1[0]
+        a1=tdb.split('-')
+        tdbroot=a1[0]
+    if(len(tcan)>0):
+        if(len(tdbcan)>0):
+            TransmissionCan(tcan+'.nxs', tdbcan+'.nxs',period_t=periods[4],period_d=periods[5])
+        else:
+            TransmissionCan(tcan+'.nxs', tdb+'.nxs',period_t=periods[4],period_d=periods[5])
+        a1=tdb.split('-')
+        tdbroot=a1[0]
+        a1=tcan.split('-')
+        tcroot=a1[0]    
+    reduced = WavRangeReduction(lmin, lmax, False)
+
 def calibrateTubes(wkspName,calibrationfile='8tubeCalibration_25-03-2015_r2284-2296.nxs'):
    #
    # pixel by pixel efficiency correction for the linear detector
