@@ -488,6 +488,7 @@ def detect_he(wvec,rad,atms,t2rad):
 	ddsqr=0.0
 	v_dd =0.0
 	v_d  =0.0
+	
 
 	if rad < 0.0 or t2rad < 0.0 or t2rad > 1.0 or atms < 0.0:
 		print('Error with detect_he input parameters')
@@ -725,21 +726,22 @@ def chbmts(a,b,c,m,x):
 
 
 	d=0.0
-	dd=0.0
+	ddd=0.0
 	y=(2.0*x-a-b)/(b-a)
 	y2=2.0*y
 
-	myrange=range(m-1,1,-1)
+	myrange=range(m-1,0,-1)
 	
+	#print('myrange')
 	#print(myrange)
 	#print(c)
 	
 	for j in myrange:
 		sv=d
-		d=y2*d-dd+c[j]
-		dd=sv
+		d=y2*d-ddd+c[j]
+		ddd=sv
 
-	out=y*d-dd+0.5*c[0]
+	out=y*d-ddd+0.5*c[0]
 
 	return out
 
@@ -792,8 +794,9 @@ def van_calc(v_mod, v_ch, v_jit, v_x, v_y, v_xy, v_dd,ei, eps, phi,omega):
     #v_van = (v_van_m + v_van_ch + v_van_jit + v_van_ya)
     
     ##New (RAE) version:
-    v_van = (v_van_m + v_van_ch + v_van_jit + v_van_ya + v_van_y)
+    v_van = (v_van_m + v_van_ch + v_van_jit + v_van_ya + v_van_y + v_van_dd)
     return v_van
+
 
 
 def sam_flux(ei,omega):
