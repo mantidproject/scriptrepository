@@ -963,7 +963,7 @@ def achop(ei,omega):
     global x0, xa, x1, x2, wa_mm, ha_mm, wa, ha, pslit
     global dslat, radius, rho, tjit, mod_type, s, thetam, mod_type
     global imod, sx, sy, sz, isam, gam, ia, ix, idet, dd, tbin, titledata
-    dd=dslat
+    ddd=dslat
     p1=pslit
     R1=radius
     rho1=rho
