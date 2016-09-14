@@ -11,7 +11,9 @@ Scan a magnet, take data on three machines, analyse it, plot results
 CACHENAME="SE_Block_Cache"
 
 # select test mode
-TESTMODE=True
+# DAQ=True (simulated), "abort" (real DAE but don't save) or False (real working system)
+TESTMODE_DAQ=False
+TESTMODE_BLOCKS=False
 
 # script top level (maybe not Algorithm unless Workflow is debugged)
 # stage 0 get input
@@ -42,6 +44,9 @@ TESTMODE=True
 # col 2 for starting value
 # col 3 for end value (same if that magnet not scanned)
 
+from mantid.api import * # PythonAlgorithm, registerAlgorithm, WorkspaceProperty
+from mantid.kernel import *
+from mantid.simpleapi import *
 from logger import Logger
 #import inspect
 #from genie_python.genie_startup import *
@@ -83,16 +88,17 @@ def getRecentFile(fmt,lastRunNum,flag):
 			return (N,False)
 
 def processHifiCam(filename):
-	img=LoadBeamCameraFile(SourceFile=filename, FilterNoiseLevel='50', BinSize='1', OutputWorkspace='IMG')
+	img=LoadBeamCameraFile(SourceFile=filename, FilterNoiseLevel='50', BinSize='1', OutputWorkspace='IMG',EnableLogging=False)
 	#img=LoadFITS(Filename=filename, LoadAsRectImg=True, FilterNoiseLevel='50', BinSize='1', Scale='80', OutputWorkspace='IMG')
-	squash=MaskAndFlattenCameraImage(img,120,590,80,440)
+	squash=MaskAndFlattenCameraImage(img,120,590,80,440,EnableLogging=False)
 	
-	fplist=Fit(Function="name=TwoDimGaussianPlusBG",
+	fplist=Fit(Function="name=TwoDimGaussianPlusBG,Intensity=40000",
 		InputWorkspace='squash',
 		Output='squash',
 		OutputCompositeMembers=True,
 		StartX=0,
-		EndX=100000000)
+		EndX=100000000,
+		EnableLogging=False)
 	
 	#print fplist
 	(YesNo, CostFn, CovarMat, Params,Workspace)=fplist	
@@ -100,10 +106,24 @@ def processHifiCam(filename):
 	(eX0,eY0,eXSig,eYSig,eSkew,eBackground,eIntens,eCostF2)=Params.column(2)
 	return (X0,eX0,Y0,eY0,XSig,eXSig,YSig,eYSig,Skew,eSkew,Intens,eIntens,Background,eBackground)
 	
-WAITFOR_TIMEOUT_SECONDS = 10
-MAGNETS=["UQ1","UQ2","UQ3","UQ4","UQ5","UQ6","UQ7","UQ8","UQ9","UQ10","UQ11","UQ12","UB1","UB2","Separ","SeptA","SeptC","UQ13A","UQ14A","UQ15A","UQ13B","UQ14B","UQ13C","UQ14C","UQ15C"] # example
+WAITFOR_TIMEOUT_SECONDS = 60
+MAGNETS=["UQ1","UQ2","UQ3","UQ4","UQ5","UQ6","UQ7","UQ8","UQ9","UQ10","UQ11","UQ12","UB1","UB2","SEPARATOR","SEPTUM_A","SEPTUM_C","UQ13A","UQ14A","UQ15A","UQ13B","UQ14B","UQ13C","UQ14C","UQ15C"] # example
 MAGNETSETS=["H123","V123","M123","H456","V456","M456","H789","V789","M789","H101112","V101112","M101112","H131415A","V131415A","M131415A","H1314B","V1314B","H131415C","V131415C","M131415C","Momentum"]
-OTHERS=["Mslits"]
+OTHERS=[] # ["Mslits"] not yet connected this way
+
+BLOCKNAMES={"UQ1":"UQ1_CURR","UQ2":"UQ2_CURR","UQ3":"UQ3_CURR",
+	"UQ4":"UQ4_CURR","UQ5":"UQ5_CURR","UQ6":"UQ6_CURR","UQ7":"UQ7_CURR",
+	"UQ8":"UQ8_CURR","UQ9":"UQ9_CURR","UQ10":"UQ10_CURR","UQ11":"UQ11_CURR",
+	"UQ12":"UQ12_CURR","UB1":"UB1_CURR","UB2":"UB2_CURR","SEPARATOR":"SEPARATOR_CURR",
+	"SEPTUM_A":"SEPTUM_A_CURR","SEPTUM_C":"SEPTUM_C_CURR","UQ13A":"UQ13A_CURR",
+	"UQ14A":"UQ14A_CURR","UQ15A":"UQ15A_CURR","UQ13B":"UQ13B_CURR",
+	"UQ14B":"UQ14B_CURR","UQ13C":"UQ13C_CURR","UQ14C":"UQ14C_CURR","UQ15C":"UQ15C_CURR"}
+
+# *********** override for tests
+#MAGNETS=["SEPTUM_A_CURR","SEPTUM_C_CURR"]
+#OTHERS=[]
+
+# full list for convenience
 TUNABLES=MAGNETS+MAGNETSETS+OTHERS
 
 DPARS={} # how to analyse data
@@ -113,89 +133,115 @@ DPARS["HIFI"]={"machine":"NDXHIFI","data":"//hifi/data/hifi%08d.nxs","tgbegin":0
 MACHINES0 = DPARS.keys()
 
 CPARS={} # how to get camera data
-CPARS["HIFI"]={"data":"C:/Users/jsl28/Documents/doc/upgrade/Beam Pics from NMR laptop/b1_%d.fit","finder":getRecentFile,"processor":processHifiCam}
+CPARS["HIFI"]={"data":"//ndlt626/Users/Public/Documents/sxvh9usb/Test for Sept2016/IMG%d.fit","finder":getRecentFile,"processor":processHifiCam}
 #CPARS["MUSR"]={finder=TakeMusrPic,processor=processMusrCam} # filenames specified by user
 CAMERAS0=CPARS.keys()
 
 
-if(TESTMODE):
+if(TESTMODE_DAQ is True):
 	DPARS["MUSR"]["data"]="//musr/data/musr%08d.nxs"
 	DPARS["EMU"]["data"]="//emu/data/Cycle 14_3/emu%08d.nxs"
 	DPARS["HIFI"]["data"]="//hifi/data/cycle_14_3/hifi%08d.nxs"
 	class MultipleDaeController:
 		def __init__(self):
-			self.runnums={"NDXMUSR":51909,"NDXEMU":50690,"NDXHIFI":77061} # B1B2 tune starting 20 Mar 2015 13:52 approx
+			self.startrunnums={"NDXMUSR":51909,"NDXEMU":50690,"NDXHIFI":77061} # B1B2 tune starting 20 Mar 2015 13:52 approx
+			self.runnums={}
 			self.states={}
 			self.frames={}
 		def add_machine(self,mac,timeout):
 			self.states[mac]="SETUP"
 			self.frames[mac]=0
-			print "registered",mac
+			self.runnums[mac]=self.startrunnums[mac]
+			print "registered "+str(mac)
 		def run_on_all(self,code,**kwds):
 			if(code=="get_run_state"):
 				return self.states
 			if(code=="begin"):
-				print "doing BEGIN,",kwds
+				print "doing BEGIN, "+str(kwds)
 				for m in self.states.keys():
 					self.states[m]="RUNNING"
 					self.frames[m]=0
 				if("waitfor_frames" in kwds):
-					print "waiting for frames=",kwds["waitfor_frames"]
+					print "waiting for frames="+str(kwds["waitfor_frames"])
 					time.sleep(1)
 					for m in self.states.keys():
 						self.frames[m]=kwds["waitfor_frames"]+1
-			if(code=="getRunNumbers"):
+			if(code=="get_run_number"):
 				return self.runnums
 			if(code=="end"):
 				print "ending runs"
 				for m in self.states.keys():
 					self.states[m]="SETUP"
 					self.runnums[m]+=1
+			if(code=="abort"):
+				print "aborting runs"
+				for m in self.states.keys():
+					self.states[m]="SETUP"
+else:
+	from multiple_dae_controller import MultipleDaeController
+	import inspect
+
+if(TESTMODE_BLOCKS):
 	blockvals={}
 	for b in MAGNETS+OTHERS:
-		blockvals[b]=50.0
-	def cset(block,value,wait=False,lowlimit=-99999.9,highlimit=99999.9):
-		print "setting",block,"to",value
+		blockvals[BLOCKNAMES[b]]=50.0
+	def cset(block=None,value=None,wait=False,lowlimit=-99999.9,highlimit=99999.9,**args):
+		if(len(args)==1):
+			block=args.keys()[0]
+			value=args.values()[0]
+		print "setting "+str(block)+" to "+str(value)
 		blockvals[block]=value
 		if(wait):
 			print "waiting for value to stabilise"
 			time.sleep(1)
 	def cshow(block):
-		return blockvals[block]
+		print "CSHOW: "+str(blockvals[block])
+		return None
+	def cget(block):
+		if block in blockvals:
+			return {"name":"TEST:"+block,"value":blockvals[block],"lowlimit":0.0,"highlimit":1.0}
+		else:
+			return None
 	def waitfor_block(block,lowlimit=-99999.9,highlimit=99999.9):
-		print "waiting for",block,"to stabilise"
+		print "waiting for "+block+" to stabilise"
 		time.sleep(1)
-				
 else:
-	from multiple_dae_controller import MultipleDaeController
-	import inspect
 	from genie_python.genie_startup import *
+	set_instrument("IN:MUONFE:")
 	
 def cached_cset(block,val,wait=False,lowlimit=-99999.9,highlimit=99999.9):
+	# translate magnet name to block name
 	# set the block
 	# also update the cache
 	ca=mtd[CACHENAME]
 	names=ca.column(0)
-	cset(block,val,wait,lowlimit,highlimit)
+	args={BLOCKNAMES[block]:val} # ,"wait":wait
+	cset(**args)
 	if block in names:
 		ca.setCell(names.index(block),1,val) # only on successful cset
 	
 def cached_get_block(block):
+	# translate magnet name to block name
 	# get block val from cache
 	# get actual value
 	# get value from table tt (_Reference) if supplied
 	# return cached value if all close
 	# or raise exception
-	rbk=cshow(block)
+	print "doing cget("+block+")"
+	rbk=cget(BLOCKNAMES[block])["value"]
 	ca=mtd[CACHENAME]
 	cnames=ca.column(0)
 	if(block in cnames):
 		cval=ca.column(1)[cnames.index(block)]
-		if(abs(rbk-cval)>0.1):
-			raise Exception("Readback of "+block+" is not close to cached setpoint")
+		if(abs(rbk-cval)>1.0):
+			raise Exception("Readback of "+block+"("+str(rbk)+") is not close to cached setpoint("+str(cval)+")")
 		return cval
 	else:
 		return rbk # uncached
+
+def raw_cget(block):
+	# translate magnet name to block name
+	return cget(BLOCKNAMES[block])["value"]
 
 
 def setTune(startPars,magName,tuneVal):
@@ -278,8 +324,8 @@ def setTune(startPars,magName,tuneVal):
 		toSet["UQ14B"]=startPars["UQ14B"]+tuneVal*1.0
 	elif(magName=="Momentum"): # units of "B1"
 		for mag in MAGNETS:
-			if(mag=="Separ"):
-				toSet["Separ"]=startPars["Separ"]*startPars["UB1"]/tuneVal
+			if(mag=="SEPARATOR"):
+				toSet["SEPARATOR"]=startPars["SEPARATOR"]*startPars["UB1"]/tuneVal
 			else:
 				toSet[mag]=startPars[mag]/startPars["UB1"]*tuneVal
 	return toSet
@@ -287,7 +333,7 @@ def setTune(startPars,magName,tuneVal):
 class Beamline_cset(PythonAlgorithm):
 	def PyInit(self):
 		self.declareProperty("Operation","",StringListValidator(["Set to value","Refresh","Refresh All","Set All from Table"]))
-		self.declareProperty("Magnet","",StringListValidator(TUNABLES))
+		self.declareProperty("Magnet","",StringListValidator(MAGNETS+OTHERS))
 		self.declareProperty("Value",0.0)
 		self.declareProperty(ITableWorkspaceProperty("Table","",direction=Direction.Input,optional=PropertyMode.Optional))
 	
@@ -308,14 +354,14 @@ class Beamline_cset(PythonAlgorithm):
 		block=self.getProperty("Magnet").value
 		if(op=="Set to value"):
 			val=self.getProperty("Value").value
-			cached_cset(block,val,wait=True,lowlimit=val-1.0, highlimit=val+1.0)
+			cached_cset(block,val,wait=True)
 		elif(op=="Refresh"):
-			val=cshow(block) # bypass cache, get readback
-			cached_cset(block,val,wait=True,lowlimit=val-1.0, highlimit=val+1.0)
+			val=raw_cget(block) # bypass cache, get readback
+			cached_cset(block,val)
 		elif(op=="Refresh All"):
 			for block in MAGNETS+OTHERS:
-				val=cshow(block) # bypass cache, get readback
-				cached_cset(block,val,wait=True,lowlimit=val-1.0, highlimit=val+1.0)
+				val=raw_cget(block) # bypass cache, get readback
+				cached_cset(block,val)
 		elif(op=="Set All from Table"):
 			# fairly free options in table. Meant for x_Reference tables, but can use Parameters table from a fit for example. Not all values need be set!
 			t=self.getProperty("Table").value
@@ -324,7 +370,7 @@ class Beamline_cset(PythonAlgorithm):
 			for block in tblks:
 				if(block in (MAGNETS+OTHERS)):
 					val=tvals[tblks.index(block)] # table entry
-					cached_cset(block,val,wait=True,lowlimit=val-1.0, highlimit=val+1.0)
+					cached_cset(block,val,wait=True)
 				else:
 					self.log().notice("Ignoring table row "+block)
 		else:
@@ -397,7 +443,7 @@ class TuneMagnet(DataProcessorAlgorithm):
 			oldTab=None
 			oldScanVals=[]
 		newScanPars=self.getProperty("ScanRange").value
-		print "newScanPars=", newScanPars
+		#print "newScanPars=", newScanPars
 		newScanPts=self.CalcScanValues(newScanPars,oldScanVals)
 		if(len(newScanPts)==0):
 			self.log().notice("No values to scan, or already measured")
@@ -420,6 +466,7 @@ class TuneMagnet(DataProcessorAlgorithm):
 			scmag.setProperty("ScanValues",newScanPts)
 			scmag.setProperty("Frames",self.getProperty("Frames").value)
 			scmag.setPropertyValue("RunNumList", "__NewRuns")
+			#scmag.setAlwaysStoreInADS(True)
 			scmag.execute()
 			runNumList = scmag.getProperty("RunNumList").value
 			AnalysisDataService.addOrReplace("__NewRuns", runNumList)
@@ -433,6 +480,7 @@ class TuneMagnet(DataProcessorAlgorithm):
 		ats.setProperty("MeasureTF20asym",self.getProperty("MeasureTF20asym").value)
 		ats.setProperty("MeasurePromptPeaks",self.getProperty("MeasurePromptPeaks").value)
 		ats.setProperty("MeasureDoublePulse",self.getProperty("MeasureDoublePulse").value)
+		#ats.setAlwaysStoreInADS(True)
 		ats.execute()
 		optab=ats.getProperty("OutputTable").value
 		self.setProperty("ResultTable",optab)
@@ -476,13 +524,15 @@ class ChooseBestValue(PythonAlgorithm):
 		toSet=setTune(refvals,mag,x)
 		try:
 			for tsb,tsv in toSet.items():
-				cached_cset(tsb,tsv,wait=True,lowlimit=tsv-1.0, highlimit=tsv+1.0) # all at once with one "Wait"
+				#print "doing cached_cset(",tsb,",",tsv,",wait=True)"
+				cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
+				#print "done the cached cset."
 			self.setProperty("BestValue",x)
 		except:
 			self.log().warning("Couldn't set one of the magnets, resetting all other values")
 			for tsb in toSet.keys():
 				tsv=refvals[tsb]
-				cached_cset(tsb,tsv,wait=True,lowlimit=tsv-1.0, highlimit=tsv+1.0) # all at once with one "Wait"
+				cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 			self.setProperty("BestValue",-1000.0)
 			toSet={}
 		for mag0 in MAGNETS+OTHERS:
@@ -528,6 +578,7 @@ class ScanMagnet(PythonAlgorithm):
 		controller = MultipleDaeController()
 		for m in MACHINES:
 			controller.add_machine(m, WAITFOR_TIMEOUT_SECONDS)
+		controller.run_on_all("set_waitfor_sleep_interval",5)
 		statuses=controller.run_on_all("get_run_state")
 		errstr=""
 		for m,status in statuses.items():
@@ -540,7 +591,7 @@ class ScanMagnet(PythonAlgorithm):
 		for i,cam in enumerate(CAMERAS):
 			cs=CPARS[cam]["finder"](CPARS[cam]["data"],0,-1)
 			cnums[i]=cs[0]
-			print "camera",i,"starting file=",cnums[i]
+			self.log().notice("camera "+str(i)+" starting file="+str(cnums[i]))
 
 		refvals={}
 		for mag0 in MAGNETS+OTHERS:
@@ -552,7 +603,9 @@ class ScanMagnet(PythonAlgorithm):
 				#for (mag,value) in toSet.items():
 				#	cset(mag,value,wait=True)
 				for tsb,tsv in toSet.items():
-					cached_cset(tsb,tsv,wait=True,lowlimit=tsv-1.0, highlimit=tsv+1.0) # all at once with one "Wait"
+					#print "in Scan, doing cached_cset(",tsb,",",tsv,",wait=True)"
+					cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
+					#print "done cached cset."
 			except:
 				self.log().warning("Couldn't set magnets for x="+str(x))
 			else: # successful cset, take data, report errors here
@@ -560,24 +613,57 @@ class ScanMagnet(PythonAlgorithm):
 				for i,cam in enumerate(CAMERAS):
 					cs=CPARS[cam]["finder"](CPARS[cam]["data"],cnums[i],0)
 					cnums[i]=cs[0]
-					print "camera",i,"file now=",cnums[i]
+					#print "camera",i,"file now=",cnums[i]
 				Prog.report("Data collection")
 				controller.run_on_all("begin",waitfor_frames=frames) # assumes waits for this many frames to be reached on all before continuing
-				runs=controller.run_on_all("getRunNumbers") # new method which will return a list of the run numbers in progress?
+				runs0=controller.run_on_all("get_run_number") # new method which will return a list of the run numbers in progress?
+				runs={}
+				for m,r in runs0.items():
+					runs[m]=r[0] # real get_run_number returns tuple of number and an empty string!
+				self.log().notice("runs in progress are"+str(runs))
+				# ensure runs really have finished
+				finished=False
+				abandon=False
+				while(not finished):
+					finished=True
+					statuses=controller.run_on_all("get_run_state")
+					errstr=""
+					for m,status in statuses.items():
+						if(status != "RUNNING"):
+							errstr=errstr+" "+m+"="+status
+					if(errstr != ""):
+						self.log().warning("Instruments are not all in RUNNING state:"+errstr+"; abandoning scan and saving previous completed runs")
+						abandon=True # to get out of for() scan loop
+						break # out of while loop
+					allframes=controller.run_on_all("get_frames")
+					for m,ff in allframes.items():
+						self.log().notice(str(m)+" is at "+str(ff)+"frames out of "+str(frames))
+						if(ff<frames):
+							finished=False
+					if(not finished):
+						self.log().notice("Waiting again. Hit 'Abort' or 'End' on a DAE to abandon scan")
+						waitagain=controller.run_on_all("waitfor_frames",frames)
+				if(abandon):
+					break # out of for loop
 				# camera call 2
 				for i,cam in enumerate(CAMERAS):
 					cs=[0,False]
-					ci=2
+					ci=100
 					while((not cs[1]) and (ci>0)):
 						cs=CPARS[cam]["finder"](CPARS[cam]["data"],cnums[i],1)
 						if(not cs[1]):
-							print "camera",cam,"has not taken a good picture yet, waiting for it"
-							time.sleep(1)
+							self.log().notice("camera "+cam+" has not taken a good picture yet, waiting for it")
+							time.sleep(5)
 							ci=ci-1
-					print "chosen pic ",cs[0]
+					self.log().notice("chosen picture "+str(cs[0])+" from camera "+cam)
 					cnums[i]=cs[0]
-				controller.run_on_all("end") # end and save them all.
-				print "measured at x=",x,"into runs",runs
+				if(TESTMODE_DAQ=="abort"):
+					controller.run_on_all("abort") # end but don't fill the archive disks.
+					for mac in runs.keys():
+						runs[mac]-=1 # current run not saved, use the previous run instead!
+				else:
+					controller.run_on_all("end") # end and save them all.
+				self.log().notice("measured at x="+str(x)+" into runs "+str(runs))
 				runs2=[]
 				for mac in MACHINES:
 					runs2.append(runs[mac])
@@ -586,7 +672,7 @@ class ScanMagnet(PythonAlgorithm):
 
 		for tsb in toSet.keys():
 			tsv=refvals[tsb]
-			cached_cset(tsb,tsv,wait=True,lowlimit=tsv-1.0, highlimit=tsv+1.0) # all at once with one "Wait"
+			cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 		self.setProperty("RunNumList",tt)
 		# create reference file
 		tt2=WorkspaceFactory.createTable()
@@ -616,7 +702,7 @@ class AnalyseTuningScan(PythonAlgorithm):
 		return "Muon\\Tuning"
 
 	def PyExec(self):
-		
+		self.setAlgStartupLogging=False # attempt to reduce unnecessary log messages
 		doDead=self.getProperty("DoDeadTimeCorr").value
 		doTF=self.getProperty("MeasureTF20asym").value
 		doPrompt=self.getProperty("MeasurePromptPeaks").value
@@ -665,7 +751,7 @@ class AnalyseTuningScan(PythonAlgorithm):
 				tt.addColumn("double",cam+"Backgd",2)
 				tt.addColumn("double",cam+"BackgdErr",5)
 		
-		print "grand list of columns:",tt.getColumnNames()
+		#print "grand list of columns:",tt.getColumnNames()
 		rowsToDo=[]
 		if(not self.getProperty("OldTable").isDefault):
 			for r in self.getProperty("OldTable").value:
@@ -696,42 +782,42 @@ class AnalyseTuningScan(PythonAlgorithm):
 				toload=10
 				while toload>0:
 					try:
-						wss=LoadMuonNexus(Filename=f,DeadTimeTable="dttab",DetectorGroupingTable="groups")
+						wss=LoadMuonNexus(Filename=f,DeadTimeTable="dttab",DetectorGroupingTable="groups",EnableLogging=False)
 						toload=0
 					except IOError:
-						print "file",f,"isn't in the archive yet, waiting 10 seconds"
+						self.log().notice("file"+str(f)+"isn't in the archive yet, waiting 10 seconds")
 						time.sleep(10)
 						toload = toload-1
 				ws=wss[0]
 				frames=wss[0].getRun().getProperty("goodfrm").value
 				if(doDead):
 					# correct for dead time
-					ws=ApplyDeadTimeCorr(InputWorkspace=ws,DeadTimeTable=wss[4])
+					ws=ApplyDeadTimeCorr(InputWorkspace=ws,DeadTimeTable=wss[4],EnableLogging=False)
 				# rate by default
-				grouped=MuonGroupDetectors(InputWorkspace=ws,DetectorGroupingTable=wss[5])
+				grouped=MuonGroupDetectors(InputWorkspace=ws,DetectorGroupingTable=wss[5],EnableLogging=False)
 				if(doTF):
-					alpha=AlphaCalc(grouped,FirstGoodValue=0.5,LastGoodValue=10.0)
+					alpha=AlphaCalc(grouped,FirstGoodValue=0.5,LastGoodValue=10.0,EnableLogging=False)
 					self.log().notice("First guess of alpha="+str(alpha))
-					asy=AsymmetryCalc(grouped,Alpha=alpha)
+					asy=AsymmetryCalc(grouped,Alpha=alpha,EnableLogging=False)
 					fguess=ws.getRun().getProperty("sample_magn_field").value*0.01355
-					fitdat=Fit(Function="name=ExpDecayOsc,A=0.2,Lambda=0.01,Frequency="+str(fguess)+",Phi=0.1;name=FlatBackground,A0=0.0",InputWorkspace=asy,StartX=DPARS[mac]["tgbegin"],EndX=DPARS[mac]["tgend"],Output="Fitted")
+					fitdat=Fit(Function="name=ExpDecayOsc,A=0.2,Lambda=0.01,Frequency="+str(fguess)+",Phi=0.1;name=FlatBackground,A0=0.0",InputWorkspace=asy,StartX=DPARS[mac]["tgbegin"],EndX=DPARS[mac]["tgend"],Output="Fitted",EnableLogging=False)
 					alpha=alpha+(2.0*alpha*fitdat[3].cell("Value",4)) # refined value, redo fit
 					self.log().notice("Second guess of alpha="+str(alpha)+" using A0="+str(fitdat[3].cell("Value",4)))
-					asy=AsymmetryCalc(grouped,Alpha=alpha)
-					fitdat=Fit(Function="name=ExpDecayOsc,A=0.2,Lambda=0.01,Frequency="+str(fguess)+",Phi=0.1;name=FlatBackground,A0=0.0",InputWorkspace=asy,StartX=DPARS[mac]["tgbegin"],EndX=DPARS[mac]["tgend"],Output="Fitted")
+					asy=AsymmetryCalc(grouped,Alpha=alpha,EnableLogging=False)
+					fitdat=Fit(Function="name=ExpDecayOsc,A=0.2,Lambda=0.01,Frequency="+str(fguess)+",Phi=0.1;name=FlatBackground,A0=0.0",InputWorkspace=asy,StartX=DPARS[mac]["tgbegin"],EndX=DPARS[mac]["tgend"],Output="Fitted",EnableLogging=False)
 					alpha=alpha+(2.0*alpha*fitdat[3].cell("Value",4)) # refined value, redo fit
 					self.log().notice("Third guess of alpha="+str(alpha)+" using A0="+str(fitdat[3].cell("Value",4)))
-					asy=AsymmetryCalc(grouped,Alpha=alpha)
-					fitdat=Fit(Function="name=ExpDecayOsc,A=0.2,Lambda=0.01,Frequency="+str(fguess)+",Phi=0.1;name=FlatBackground,A0=0.0",InputWorkspace=asy,StartX=DPARS[mac]["tgbegin"],EndX=DPARS[mac]["tgend"],Output="Fitted")
+					asy=AsymmetryCalc(grouped,Alpha=alpha,EnableLogging=False)
+					fitdat=Fit(Function="name=ExpDecayOsc,A=0.2,Lambda=0.01,Frequency="+str(fguess)+",Phi=0.1;name=FlatBackground,A0=0.0",InputWorkspace=asy,StartX=DPARS[mac]["tgbegin"],EndX=DPARS[mac]["tgend"],Output="Fitted",EnableLogging=False)
 					alpha=alpha+(2.0*alpha*fitdat[3].cell("Value",4))
 					self.log().notice("Fourth guess of alpha="+str(alpha)+" using A0="+str(fitdat[3].cell("Value",4)))
 				else:
 					alpha=1.0
-				sf=ExtractSingleSpectrum(InputWorkspace=grouped,WorkspaceIndex=0)
-				sb=ExtractSingleSpectrum(InputWorkspace=grouped,WorkspaceIndex=1)
-				sba=Scale(InputWorkspace=sb,Factor=alpha,Operation="Multiply")
-				s=Plus(LHSWorkspace=sf,RHSWorkspace=sba)
-				integ=Integration(InputWorkspace=s,RangeLower=DPARS[mac]["tgbegin"],RangeUpper=DPARS[mac]["tgend"])
+				sf=ExtractSingleSpectrum(InputWorkspace=grouped,WorkspaceIndex=0,EnableLogging=False)
+				sb=ExtractSingleSpectrum(InputWorkspace=grouped,WorkspaceIndex=1,EnableLogging=False)
+				sba=Scale(InputWorkspace=sb,Factor=alpha,Operation="Multiply",EnableLogging=False)
+				s=Plus(LHSWorkspace=sf,RHSWorkspace=sba,EnableLogging=False)
+				integ=Integration(InputWorkspace=s,RangeLower=DPARS[mac]["tgbegin"],RangeUpper=DPARS[mac]["tgend"],EnableLogging=False)
 				rate=integ.dataY(0)[0]/frames
 				rateErr=integ.dataE(0)[0]/frames
 				tr.extend([r[mac+"Run"],rate,rateErr])
@@ -744,16 +830,16 @@ class AnalyseTuningScan(PythonAlgorithm):
 						mAsym=-mAsym
 					tr.extend([alpha,eAlpha,mAsym,eAsym])
 				if(doPrompt):
-					prws=Integration(InputWorkspace=ws,RangeLower=DPARS[mac]["promptbegin"],RangeUpper=DPARS[mac]["promptend"])
+					prws=Integration(InputWorkspace=ws,RangeLower=DPARS[mac]["promptbegin"],RangeUpper=DPARS[mac]["promptend"],EnableLogging=False)
 					tr.extend([prws.dataY(0)[0]/frames,prws.dataE(0)[0]/frames])
 					# integrate a suggested region or regions
 					# give absolute rate as counts/frame
 					pass
 				if(do2nd):
 					# contamination factor, 0.0=pure correct single pulse, 1.0=equal double pulse, >1 = wrong pulse!
-					ecs=RemoveExpDecay(s)
-					p1ws=Integration(InputWorkspace=ecs,RangeLower=DPARS[mac]["p1begin"],RangeUpper=DPARS[mac]["p1end"])
-					p12ws=Integration(InputWorkspace=ecs,RangeLower=DPARS[mac]["tgbegin"],RangeUpper=DPARS[mac]["tgend"])
+					ecs=RemoveExpDecay(s,EnableLogging=False)
+					p1ws=Integration(InputWorkspace=ecs,RangeLower=DPARS[mac]["p1begin"],RangeUpper=DPARS[mac]["p1end"],EnableLogging=False)
+					p12ws=Integration(InputWorkspace=ecs,RangeLower=DPARS[mac]["tgbegin"],RangeUpper=DPARS[mac]["tgend"],EnableLogging=False)
 					r1=p1ws.dataY(0)[0]/(p1ws.dataX(0)[1]-p1ws.dataX(0)[0])
 					r12=p12ws.dataY(0)[0]/(p12ws.dataX(0)[1]-p12ws.dataX(0)[0])
 					if(DPARS[mac]["pulse"]==1):
