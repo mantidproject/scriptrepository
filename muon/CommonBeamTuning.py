@@ -603,7 +603,7 @@ class ScanMagnet(PythonAlgorithm):
 				#for (mag,value) in toSet.items():
 				#	cset(mag,value,wait=True)
 				for tsb,tsv in toSet.items():
-					#print "in Scan, doing cached_cset(",tsb,",",tsv,",wait=True)"
+					self.log().notice("doing cached_cset("+str(tsb)+","+str(tsv)+")")
 					cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 					#print "done cached cset."
 			except:
@@ -672,6 +672,7 @@ class ScanMagnet(PythonAlgorithm):
 
 		for tsb in toSet.keys():
 			tsv=refvals[tsb]
+			self.log().notice("doing cached_cset("+str(tsb)+","+str(tsv)+")")
 			cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 		self.setProperty("RunNumList",tt)
 		# create reference file
@@ -784,7 +785,7 @@ class AnalyseTuningScan(PythonAlgorithm):
 					try:
 						wss=LoadMuonNexus(Filename=f,DeadTimeTable="dttab",DetectorGroupingTable="groups",EnableLogging=False)
 						toload=0
-					except IOError:
+					except:
 						self.log().notice("file"+str(f)+"isn't in the archive yet, waiting 10 seconds")
 						time.sleep(10)
 						toload = toload-1
