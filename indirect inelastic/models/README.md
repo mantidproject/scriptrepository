@@ -14,8 +14,8 @@ Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFTTauQ ) + LinearBackgroun
 with StretchedExFTTauQ = height * exp( - |t/tau|**beta )  
 and tau = taumax*(Qmin/Q)**alpha
 
-* TeixeiraWaterSQE
+* TeixeiraWaterSQE  
 Fitting of water at room temperature with an elastic component and the jump-diffusion
-model of Teixeira for translational diffusion. The model is:
+model of Teixeira for translational diffusion. The model is:  
 S(Q,E) = Convolution( A*Resolution, x*Delta + (1-x)*TeixeiraWater ) + LinearBackground
  
