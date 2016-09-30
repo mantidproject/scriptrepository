@@ -8,7 +8,7 @@ import numpy as np
 import mantid.simpleapi as msapi
 
 # Data directory (User, update with your own)
-datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/BASIS/models/StretchedExpFT"     #update this with your own directory
+datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/models/StretchedExpFT"     #update this with your own directory
 data_davegroup_filename = "data.dat"
 resolution_davegroup_filename = "resolution.dat"
 

@@ -16,7 +16,7 @@ from copy import copy
 import sys
 
 # Directory holding the scripts and the fit function
-scriptdir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/BASIS/models/StretchedExpFTTauQ/v3.8"
+scriptdir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/models/StretchedExpFTTauQ/v3.8"
 sys.path.append(scriptdir)
 from seqFitStretchedExFTTauQ import sequentialFit
 

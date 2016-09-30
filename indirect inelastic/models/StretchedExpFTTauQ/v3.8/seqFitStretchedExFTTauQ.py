@@ -11,7 +11,7 @@ import numpy as np
 import mantid.simpleapi as msapi
 
 # Directory holding the scripts and the fit function
-scriptdir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/BASIS/models/StretchedExpFTTauQ/v3.8"
+scriptdir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/models/StretchedExpFTTauQ/v3.8"
 sys.path.append(scriptdir)
 from StretchedExpFTTauQ import StretchedExpFTTauQ
 msapi.FunctionFactory.subscribe(StretchedExpFTTauQ)  # required for Mantid to read in the fit function

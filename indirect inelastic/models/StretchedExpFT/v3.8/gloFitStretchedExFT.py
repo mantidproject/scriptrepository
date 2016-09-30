@@ -16,7 +16,7 @@ from seqFitStretchedExFT import sequentialFit
 import sys
 
 # Data directory (update with your own)
-datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/BASIS/models/StretchedExpFT"
+datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/models/StretchedExpFT"
 data_davegroup_filename = "data.dat"
 resolution_davegroup_filename = "resolution.dat"
 
