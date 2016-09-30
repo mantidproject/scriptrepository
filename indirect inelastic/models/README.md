@@ -17,5 +17,5 @@ and tau = taumax*(Qmin/Q)**alpha
 * TeixeiraWaterSQE  
 Fitting of water at room temperature with an elastic component and the jump-diffusion
 model of Teixeira for translational diffusion. The model is:  
-S(Q,E) = Convolution( A*Resolution, x*Delta + (1-x)*TeixeiraWater ) + LinearBackground
+S(Q,E) = Convolution( Resolution, EISF*Delta + (1-EISF)*TeixeiraWater ) + LinearBackground
  
