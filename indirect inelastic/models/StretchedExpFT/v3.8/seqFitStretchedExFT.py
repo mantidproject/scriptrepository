@@ -23,32 +23,15 @@ resolution_davegroup_filename = "resolution.dat"
     "Manage Setup" --> "Copy to Clipboard". This actions will save the model
     as a string which you can later paste onto this script.
 """
-fitstring_template = """
-(composite=Convolution,FixResolution=false,NumDeriv=true;
-  name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
-  Scaling=f0.f0.Scaling,Shift=0,XScaling=1,ties=(Shift=0,XScaling=1);
-  (name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height<1);
-   name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
-   constraints=(0<Tau,0<Beta);
-   ties=(f1.Height=1-f0.Height,f1.Centre=f0.Centre)
-  )
-);name=LinearBackground,A0=f1.A0,A1=f1.A1"""
+fitstring_template = """(composite=Convolution,FixResolution=true,NumDeriv=true;
+name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
+Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,Shift=0,XScaling=1);
+(name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height);
+name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
+constraints=(0<Tau,0<Beta);
+ties=(f1.Centre=f0.Centre)));
+name=LinearBackground,A0=-0.000244617,A1=-0.000197589"""
 
-'''
-############
-# If you want the same model with beta fixed to one, use this template string instead
-############
-fitstring_template = """
-(composite=Convolution,FixResolution=false,NumDeriv=true;
-  name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
-  Scaling=f0.f0.Scaling,Shift=0,XScaling=1,ties=(Shift=0,XScaling=1);
-  (name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height<1);
-   name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
-   constraints=(0<Tau),ties=(Beta=1);
-   ties=(f1.Height=1-f0.Height,f1.Centre=f0.Centre)
-  )
-);name=LinearBackground,A0=f1.A0,A1=f1.A1"""
-'''
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
 # Load the data. We assume the format is DAVE group file.
@@ -79,17 +62,17 @@ maxE =  0.1
 
 # Initial guess for the lowest Q. A guess can be obtained by
 # running MantidPlot interactively just for the first Q
-initguess = { 'f0.f0.Scaling'   :     0.5,   # Overall intensity
-              'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
+initguess = { 'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
               'f0.f1.f1.Height' :    0.9,   # This has to be 1-f0.f1.f0.Height
-              'f0.f1.f1.Tau'    :  500.0,   # tau or relaxation time
+              'f0.f1.f1.Tau'    : 1000.0,   # tau or relaxation time
               'f0.f1.f1.Beta'   :    0.9,   # exponent
               'f1.A0'           :    0.0,   # intercept background
               'f1.A1'           :    0.0,   # slope background
 }
 
 # Do the fit only on these workspace indexes
-selected_wi = [ 1, 2, 3, 4] # select a few workspace indexes
+#selected_wi = [ 1, 2, 3, 4] # select a few workspace indexes
+selected_wi = [ 0, 1, 2, 3, 4] # select a few workspace indexes
 #selected_wi = range(0,len(qvalues))  # select all spectra
 
 def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalues, selectedwi):
@@ -111,6 +94,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
     names = initguess.keys()  # Store the names of the parameters in a list
     chi2 = []     # store the Chi-square values of the fits for every Q
     results = []  # we will store in this list the fitted parameters for every Q
+    errors = []  # we will store in this list the errors of fitted parameters for every Q
     funcStrings = []  # store the fitstring with the optimized values
 
     # "iq" is the workspace index variable
@@ -120,6 +104,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
             if iq not in selected_wi:
                     chi2.append(None)
                     results.append(None)
+                    errors.append(None)
                     continue  # skip to next workspace index
             # Update the model template string with the particular workspace index
             fitstring = fitstring_template.replace( '_IQ_', str(iq) )
@@ -132,7 +117,8 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
             # Call the Fit algorithm using the updated "fitstring".
             print fitstring+'\n'
             msapi.Fit( fitstring, InputWorkspace=dataName, WorkspaceIndex=iq,
-                       CreateOutput=1, startX=minE, endX=maxE, MaxIterations=500 )
+                       CreateOutput=1, startX=minE, endX=maxE,
+                       Minimizer="FABADA", MaxIterations=5000 )
 
             # As a result of the fit, three workspaces are created:
             # dataName+"_Parameters" : optimized parameters and Chi-square
@@ -142,12 +128,14 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
             # Update the initial guess for the next fit using the results of the
             # current fit. We do this by scanning every row in dataName+"_Parameters"
             params_workspace = msapi.mtd[dataName+'_Parameters']
+            error = dict()
             for row in params_workspace:
                     # name of the fitting parameter for this particular row
                     name = row['Name']
                     if name in names:
                             # update the value of the fitting parameter
                             initguess[name] = row['Value']
+                            error[name] = row['Error']
                     if name == 'Cost function value':  # store Chi-square separately
                             chi2.append(row['Value'])
             # Save the string representation with optimal values
@@ -159,13 +147,14 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
             z = copy( initguess )
             # add also the workspace index and the particular Q value
             z.update({'iq': iq, 'qvalue': qvalues[iq]})
-
-            # Append the dictionary to the list of results
+            error.update({'iq': 0, 'qvalue': 0})
+            # Append dictionaries to the list of results and associated errors
             results.append( z )
+            errors.append(error)
 
             # Strangely, we need a non-vanishing value of f0.f1.f0.Height as initial guess
-            initguess['f0.f1.f0.Height'] = max(0.1, initguess['f0.f1.f0.Height'])
-            initguess['f0.f1.f1.Height'] = 1 - initguess['f0.f1.f0.Height']
+            #initguess['f0.f1.f0.Height'] = max(0.1, initguess['f0.f1.f0.Height'])
+            #initguess['f0.f1.f1.Height'] = 1 - initguess['f0.f1.f0.Height']
 
             # Special treatment for the tau parameter!
             # tau decreases very fast with increasing Q,
@@ -184,53 +173,69 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
                                    OutputWorkspace= "seqfit_"+dataName+'_{0}_NormalisedCovarianceMatrix'.format(iq))
             msapi.RenameWorkspace( InputWorkspace = dataName+'_Workspace',
                                    OutputWorkspace = "seqfit_"+dataName+'_{0}_Workspace'.format(iq) )
+            msapi.RenameWorkspace( InputWorkspace = "PDF",
+                                   OutputWorkspace = "seqfit_"+dataName+'_{0}_PDF'.format(iq) )
 
 
     # Save some selected parameters to a string.
     # Remember that only the selected spectra contain data.
-    buffer = '#Sequential fit summary\n#  Q    Chi2   x   Tau(ps) Beta\n'
+    buffer = '#Sequential fit summary\n#  Q    Chi2 Tau(ps)+-error  Beta+-error\n'
     print buffer,
     for iq in range( nq ):
             if iq not in selected_wi:
                 continue # skip to next workspace index
             # python dictionary holding  results for the fit of this workspace index
             result = results[ iq ]
-            line = '{0} {1:6.2f} {2:5.3f} {3:6.2f} {4:5.3f}\n'.format( result['qvalue'],
+            error = errors[iq]
+            line = '{0} {1:6.2f} {2:7.2f} {3:6.2f} {4:5.3f} {5:4.3f}\n'.format( result['qvalue'],
                 chi2[ iq ],
-                result['f0.f1.f0.Height'],
-                result['f0.f1.f1.Tau'],
-                result['f0.f1.f1.Beta'])
+                result['f0.f1.f1.Tau'], error['f0.f1.f1.Tau'],
+                result['f0.f1.f1.Beta'], error['f0.f1.f1.Beta'])
             print line,
             buffer += line
 
     # Save Q-dependence of parameters to a Workspace
     other = {}
+    other_error = {}
     for iq in range( nq ):
         if iq not in selected_wi:
             continue # skip to next workspace index
         # python dictionary holding  results for the fit of this workspace index
         result = results[ iq ]
+        error = errors[iq]
         for key,value in result.items():
             if key not in other.keys():
-                other[key] = [value,]
+                other[key] = np.array([value,])
+                other_error[key] = np.array([error[key],])
             else:
-                other[key].append(value)
+                other[key] = np.append(other[key], value)
+                other_error[key] = np.append(other_error[key], error[key])
         if "Chi2" not in other.keys():
-            other["Chi2"] = [chi2[ iq ],]
+            other["Chi2"] = np.array([chi2[iq],])
+            other_error["Chi2"] = np.array([0.0,])  # no error in the optimal Chi2
         else:
-            other["Chi2"].append(chi2[ iq ])
+            other["Chi2"] = np.append(other["Chi2"], chi2[ iq ])
+            other_error["Chi2"] = np.append(other_error["Chi2"],0.0)
+    # Get the EISF and associated error with error propagation
+    a=other["f0.f1.f0.Height"]; b=other["f0.f1.f1.Height"]
+    ae=other_error["f0.f1.f0.Height"];  be=other_error["f0.f1.f1.Height"]
+    other["EISF"] = a/(a+b)
+    other_error["EISF"]=np.sqrt(b*ae*ae+a*be*be)/(a+b)  # Used error propagation formula
+    # Plot the Q-dependenced of the optimal parameters
     nspectra = 4
-    dataY = other["f0.f1.f0.Height"] + other['f0.f1.f1.Tau'] + other['f0.f1.f1.Beta'] + other["Chi2"]
-    dataX = other["qvalue"] * nspectra
+    dataY = np.concatenate((other["EISF"],other['f0.f1.f1.Tau'],other['f0.f1.f1.Beta'],other["Chi2"]))
+    dataE = np.concatenate((other_error["EISF"],other_error['f0.f1.f1.Tau'],
+        other_error['f0.f1.f1.Beta'],other_error["Chi2"]))
+    dataX = np.tile(other["qvalue"], nspectra)
     # Save dependence versus Q
-    seqfit_Qdependencies = msapi.CreateWorkspace(DataX=dataX, UnitX="MomentumTransfer", DataY=dataY,
+    seqfit_Qdependencies = msapi.CreateWorkspace(DataX=dataX, UnitX="MomentumTransfer", DataY=dataY, DataE=dataE,
                                                  NSpec=nspectra, WorkspaceTitle="Q-dependence of parameters",
                                                  VerticalAxisUnit="Text",
                                                  VerticalAxisValues=["EISF", "Tau", "Beta", "Chi2"])
     # Save dependence versus Q**2
     dataX = np.array(dataX)**2
-    seqfit_Q2dependencies = msapi.CreateWorkspace(DataX=dataX, UnitX="QSquared", DataY=dataY, NSpec=nspectra,
-                                                  WorkspaceTitle="Q squared-dependence of parameters",
+    seqfit_Q2dependencies = msapi.CreateWorkspace(DataX=dataX, UnitX="QSquared", DataY=dataY, DataE=dataE,
+                                                  NSpec=nspectra, WorkspaceTitle="Q squared-dependence of parameters",
                                                   VerticalAxisUnit="Text",
                                                   VerticalAxisValues=["EISF", "Tau", "Beta", "Chi2"])
 
