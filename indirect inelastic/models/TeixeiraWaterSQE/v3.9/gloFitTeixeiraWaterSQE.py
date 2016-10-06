@@ -1,4 +1,9 @@
 '''
+  For problems with this script, please either write a:
+  - post in the Mantid forum <http://forum.mantidproject.org>
+  - message in the "Contact us" page <http://www.mantidproject.org/Contact>
+  - email to <mantid-help@mantidproject.org>
+
   Script to global fit of QENS data to the jump-diffusion model by Teixeira
   This script should be run in the "Script Window" of MantidPlot
 

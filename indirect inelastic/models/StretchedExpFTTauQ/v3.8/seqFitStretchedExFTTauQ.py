@@ -1,4 +1,10 @@
-''' Sequential fit of QENS data to the Fourier trasnform of a stretched exponential
+'''   
+For problems with this script, please either write a:
+  - post in the Mantid forum <http://forum.mantidproject.org>
+  - message in the "Contact us" page <http://www.mantidproject.org/Contact>
+  - email to <mantid-help@mantidproject.org>
+
+Sequential fit of QENS data to the Fourier trasnform of a stretched exponential
     Relaxation time follows a power-law: tau = taumax * (Qmin/Q)**alpha
     This script should be run in the "Script Window" of MantidPlot
 '''

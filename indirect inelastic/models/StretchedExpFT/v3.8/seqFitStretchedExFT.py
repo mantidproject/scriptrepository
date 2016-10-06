@@ -1,4 +1,9 @@
 """
+  For problems with this script, please either write a:
+  - post in the Mantid forum <http://forum.mantidproject.org>
+  - message in the "Contact us" page <http://www.mantidproject.org/Contact>
+  - email to <mantid-help@mantidproject.org>
+
 Script to sequential fit of QENS data to a the Fourier trasnform of a stretched exponential
 This script should be run in the "Script Window" of MantidPlot
 """
