@@ -20,10 +20,45 @@ from copy import copy
 from seqFitStretchedExFT import sequentialFit
 import sys
 
-# Data directory (update with your own)
-datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/models/StretchedExpFT"
-data_davegroup_filename = "data.dat"
-resolution_davegroup_filename = "resolution.dat"
+"""
+   Below are the variables that can be changed by the user
+"""
+data_name="data"  # Name of the workspace containing the QENS signal
+resolution_name="resolution"  # Name of the workspace containing the resolution
+
+# Energy range over which we do the fitting.
+minE = -0.1  # Units are in meV
+maxE =  0.1
+
+# Do the fit only on these workspace indexes (Note: the index begins at zero, not one)
+selected_wi = [ 0, 1, 2, 3, 4]
+#selected_wi = None   # uncomment this line if your want to select all spectra
+
+# Initial guess for the lowest Q. A guess can be obtained by
+# running MantidPlot interactively just for the first Q
+initguess = { 'f0.f0.Scaling'   :     0.5,   # Overall intensity
+              'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
+              'f0.f1.f1.Height' :    0.9,   # This has to be 1-f0.f1.f0.Height
+              'f0.f1.f1.Tau'    :  500.0,   # tau or relaxation time
+              'f0.f1.f1.Beta'   :    0.9,   # exponent
+              'f1.A0'           :    0.0,   # intercept background
+              'f1.A1'           :    0.0,   # slope background
+}
+
+
+"""
+   Beginning here, the user does not need to change anything
+"""
+
+# Get handle to workspaces
+data=mtd[data_name]
+resolution=mtd[resolution_name]
+
+# Extract Q-values
+vertical_axis = data.getAxis(1)
+qvalues = vertical_axis.extractValues()
+if not selected_wi:
+    selected_wi=range(len(qvalues))
 
 """ Below is the model cast as a template string suitable for the
     Fit algoritm of Mantid. You can obtain similar string by setting up a model
@@ -43,48 +78,7 @@ fitstring_template = """(composite=Convolution,FixResolution=false,NumDeriv=true
 
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
-# Load the data. We assume the format is DAVE group file.
-#  Use the "LoadDaveGrp" algorithm
-data = msapi.LoadDaveGrp( Filename = '{0}/{1}'.format(datadir, data_davegroup_filename),
-                          OutputWorkspace = 'data', XAxisUnits = 'DeltaE', IsMicroEV = 1 )
-
-# Alternatively, we use the "LoadNexus" algorithm if we have the reduced data
-# as a Nexus file
-# LoadNexus( Filename = '{0}/BASIS_17706_1run_divided.nxs'.format( datadir ),
-#             OutputWorkspace = 'data' )
-
-# Load the resolution
-resolution = LoadDaveGrp( Filename = '{0}/resolution.dat'.format( datadir ),
-    OutputWorkspace = 'resolution',
-    XAxisUnits = 'DeltaE',
-    IsMicroEV = 1 )
-
-# Extra information
-# list of Q-values
-qvalues = [ 0.275, 0.425, 0.575, 0.725, 0.875, 1.025,
-            1.175, 1.325, 1.475, 1.625, 1.775, 1.925 ]
-
-# Do the fit only on these workspace indexes
-selected_wi = [ 1, 2, 3, 4] # select a few workspace indexes
-#selected_wi = range(0,len(qvalues))  # select all spectra
-
-# Energy range over which we do the fitting.
-#  You can edit this to change these boundaries.
-minE = -0.1  # Units are in meV
-maxE =  0.1
-
-# Initial guess for the lowest Q. A guess can be obtained by
-# running MantidPlot interactively just for the first Q
-initguess = { 'f0.f0.Scaling'   :     0.5,   # Overall intensity
-              'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
-              'f0.f1.f1.Height' :    0.9,   # This has to be 1-f0.f1.f0.Height
-              'f0.f1.f1.Tau'    :  500.0,   # tau or relaxation time
-              'f0.f1.f1.Beta'   :    0.9,   # exponent
-              'f1.A0'           :    0.0,   # intercept background
-              'f1.A1'           :    0.0,   # slope background
-}
-
-# Run sequential fit to obtain good initial guess for each spectrum
+print "\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################"
 seqOutput = sequentialFit(resolution, data, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
 # Since we are going to tie parameter Beta, find the average and use this number as initial guess
 betas = list()
@@ -117,8 +111,11 @@ for iq in selected_wi:
 global_model += "ties=({0}=f0.f0.f1.f1.Beta)".format('='.join(ties))
 
 # Carry out the fit
+print "#######################\nRunning the global fit\n#######################"
 output_workspace = "glofit_"+data.name()
-Fit(Function=global_model, Output=output_workspace, CreateOutput=True, MaxIterations=500, **spectra_domain_relation)
+Fit(Function=global_model, Output=output_workspace, CreateOutput=True,
+    Minimizer="FABADA", MaxIterations=1000,
+    **spectra_domain_relation)
 
 # Save Q-dependencies of the optimized parameters
 parameters_workspace = mtd[output_workspace+"_Parameters"]
