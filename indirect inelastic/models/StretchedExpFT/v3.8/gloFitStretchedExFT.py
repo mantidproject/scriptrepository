@@ -36,10 +36,9 @@ selected_wi = [ 0, 1, 2, 3, 4]
 
 # Initial guess for the lowest Q. A guess can be obtained by
 # running MantidPlot interactively just for the first Q
-initguess = { 'f0.f0.Scaling'   :     0.5,   # Overall intensity
-              'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
+initguess = { 'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
               'f0.f1.f1.Height' :    0.9,   # This has to be 1-f0.f1.f0.Height
-              'f0.f1.f1.Tau'    :  500.0,   # tau or relaxation time
+              'f0.f1.f1.Tau'    : 1000.0,   # tau or relaxation time
               'f0.f1.f1.Beta'   :    0.9,   # exponent
               'f1.A0'           :    0.0,   # intercept background
               'f1.A1'           :    0.0,   # slope background
@@ -66,15 +65,14 @@ if not selected_wi:
     "Manage Setup" --> "Copy to Clipboard". This actions will save the model
     as a string which you can later paste onto this script.
 """
-fitstring_template = """(composite=Convolution,FixResolution=false,NumDeriv=true;
-  name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
-  Scaling=f0.f0.Scaling,Shift=0,XScaling=1,ties=(Shift=0,XScaling=1);
-  (name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height<1);
-   name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
-   constraints=(0<Tau,0<Beta);
-   ties=(f1.Height=1-f0.Height,f1.Centre=f0.Centre)
-  )
-);name=LinearBackground,A0=f1.A0,A1=f1.A1"""
+fitstring_template = """(composite=Convolution,FixResolution=true,NumDeriv=true;
+name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
+Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,Shift=0,XScaling=1);
+(name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height);
+name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
+constraints=(0<Tau,0<Beta);
+ties=(f1.Centre=f0.Centre)));
+name=LinearBackground,A0=0,A1=0"""
 
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
