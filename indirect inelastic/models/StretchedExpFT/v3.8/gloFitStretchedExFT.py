@@ -17,8 +17,10 @@
 '''
 import re
 from copy import copy
-from seqFitStretchedExFT import sequentialFit
+import numpy as np
 import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+from seqFitStretchedExFT import sequentialFit
 
 """
    Below are the variables that can be changed by the user
@@ -31,7 +33,7 @@ minE = -0.1  # Units are in meV
 maxE =  0.1
 
 # Do the fit only on these workspace indexes (Note: the index begins at zero, not one)
-selected_wi = [ 0, 1, 2, 3, 4]
+selected_wi = [ 1, 2, 3]
 #selected_wi = None   # uncomment this line if your want to select all spectra
 
 # Initial guess for the lowest Q. A guess can be obtained by
@@ -43,6 +45,10 @@ initguess = { 'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic 
               'f1.A0'           :    0.0,   # intercept background
               'f1.A1'           :    0.0,   # slope background
 }
+
+# Settings for the minimizer. See the "Fit" algorithm in the documentation
+minimizer="FABADA"  # slow, but more reliable than "Levenberg-Marquardt"
+maxIterations=1000
 
 
 """
@@ -65,19 +71,22 @@ if not selected_wi:
     "Manage Setup" --> "Copy to Clipboard". This actions will save the model
     as a string which you can later paste onto this script.
 """
-fitstring_template = """(composite=Convolution,FixResolution=true,NumDeriv=true;
-name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
-Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,Shift=0,XScaling=1);
-(name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height);
-name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
-constraints=(0<Tau,0<Beta);
-ties=(f1.Centre=f0.Centre)));
-name=LinearBackground,A0=0,A1=0"""
-
+fitstring_template = """
+(composite=Convolution,FixResolution=false,NumDeriv=true;
+    name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
+        Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,XScaling=1);
+    (
+     name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height),ties=(Centre=0);
+     name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
+         constraints=(0<Tau,0<Beta),ties=(Centre=0)
+    );
+);
+name=LinearBackground,A0=0.0,A1=0.0"""
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
 print "\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################"
 seqOutput = sequentialFit(resolution, data, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
+
 # Since we are going to tie parameter Beta, find the average and use this number as initial guess
 betas = list()
 for i in range(len(seqOutput["funcStrings"])):
@@ -99,40 +108,51 @@ ties = list()
 spectra_domain_relation = dict()
 domain_index = 0
 for iq in selected_wi:
+    di = str(domain_index) 
     if domain_index == 0:
         spectra_domain_relation.update({"InputWorkspace": data.name(), "WorkspaceIndex": str(iq), "StartX": str(minE), "EndX": str(maxE)})
+        #spectra_domain_relation.update({"InputWorkspace_"+di: data.name(), "WorkspaceIndex_"+di: str(iq), "StartX_"+di: str(minE), "EndX_"+di: str(maxE)})
     else:
-        di = str(domain_index)
         spectra_domain_relation.update({"InputWorkspace_"+di: data.name(), "WorkspaceIndex_"+di: str(iq), "StartX_"+di: str(minE), "EndX_"+di: str(maxE)})
         ties.append("f{0}.f0.f1.f1.Beta".format(domain_index))
-    domain_index += 1
+    domain_index += 1   
 global_model += "ties=({0}=f0.f0.f1.f1.Beta)".format('='.join(ties))
 
 # Carry out the fit
 print "#######################\nRunning the global fit\n#######################"
 output_workspace = "glofit_"+data.name()
 Fit(Function=global_model, Output=output_workspace, CreateOutput=True,
-    Minimizer="FABADA", MaxIterations=1000,
+    Minimizer=minimizer, MaxIterations=maxIterations,
     **spectra_domain_relation)
 
 # Save Q-dependencies of the optimized parameters
 parameters_workspace = mtd[output_workspace+"_Parameters"]
-shorties = {"f0.f1.f0.Height": "EISF", "f0.f1.f1.Tau": "tau", "f0.f1.f1.Beta": "beta"}
 other = dict()
-for shorty in shorties.values():
-    other[shorty] = list()
+other_error = dict()
 other["qvalues"] = [qvalues[iq] for iq in selected_wi]
-names = shorties.keys()
+other_error["qvalues"] = [0.0,]*len(selected_wi)
 for row in parameters_workspace:
-    # name of the fitting parameter for this particular row
-    matches = re.search("^f(\d+)\.(.*)", row['Name']) # for instance, f0.f0.f1.f0.Height
+    name = row["Name"]
+    matches = re.search("^f(\d+)\.(.*)", row['Name']) # for instance, f3.f0.f1.f0.Height
     if matches:
-        iq, name = matches.groups()
-        if name in names:
-            other[shorties[name]].append(row["Value"])
-dataY = other["EISF"] + other["tau"] + other["beta"]
-dataX = other["qvalues"] * 3
+        iq, name = matches.groups()  # for instance, 3 and f0.f1.f0.Height
+        if name in other.keys():
+            other[name].append(row["Value"])
+            other_error[name].append(row["Error"])
+        else:
+            other[name]=[row["Value"],]
+            other_error[name]=[row["Error"],]
+    if name=="Cost function value":
+        chi2 = row["Value"]
+# Calculate the EISF and associated error with error propagation
+a=np.array(other["f0.f1.f0.Height"]); b=np.array(other["f0.f1.f1.Height"])
+ae=other_error["f0.f1.f0.Height"];  be=other_error["f0.f1.f1.Height"]
+other["EISF"] = (a/(a+b)).tolist()
+other_error["EISF"]=(np.sqrt(b*ae*ae+a*be*be)/(a+b)).tolist()  # Used error propagation formula
+
 # Save dependence versus Q
+dataY = other["EISF"] + other["f0.f1.f1.Tau"] + other["f0.f1.f1.Beta"]
+dataX = other["qvalues"] * 3
 glofit_Qdependencies = CreateWorkspace(DataX=dataX, UnitX="MomentumTransfer", DataY=dataY,
                                        NSpec=3, WorkspaceTitle="Q-dependence of parameters",
                                        VerticalAxisUnit="Text", VerticalAxisValues=["EISF", "tau", "beta"])
@@ -141,4 +161,6 @@ dataX = np.array(dataX) ** 2
 glofit_Q2dependencies = CreateWorkspace(DataX=dataX, UnitX="QSquared", DataY=dataY, NSpec=3,
                                         WorkspaceTitle="Q squared-dependence of parameters",
                                         VerticalAxisUnit="Text", VerticalAxisValues=["EISF", "tau", "beta"])
+print "Chi-square of global fit=",chi2
+
 

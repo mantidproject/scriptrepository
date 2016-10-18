@@ -24,7 +24,7 @@ minE = -0.1  # Units are in meV
 maxE =  0.1
 
 # Do the fit only on these workspace indexes (Note: the index begins at zero, not one)
-selected_wi = [ 0, 1, 2, 3, 4]
+selected_wi = [0, 1, 2, 3, 4]
 #selected_wi = None   # uncomment this line if your want to select all spectra
 
 # Initial guess for the lowest selected index. A guess can be obtained by
@@ -37,36 +37,16 @@ initguess = { 'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic 
               'f1.A1'           :    0.0,   # slope background
 }
 
+# Settings for the minimizer. See the "Fit" algorithm in the documentation
+minimizer="FABADA"  # slow, but more reliable than "Levenberg-Marquardt"
+maxIterations=5000
+
 
 """
    Beginning here, the user does not need to change anything
 """
 
-
-
-""" Fitting model. In this case:
-        Convolution( A*Resolution, EISF*Delta + (1-EISF)*StretchedExFT ) + LinearBackground
-    with 0<EISF<1 is the fraction of the elastic intensity
-"""
-
-""" Below is the model cast as a template string suitable for the
-    Fit algoritm of Mantid. You can obtain similar string by setting up a model
-    in the "fit wizard" of MantidPlot and then
-    "Manage Setup" --> "Copy to Clipboard". This actions will save the model
-    as a string which you can later paste onto this script.
-"""
-fitstring_template = """(composite=Convolution,FixResolution=true,NumDeriv=true;
-name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
-Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,Shift=0,XScaling=1);
-(name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height);
-name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
-constraints=(0<Tau,0<Beta);
-ties=(f1.Centre=f0.Centre)));
-name=LinearBackground,A0=-0.000244617,A1=-0.000197589"""
-
-fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
-
-def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalues, selectedwi):
+def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalues, selected_wi):
     """
     Carry out the sequential fitting
     :param resolution: workspace containing the resolution function
@@ -109,7 +89,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
             print fitstring+'\n'
             msapi.Fit( fitstring, InputWorkspace=dataName, WorkspaceIndex=iq,
                        CreateOutput=1, startX=minE, endX=maxE,
-                       Minimizer="FABADA", MaxIterations=5000 )
+                       Minimizer=minimizer, MaxIterations=maxIterations )
 
             # As a result of the fit, three workspaces are created:
             # dataName+"_Parameters" : optimized parameters and Chi-square
@@ -159,13 +139,13 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
             # but if we want to keep them we should rename then by
             # tagging them with the workspace index.
             msapi.RenameWorkspace( InputWorkspace = dataName+'_Parameters',
-                                   OutputWorkspace = "seqfit_"+dataName+'_{0}_Parameters'.format(iq) )
+                                   OutputWorkspace = "seqfit_"+dataName+'_Q{0}_Parameters'.format(qvalues[iq]) )
             msapi.RenameWorkspace( InputWorkspace = dataName+'_NormalisedCovarianceMatrix',
-                                   OutputWorkspace= "seqfit_"+dataName+'_{0}_NormalisedCovarianceMatrix'.format(iq))
+                                   OutputWorkspace= "seqfit_"+dataName+'_Q{0}_NormalisedCovarianceMatrix'.format(qvalues[iq]))
             msapi.RenameWorkspace( InputWorkspace = dataName+'_Workspace',
-                                   OutputWorkspace = "seqfit_"+dataName+'_{0}_Workspace'.format(iq) )
+                                   OutputWorkspace = "seqfit_"+dataName+'_Q{0}_Workspace'.format(qvalues[iq]) )
             msapi.RenameWorkspace( InputWorkspace = "PDF",
-                                   OutputWorkspace = "seqfit_"+dataName+'_{0}_PDF'.format(iq) )
+                                   OutputWorkspace = "seqfit_"+dataName+'_Q{0}_PDF'.format(qvalues[iq]) )
 
 
     # Save some selected parameters to a string.
@@ -244,4 +224,27 @@ if __name__ == "__main__":
     if not selected_wi:
         selected_wi=range(len(qvalues))
 
+    """ Fitting model. In this case:
+        Convolution( A*Resolution, EISF*Delta + (1-EISF)*StretchedExFT ) + LinearBackground
+        with 0<EISF<1 is the fraction of the elastic intensity
+    """
+    
+    """ Below is the model cast as a template string suitable for the
+        Fit algoritm of Mantid. You can obtain similar string by setting up a model
+        in the "fit wizard" of MantidPlot and then
+        "Manage Setup" --> "Copy to Clipboard". This actions will save the model
+        as a string which you can later paste onto this script.
+    """
+    fitstring_template = """
+    (composite=Convolution,FixResolution=false,NumDeriv=true;
+        name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
+            Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,XScaling=1);
+        (
+         name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height),ties=(Centre=0);
+         name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
+             constraints=(0<Tau,0<Beta),ties=(Centre=0)
+        );
+    );
+    name=LinearBackground,A0=0.0,A1=0.0"""
+    fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
     sequentialFit(resolution, data, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
