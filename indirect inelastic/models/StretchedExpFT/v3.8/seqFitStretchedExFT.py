@@ -46,7 +46,7 @@ maxIterations=5000
    Beginning here, the user does not need to change anything
 """
 
-def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalues, selected_wi):
+def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalues, selectedwi):
     """
     Carry out the sequential fitting
     :param resolution: workspace containing the resolution function
@@ -72,7 +72,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
     # (Note: the first value of iq is zero, not one)
     for iq in range(nq):
             # Insert blank data if the workspace is not among the selected ones
-            if iq not in selected_wi:
+            if iq not in selectedwi:
                     chi2.append(None)
                     results.append(None)
                     errors.append(None)
@@ -153,7 +153,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
     buffer = '#Sequential fit summary\n#  Q    Chi2 Tau(ps)+-error  Beta+-error\n'
     print buffer,
     for iq in range( nq ):
-            if iq not in selected_wi:
+            if iq not in selectedwi:
                 continue # skip to next workspace index
             # python dictionary holding  results for the fit of this workspace index
             result = results[ iq ]
@@ -169,7 +169,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
     other = {}
     other_error = {}
     for iq in range( nq ):
-        if iq not in selected_wi:
+        if iq not in selectedwi:
             continue # skip to next workspace index
         # python dictionary holding  results for the fit of this workspace index
         result = results[ iq ]
