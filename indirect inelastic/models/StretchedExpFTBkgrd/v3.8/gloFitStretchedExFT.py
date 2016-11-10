@@ -9,8 +9,8 @@
   Global parameter: beta exponent in the stretched exponential
 
   Fitting model. In this case:
-        Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFT ) + LinearBackground + BackgroundFile
-    with 0<x<1 is the fraction of the elastic intensity
+        Convolution( Resolution, A*Delta + B*StretchedExFT ) + LinearBackground + BackgroundFile
+  ( the EISF is later computed as =A/(A+B) )
 
   Parameter Beta of fit function StretchedExFT is the same for all spectra. All other fitting
   parameters are different for each spectrum

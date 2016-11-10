@@ -229,8 +229,8 @@ if __name__ == "__main__":
         selected_wi=range(len(qvalues))
 
     """ Fitting model. In this case:
-        Convolution( A*Resolution, EISF*Delta + (1-EISF)*StretchedExFT ) + LinearBackground + BackgroundFile
-        with 0<EISF<1 is the fraction of the elastic intensity
+        Convolution( Resolution, A*Delta + B*StretchedExFT ) + LinearBackground + BackgroundFile
+        ( later the EISF is computed as A/(A+B) )
     """
     
     """ Below is the model cast as a template string suitable for the
