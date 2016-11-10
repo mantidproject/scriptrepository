@@ -34,24 +34,26 @@ minE = -0.1  # Units are in meV
 maxE =  0.1
 
 # Do the fit only on these workspace indexes (Note: the index begins at zero, not one)
-selected_wi = [ 1, 2, 3]
-#selected_wi = None   # uncomment this line if your want to select all spectra
+#selected_wi = [ 1, 2, 3]
+selected_wi = None   # uncomment this line if your want to select all spectra
 
-# Initial guess for the lowest Q. A guess can be obtained by
-# running MantidPlot interactively just for the first Q
-initguess = { 'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
-              'f0.f1.f1.Height' :    0.9,   # intensity of the stretched exponential
-              'f0.f1.f1.Tau'    : 1000.0,   # tau or relaxation time
-              'f0.f1.f1.Beta'   :    0.9,   # exponent
-              'f1.A0'           :    0.0,   # intercept background
-              'f1.A1'           :    0.0,   # slope background
-              'f2.Scaling'      :    1.0    # intensity of the background file
+# Initial guess for the HIGHEST Q of the sequential fit. A guess can be obtained by
+# running MantidPlot interactively
+initguess = { 'f0.f1.f0.Height' :    0.0,   # intensity due to elastic line
+              'f0.f1.f1.Height' :    0.4,   # intensity of the stretched exponential
+              'f0.f1.f1.Tau'    :   25.0,   # relaxation time
+              'f0.f1.f1.Beta'   :    0.6,   # stretching exponent
 }
+
+# Option to select an initial value of stretching exponent beta for the global fit. 
+# If "None" is selected, the initial value will be average over all the values
+# that beta takes during the sequential fit of the spectra
+#initial_beta=None
+initial_beta=0.61
 
 # Settings for the minimizer. See the "Fit" algorithm in the documentation
 minimizer="FABADA"  # slow, but more reliable than "Levenberg-Marquardt"
 maxIterations=1000
-
 
 """
    Beginning here, the user does not need to change anything
@@ -79,13 +81,14 @@ fitstring_template ="""
         name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=_IQ_,
             Scaling=1,Shift=0,XScaling=1,ties=(Scaling=1,XScaling=1);
         (
-         name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height),ties=(Centre=0);
+         name=DeltaFunction,Height=f0.f1.f0.Height,Centre=0,constraints=(0<Height),
+             ties=(Centre=0);
          name=StretchedExpFT,Height=f0.f1.f1.Height,Tau=f0.f1.f1.Tau,Beta=f0.f1.f1.Beta,Centre=0,
-             constraints=(0<Tau,0<Beta),ties=(Centre=0)
+             ties=(Centre=0)
         );
     );
     name=LinearBackground,A0=0.0,A1=0.0;
-    name=TabulatedFunction,,Workspace=_BACKGROUND_,WorkspaceIndex=_IQ_,Scaling=f2.Scaling,Shift=0,XScaling=1,ties=(XScaling=1)"""
+    name=TabulatedFunction,Workspace=_BACKGROUND_,WorkspaceIndex=_IQ_,Scaling=1,Shift=0,XScaling=1,ties=(XScaling=1)"""
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
 print "\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################"
@@ -97,6 +100,8 @@ for i in range(len(seqOutput["funcStrings"])):
     match = re.search("Beta=(\d+\.\d+)", seqOutput["funcStrings"][i])
     betas.append(float(match.groups()[0]))
 average_beta = "Beta="+str(sum(betas)/len(betas))
+if initial_beta:
+    average_beta="Beta="+str(initial_beta)
 for i in range(len(seqOutput["funcStrings"])):
     seqOutput["funcStrings"][i] = re.sub("Beta=\d+\.\d+",average_beta, seqOutput["funcStrings"][i])
 

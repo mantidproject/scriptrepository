@@ -40,7 +40,7 @@ selected_wi = [ 1, 2, 3]
 # running MantidPlot interactively just for the first Q
 initguess = { 'f0.f1.f0.Height' :    0.1,   # intensity fraction due to elastic line
               'f0.f1.f1.Height' :    0.9,   # This has to be 1-f0.f1.f0.Height
-              'f0.f1.f1.Tau'    : 1000.0,   # tau or relaxation time
+              'f0.f1.f1.Tau'    : 1000.0,   # tau or relaxation time (ps)
               'f0.f1.f1.Beta'   :    0.9,   # exponent
               'f1.A0'           :    0.0,   # intercept background
               'f1.A1'           :    0.0,   # slope background
