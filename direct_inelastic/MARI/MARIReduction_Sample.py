@@ -129,7 +129,7 @@ class MARIReduction(ReductionWrapper):
         # Uncomment this to use custom filename function        
         return lambda : custom_name(self.reducer.prop_man)
         # Uncomment this to use standard file name generating function
-        #return None
+        return None
    #
    #
     def validation_file_place(self):
