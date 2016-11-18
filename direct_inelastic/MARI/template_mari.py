@@ -7,6 +7,7 @@ import sys
 try:
     #Note: due to the mantid-python implementation, one needs to run this 
     #script in Mantid  script window  TWICE!!!  to deploy the the changes made to MARIReduction_Sample.py file.
+    sys.path.insert(0,'/instrument/MARI/RBNumber/USER_RB_FOLDER/')
     reload(sys.modules['MARIReduction_Sample'])
 except:
     print "*** WARNING can not reload MARIReduction_Sample file"
@@ -38,3 +39,7 @@ remove_bkg = True
 # (e.g.:  iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs,check_background=False)
 iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs,check_background=remove_bkg)
 
+# edit next command manually
+#ComputeIncoherentDOS(InputWorkspace='MAR0Reduced#59.57_SQW', 
+#Temperature=5, QSumRange='4,12', EnergyBinning='0,Ei/100,0.9*Ei', 
+#OutputWorkspace='MAR0Reduced#59.57_SQW_incdos')
