@@ -7,6 +7,7 @@ import sys
 try:
     #Note: due to the mantid-python implementation, one needs to run this 
     #script in Mantid  script window  TWICE!!!  to deploy  the the changes made to MAPSReduction_Sample.py file.
+    sys.path.insert(0,'/instrument/MARI/RBNumber/USER_RB_FOLDER');    
     reload(sys.modules['MAPSReduction_Sample'])
 except:
     print "*** WARNING can not reload MAPSReduction_Sample file"
