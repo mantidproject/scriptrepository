@@ -180,9 +180,12 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
         prop_man.monovan_run=monovan
     else:
         prop_man.monovan_run=None
+    #-----------------------------------------
     #
+    filename_present = false;
     for key,val in kwargs.items():
         if key == 'save_file_name':
+            filename_present = true;
             if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
                   print "**************************************************************************************"
                   print "*** WARNING: you can not set up single file name for list of files or list of energies"
@@ -193,8 +196,11 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
         if key == 'wait_for_file':
              rd.wait_for_file = kwargs['wait_for_file']
              continue
-         
-        setattr(prop_man,key,val);          
+        setattr(prop_man,key,val)
+    #
+    if not filename_present: # clear previous filename which may stuck in modules and does not allow
+        # auto filename to run
+        setattr(prop_man,'save_file_name',None);        
     rd.reducer.prop_man = prop_man
           
      
