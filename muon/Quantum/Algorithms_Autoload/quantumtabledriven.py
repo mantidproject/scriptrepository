@@ -71,7 +71,7 @@ def ParseStringToDict(st,di0={}):
 	# comment lines start with "#"
 	
 	textlists=("measure","spins","detectspin","initialspin","tzero","recycle","brf","morespin")
-	freetext=("fitfunction","loop0par","loop1par","fit0par","fit1par","fit2par","fit3par","fit4par","fit5par","fit6par") # do not parse at all (are on one line)
+	freetext=("fitfunction","loop0par","loop1par","fit0par","fit1par","fit2par","fit3par","fit4par","fit5par","fit6par","fit7par","fit8par","fit9par") # do not parse at all (are on one line)
 	di=dict(di0) # copy
 	for sl in st.splitlines():
 		if(len(sl.strip()) > 0 and sl.strip()[0] != "#"):
@@ -371,6 +371,7 @@ def ParseAndIterateModel(pars):
 	if(dynstates>0 or dssize>1):
 		Hams=[]
 		reltable=numpy.zeros([dssize,len(spins)],dtype=numpy.float)
+		reldetails=numpy.zeros([dssize,len(spins),4],dtype=numpy.float)
 		for i in range(dssize):
 			Hams.append(numpy.zeros_like(spmat[0,0,:,:]) )
 	else:
@@ -598,6 +599,7 @@ def ParseAndIterateModel(pars):
 			
 		# dynamic params:
 		# Relax(@state,spin)=lambda (or Relax(lambda) for all)
+		# ..=lambda,pol,x,y,z for relaxation to (partially) polarised state
 		# Convert(from,to)=lambda
 		# or Convert(from,to)=lambda,relaxthis
 		# populations=a,b,c...
@@ -609,6 +611,8 @@ def ParseAndIterateModel(pars):
 			spin1=labels[sp[0]]
 			for i in ii:
 				reltable[i,spin1]=float(val[0])
+				if(len(val)==5):
+					reldetails[i,spin1,:]=val[1:5]
 		elif(key[0:8]=="convert("):
 			stsp=key[8:].split(")")
 			ii,sp=EnumerateSites(slices,0,stsp[0])
@@ -833,7 +837,11 @@ def ParseAndIterateModel(pars):
 				for i in range(dynstates):
 					for j in range(len(spins)):
 						if(reltable[k*dynstates+i,j] != 0.0):
-							addSpinRelaxation(len(pops),BigHams[k],i,spmat[j],reltable[k*dynstates+i,j],0.0,0.0) # no eqm polarisation, yet
+							if(reldetails[k*dynstates+i,j,0]!=0):
+								addSpinRelaxation(len(pops),BigHams[k],i,spmat[j],reltable[k*dynstates+i,j],reldetails[k*dynstates+i,j,1:4],reldetails[k*dynstates+i,j,0]) # with eqm polarisation
+							else:
+								addSpinRelaxation(len(pops),BigHams[k],i,spmat[j],reltable[k*dynstates+i,j],0.0,0.0) # without eqm polarisation
+								
 			if(slices>1):
 				yield(spmat,BigHams,BigRho,BigScint,[0.0,],0,None,None,None,slicetimes)
 			else:
@@ -2229,6 +2237,140 @@ class QuantumTableDrivenFunction7(IFunction1D):
 			return numpy.array([1.E30]*len(xvals))
 
 FunctionFactory.subscribe(QuantumTableDrivenFunction7)
+
+class QuantumTableDrivenFunction8(IFunction1D):
+	def category(self):
+		return 'Muon'
+
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1",2.0)
+		self.declareParameter("P2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("P4",5.0)
+		self.declareParameter("P5",6.0)
+		self.declareParameter("P6",7.0)
+		self.declareParameter("P7",8.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P1=self.getParameterValue("P0")
+			P2=self.getParameterValue("P1")
+			P3=self.getParameterValue("P2")
+			P4=self.getParameterValue("P3")
+			P5=self.getParameterValue("P4")
+			P6=self.getParameterValue("P5")
+			P7=self.getParameterValue("P6")
+			P8=self.getParameterValue("P7")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P1,P2,P3,P4,P5,P6,P7,P8))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+
+			# cache control
+			key=((P1,P2,P3,P4,P5,P6,P7,P8),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction8)
+
+class QuantumTableDrivenFunction9(IFunction1D):
+	def category(self):
+		return 'Muon'
+
+	def init(self):
+		#self.declareAttribute("Table","Tab")
+		self.declareParameter("P0",1.0)
+		self.declareParameter("P1",2.0)
+		self.declareParameter("P2",3.0)
+		self.declareParameter("P3",4.0)
+		self.declareParameter("P4",5.0)
+		self.declareParameter("P5",6.0)
+		self.declareParameter("P6",7.0)
+		self.declareParameter("P7",8.0)
+		self.declareParameter("P8",9.0)
+		self.declareParameter("Scale",1.0) # always have variable asymmetry and background, could tie if not needed
+		self.declareParameter("Baseline",0.0)
+
+	#def setAttributeValue(self,name,value):
+	#	if name == "Table":
+	#		self._table = mtd[value]
+			
+	def function1D(self,xvals):
+		try:
+			P1=self.getParameterValue("P0")
+			P2=self.getParameterValue("P1")
+			P3=self.getParameterValue("P2")
+			P4=self.getParameterValue("P3")
+			P5=self.getParameterValue("P4")
+			P6=self.getParameterValue("P5")
+			P7=self.getParameterValue("P6")
+			P8=self.getParameterValue("P7")
+			P9=self.getParameterValue("P8")
+			scal=self.getParameterValue("Scale")
+			base=self.getParameterValue("Baseline")
+			pars=ParseTableWorkspaceToDict(mtd["Tab"]) # self._table
+			InsertFitPars(pars,(P1,P2,P3,P4,P5,P6,P7,P8,P9))
+			# case 1: mtype="timespectra", X axis of data is time, copy X bins of data into time for simulation
+			# case 2: mtype="integral", X axis of data means scan some parameter such as field. Copy into loop0.
+			# either case, pre-define "axis0" with the data's X. 
+
+
+			if(pars["measure"][0]=="timespectra"):
+				xbins=numpy.zeros(len(xvals)+1)
+				xbins[1:-1]=(xvals[1:]+xvals[:-1])/2.0 # inner bin boundaries
+				xbins[0]=xbins[1]*2-xbins[2]
+				xbins[-1]=xbins[-2]*2-xbins[-3] # bin boundaries, end bins set to same width as next ones in		
+				pars["axis0"]=xbins
+				pars["axis0extra"]=(1,)
+				
+			elif(pars["measure"][0]=="integral"):
+				pars["axis0"]=numpy.array(xvals) # point data type for field, etc
+				pars["axis0extra"]=(0,)
+
+			else:
+				raise Exception("Can't fit with measure type"+pars["measure"][0])
+
+			# cache control
+			key=((P1,P2,P3,P4,P5,P6,P7,P8,P9),len(xvals),xvals[0])
+			axes,ybins,ebins = RunModelledSystemCached(pars,key)
+			
+			return ybins[0,:]*scal+base
+		except Exception as e:
+			traceback.print_exc()
+			return numpy.array([1.E30]*len(xvals))
+
+FunctionFactory.subscribe(QuantumTableDrivenFunction9)
 
 class ReplaceFitParsInTable(PythonAlgorithm):
 	def category(self):
