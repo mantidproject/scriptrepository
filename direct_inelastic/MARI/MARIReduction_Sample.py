@@ -182,10 +182,10 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
         prop_man.monovan_run=None
     #-----------------------------------------
     #
-    filename_present = false;
+    filename_present = False;
     for key,val in kwargs.items():
         if key == 'save_file_name':
-            filename_present = true;
+            filename_present = True;
             if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
                   print "**************************************************************************************"
                   print "*** WARNING: you can not set up single file name for list of files or list of energies"
