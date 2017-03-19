@@ -20,7 +20,7 @@ from copy import copy
 import numpy as np
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from seqFitStretchedExFT import sequentialFit
+from seqFitStretchedExFTBkgrd import sequentialFit
 
 """
    Below are the variables that can be changed by the user

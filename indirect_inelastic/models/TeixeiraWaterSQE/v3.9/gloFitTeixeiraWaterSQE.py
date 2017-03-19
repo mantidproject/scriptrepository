@@ -20,10 +20,21 @@ import sys
 import numpy as np
 from os.path import join as pjoin
 
-# Data directory (update with your own)
-datadir = "/home/jbq/repositories/mantidproject/scriptrepository/indirect inelastic/models/TeixeiraWaterSQE"
-data=LoadNexus(pjoin(datadir,"irs26176_graphite002_red.nxs"))
-resolution=LoadNexus(pjoin(datadir,"irs26173_graphite_res.nxs"))
+"""
+   Below are the variables that can be changed by the user
+"""
+data_name="irs26176_graphite002_red"  # Name of the workspace containing the QENS signal
+resolution_name="irs26173_graphite_res"  # Name of the workspace containing the resolution
+# Energy range over which we do the fitting.
+minE = -0.4  # Units are in meV
+maxE =  0.4
+# Do the fit using only these workspaces
+#selected_wi = [ 0, 3, 4, 7] # select a few workspace indexes
+selected_wi = None  # use all spectra for the fit
+
+# Get handle to workspaces
+data=mtd[data_name]
+resolution=mtd[resolution_name]
 
 # Find out the Q-values from the loaded data
 numHist = data.getNumberHistograms()
@@ -36,6 +47,8 @@ for idx in range(numHist):
     Q = (4*np.pi/wavelength)*np.sin(usignTheta)  # in inverse Angstroms
     Qs.append(Q)
 nQ=len(Qs)
+if not selected_wi:
+    selected_wi = range(0,len(Qs))
 
 """ Below is the model cast as a template string suitable for the
     Fit algoritm of Mantid. You can obtain similar string by setting up a model
@@ -46,27 +59,21 @@ nQ=len(Qs)
     Our initial guesses are DiffCoeff=1.0 and Tau=1.0
 """
 single_model_template="""(composite=Convolution,NumDeriv=true;
-name=TabulatedFunction,Workspace=resolution,WorkspaceIndex=0,Scaling=1,Shift=0,XScaling=1;
+name=TabulatedFunction,Workspace=_RESOLUTION_,WorkspaceIndex=0,Scaling=1,Shift=0,XScaling=1;
 (name=DeltaFunction,Height=1.5,Centre=0;
 name=TeixeiraWaterSQE,Q=_Q_,Height=1.0,Tau=1.0,DiffCoeff=1.0,Centre=0;
 ties=(f1.Centre=f0.Centre)));
 name=LinearBackground,A0=0,A1=0"""
 single_model_template = re.sub('[\s+]', '', single_model_template)  # remove whitespaces and such
 
-# Do the fit using only these workspaces
-#selected_wi = [ 0, 3, 4, 7] # select a few workspace indexes
-selected_wi = range(0,len(Qs))  # use all spectra for the fit
 nWi=len(selected_wi)  # number of selected spectra for fitting
-
-# Energy range over which we do the fitting.
-minE = -0.4  # Units are in meV
-maxE =  0.4
 
 # Create the string representation of the global model (for selected spectra):
 global_model="composite=MultiDomainFunction,NumDeriv=true;"
 for wi in selected_wi:
     Q=Qs[wi]
     single_model = single_model_template.replace("_Q_", str(Q))  # insert Q-value
+    single_model = single_model.replace("_RESOLUTION_", resolution_name)
     global_model += "(composite=CompositeFunction,NumDeriv=true,$domains=i;{0});\n".format(single_model)
 
 # Tie DiffCoeff and Tau since they are global parameters
