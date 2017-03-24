@@ -105,6 +105,7 @@ if initial_beta:
 for i in range(len(seqOutput["funcStrings"])):
     seqOutput["funcStrings"][i] = re.sub("Beta=\d+\.\d+",average_beta, seqOutput["funcStrings"][i])
 
+print "\n##################\n Representation of the models after sequential optimization\n##################"
 print seqOutput["funcStrings"]
 
 # Merge models for each spectra
@@ -127,8 +128,11 @@ for iq in selected_wi:
     domain_index += 1   
 global_model += "ties=({0}=f0.f0.f1.f1.Beta)".format('='.join(ties))
 
+print "\n##################\n Initial Global Model \n##################"
+print global_model
+
 # Carry out the fit
-print "#######################\nRunning the global fit\n#######################"
+print "\n#######################\nRunning the global fit\n#######################"
 output_workspace = "glofit_"+data.name()
 Fit(Function=global_model, Output=output_workspace, CreateOutput=True,
     Minimizer=minimizer, MaxIterations=maxIterations,

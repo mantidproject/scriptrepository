@@ -38,7 +38,7 @@ initguess = { 'f0.f1.f0.Height' :    0.0,   # intensity due to elastic line
 
 # Settings for the minimizer. See the "Fit" algorithm in the documentation
 minimizer="FABADA"  # slow, but more reliable than "Levenberg-Marquardt"
-maxIterations=3000
+maxIterations=2000
 
 
 """#############################################################

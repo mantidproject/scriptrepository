@@ -37,15 +37,7 @@ data=mtd[data_name]
 resolution=mtd[resolution_name]
 
 # Find out the Q-values from the loaded data
-numHist = data.getNumberHistograms()
-Qs=list()  # will store the Q-values
-for idx in range(numHist):
-    detector = data.getDetector(idx) 
-    efixed = data.getEFixed(detector.getID())  # in meV
-    wavelength=9.044567/np.sqrt(efixed)  # in Angstroms
-    usignTheta = 0.5 * data.detectorTwoTheta(detector)
-    Q = (4*np.pi/wavelength)*np.sin(usignTheta)  # in inverse Angstroms
-    Qs.append(Q)
+Qs=GetQsInQENSData(data)
 nQ=len(Qs)
 if not selected_wi:
     selected_wi = range(0,len(Qs))
