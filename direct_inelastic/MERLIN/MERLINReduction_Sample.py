@@ -57,13 +57,13 @@ class MERLINReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'one2one_164.map'
-      prop['det_cal_file'] = 'det_corr_164.dat' #'det_corrected7.nxs - testing'
+      prop['map_file'] = 'one2one_171.map'
+      prop['det_cal_file'] = 'det_corr_171.dat' #'det_corrected7.nxs - testing'
       prop['bleed'] = True
       prop['norm_method']='current' #'monitor-1', 'monitor-2'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
-      prop['hardmaskPlus']='mask_16_4.msk' # Use diag (hardmaskPlus option) to enhance hard masks
+      prop['hardmaskPlus']='mask_16_5.msk' # Use diag (hardmaskPlus option) to enhance hard masks
       #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
       prop['check_background']=False
@@ -71,12 +71,12 @@ class MERLINReduction(ReductionWrapper):
       #prop[fix_ei]=True
       
 
-      prop['save_format'] = 'nxspe' #nxs,nxspe'
+      prop['save_format'] = 'nxspe' #nxs,nxspe,spe'
        # if two input files with the same name and  different extension found, what to prefer. 
       prop['data_file_ext']='.nxs' # for MER it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
       # Absolute units: map file to calculate monovan integrals                                                                      
-      prop['monovan_mapfile'] = 'rings_164.map'
+      prop['monovan_mapfile'] = 'rings_171.map'
       prop['vanadium-mass']=7.85 # check this
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
