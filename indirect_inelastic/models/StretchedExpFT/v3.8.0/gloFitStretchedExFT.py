@@ -20,7 +20,8 @@ from copy import copy
 import numpy as np
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from seqFitStretchedExFT import sequentialFit
+import seqFitStretchedExFT
+reload(seqFitStretchedExFT)
 
 """
    Below are the variables that can be changed by the user
@@ -85,7 +86,7 @@ name=LinearBackground,A0=0.0,A1=0.0"""
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
 print "\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################"
-seqOutput = sequentialFit(resolution, data, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
+seqOutput = seqFitStretchedExFT.sequentialFit(resolution, data, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
 
 # Since we are going to tie parameter Beta, find the average and use this number as initial guess
 betas = list()

@@ -25,11 +25,11 @@ from os.path import join as pjoin
 class TeixeiraWaterFit(DataProcessorAlgorithm):
 
     def category(self):
-        return "Workflow\\MIDAS"
+        return "Optimization\\FitAlgorithms"
 
 
     def summary (self):
-        return "Calculates the nth moment of y(q,w)"
+        return "global fit of QENS data to the jump-diffusion model by Teixeira"
 
     def PyInit(self):
         self.declareProperty(MatrixWorkspaceProperty("DataWorkspace", "", Direction.Input),
