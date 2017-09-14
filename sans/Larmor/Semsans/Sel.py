@@ -17,7 +17,7 @@ class Patterson(PythonAlgorithm):
             WorkspaceProperty(name="pol",
                               defaultValue="",
                               direction=Direction.Input))
-        self.declareProperty("const", defaultValue=10)
+        self.declareProperty("const", defaultValue=10.0)
         self.declareProperty(
             WorkspaceProperty(name="OutputWorkspace",
                               defaultValue="",
@@ -34,6 +34,7 @@ class Patterson(PythonAlgorithm):
         wksp = Logarithm(wksp)
         for i in range(x.shape[0]):
             wksp.setY(i, wksp.readY(i)/x[i]**2)
+            wksp.setE(i, wksp.readE(i)/x[i]**2)
         wksp = ConvertUnits(wksp, "SpinEchoLength", EFixed=const)
 
         self.setProperty("OutputWorkspace", wksp)
