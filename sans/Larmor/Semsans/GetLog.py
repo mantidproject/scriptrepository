@@ -4,7 +4,7 @@ from mantid.api import *
 import datetime
 import numpy as np
 import re
-import xml.etree
+import xml.etree.cElementTree
 from runtypes import QuickData, RunData
 
 class GetLog(PythonAlgorithm):
@@ -145,7 +145,7 @@ class GetLog(PythonAlgorithm):
 
         """
         with open(self.JPATH+r"\journal_main.xml", "r") as infile:
-            journals = xml.etree.ElementTree.parse(infile)
+            journals = xml.etree.cElementTree.parse(infile)
         for child in journals.getroot():
             if int(child.attrib["first_run"]) <= run and \
                run <= int(child.attrib["last_run"]):
