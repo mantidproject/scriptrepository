@@ -1,0 +1,16 @@
+index,csv_file_name,reduced_files_folder,binning_wavelength_ini,binning_q,binning_wavelength_transmission,RadiusCut,WaveCut,transmission_fit,PolynomialOrder,wavelength_intervals,wav_delta,reduce_2D,2D_number_data_points,plot_2D
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,Name of the csv list of files to be reduced,Path for a folder where reduced data will be stored,"Wavelength boundaries for reduction: a comma separated list of first bin boundary, width, last bin boundary","Output Q-boundaries: a comma separated list of first bin boundary, width, last bin boundary","Wavelengths boundaries for transmission binning: a comma separated list of first bin boundary, width, last bin boundary","To increase resolution some wavelengths are excluded within this distance from the beam center (mm). Default value is ""0""",To increase resolution by starting to remove some wavelengths below thisfreshold (angstrom). Default value is 0.,"Function to use to fit transmission; can be Linear, Log, Polynomial (first letter shall be capital)","Used only for Polynomial function, but needed as an input parameter anyway",If reduce data on wavelengths' slices (case insensitive),Wavelength interval for the slices (can be empty if not in use),If reduce data in 2D mode (case insensitive),Q-binning will be ignored; given Q-interval will be divided by number of points,
+,,,,,,,,,,,,,,
+0,input_csv_5779.csv,1d_data,"3.0, -0.05, 20.0","0.001, -0.05, 0.6","3.0, -0.05, 20.0",0,0,Polynomial,3,TRUE,1,FALSE,100,TRUE
+1,input_csv_5779.csv,1d_data,"3.0, -0.05, 19.0","0.0012, -0.05, 0.34","3.0, -0.05, 19.0",0,0,Polynomial,3,FALSE,1,FALSE,100,TRUE
+,,,,,,,,,,,,,,
+2,input_csv_5779.csv,1d_data,"3.0, -0.05, 20.0","0.001, -0.05, 0.6","3.0, -0.05, 20.0",0,0,Polynomial,3,TRUE,1,FALSE,100,TRUE
+,,,,,,,,,,,,,,
+3,input_csv_5779.csv,1d_data,"10.0, -0.05, 12.0","0.001, -0.05, 0.6","3.0, -0.05, 16.0",0,0,Polynomial,3,FALSE,3,FALSE,100,TRUE
+4,input_csv_5779.csv,1d_data,"8.0, -0.05, 10.0","0.001, -0.05, 0.6","3.0, -0.05, 16.0",0,0,Polynomial,3,FALSE,3,FALSE,100,TRUE
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+END,,,,,,,,,,,,,,
