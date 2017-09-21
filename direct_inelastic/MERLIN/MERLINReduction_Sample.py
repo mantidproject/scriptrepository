@@ -19,7 +19,7 @@ class MERLINReduction(ReductionWrapper):
 #---------------------------------------------------------------------------#
 
       # multiple energies provided in the data file
-       ei=[40,14] #[150,64,36] # multiple energies provided in the data file
+       ei=[110,41,21] #[150,64,36] # multiple energies provided in the data file
        ebin=[-0.25,0.005,0.85]    #binning of the energy for the spe file. 
        # if energy is specified as a list (even with single value e.g. ei=[81])
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
@@ -33,8 +33,8 @@ class MERLINReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = 32000 #range(24003,24011) # 'MER23700.n001'
-       prop['wb_run'] = '31947.raw'
+       prop['sample_run'] = 35483 #range(24003,24011) # 'MER23700.n001'
+       prop['wb_run'] = '35475.raw'
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
@@ -57,13 +57,12 @@ class MERLINReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = 'one2one_164.map'
-      prop['det_cal_file'] = 'det_corr_164.dat' #'det_corrected7.nxs - testing'
-      prop['bleed'] = True
+      prop['map_file'] = None #'one2one_164.map'
+      prop['det_cal_file'] = 'det_corr_172.dat' #'det_corrected7.nxs - testing'
       prop['norm_method']='current' #'monitor-1', 'monitor-2'
       prop['detector_van_range']=[40,55]
       prop['background_range'] = [18000,19000] # TOF range for the calculating flat background
-      prop['hardmaskPlus']='mask_16_4.msk' # Use diag (hardmaskPlus option) to enhance hard masks
+      prop['hardmaskPlus']='mask_172.xml' # Use diag (hardmaskPlus option) to enhance hard masks
       #prop['hard_mask_file'] = "Bjorn_mask.msk"
 
       prop['check_background']=False
@@ -76,7 +75,7 @@ class MERLINReduction(ReductionWrapper):
       prop['data_file_ext']='.nxs' # for MER it may be choice between event and histo mode if 
       # raw file is written in histo, and nxs -- in event mode
       # Absolute units: map file to calculate monovan integrals                                                                      
-      prop['monovan_mapfile'] = 'rings_164.map'
+      prop['monovan_mapfile'] = 'rings_172.map'
       prop['vanadium-mass']=7.85 # check this
       # change this to correct value and verify that motor_log_names refers correct and existing 
       # log name for crystal rotation to write correct psi value into nxspe files
@@ -84,8 +83,6 @@ class MERLINReduction(ReductionWrapper):
       #
       prop['monovan_lo_frac']=-0.4
       prop['monovan_hi_frac']= 0.4
-      #RAE added
-      prop['bleed_maxrate']=0.005
       return prop
       #
 #------------------------------------------------------------------------------------#
