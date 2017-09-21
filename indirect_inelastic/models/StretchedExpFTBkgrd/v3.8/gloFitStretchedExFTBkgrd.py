@@ -19,8 +19,10 @@ import re
 from copy import copy
 import numpy as np
 import sys
+import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from seqFitStretchedExFTBkgrd import sequentialFit
+import seqFitStretchedExFTBkgrd
+reload(seqFitStretchedExFTBkgrd)
 
 """
    Below are the variables that can be changed by the user
@@ -48,10 +50,11 @@ initguess = { 'f0.f1.f0.Height' :    0.0,   # intensity due to elastic line
 # Option to select an initial value of stretching exponent beta for the global fit. 
 # If "None" is selected, the initial value will be average over all the values
 # that beta takes during the sequential fit of the spectra
-#initial_beta=None
-initial_beta=0.61
+initial_beta=None
+#initial_beta=0.61
 
 # Settings for the minimizer. See the "Fit" algorithm in the documentation
+#minimizer="Levenberg-Marquardt"  # Fast, but may be trapped in a local minimum
 minimizer="FABADA"  # slow, but more reliable than "Levenberg-Marquardt"
 maxIterations=1000
 
@@ -92,7 +95,7 @@ fitstring_template ="""
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
 print "\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################"
-seqOutput = sequentialFit(resolution, data, background, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
+seqOutput = seqFitStretchedExFTBkgrd.sequentialFit(resolution, data, background, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
 
 # Since we are going to tie parameter Beta, find the average and use this number as initial guess
 betas = list()

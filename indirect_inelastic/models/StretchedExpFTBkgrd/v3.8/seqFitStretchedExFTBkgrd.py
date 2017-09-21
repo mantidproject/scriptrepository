@@ -21,8 +21,8 @@ resolution_name="resolution"  # Name of the workspace containing the resolution
 background_name="background"  # Name of the workspace containing the background
 
 # Energy range over which we do the fitting.
-minE = -0.12  # Units are in meV
-maxE =  0.12
+minE = -0.1  # Units are in meV
+maxE =  0.1
 
 # Do the fit only on these workspace indexes (Note: the index begins at zero, not one)
 #selected_wi = [0, 1]
@@ -37,6 +37,7 @@ initguess = { 'f0.f1.f0.Height' :    0.0,   # intensity due to elastic line
 }
 
 # Settings for the minimizer. See the "Fit" algorithm in the documentation
+#minimizer="Levenberg-Marquardt"  # Fast, but may be trapped in a local minimum
 minimizer="FABADA"  # slow, but more reliable than "Levenberg-Marquardt"
 maxIterations=2000
 
@@ -46,7 +47,7 @@ maxIterations=2000
    #############################################################
 """
 
-def sequentialFit(resolution, data, background, fitstring_template, initguess, erange, qvalues, selectedwi):
+def doFit(resolution, data, background, fitstring_template, initguess, erange, qvalues, selectedwi):
     """
     Carry out the sequential fitting
     :param resolution: workspace containing the resolution function
@@ -253,4 +254,4 @@ if __name__ == "__main__":
     name=LinearBackground,A0=0.0,A1=0.0;
     name=TabulatedFunction,Workspace=_BACKGROUND_,WorkspaceIndex=_IQ_,Scaling=1,Shift=0,XScaling=1,ties=(XScaling=1)"""
     fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
-    sequentialFit(resolution, data, background, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
+    doFit(resolution, data, background, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)

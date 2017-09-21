@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>help.md</title><style></style></head><body id="preview">
+<p><img src="dialog.png" alt="alt text" title="Title"></p>
+<h3><a id="Fit_Engine_Options_2"></a>Fit Engine Options</h3>
+<ul>
+<li><strong>FitScheme</strong>: Either <em>Sequential</em> or <em>Global</em> fit. The sequential fit begins with the highest selected spectrum, and proceeds towards the lowest selected spectrum.</li>
+<li><strong>seqMinimizer</strong>: options for the sequential fit</li>
+<li><strong>gloMinimizer</strong>: options for the global fit</li>
+<li><strong>SelectedWI</strong>: selected workspace indexes to fit. The first workspace begins with index 0. If empty, all spectra are selected. Examples: 2,3,7 for three workspaces, 3-8 for five consecutive workspaces.</li>
+<li><strong>EnergyRange</strong>: energy range over which to carry the fit, in units of meV</li>
+</ul>
+<h3><a id="Initial_Guess_for_spectrum_with_highest_Q_9"></a>Initial Guess for spectrum with highest Q</h3>
+<p>In the sequential fit, we begin fitting the spectrum with the highest Q, and then proceed towards spectra of lower Q. Thus, we need an initial guess of the fitting parameters for the first spectrum to fit.</p>
+<p>The model to be convolved with the resolution fuction:<br>
+$Intensity (EISF \delta(E) + (1-EISF)StretchedExpFT(E,Tau, Beta)) + (A0 + A1 E)$</p>
+<h2><a id="Other_options_16"></a>Other options</h2>
+<ul>
+<li><strong>OutputName</strong>: prefix for all files output from the fit</li>
+<li><strong>dryrun</strong>: This option will not carry out the fit. Instead, a string representation of the fit funtion for the spectrum with the highest Q will be printed to the <em>Restuls Log</em> window:</li>
+</ul>
+<p><img src="results_log.png" alt="Representation of the fit" title="Representation of the fit"></p>
+<p>The purpose of the dryrun is to use import string in the <em>Fit Wizard</em> window in order to carry out an interactive fit and in this way fine tune the fitting parameters that will serve as initial guess.</p>
+<p><img src="fit_wizard.png" alt="Importing the dry run string to the Fit Wizard" title="Importing the dry run string to the Fit Wizard"></p>
+<p>After importing the string, we can apply the model onto the spectrum with the highest Q</p>
+<p><img src="apply_model.png" alt="Applying the model" title="Applying the model to the Spectrum"></p>
+<p>After this, we can begin tweaking the parameters for this one-spectrum fit. Once satisfied, we can enter this initial guess into the algorithm’s dialog.</p>
+
+</body></html>
