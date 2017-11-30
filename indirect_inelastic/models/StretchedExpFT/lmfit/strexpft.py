@@ -145,6 +145,7 @@ class StretchedExponentialFTModel(Model):
                                 beta=beta)
 
 
+# Test that FT{Gaussian} = Gaussian, and FT{exponential} = Lorentzian
 # items are (tau, beta, intensities). tau units are picoseconds
 x = np.arange(-0.1, 0.5, 0.0004)  # energy domain, in meV
 trios = [(20.0, 2.0,
@@ -158,7 +159,6 @@ trios = [(20.0, 2.0,
 
 @pytest.mark.parametrize('tau, beta, y', trios)
 def test_lineshapes(tau, beta, y):
-    r"""Fit for the Fourier transform of a Gaussian (a Gaussian)"""
     model = StretchedExponentialFTModel()
     params = model.guess(y, x=None)
     # Stray away from optimal parameters
