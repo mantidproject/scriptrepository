@@ -35,7 +35,7 @@ def strexpft(x, amplitude=1.0, center=0.0, tau=10.0, beta=1.0):
     x: sequence of floats
         domain of the function, energy
     amplitude : float
-        Overall intensity of the curve
+        Integrated intensity of the curve
     center : float
         position of the peak
     tau: float
