@@ -2,12 +2,14 @@ from __future__ import (absolute_import, division, print_function)
 
 import os
 import pytest
+from distutils.version import LooseVersion as version
 from scipy.fftpack import fft, fftfreq
 from scipy.special import gamma
 from scipy import constants
 import numpy as np
 from numpy.testing import assert_allclose
-from lmfit.models import (Model, index_of, COMMON_INIT_DOC)
+import lmfit
+from lmfit.models import (Model, index_of)
 from lmfit.lineshapes import gaussian, lorentzian
 
 planck_constant = constants.Planck / constants.e * 1E15  # meV*psec
@@ -109,7 +111,8 @@ class StretchedExponentialFTModel(Model):
         self.set_param_hint('tau', min=0)
         self.set_param_hint('beta', min=0)
 
-    __init__.__doc__ = COMMON_INIT_DOC
+    if version(lmfit.__version__) > version('0.9.5'):
+        __init__.__doc__ = lmfit.models.COMMON_INIT_DOC
 
     def guess(self, y, x=None, **kwargs):
         r"""Guess starting values for the parameters of a model.
