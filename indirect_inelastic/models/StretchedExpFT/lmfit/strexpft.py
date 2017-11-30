@@ -19,7 +19,7 @@ def strexpft(x, amplitude=1.0, center=0.0, tau=10.0, beta=1.0):
 
     .. math::
 
-        S(E) = A \int_{-\infty}^{\infty} dt/h e^{-i2\pi(E-E_0)t/h} e ^{|\frac{x}{\tau}|^\beta}
+        S(E) = A \int_{-\infty}^{\infty} dt/h e^{-i2\pi(E-E_0)t/h} e^{|\frac{x}{\tau}|^\beta}
 
     Normalization and maximum at :math:`E=E_0`:
 
@@ -84,7 +84,7 @@ class StretchedExponentialFTModel(Model):
 
     .. math::
 
-        S(E) = A \int_{-\infty}^{\infty} dt/h e^{-i2\pi(E-E_0)t/h} e ^{|\frac{x}{\tau}|^\beta}
+        S(E) = A \int_{-\infty}^{\infty} dt/h e^{-i2\pi(E-E_0)t/h} e^{|\frac{x}{\tau}|^\beta}
 
     Normalization and maximum at :math:`E=E_0`:
 
