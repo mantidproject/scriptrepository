@@ -39,9 +39,11 @@ def strexpft(x, amplitude=1.0, center=0.0, tau=10.0, beta=1.0):
     center : float
         position of the peak
     tau: float
-        relaxation time in picoseconds
+        relaxation time.
     beta: float
         stretching exponent
+
+    If the time units are picoseconds, then the energy units are mili-eV.
 
     Returns
     -------
@@ -99,7 +101,7 @@ class StretchedExponentialFTModel(Model):
         - nominal relaxation time ``tau``` :math:`\tau` in picoseconds
         - stretching exponent ``beta`` :math:`\beta`
 
-    The time unit is picosecond and the reciprocal energy unit is mili-eV
+    If the time unit is picoseconds, then the reciprocal energy unit is mili-eV
     """
 
     def __init__(self, independent_vars=['x'], prefix='', missing=None,
@@ -149,8 +151,8 @@ class StretchedExponentialFTModel(Model):
 
 
 # Test that FT{Gaussian} = Gaussian, and FT{exponential} = Lorentzian
-# items are (tau, beta, intensities). tau units are picoseconds
 x = np.arange(-0.1, 0.5, 0.0004)  # energy domain, in meV
+# items are (tau, beta, intensities). Assumed that tau unit is picoseconds
 trios = [(20.0, 2.0,
           gaussian(x, amplitude=1.0, center=0.0,
                    sigma=planck_constant/(np.sqrt(2.0)*20.0*np.pi))),
