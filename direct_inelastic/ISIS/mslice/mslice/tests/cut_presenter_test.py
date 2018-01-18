@@ -1,9 +1,13 @@
+from __future__ import (absolute_import, division, print_function)
 import mock
 from mock import call
 import unittest
+import warnings
 from tempfile import gettempdir
 from os.path import join
 
+import numpy as np
+from mslice.util.qt.QtWidgets import QFileDialog
 
 from mslice.models.cut.cut_algorithm import CutAlgorithm
 from mslice.models.cut.cut_plotter import CutPlotter
@@ -13,8 +17,11 @@ from mslice.presenters.slice_plotter_presenter import Axis
 from mslice.widgets.cut.command import Command
 from mslice.views.cut_view import CutView
 
-from PyQt4.QtGui import QFileDialog
-import numpy as np
+def isstr(s):
+    try:
+        return isinstance(s, basestring)
+    except NameError:
+        return isinstance(s, str)
 
 class CutPresenterTest(unittest.TestCase):
     def setUp(self):
@@ -51,11 +58,8 @@ class CutPresenterTest(unittest.TestCase):
         cut_presenter.register_master(self.main_presenter)
         # This unit test will verify that notifying cut presenter will cause the error to be cleared on the view.
         # The actual subsequent procedure will fail, however this irrelevant to this. Hence the try, except blocks
-        for command in filter(lambda x: x[0] != "_", dir(Command)):
-            try:
-                cut_presenter.notify(command)
-            except:
-                pass
+        for command in [x for x in dir(Command) if x[0] != "_"]:
+            cut_presenter.notify(command)
             self.view.clear_displayed_error.assert_called()
             self.view.reset_mock()
 
@@ -69,6 +73,7 @@ class CutPresenterTest(unittest.TestCase):
         available_dimensions = ["dim1", "dim2"]
         self.cut_algorithm.get_available_axis = mock.Mock(return_value=available_dimensions)
         self.cut_algorithm.set_cut_axis = mock.Mock
+        self.cut_algorithm.get_saved_cut_parameters = mock.Mock(return_value=(None, None))
         cut_presenter.workspace_selection_changed()
         self.view.populate_cut_axis_options.assert_called_with(available_dimensions)
         self.view.enable.assert_called_with()
@@ -78,13 +83,18 @@ class CutPresenterTest(unittest.TestCase):
         fields = dict()
         fields['axes'] = available_dimensions
         self.view.get_input_fields = mock.Mock(return_value=fields)
+        self.view.is_fields_cleared = mock.Mock(return_value=False)
+        self.cut_algorithm.get_saved_cut_parameters = mock.Mock(return_value=(fields, available_dimensions[0]))
+        self.cut_algorithm.is_axis_saved = mock.Mock(return_value=False)
+        self.view.get_cut_axis = mock.Mock(return_value=available_dimensions[0])
         cut_presenter.workspace_selection_changed()
+        self.cut_algorithm.set_saved_cut_parameters.assert_called_with(workspace, available_dimensions[0], fields)
         self.view.get_cut_axis.assert_called_with()
         # Change back to check that it repopulates the fields
         self.main_presenter.get_selected_workspaces = mock.Mock(return_value=[workspace])
-        self.view.get_cut_axis = mock.Mock(return_value=available_dimensions[0])
         cut_presenter.workspace_selection_changed()
         self.view.populate_input_fields.assert_called_with(fields)
+        self.cut_algorithm.set_saved_cut_parameters.assert_called_with(new_workspace, available_dimensions[0], fields)
 
     def test_workspace_selection_changed_single_cut_workspace(self):
         cut_presenter = CutPresenter(self.view, self.cut_algorithm, self.cut_plotter)
@@ -124,7 +134,9 @@ class CutPresenterTest(unittest.TestCase):
         integration_start, integration_end, width = tuple(args[2:5])
         intensity_start, intensity_end, is_norm = tuple(args[5:8])
         workspace, integrated_axis = tuple(args[8:10])
-        self.main_presenter.get_selected_workspaces = mock.Mock(return_value=[workspace])
+        if isstr(workspace):
+            workspace = [workspace]
+        self.main_presenter.get_selected_workspaces = mock.Mock(return_value=workspace)
         self.view.get_cut_axis = mock.Mock(return_value=axis.units)
         self.view.get_cut_axis_start = mock.Mock(return_value=axis.start)
         self.view.get_cut_axis_end = mock.Mock(return_value=axis.end)
@@ -136,6 +148,7 @@ class CutPresenterTest(unittest.TestCase):
         self.view.get_intensity_is_norm_to_one = mock.Mock(return_value=is_norm)
         self.view.get_integration_width = mock.Mock(return_value=width)
         self.cut_algorithm.get_other_axis = mock.Mock(return_value=integrated_axis)
+        self.cut_algorithm.get_available_axis = mock.Mock(return_value=[axis.units,integrated_axis])
 
     def test_cut_parse_input_errors(self):
         cut_presenter = CutPresenter(self.view, self.cut_algorithm, self.cut_plotter)
@@ -350,6 +363,36 @@ class CutPresenterTest(unittest.TestCase):
         self.cut_algorithm.compute_cut.assert_not_called()
         self.cut_plotter.plot_cut.assert_has_calls(call_list)
 
+    def test_plot_multiple_workspaces_cut(self):
+        cut_presenter = CutPresenter(self.view, self.cut_algorithm, self.cut_plotter)
+        cut_presenter.register_master(self.main_presenter)
+        axis = Axis("units", "0", "100", "1")
+        processed_axis = Axis("units", 0, 100, 1)
+        integration_start = 3
+        integration_end = 8
+        width = ""
+        intensity_start = 11
+        intensity_end = 30
+        is_norm = True
+        selected_workspaces = ["ws1", "ws2"]
+        integrated_axis = 'integrated axis'
+        self._create_cut(axis, processed_axis, integration_start, integration_end, width,
+                         intensity_start, intensity_end, is_norm, selected_workspaces, integrated_axis)
+        self.cut_algorithm.get_saved_cut_parameters = mock.Mock(return_value=(None, None))
+        cut_presenter.notify(Command.Plot)
+        call_list = [
+            call(selected_workspace=selected_workspaces[0], cut_axis=processed_axis,
+                 integration_start=integration_start, integration_end=integration_end,
+                 norm_to_one=is_norm, intensity_start=intensity_start,
+                 intensity_end=intensity_end, plot_over=False),
+            call(selected_workspace=selected_workspaces[1], cut_axis=processed_axis,
+                 integration_start=integration_start, integration_end=integration_end,
+                 norm_to_one=is_norm, intensity_start=intensity_start,
+                 intensity_end=intensity_end, plot_over=True),
+        ]
+        self.cut_algorithm.compute_cut.assert_not_called()
+        self.cut_plotter.plot_cut.assert_has_calls(call_list)
+
     def test_multiple_cut_save_ascii(self):
         cut_presenter = CutPresenter(self.view, self.cut_algorithm, self.cut_plotter)
         cut_presenter.register_master(self.main_presenter)
@@ -384,7 +427,7 @@ class CutPresenterTest(unittest.TestCase):
         ]
         self.cut_algorithm.compute_cut_xye.assert_has_calls(call_list)
         callargs = np.savetxt.call_args[0]
-        self.assertEquals(callargs[0], join(tempdir, 'out_2.txt'))  # Indexed from zero
+        self.assertEqual(callargs[0], join(tempdir, 'out_2.txt'))  # Indexed from zero
         self.cut_plotter.plot_cut.assert_not_called()
 
     def test_change_axis(self):
@@ -396,6 +439,7 @@ class CutPresenterTest(unittest.TestCase):
         self.cut_algorithm.is_cuttable = mock.Mock(return_value=True)
         available_dimensions = ["dim1", "dim2"]
         self.cut_algorithm.get_available_axis = mock.Mock(return_value=available_dimensions)
+        self.cut_algorithm.get_saved_cut_parameters = mock.Mock(return_value=(None, None))
         cut_presenter.workspace_selection_changed()
         # Set up a set of input values for this cut, then simulate changing axes.
         fields1 = dict()
@@ -407,7 +451,9 @@ class CutPresenterTest(unittest.TestCase):
         fields1['normtounity'] = False
         self.view.get_input_fields = mock.Mock(return_value=fields1)
         self.view.get_cut_axis = mock.Mock(return_value='dim2')
+        self.view.is_fields_cleared = mock.Mock(return_value=False)
         cut_presenter.notify(Command.AxisChanged)
+        self.cut_algorithm.set_saved_cut_parameters.assert_called_with(workspace, 'dim1', fields1)
         self.view.clear_input_fields.assert_called_with(keep_axes=True)
         self.view.populate_input_fields.assert_not_called()
         # Set up a set of input values for this other cut, then simulate changing axes again.
@@ -420,7 +466,10 @@ class CutPresenterTest(unittest.TestCase):
         fields2['normtounity'] = True
         self.view.get_input_fields = mock.Mock(return_value=fields2)
         self.view.get_cut_axis = mock.Mock(return_value='dim1')
+        self.cut_algorithm.get_saved_cut_parameters = mock.Mock(return_value=(fields1, 'dim1'))
         cut_presenter.notify(Command.AxisChanged)
+        self.cut_algorithm.set_saved_cut_parameters.assert_called_with(workspace, 'dim2', fields2)
+        self.cut_algorithm.get_saved_cut_parameters.assert_called_with(workspace, 'dim1')
         self.view.populate_input_fields.assert_called_with(fields1)
 
     def test_cut_step_size(self):
@@ -431,9 +480,36 @@ class CutPresenterTest(unittest.TestCase):
         self.cut_algorithm.is_cuttable = mock.Mock(return_value=True)
         available_dimensions = ["dim1", "dim2"]
         self.cut_algorithm.get_available_axis = mock.Mock(return_value=available_dimensions)
+        self.cut_algorithm.get_saved_cut_parameters = mock.Mock(return_value=(None, None))
         cut_presenter.workspace_selection_changed()
         self.cut_algorithm.get_axis_range.assert_any_call(workspace, available_dimensions[0])
         self.cut_algorithm.get_axis_range.assert_any_call(workspace, available_dimensions[1])
         self.cut_algorithm.get_axis_range = mock.Mock(side_effect=KeyError)
         cut_presenter.workspace_selection_changed()
         self.view.set_minimum_step.assert_called_with(None)
+
+    def test_invalid_step(self):
+        cut_presenter = CutPresenter(self.view, self.cut_algorithm, self.cut_plotter)
+        cut_presenter.register_master(self.main_presenter)
+        axis = Axis("units", "0", "100", "")
+        processed_axis = Axis("units", 0, 100, 0)
+        integration_start = 3
+        integration_end = 5
+        width = ""
+        intensity_start = 11
+        intensity_end = 30
+        is_norm = True
+        workspace = "workspace"
+        integrated_axis = 'integrated axis'
+        self._create_cut(axis, processed_axis, integration_start, integration_end, width,
+                         intensity_start, intensity_end, is_norm, workspace, integrated_axis)
+        self.view.get_cut_axis_step = mock.Mock(return_value="")
+        self.view.get_minimum_step = mock.Mock(return_value=1)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cut_presenter.notify(Command.Plot)
+        self.cut_algorithm.compute_cut.assert_not_called()
+        self.view.get_minimum_step.assert_called_with()
+        self.view.error_invalid_cut_step_parameter.assert_called_with()
+        self.view.populate_cut_params.assert_called_with("0", "100", "1.00000")

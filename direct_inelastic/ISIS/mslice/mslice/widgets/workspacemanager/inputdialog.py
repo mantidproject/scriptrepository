@@ -1,4 +1,5 @@
-from PyQt4.QtGui import QDialog, QFormLayout, QLabel, QDoubleSpinBox, QPushButton, QCheckBox
+from __future__ import (absolute_import, division, print_function)
+from mslice.util.qt.QtWidgets import QDialog, QFormLayout, QLabel, QDoubleSpinBox, QPushButton, QCheckBox
 
 class EfInputDialog(QDialog):
     def __init__(self, parent = None):

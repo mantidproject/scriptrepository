@@ -1,31 +1,37 @@
-from PyQt4.QtGui import QWidget, QListWidgetItem, QFileDialog, QInputDialog, QMessageBox
-from PyQt4.QtCore import pyqtSignal
+from __future__ import (absolute_import, division, print_function)
+
+from mslice.util.qt.QtCore import Signal
+from mslice.util.qt.QtWidgets import QWidget, QListWidgetItem, QFileDialog, QInputDialog, QMessageBox
 
 from mslice.models.workspacemanager.mantid_workspace_provider import MantidWorkspaceProvider
 from mslice.presenters.workspace_manager_presenter import WorkspaceManagerPresenter
+from mslice.util.qt import load_ui
 from mslice.views.workspace_view import WorkspaceView
 from .command import Command
 from .inputdialog import EfInputDialog
-from .workspacemanager_ui import Ui_Form
 
-class WorkspaceManagerWidget(QWidget,Ui_Form,WorkspaceView):
+
+class WorkspaceManagerWidget(WorkspaceView, QWidget):
     """A Widget that allows user to perform basic workspace save/load/rename/delete operations on workspaces"""
 
-    error_occurred = pyqtSignal('QString')
+    error_occurred = Signal('QString')
+    busy = Signal(bool)
 
-    def __init__(self,parent):
-        super(WorkspaceManagerWidget,self).__init__(parent)
-        self.setupUi(self)
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        load_ui(__file__, 'workspacemanager.ui', self)
         self.btnWorkspaceSave.clicked.connect(self._btn_clicked)
         self.btnLoad.clicked.connect(self._btn_clicked)
         self.btnWorkspaceCompose.clicked.connect(self._btn_clicked)
         self.btnWorkspaceRemove.clicked.connect(self._btn_clicked)
         self.btnRename.clicked.connect(self._btn_clicked)
+        self.btnCombine.clicked.connect(self._btn_clicked)
         self.button_mappings = {self.btnWorkspaceRemove: Command.RemoveSelectedWorkspaces,
                                 self.btnWorkspaceSave: Command.SaveSelectedWorkspace,
                                 self.btnWorkspaceCompose: Command.ComposeWorkspace,
                                 self.btnLoad: Command.LoadWorkspace,
-                                self.btnRename: Command.RenameWorkspace
+                                self.btnRename: Command.RenameWorkspace,
+                                self.btnCombine: Command.CombineWorkspace
                                 }
         self._main_window = None
         self.lstWorkspaces.itemSelectionChanged.connect(self.list_item_changed)
@@ -74,7 +80,7 @@ class WorkspaceManagerWidget(QWidget,Ui_Form,WorkspaceView):
                 return
 
     def get_workspace_selected(self):
-        selected_workspaces = map(lambda x: str(x.text()), self.lstWorkspaces.selectedItems())
+        selected_workspaces = [str(x.text()) for x in self.lstWorkspaces.selectedItems()]
         return list(selected_workspaces)
 
     def set_workspace_selected(self, index):
@@ -93,10 +99,8 @@ class WorkspaceManagerWidget(QWidget,Ui_Form,WorkspaceView):
         paths = QFileDialog.getOpenFileNames()
         return [str(filename) for filename in paths]
 
-    def get_workspace_to_save_filepath(self):
-        extension = 'Nexus file (*.nxs)'
-        path = QFileDialog.getSaveFileName(filter=extension)
-        return str(path)
+    def get_directory_to_save_workspaces(self):
+        return QFileDialog.getExistingDirectory()
 
     def get_workspace_new_name(self):
         name, success = QInputDialog.getText(self,"Workspace New Name","Enter the new name for the workspace :      ")
@@ -119,6 +123,9 @@ class WorkspaceManagerWidget(QWidget,Ui_Form,WorkspaceView):
 
     def error_select_one_workspace(self):
         self._display_error('Please select a workspace then try again')
+
+    def error_select_more_than_one_workspaces(self):
+        self._display_error('Please select more than one projected workspaces then try again')
 
     def error_unable_to_open_file(self, filename=None):
         self._display_error('MSlice was not able to load %s' % ('the selected file' if filename is None else filename))

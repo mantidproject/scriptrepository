@@ -1,4 +1,4 @@
-"""Defines the interface to an object responsible for performaing operations on
+"""Defines the interface to an object responsible for performing operations on
 workspaces
 """
 # -----------------------------------------------------------------------------
@@ -6,11 +6,14 @@ workspaces
 # -----------------------------------------------------------------------------
 
 import abc
+from six import add_metaclass
 
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------
 
+
+@add_metaclass(abc.ABCMeta)
 class WorkspaceProvider(object):
 
     @abc.abstractmethod
@@ -30,7 +33,14 @@ class WorkspaceProvider(object):
         pass
 
     @abc.abstractmethod
+    def combine_workspace(self, selected_workspace, new_name):
+        pass
+
+    @abc.abstractmethod
     def save_nexus(self, workspace, path):
+        pass
+
+    def is_pixel_workspace(self, workspace_name):
         pass
 
     def get_workspace_handle(self, workspace_name):
@@ -40,4 +50,13 @@ class WorkspaceProvider(object):
         pass
 
     def getComment(self, workspace):
+        pass
+
+    def setCutParameters(self, workspace, axis, parameters):
+        pass
+
+    def getCutParameters(self, workspace, axis=None):
+        pass
+
+    def isAxisSaved(self, workspace, axis):
         pass

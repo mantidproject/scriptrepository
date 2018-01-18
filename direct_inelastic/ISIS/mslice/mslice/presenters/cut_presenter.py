@@ -1,14 +1,18 @@
+from __future__ import (absolute_import, division, print_function)
 from mslice.models.cut.cut_algorithm import CutAlgorithm
 from mslice.models.cut.cut_plotter import CutPlotter
+from mslice.presenters.presenter_utility import PresenterUtility
 from mslice.presenters.slice_plotter_presenter import Axis
 from mslice.views.cut_view import CutView
 from mslice.widgets.cut.command import Command
 from .validation_decorators import require_main_presenter
-from PyQt4.QtGui import QFileDialog
+from mslice.util.qt.QtWidgets import QFileDialog
 from os.path import splitext
 import numpy as np
+import warnings
 
-class CutPresenter(object):
+
+class CutPresenter(PresenterUtility):
     def __init__(self, cut_view, cut_algorithm, cut_plotter):
         self._cut_view = cut_view
         self._cut_algorithm = cut_algorithm
@@ -19,18 +23,14 @@ class CutPresenter(object):
         self._cut_plotter = cut_plotter
         self._acting_on = None
         self._cut_view.disable()
-        self._saved_parameters = dict()
         self._previous_cut = None
         self._previous_axis = None
         self._minimumStep = dict()
 
-    def register_master(self, main_presenter):
-        self._main_presenter = main_presenter
-        self._main_presenter.subscribe_to_workspace_selection_monitor(self)
-
     @require_main_presenter
     def notify(self, command):
-        self._clear_displayed_error()
+        self._clear_displayed_error(self._cut_view)
+        self._cut_view.busy.emit(True)
         if command == Command.Plot:
             self._process_cuts(plot_over=False)
         elif command == Command.PlotOver:
@@ -43,15 +43,18 @@ class CutPresenter(object):
                 self._process_cuts(save_to_file=fname)
         elif command == Command.AxisChanged:
             self._cut_axis_changed()
+        self._cut_view.busy.emit(False)
 
-    def _process_cuts(self, plot_over=False, save_to_workspace=False, save_to_file=None):
+
+    def _process_cuts(self, plot_over=False, save_to_workspace=False, save_to_file=None, workspace_index=0):
         """This function handles the width parameter. If it is not specified a single cut is plotted from
         integration_start to integration_end """
+        selected_workspaces = self._main_presenter.get_selected_workspaces()
         try:
-            params = self._parse_input()
+            self._parse_step()
+            params = self._parse_input(workspace_index)
         except ValueError:
             return
-
         if save_to_workspace:
             def handler(*args):
                 self._save_cut_to_workspace(args[0])
@@ -61,27 +64,34 @@ class CutPresenter(object):
         else:
             def handler(params, plot_over, _):
                 self._plot_cut(params, plot_over)
+
         width = params[-1]
         params = params[:-1]
-        if width is None:
+        if width is not None:
+            integration_start, integration_end = params[2:4]
+            cut_start, cut_end = integration_start, min(integration_start + width, integration_end)
+            index = 0
+            while cut_start != cut_end:
+                params = params[:2] + (cut_start, cut_end) + params[4:]
+                if save_to_file is not None:
+                    filename, file_extension = splitext(save_to_file)
+                    output_file_part = filename+'_'+str(index)+file_extension
+                else:
+                    output_file_part = None
+                index += 1
+                handler(params, plot_over, output_file_part)
+                cut_start, cut_end = cut_end, min(cut_end + width, integration_end)
+                # The first plot will respect which button the user pressed. The rest will over plot
+                plot_over = True
+        else:
             # No width specified, just plot a single cut
             handler(params, plot_over, save_to_file)
-            return
-        integration_start, integration_end = params[2:4]
-        cut_start, cut_end = integration_start, min(integration_start + width, integration_end)
-        index = 0
-        while cut_start != cut_end:
-            params = params[:2] + (cut_start, cut_end) + params[4:]
-            if save_to_file is not None:
-                filename, file_extension = splitext(save_to_file)
-                output_file_part = filename+'_'+str(index)+file_extension
-            else:
-                output_file_part = None
-            index += 1
-            handler(params, plot_over, output_file_part)
-            cut_start, cut_end = cut_end, min(cut_end + width, integration_end)
-            # The first plot will respect which button the user pressed. The rest will over plot
-            plot_over = True
+
+        if workspace_index < len(selected_workspaces) - 1:
+            workspace_index += 1
+            self._populate_fields_using_workspace(selected_workspaces[workspace_index], plotting=True)
+            self._process_cuts(plot_over=True, save_to_workspace=save_to_workspace, save_to_file=save_to_file,
+                               workspace_index=workspace_index)
 
     def _plot_cut(self, params, plot_over):
         self._cut_plotter.plot_cut(*params, plot_over=plot_over)
@@ -99,14 +109,23 @@ class CutPresenter(object):
         self._cut_algorithm.compute_cut(*cut_params)
         self._main_presenter.update_displayed_workspaces()
 
+    def _parse_step(self):
+        step = self._cut_view.get_cut_axis_step()
+        try:
+            step = float(step)
+        except ValueError:
+            step = self._cut_view.get_minimum_step()
+            if step is not None:
+                self._cut_view.populate_cut_params(self._cut_view.get_cut_axis_start(),
+                                                   self._cut_view.get_cut_axis_end(),
+                                                   "%0.5f" % step)
+                self._cut_view.error_invalid_cut_step_parameter()
+                warnings.warn("Invalid cut step, using default value")
 
-    def _parse_input(self):
+    def _parse_input(self, workspace_index=0):
         # The messages of the raised exceptions are discarded. They are there for the sake of clarity/debugging
         selected_workspaces = self._main_presenter.get_selected_workspaces()
-        if len(selected_workspaces) != 1:
-            self._cut_view.error_select_a_workspace()
-            raise ValueError("Invalid workspace selection")
-        selected_workspace = selected_workspaces[0]
+        selected_workspace = selected_workspaces[workspace_index]
         cut_axis = Axis(self._cut_view.get_cut_axis(), self._cut_view.get_cut_axis_start(),
                         self._cut_view.get_cut_axis_end(), self._cut_view.get_cut_axis_step())
         if cut_axis.units == "":
@@ -159,11 +178,6 @@ class CutPresenter(object):
         return selected_workspace, cut_axis, integration_start, integration_end, norm_to_one, intensity_start, \
             intensity_end, width
 
-    def _to_float(self, x):
-        if x == "":
-            return None
-        return float(x)
-
     def _set_minimum_step(self, workspace, axis):
         """Gets axes limits from workspace_provider and then sets the minimumStep dictionary with those values"""
         for ax in axis:
@@ -175,33 +189,50 @@ class CutPresenter(object):
 
     def workspace_selection_changed(self):
         if self._previous_cut is not None and self._previous_axis is not None:
-            if self._previous_cut not in self._saved_parameters.keys():
-                self._saved_parameters[self._previous_cut] = dict()
-            self._saved_parameters[self._previous_cut][self._previous_axis] = self._cut_view.get_input_fields()
+            if not self._cut_view.is_fields_cleared():
+                self._cut_algorithm.set_saved_cut_parameters(self._previous_cut, self._previous_axis,
+                                                             self._cut_view.get_input_fields())
+            else:
+                self._previous_cut = None
+                self._previous_axis = None
 
         workspace_selection = self._main_presenter.get_selected_workspaces()
-
-        if len(workspace_selection) != 1:
+        if len(workspace_selection) < 1:
             self._cut_view.clear_input_fields()
             self._cut_view.disable()
             self._previous_cut = None
             self._previous_axis = None
             return
+        self._populate_fields_using_workspace(workspace_selection[0])
 
-        workspace = workspace_selection[0]
-
+    def _populate_fields_using_workspace(self, workspace, plotting=False):
         if self._cut_algorithm.is_cuttable(workspace):
             axis = self._cut_algorithm.get_available_axis(workspace)
-            current_axis = axis[0]
-            if self._previous_cut is not None and self._previous_axis is not None:
-                if axis == self._saved_parameters[self._previous_cut][self._previous_axis]['axes']:
-                    current_axis = self._cut_view.get_cut_axis()
+            # There are three choices for which axes to select:
+            #   1. If the current cut is of the same type (e.g. QE), and parameters for the current
+            #      axis in the new cut has not been defined by the user, use the current axis
+            #   2. If the user has looked at this cut _and_ this axis before, use that
+            #   3. Otherwise use the first available axis
+            this_cut_par, prev_selected_axis = self._cut_algorithm.get_saved_cut_parameters(workspace)
+            prev_cut_par, _ = self._cut_algorithm.get_saved_cut_parameters(self._previous_cut, self._previous_axis)
+            axis_is_same_as_prev = prev_cut_par is not None and axis == prev_cut_par['axes']
+            axis_in_dict = self._cut_algorithm.is_axis_saved(workspace, self._previous_axis)
+            if axis_is_same_as_prev and not axis_in_dict:
+                current_axis = self._cut_view.get_cut_axis()
+                saved_parameters = prev_cut_par
+            elif this_cut_par is not None:
+                current_axis = prev_selected_axis
+                saved_parameters = this_cut_par
+            else:
+                current_axis = axis[0]
+                saved_parameters = None
+
+            self._cut_view.clear_input_fields()
             self._cut_view.populate_cut_axis_options(axis)
             self._cut_view.enable()
             self._cut_view.set_cut_axis(current_axis)
-            if workspace in self._saved_parameters.keys():
-                if current_axis in self._saved_parameters[workspace].keys():
-                    self._cut_view.populate_input_fields(self._saved_parameters[workspace][current_axis])
+            if not plotting and saved_parameters is not None:
+                self._cut_view.populate_input_fields(saved_parameters)
             self._previous_cut = workspace
             self._previous_axis = current_axis
             self._set_minimum_step(workspace, axis)
@@ -213,8 +244,9 @@ class CutPresenter(object):
             if is_normed:
                 self._cut_view.force_normalization()
             self._cut_view.populate_cut_axis_options([cut_axis.units])
+
             def format_(*args):
-                return map(lambda x: "%.5f" % x, args)
+                return ["%.5f" % x for x in args]
             self._cut_view.populate_cut_params(*format_(cut_axis.start, cut_axis.end, cut_axis.step))
             self._cut_view.populate_integration_params(*format_(*integration_limits))
             self._minimumStep[cut_axis.units] = None
@@ -228,20 +260,17 @@ class CutPresenter(object):
             self._previous_axis = None
 
     def _cut_axis_changed(self):
-        if self._previous_axis is not None:
-            if self._previous_cut not in self._saved_parameters.keys():
-                self._saved_parameters[self._previous_cut] = dict()
-            self._saved_parameters[self._previous_cut][self._previous_axis] = self._cut_view.get_input_fields()
+        if self._previous_axis is not None and not self._cut_view.is_fields_cleared():
+            self._cut_algorithm.set_saved_cut_parameters(self._previous_cut, self._previous_axis,
+                                                         self._cut_view.get_input_fields())
         self._cut_view.clear_input_fields(keep_axes=True)
         if self._previous_cut is not None:
             self._previous_axis = self._cut_view.get_cut_axis()
-            if self._previous_axis in self._saved_parameters[self._previous_cut].keys():
-                self._cut_view.populate_input_fields(self._saved_parameters[self._previous_cut][self._previous_axis])
-        minStep = self._minimumStep[self._cut_view.get_cut_axis()]
-        self._cut_view.set_minimum_step(minStep)
-
-    def _clear_displayed_error(self):
-        self._cut_view.clear_displayed_error()
+            saved_parameters, _ = self._cut_algorithm.get_saved_cut_parameters(self._previous_cut, self._previous_axis)
+            if saved_parameters is not None:
+                self._cut_view.populate_input_fields(saved_parameters)
+        min_step = self._minimumStep[self._cut_view.get_cut_axis()]
+        self._cut_view.set_minimum_step(min_step)
 
     def set_workspace_provider(self, workspace_provider):
         self._cut_algorithm.set_workspace_provider(workspace_provider)

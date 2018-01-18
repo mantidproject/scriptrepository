@@ -1,24 +1,59 @@
-from itertools import chain
+from __future__ import (absolute_import, division, print_function)
 
-from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
-from matplotlib.container import ErrorbarContainer
-import matplotlib.colors as colors
-from PyQt4.QtCore import Qt
-import numpy as np
+import importlib
 
-from .plot_window_ui import Ui_MainWindow
-from .base_qt_plot_window import BaseQtPlotWindow
-from .plot_options import PlotOptionsDialog, LegendDescriptor, PlotConfig
+from matplotlib.figure import Figure
+import six
+from mslice.util.qt import QT_VERSION
+from mslice.util.qt.QtCore import Qt
+from mslice.util.qt import QtWidgets
+
+from mslice.plotting.plot_window.slice_plot import SlicePlot
+from mslice.plotting.plot_window.cut_plot import CutPlot
+from mslice.util.qt import load_ui
+from mslice.plotting.plot_window.base_plot_window import BasePlotWindow
+
+# The FigureCanvas & Toolbar are QWidgets so we must import it from the mpl backend that matches
+# the version of Qt we are running with
+mpl_qt_backend  = importlib.import_module('matplotlib.backends.backend_qt{}agg'.format(QT_VERSION[0]))
+FigureCanvasQTAgg = getattr(mpl_qt_backend, 'FigureCanvasQTAgg')
+NavigationToolbar2QT = getattr(mpl_qt_backend, 'NavigationToolbar2QT')
 
 
-class PlotFigureManager(BaseQtPlotWindow, Ui_MainWindow):
+class MatplotlibCanvas(FigureCanvasQTAgg):
+    """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        self.figure = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvasQTAgg.__init__(self, self.figure)
+        self.setParent(parent)
+
+        FigureCanvasQTAgg.setSizePolicy(self,
+                                        QtWidgets.QSizePolicy.Expanding,
+                                        QtWidgets.QSizePolicy.Expanding)
+        FigureCanvasQTAgg.updateGeometry(self)
+
+
+PlotWindowUI, _ = load_ui(__file__, 'plot_window.ui')
+
+
+class PlotFigureManager(BasePlotWindow, PlotWindowUI, QtWidgets.QMainWindow):
     def __init__(self, number, manager):
-        super(PlotFigureManager, self).__init__(number, manager)
+        QtWidgets.QMainWindow.__init__(self)
+        BasePlotWindow.__init__(self, number, manager)
+        self.setupUi(self)
+
+        self.canvas = MatplotlibCanvas(self)
+        self.canvas.manager = self
+        self.setCentralWidget(self.canvas)
+
+        self._plot_handler = None
+        # Need flags here as matplotlib provides no way to access the grid state
+        self._xgrid = False
+        self._ygrid = False
 
         self.actionKeep.triggered.connect(self._report_as_kept_to_manager)
         self.actionMakeCurrent.triggered.connect(self._report_as_current_to_manager)
-
-        self.actionDump_To_Console.triggered.connect(self._dump_script_to_console)
 
         self.actionDataCursor.toggled.connect(self.toggle_data_cursor)
         self.stock_toolbar = NavigationToolbar2QT(self.canvas, self)
@@ -27,20 +62,46 @@ class PlotFigureManager(BaseQtPlotWindow, Ui_MainWindow):
         self.actionZoom_In.triggered.connect(self.stock_toolbar.zoom)
         self.actionZoom_Out.triggered.connect(self.stock_toolbar.back)
         self.action_save_image.triggered.connect(self.stock_toolbar.save_figure)
+        self.action_Print_Plot.triggered.connect(self.print_plot)
         self.actionPlotOptions.triggered.connect(self._plot_options)
         self.actionToggleLegends.triggered.connect(self._toggle_legend)
+        self.canvas.mpl_connect('button_press_event', self.plot_clicked)
+        self.canvas.mpl_connect('pick_event', self.object_clicked)
 
         self.show()  # is not a good idea in non interactive mode
+
+    def add_slice_plot(self, slice_plotter):
+        self._plot_handler = SlicePlot(self, self.canvas, slice_plotter)
+
+    def add_cut_plot(self, cut_plotter):
+        self._plot_handler = CutPlot(self, self.canvas, cut_plotter)
+
+    def _toggle_legend(self):
+        axes = self.canvas.figure.gca()
+        if axes.legend_ is None:
+            self._plot_handler.update_legend()
+        else:
+            axes.legend_ = None
+        self.canvas.draw()
+
+    def plot_clicked(self, event):
+        if event.dblclick:
+            self._plot_handler.plot_clicked(event.x, event.y)
+
+    def object_clicked(self, event):
+        if event.mouseevent.dblclick:
+            self._plot_handler.object_clicked(event.artist)
 
     def toggle_data_cursor(self):
         if self.actionDataCursor.isChecked():
             self.stock_toolbar.message.connect(self.statusbar.showMessage)
             self.canvas.setCursor(Qt.CrossCursor)
+
         else:
             self.stock_toolbar.message.disconnect()
             self.canvas.setCursor(Qt.ArrowCursor)
 
-    def _display_status(self,status):
+    def _display_status(self, status):
         if status == "kept":
             self.actionKeep.setChecked(True)
             self.actionMakeCurrent.setChecked(False)
@@ -49,187 +110,88 @@ class PlotFigureManager(BaseQtPlotWindow, Ui_MainWindow):
             self.actionKeep.setChecked(False)
 
     def _plot_options(self):
-        config = self._get_plot_description()
-        new_config = PlotOptionsDialog.get_new_config(config)
-        if new_config:
-            self._apply_config(new_config)
+        self._plot_handler.plot_options()
 
-    def _get_min(self, data, absolute_minimum=-np.inf):
-        """Determines the minimum of a set of numpy arrays"""
-        data = data if isinstance(data, list) else [data]
-        running_min = []
-        for values in data:
-            try:
-                running_min.append(np.min(values[np.isfinite(values) * (values > absolute_minimum)]))
-            except ValueError:  # If data is empty or not array of numbers
-                pass
-        return np.min(running_min) if running_min else absolute_minimum
+    def print_plot(self):
+        printer = QtWidgets.QPrinter()
+        printer.setResolution(300)
+        printer.setOrientation(QtWidgets.QPrinter.Landscape) #  landscape by default
+        print_dialog = QtWidgets.QPrintDialog(printer)
+        if print_dialog.exec_():
+            pixmap_image = QtWidgets.QPixmap.grabWidget(self.canvas)
+            page_size = printer.pageRect()
+            pixmap_image = pixmap_image.scaled(page_size.width(), page_size.height(), Qt.KeepAspectRatio)
+            painter = QtWidgets.QPainter(printer)
+            painter.drawPixmap(0,0,pixmap_image)
+            painter.end()
 
-    def _apply_config(self, plot_config): # noqa: C901
-        current_axis = self.canvas.figure.gca()
-        current_axis.set_title(plot_config.title)
-        current_axis.set_xlabel(plot_config.xlabel)
-        current_axis.set_ylabel(plot_config.ylabel)
+    def update_grid(self):
+        if self._xgrid:
+            self.canvas.figure.gca().grid(True, axis='x')
+        if self._ygrid:
+            self.canvas.figure.gca().grid(True, axis='y')
 
-        if current_axis.get_images():
-            images = current_axis.get_images()
-            if len(images) != 1:
-                raise RuntimeError("Expected single image on axes, found " + str(len(images)))
-            mappable = images[0]
-            mappable.set_clim(*plot_config.colorbar_range)
-            vmin, vmax = plot_config.colorbar_range
+    def get_window_title(self):
+        return six.text_type(self.windowTitle())
 
-            if plot_config.logarithmic and type(mappable.norm) != colors.LogNorm:
-                mappable.colorbar.remove()
-                if vmin == float(0):
-                    vmin = 0.001
-                norm = colors.LogNorm(vmin, vmax)
-                mappable.set_norm(norm)
-                self.canvas.figure.colorbar(mappable)
-            elif not plot_config.logarithmic and type(mappable.norm) != colors.Normalize:
-                mappable.colorbar.remove()
-                norm = colors.Normalize(vmin, vmax)
-                mappable.set_norm(norm)
-                self.canvas.figure.colorbar(mappable)
-        else:
-            if plot_config.xlog:
-                xdata = [ll.get_xdata() for ll in current_axis.get_lines()]
-                xmin = self._get_min(xdata, absolute_minimum=0.)
-                current_axis.set_xscale('symlog', linthreshx=pow(10, np.floor(np.log10(xmin))))
-                if self._get_min(xdata) > 0:
-                    plot_config.x_range = (xmin, plot_config.x_range[1])
-            else:
-                current_axis.set_xscale('linear')
-            if plot_config.ylog:
-                ydata = [ll.get_ydata() for ll in current_axis.get_lines()]
-                ymin = self._get_min(ydata, absolute_minimum=0.)
-                current_axis.set_yscale('symlog', linthreshy=pow(10, np.floor(np.log10(ymin))))
-                if self._get_min(ydata) > 0:
-                    plot_config.y_range = (ymin, plot_config.y_range[1])
-            else:
-                current_axis.set_yscale('linear')
+    def set_window_title(self, title):
+        self.setWindowTitle(title)
 
-        current_axis.set_xlim(*plot_config.x_range)
-        current_axis.set_ylim(*plot_config.y_range)
+    @property
+    def title(self):
+        return self.canvas.figure.gca().get_title()
 
-        legend_config = plot_config.legend
-        for handle in legend_config.handles:
-            handle.set_label(legend_config.get_legend_text(handle))
+    @title.setter
+    def title(self, value):
+        self.canvas.figure.gca().set_title(value)
+        self.setWindowTitle(value)
 
-        # To show/hide errorbars we will just set the alpha to 0
-        if plot_config.errorbar is not None:
-            self._set_errorbars_shown_state(plot_config.errorbar)
+    @property
+    def x_label(self):
+        return self.canvas.figure.gca().get_xlabel()
 
-        # The legend must be set after hiding/showing the error bars so the errorbars on the legend are in sync with
-        # the plot (in terms of having/not having errorbars)
-        if legend_config.visible:
-            current_axis.legend()
-        else:
-            if current_axis.legend_:
-                current_axis.legend_.remove()
-            current_axis.legend_ = None
+    @x_label.setter
+    def x_label(self, value):
+        self.canvas.figure.gca().set_xlabel(value)
 
-        self.canvas.draw()
+    @property
+    def y_label(self):
+        return self.canvas.figure.gca().get_ylabel()
 
-    def _set_legend_state(self, visible=True):
-        """Show legends if true, hide legends is visible is false"""
-        current_axes = self.canvas.figure.gca()
-        if visible:
-            current_axes.legend()
-        else:
-            if current_axes.legend_:
-                current_axes.legend_.remove()
-                current_axes.legend_ = None
+    @y_label.setter
+    def y_label(self, value):
+        self.canvas.figure.gca().set_ylabel(value)
 
-    def _toggle_legend(self):
-        current_axes = self.canvas.figure.gca()
-        if not list(current_axes._get_legend_handles()):
-            return  # Legends are not appplicable to this plot
-        current_state = getattr(current_axes, 'legend_') is not None
-        self._set_legend_state(not current_state)
-        self.canvas.draw()
+    @property
+    def x_range(self):
+        return self.canvas.figure.gca().get_xlim()
 
-    def _has_errorbars(self):
-        """True current axes has visible errorbars,
-         False if current axes has hidden errorbars
-         None if errorbars are not applicable"""
-        current_axis = self.canvas.figure.gca()
-        if not any(map(lambda x: isinstance(x, ErrorbarContainer),current_axis.containers)):
-            has_errorbars = None  # Error bars are not applicable to this plot and will not show up in the config
-        else:
-            # If all the error bars have alpha= 0 they are all transparent (hidden)
-            containers = filter(lambda x: isinstance(x, ErrorbarContainer), current_axis.containers)
-            line_components = map(lambda x:x.get_children(), containers)
-            # drop the first element of each container because it is the the actual line
-            errorbars = map(lambda x: x[1:] , line_components)
-            errorbars = chain(*errorbars)
-            alpha = map(lambda x: x.get_alpha(), errorbars)
-            # replace None with 1(None indicates default which is 1)
-            alpha = map(lambda x: x if x is not None else 1, alpha)
-            if sum(alpha) == 0:
-                has_errorbars = False
-            else:
-                has_errorbars = True
-        return has_errorbars
+    @x_range.setter
+    def x_range(self, value):
+        self.canvas.figure.gca().set_xlim(value)
 
-    def _set_errorbars_shown_state(self,state):
-        """Show errrorbar if state = 1, hide if state = 0"""
-        current_axis = self.canvas.figure.gca()
-        if state:
-            alpha = 1
-        else:
-            alpha = 0
-        for container in current_axis.containers:
-            if isinstance(container, ErrorbarContainer):
-                elements = container.get_children()
-                for i in range(len(elements)):
-                    # The first component is the actual line so we will not touch it
-                    if i != 0:
-                        elements[i].set_alpha(alpha)
+    @property
+    def y_range(self):
+        return self.canvas.figure.gca().get_ylim()
 
-    def _toggle_errorbars(self):
-        state = self._has_errorbars()
-        if state is None: # No errorbars in this plot
-            return
-        self._set_errorbars_shown_state(not state)
+    @y_range.setter
+    def y_range(self, value):
+        self.canvas.figure.gca().set_ylim(value)
 
-    def _get_plot_description(self):
-        current_axis = self.canvas.figure.gca()
-        title = current_axis.get_title()
-        xlabel = current_axis.get_xlabel()
-        ylabel = current_axis.get_ylabel()
-        x_range = current_axis.get_xlim()
-        y_range = current_axis.get_ylim()
+    @property
+    def x_grid(self):
+        return self._xgrid
 
-        if not current_axis.get_images():
-            colorbar_range = None, None
-            logarithmic = None
-            xlog = 'log' in current_axis.get_xscale()
-            ylog = 'log' in current_axis.get_yscale()
-        else:
-            mappable = current_axis.get_images()[0]
-            colorbar_range = mappable.get_clim()
-            norm = mappable.norm
-            logarithmic = isinstance(norm, colors.LogNorm)
-            xlog = None
-            ylog = None
+    @x_grid.setter
+    def x_grid(self, value):
+        self._xgrid = value
+        self.canvas.figure.gca().grid(value, axis='x')
 
-        # if a legend has been set to '' or has been hidden (by prefixing with '_)then it will be ignored by
-        # axes.get_legend_handles_labels()
-        # That is the reason for the use of the private function axes._get_legend_handles
-        # This code was written against the 1.5.1 version of matplotlib.
-        handles = list(current_axis._get_legend_handles())
-        labels = map(lambda x: x.get_label(), handles)
-        labels = list(labels)
-        if not handles:
-            legend = LegendDescriptor(applicable=False)
-        else:
-            visible = getattr(current_axis, 'legend_') is not None
-            legend = LegendDescriptor(visible=visible, handles=handles)
-        has_errorbars  = self._has_errorbars()
-        return PlotConfig(title=title, xlabel=xlabel, ylabel=ylabel, legend=legend,
-                          errorbars=has_errorbars,
-                          x_range=x_range, xlog=xlog,
-                          y_range=y_range, ylog=ylog,
-                          colorbar_range=colorbar_range,
-                          logarithmic=logarithmic)
+    @property
+    def y_grid(self):
+        return self._ygrid
+
+    @y_grid.setter
+    def y_grid(self, value):
+        self._ygrid = value
+        self.canvas.figure.gca().grid(value, axis='y')

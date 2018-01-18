@@ -1,10 +1,9 @@
+from mslice.util.qt import QtWidgets
 import mock
-import unittest
 from mock import patch
-import PyQt4
+import unittest
 
 from mslice.app.mainwindow import MainWindow
-from mslice.app.mainwindow_ui import Ui_MainWindow
 from mslice.presenters.powder_projection_presenter import PowderProjectionPresenter
 from mslice.presenters.workspace_manager_presenter import WorkspaceManagerPresenter
 from mslice.presenters.slice_plotter_presenter import SlicePlotterPresenter
@@ -25,6 +24,7 @@ slice_view = mock.create_autospec(SlicePlotterView)
 powder_view = mock.create_autospec(PowderView)
 cut_view = mock.create_autospec(CutView)
 workspace_view = mock.create_autospec(WorkspaceView)
+busy_label = mock.create_autospec(QtWidgets.QLabel)
 
 class AppTests(unittest.TestCase):
     def setUp(self):
@@ -47,17 +47,19 @@ class AppTests(unittest.TestCase):
         slice_view.get_presenter = mock.Mock(return_value=self.slice_presenter)
         powder_view.get_presenter = mock.Mock(return_value=self.powder_presenter)
         cut_view.get_presenter = mock.Mock(return_value=self.cut_presenter)
+        MainWindow.init_ui = mock.Mock()
 
-    def mock_setupUi(self, mock_setup):
-        self.wgtWorkspacemanager = workspace_view
-        self.wgtSlice = slice_view
-        self.wgtPowder = powder_view
-        self.wgtCut = cut_view
+    def mock_setup_Ui(self, mock_setup, mainwindow):
+        mainwindow.wgtWorkspacemanager = workspace_view
+        mainwindow.wgtSlice = slice_view
+        mainwindow.wgtPowder = powder_view
+        mainwindow.wgtCut = cut_view
+        mainwindow.busy_text = busy_label
         global mainview
         mainview = mock_setup
 
-    @patch.object(Ui_MainWindow, 'setupUi', mock_setupUi)
-    @patch.object(PyQt4.QtGui.QMainWindow, '__init__', lambda x: None)
+    @patch('mslice.app.mainwindow.load_ui', mock_setup_Ui)
+    @patch.object(QtWidgets.QMainWindow, '__init__', lambda x: None)
     def test_mainwindow(self):
         """Test the MainWindow initialises correctly"""
         MainWindow()

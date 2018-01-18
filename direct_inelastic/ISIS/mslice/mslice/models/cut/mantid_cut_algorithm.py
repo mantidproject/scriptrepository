@@ -1,4 +1,4 @@
-from math import floor
+from __future__ import (absolute_import, division, print_function)
 import numpy as np
 
 from mantid.simpleapi import BinMD
@@ -6,11 +6,12 @@ from mantid.api import MDNormalization
 from mantid.api import IMDEventWorkspace, IMDHistoWorkspace
 
 from .cut_algorithm import CutAlgorithm
+from mslice.models.alg_workspace_ops import AlgWorkspaceOps
 from mslice.models.workspacemanager.mantid_workspace_provider import MantidWorkspaceProvider
 from mslice.presenters.slice_plotter_presenter import Axis
 
 
-class MantidCutAlgorithm(CutAlgorithm):
+class MantidCutAlgorithm(AlgWorkspaceOps, CutAlgorithm):
     def __init__(self):
         self._workspace_provider = MantidWorkspaceProvider()
 
@@ -35,7 +36,8 @@ class MantidCutAlgorithm(CutAlgorithm):
 
         plot_data = self._num_events_normalized_array(cut)
         plot_data = plot_data.squeeze()
-        errors = np.sqrt(cut.getErrorSquaredArray())/cut.getNumEventsArray()
+        with np.errstate(invalid='ignore'):
+            errors = np.sqrt(cut.getErrorSquaredArray())/cut.getNumEventsArray()
         errors = errors.squeeze()
 
         x = np.linspace(cut_axis.start, cut_axis.end, plot_data.size)
@@ -69,14 +71,6 @@ class MantidCutAlgorithm(CutAlgorithm):
             self._normalize_workspace(cut)
         return cut
 
-    def get_available_axis(self, workspace):
-        if isinstance(workspace, str):
-            workspace = self._workspace_provider.get_workspace_handle(workspace)
-        dim_names = []
-        for i in range(workspace.getNumDims()):
-            dim_names.append(workspace.getDimension(i).getName())
-        return dim_names
-
     def get_other_axis(self, workspace, axis):
         all_axis = self.get_available_axis(workspace)
         all_axis.remove(axis.units)
@@ -99,8 +93,8 @@ class MantidCutAlgorithm(CutAlgorithm):
             except RuntimeError:
                 return False
             if algorithm.name() == 'BinMD':
-                if all(map(lambda x: not algorithm.getPropertyValue(x), empty_params))\
-                        and all(map(lambda x: algorithm.getPropertyValue(x), used_params)):
+                if all([not algorithm.getPropertyValue(x) for x in empty_params])\
+                        and all([algorithm.getPropertyValue(x) for x in used_params]):
                     return True
                 break
         return False
@@ -127,9 +121,18 @@ class MantidCutAlgorithm(CutAlgorithm):
         # The axis name is retreived from the workspace directly and not the binning string to avoid
         # adding/removing trailing spaces
         dim_name = cut_workspace.getDimension(0).getName()
-        cut_axis = Axis(dim_name, *map(float,cut_binning[1:]))
+        cut_axis = Axis(dim_name, *list(map(float,cut_binning[1:])))
         cut_axis.step = (cut_axis.end - cut_axis.start)/float(cut_binning[-1])
         return cut_axis, integration_range, is_norm
+
+    def set_saved_cut_parameters(self, workspace, axis, parameters):
+        self._workspace_provider.setCutParameters(workspace, axis, parameters)
+
+    def get_saved_cut_parameters(self, workspace, axis=None):
+        return self._workspace_provider.getCutParameters(workspace, axis)
+
+    def is_axis_saved(self, workspace, axis):
+        return self._workspace_provider.isAxisSaved(workspace, axis)
 
     def _num_events_normalized_array(self, workspace):
         assert isinstance(workspace, IMDHistoWorkspace)
@@ -169,30 +172,5 @@ class MantidCutAlgorithm(CutAlgorithm):
         workspace.setErrorSquaredArray(errors)
         workspace.setComment("Normalized By MSlice")
 
-    def _get_number_of_steps(self, axis):
-        return int(max(1, floor((axis.end - axis.start)/axis.step)))
-
     def _was_previously_normalized(self, workspace):
         return workspace.getComment() == "Normalized By MSlice"
-
-    def _fill_in_missing_input(self,axis,workspace):
-        dim = workspace.getDimensionIndexByName(axis.units)
-        dim = workspace.getDimension(dim)
-
-        if axis.start is None:
-            axis.start = dim.getMinimum()
-
-        if axis.end is None:
-            axis.end = dim.getMaximum()
-
-        if axis.step is None:
-            axis.step = (axis.end - axis.start)/100
-
-    def get_axis_range(self, workspace, dimension_name):
-        return tuple(self._workspace_provider.get_limits(workspace, dimension_name))
-
-    def set_workspace_provider(self, workspace_provider):
-        self._workspace_provider = workspace_provider
-
-    def getComment(self, workspace):
-        return self._workspace_provider.getComment(workspace)

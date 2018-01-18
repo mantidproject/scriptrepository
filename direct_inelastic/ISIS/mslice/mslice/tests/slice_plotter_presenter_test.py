@@ -1,3 +1,4 @@
+from __future__ import (absolute_import, division, print_function)
 import mock
 import unittest
 
@@ -89,7 +90,7 @@ class SlicePlotterPresenterTest(unittest.TestCase):
         self.slice_plotter.plot_slice.assert_called_with( selected_workspace, Axis( 'x', 0, 10, 1 ),
                                                           Axis('y', 2, 8, 3), int(smoothing),
                                                           float(intensity_start), float(intensity_end),
-                                                          norm_to_one, colourmap )
+                                                          norm_to_one, colourmap)
 
     def test_plot_slice_invalid__string_x_params_fail(self):
         self.slice_plotter_presenter = SlicePlotterPresenter( self.slice_view, self.slice_plotter )
@@ -299,6 +300,7 @@ class SlicePlotterPresenterTest(unittest.TestCase):
         self.slice_view.get_slice_colourmap.return_value = colourmap
         plot_info = ("plot_data", "boundaries", "colormap", "norm")
         self.slice_plotter.plot_slice = mock.Mock( return_value=plot_info )
+
         # Test empty workspace, multiple workspaces
         self.main_presenter.get_selected_workspaces.return_value = []
         self.slice_plotter_presenter.notify(Command.DisplaySlice)
@@ -358,10 +360,10 @@ class SlicePlotterPresenterTest(unittest.TestCase):
         presenter.register_master(self.main_presenter)
         # This unit test will verify that notifying cut presenter will cause the error to be cleared on the view.
         # The actual subsequent procedure will fail, however this irrelevant to this. Hence the try, except blocks
-        for command in filter(lambda x: x[0] != "_", dir(Command)):
+        for command in [x for x in dir(Command) if x[0] != "_"]:
             try:
                 presenter.notify(command)
-            except:
+            except ValueError:
                 pass
             self.slice_view.clear_displayed_error.assert_called()
             self.slice_view.reset_mock()

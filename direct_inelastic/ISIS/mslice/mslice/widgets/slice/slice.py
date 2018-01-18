@@ -3,30 +3,33 @@
 # -----------------------------------------------------------------------------
 # Imports
 # -----------------------------------------------------------------------------
-from PyQt4.QtGui import QWidget
-from PyQt4.QtCore import pyqtSignal
+from __future__ import (absolute_import, division, print_function)
 
-from mslice.models.slice.matplotlib_slice_plotter import MatplotlibSlicePlotter
+from mslice.util.qt.QtCore import Signal
+from mslice.util.qt.QtWidgets import QWidget
+
 from mslice.models.slice.mantid_slice_algorithm import MantidSliceAlgorithm
+from mslice.models.slice.matplotlib_slice_plotter import MatplotlibSlicePlotter
 from mslice.presenters.slice_plotter_presenter import SlicePlotterPresenter
+from mslice.util.qt import load_ui
 from mslice.views.slice_plotter_view import SlicePlotterView
 from .command import Command
-from .slice_ui import Ui_Form
 
 
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------
 
-class SliceWidget(QWidget, Ui_Form, SlicePlotterView):
-    error_occurred = pyqtSignal('QString')
+class SliceWidget(SlicePlotterView, QWidget):
+    error_occurred = Signal('QString')
+    busy = Signal(bool)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent=None, *args, **kwargs):
         """This Widget provides basic control over displaying slices. This widget is NOT USABLE without a main window
 
         The main window must implement MainView"""
-        super(SliceWidget, self).__init__(*args, **kwargs)
-        self.setupUi(self)
+        QWidget.__init__(self, parent, *args, **kwargs)
+        load_ui(__file__, 'slice.ui', self)
         self.btnSliceDisplay.clicked.connect(self._btn_clicked)
         self.display_errors_to_statusbar = True
         plotter = MatplotlibSlicePlotter(MantidSliceAlgorithm())
@@ -49,7 +52,8 @@ class SliceWidget(QWidget, Ui_Form, SlicePlotterView):
             try:
                 value = float(lineEdit.text())
             except ValueError:
-                return
+                value = 0
+                self._display_error('Invalid step parameter. Using default value.')
             if value == 0:
                 lineEdit.setText(str(self._minimumStep[idx]))
                 self._display_error('Setting step size to default.')

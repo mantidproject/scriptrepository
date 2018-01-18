@@ -3,26 +3,31 @@
 # -----------------------------------------------------------------------------
 # Imports
 # -----------------------------------------------------------------------------
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QWidget
+from __future__ import (absolute_import, division, print_function)
+
+from mslice.util.qt.QtCore import Signal
+from mslice.util.qt.QtWidgets import QWidget
 
 from mslice.models.cut.mantid_cut_algorithm import MantidCutAlgorithm
 from mslice.models.cut.matplotlib_cut_plotter import MatplotlibCutPlotter
 from mslice.presenters.cut_presenter import CutPresenter
+from mslice.util.qt import load_ui
 from mslice.views.cut_view import CutView
 from .command import Command
-from .cut_ui import Ui_Form
+
 
 # -----------------------------------------------------------------------------
 # Classes and functions
 # -----------------------------------------------------------------------------
 
-class CutWidget(QWidget, CutView, Ui_Form):
-    error_occurred = pyqtSignal('QString')
 
-    def __init__(self, *args, **kwargs):
-        super(CutWidget, self).__init__(*args, **kwargs)
-        self.setupUi(self)
+class CutWidget(CutView, QWidget):
+    error_occurred = Signal('QString')
+    busy = Signal(bool)
+
+    def __init__(self, parent=None, *args, **kwargs):
+        QWidget.__init__(self, parent, *args, **kwargs)
+        load_ui(__file__, 'cut.ui', self)
         self._command_lookup = {
             self.btnCutPlot: Command.Plot,
             self.btnCutPlotOver: Command.PlotOver,
@@ -31,9 +36,9 @@ class CutWidget(QWidget, CutView, Ui_Form):
         }
         for button in self._command_lookup.keys():
             button.clicked.connect(self._btn_clicked)
-        cut_alogrithm = MantidCutAlgorithm()
-        cut_plotter = MatplotlibCutPlotter(cut_alogrithm)
-        self._presenter = CutPresenter(self, cut_alogrithm, cut_plotter)
+        cut_algorithm = MantidCutAlgorithm()
+        cut_plotter = MatplotlibCutPlotter(cut_algorithm)
+        self._presenter = CutPresenter(self, cut_algorithm, cut_plotter)
         self.cmbCutAxis.currentIndexChanged.connect(self.axis_changed)
         self._minimumStep = None
         self.lneCutStep.editingFinished.connect(self._step_edited)
@@ -49,7 +54,8 @@ class CutWidget(QWidget, CutView, Ui_Form):
             try:
                 value = float(self.lneCutStep.text())
             except ValueError:
-                return
+                value = 0
+                self.error_invalid_cut_step_parameter()
             if value == 0:
                 self.lneCutStep.setText('%.5f' % (self._minimumStep))
                 self._display_error('Setting step size to default.')
@@ -110,6 +116,9 @@ class CutWidget(QWidget, CutView, Ui_Form):
     def set_minimum_step(self, value):
         self._minimumStep = value
 
+    def get_minimum_step(self):
+        return self._minimumStep
+
     def populate_cut_axis_options(self, options):
         self.cmbCutAxis.blockSignals(True)
         self.cmbCutAxis.clear()
@@ -132,13 +141,25 @@ class CutWidget(QWidget, CutView, Ui_Form):
             self.lneCutIntegrationEnd.setText(integration_end)
 
     def clear_input_fields(self, **kwargs):
-        if 'keep_axes' not in kwargs.keys() or not kwargs['keep_axes']:
+        if 'keep_axes' not in kwargs or not kwargs['keep_axes']:
             self.populate_cut_axis_options([])
         self.populate_cut_params("", "", "")
         self.populate_integration_params("", "")
         self.lneCutIntegrationWidth.setText("")
         self.lneCutSmoothing.setText("")
         self.rdoCutNormToOne.setChecked(0)
+
+    def is_fields_cleared(self):
+        current_fields = self.get_input_fields()
+        cleared_fields = {'cut_parameters': ['', '', ''],
+                          'integration_range': ['', ''],
+                          'integration_width': '',
+                          'smoothing': '',
+                          'normtounity': False}
+        for k in cleared_fields:
+            if current_fields[k] != cleared_fields[k]:
+                return False
+        return True
 
     def populate_input_fields(self, saved_input):
         self.populate_cut_params(*saved_input['cut_parameters'])
@@ -226,6 +247,9 @@ class CutWidget(QWidget, CutView, Ui_Form):
 
     def error_invalid_cut_axis_parameters(self):
         self._display_error("Invalid cut axis parameters")
+
+    def error_invalid_cut_step_parameter(self):
+        self._display_error("Invalid cut step parameter. Using default.")
 
     def error_invalid_integration_parameters(self):
         self._display_error("Invalid parameters for integration")

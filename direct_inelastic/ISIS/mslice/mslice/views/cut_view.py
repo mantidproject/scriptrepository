@@ -2,6 +2,7 @@
 
 class CutView:
     error_occurred = None
+    busy = None
 
     def get_cut_axis(self):
         pass
@@ -45,6 +46,9 @@ class CutView:
     def set_minimum_step(self, value):
         pass
 
+    def get_minimum_step(self):
+        pass
+
     def error_select_a_workspace(self):
         pass
 
@@ -61,6 +65,9 @@ class CutView:
         pass
 
     def error_current_selection_invalid(self):
+        pass
+
+    def error_invalid_cut_step_parameter(self):
         pass
 
     def populate_cut_axis_options(self,options):
@@ -91,6 +98,9 @@ class CutView:
         pass
 
     def clear_input_fields(self, **kwargs):
+        pass
+
+    def is_fields_cleared(self):
         pass
 
     def clear_displayed_error(self):
