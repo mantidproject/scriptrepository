@@ -17,11 +17,11 @@ class FracTwoExp(IFunction1D):
   def function1D(self, x):
         # Access current values during the fit
         A0 = self.getParameterValue("A0")
-        A = self.getParameterValue("A")
+        Af = self.getParameterValue("Af")
         lambda1 = self.getParameterValue("lambda1")
         lambda2 = self.getParameterValue("lambda2")
         Abg= self.getParameterValue("Abg")
 
-        return Af*alpha*numpy.exp(-lambda1*x)+A0*(A0-Af)*numpy.exp(-lambda1*x)+Abg
+        return A0*(Af*numpy.exp(-lambda1*x)+(1-Af)*numpy.exp(-lambda2*x))+Abg
 
 FunctionFactory.subscribe(FracTwoExp)
