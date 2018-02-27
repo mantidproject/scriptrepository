@@ -608,7 +608,7 @@ class OpengenieMaxent(PythonAlgorithm):
 		fperchan=1./(RUNDATA_res*float(POINTS_npts)*2.)
 		fchan=np.linspace(0.0,MAXPAGE_n*fperchan/135.5e-4 ,MAXPAGE_n,endpoint=False)
 		# write results! Frequency spectra
-		outSpec=WorkspaceFactory.create("Workspace2D",NVectors=1,XLength=MAXPAGE_n,YLength=MAXPAGE_n)
+		outSpec=WorkspaceFactory.create(ws,NVectors=1,XLength=MAXPAGE_n,YLength=MAXPAGE_n)
 		outSpec.dataX(0)[:]=fchan
 		outSpec.dataY(0)[:]=MAXPAGE_f
 		self.setProperty("OutputWorkspace",outSpec)
