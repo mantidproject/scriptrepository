@@ -591,7 +591,7 @@ class OpengenieMaxent(PythonAlgorithm):
 		#
 		# debugging
 		if not self.getProperty("PhaseConvergenceTable").isDefault:
-			phaseconvWS=WorkspaceFactory.create("Workspace2D",NVectors=POINTS_ngroups,XLength=OuterIter+1,YLength=OuterIter+1)
+			phaseconvWS=WorkspaceFactory.create(ws,NVectors=POINTS_ngroups,XLength=OuterIter+1,YLength=OuterIter+1)
 			for i in range(POINTS_ngroups):
 				phaseconvWS.dataX(i)[0]=0.0
 				phaseconvWS.dataY(i)[0]=filePHASE[i]
