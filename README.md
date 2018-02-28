@@ -1,10 +1,10 @@
-scriptrepository
-================
+Script Repository
+=================
 
-This is a public repository of users scripts for Mantid
+This is a public repository of users scripts for Mantid.
 
-Directory structure
-================
+Directory Structure
+===================
 
 In order to try to keep the content in the repository navigable over time please follow the suggested directory structure
 
