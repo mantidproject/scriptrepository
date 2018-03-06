@@ -18,14 +18,14 @@ class MAPSReduction(ReductionWrapper):
        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
        # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
        #
-       prop['incident_energy'] = [610]
+       prop['incident_energy'] = [120]
        prop['energy_bins'] =[-0.1,0.05,0.9]
 
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] =24556 #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
-       prop['wb_run'] = 24550
+       prop['sample_run'] =25636 #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
+       prop['wb_run'] = 25545
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
        #                        # list
@@ -46,11 +46,14 @@ class MAPSReduction(ReductionWrapper):
            to work properly
       """
       prop = {}
-      prop['map_file'] = "4to1.map"
+      #prop['map_file'] = "4to1.map"
+      prop['map_file'] = "MAPS_rings.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
-      #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_161.msk"
+      #prop['hardmaskOnly']="4to1_164.msk" # disable diag, use only hard mask
+      prop['hard_mask_file'] = "4to1_171.msk"
+      prop['run_diagnostics'] = True
       prop['bkgd_range'] = [15000,19000]
+      prop['normalise_method']='current'
 
       prop['monovan_lo_frac'] = -0.5 # default is -0.6
       #prop['monovan_hi_frac'] = 0.7 # default is 0.7, no need to change
@@ -180,7 +183,7 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_ru
                   continue
         if key == 'wait_for_file':
             rd.wait_for_file = kwargs['wait_for_file']
-             continue
+            continue
         setattr(prop_man,key,val)
     #
     if not filename_present: # clear previous filename which may stuck in modules and does not allow
