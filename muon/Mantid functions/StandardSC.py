@@ -14,8 +14,8 @@ class StandardSC(IFunction1D):
         self.declareParameter("phi", 0.0)
         self.declareParameter("Abg", 0.1)
  
-  def getOmega(self,field):
-       return field*0.1355
+  def getfreq(self,field):
+       return (field*0.1355)/(2.0*3.1415927)
  
   def function1D(self, xvals):
         # Access current values during the fit
@@ -23,9 +23,9 @@ class StandardSC(IFunction1D):
         sigma = self.getParameterValue("sigma")
         field = self.getParameterValue("field")
         phi= self.getParameterValue("phi")
-        omega = self.getOmega(field)
+        freq = self.getfreq(field)
         Abg = self.getParameterValue("Abg")
 
-        return A0*numpy.exp(-sigma*sigma*xvals*xvals/2.)*numpy.cos(omega*xvals+phi)+Abg*numpy.cos(omega*xvals+phi)
+        return A0*numpy.exp(-sigma*sigma*xvals*xvals/2.)*numpy.cos(2.0*3.1415927*freq*xvals+phi)+Abg*numpy.cos(2.0*3.1415927*freq*xvals+phi)
 
 FunctionFactory.subscribe(StandardSC)
