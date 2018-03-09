@@ -1,0 +1,64 @@
+from __future__ import (absolute_import, division, print_function)
+import numpy as np
+import os
+from muesr.i_o import load_sample
+from muesr.engines.clfc import locfield
+from muesr.core import Sample
+from muesr.engines.clfc import find_largest_sphere
+from muesr.i_o import load_cif 
+from muesr.utilities.ms import mago_add 
+import matplotlib.pyplot as P
+
+
+np.set_printoptions(suppress=True,precision=4)
+head,tail = os.path.split(os.path.realpath(__file__))
+print("working from "+head)
+
+def add_muon_points(smp):
+     smp.add_muon([0.5,0.0,0.0]) # Agreed experimentally
+     #smp.add_muon([0.5,0.0,0.25])
+     #smp.add_muon([0.65,0.84,0.0])
+     #smp.add_muon([0.69,0.31,0.0])
+     #smp.add_muon([0.5 ,0.5 ,0.0])
+     
+
+#CoF2 a magnetic insulator\n",
+cof = Sample()
+load_cif(cof,os.path.join(head,"CoF2.cif"))
+add_muon_points(cof)
+
+
+#magnetic moment from ( DOI:10.1103/PhysRevB.87.121108) and (DOI:https://doi.org/10.1103/PhysRevB.30.186) and https://doi.org/10.1103/PhysRevB.69.014417\n",
+cof.new_mm()
+cof.mm.k=np.array([0.0,0.0,1.0])
+cof.mm.fc= np.array([[0.0+0.j, 0.0+0.j, 2.6+0.j],[0.0+0.j, 0.0+0.j, -2.6+0.j], 
+                              [0.0+0.j, 0.0+0.j, 0.0+0.j],[0.0+0.j, 0.0+0.j,  0.0+0.j],
+                              [0.0+0.j, 0.0+0.j, 0.0+0.j],[0.0+0.j, 0.0+0.j,  0.0+0.j] ])
+
+   
+radius=find_largest_sphere(cof,[100, 100, 100])
+
+
+npoints = 11
+n = np.logspace(0.53,2,npoints,dtype=int)
+k = -1
+B_dip = np.zeros(npoints)
+R = np.zeros(npoints)
+for m in n:
+     k += 1
+     radius=find_largest_sphere(cof,[m,m,m])
+     r=locfield(cof, 's', [m, m, m] ,radius) #
+     R[k] = radius
+     B_dip[k] =np.linalg.norm(r[0].D,axis=0)
+fig,ax = P.subplots()
+ax.plot(R,B_dip,'bo',label='sum')
+ax.plot(R,R-R+0.265,'b--',label='exp')
+ax1 = ax.twinx()
+ax.set_xlabel('R')
+ax.set_ylabel(r'$B_d$  [T]')
+ax1.plot(R,n,'rd')
+ax1.set_ylabel('m (sites per cube edge)')
+ax.legend(loc=9)
+P.show()
+#Experimental results at site 1, Octahedral site is 2650 Gauss from (DOI:https://doi.org/10.1103/PhysRevB.30.186)
+
