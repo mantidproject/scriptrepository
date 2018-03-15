@@ -47,14 +47,14 @@ la2cuo4.mm.desc = 'stripe along b with k = 0'
 radius=find_largest_sphere(la2cuo4,[100, 100, 100])
 print("Radius: ", radius)
 
-print("Expected answer: [ 0.0035 -0.039  -0.0131] B_dip = 0.04127550110183053")
+print("Expected answer: [ 0.0035 -0.039  -0.0131] B_dip = 0.04127550110183053 T")
 
 
-show_structure(la2cuo4)
+#show_structure(la2cuo4,visualizationTool='V')
 la2cuo4.current_mm_idx=0
 r=locfield(la2cuo4, 's', [100, 100, 100] ,radius)
 for v in r:
-   print ("Calculated ",v.D, 'B_dip =',np.linalg.norm(v.D,axis=0))
+   print ("Calculated ",v.D, 'B_dip =',np.linalg.norm(v.D,axis=0),'T')
    # save_sample(la2cuo4,path+"La2CuO4-stripe-as-fm.yaml")
    #------------------------------------------------------------------------------------------------------------  
    #Experimental internal field at the muon B_dip+B_contact in range of 400-430 G.
