@@ -6,7 +6,7 @@ from muesr.engines.clfc import locfield
 from muesr.core import Sample
 from muesr.engines.clfc import find_largest_sphere
 from muesr.i_o import load_cif 
-from muesr.utilities.ms import mago_add 
+from muesr.utilities import mago_add, show_structure
 import matplotlib.pyplot as P
 
 
@@ -26,19 +26,28 @@ def add_muon_points(smp):
 cof = Sample()
 load_cif(cof,os.path.join(head,"CoF2.cif"))
 add_muon_points(cof)
-
+# compare your structure with CoF2.png from https://doi.org/10.1103/PhysRevB.30.186
 
 #magnetic moment from ( DOI:10.1103/PhysRevB.87.121108) and (DOI:https://doi.org/10.1103/PhysRevB.30.186) and https://doi.org/10.1103/PhysRevB.69.014417\n",
 cof.new_mm()
 cof.mm.k=np.array([0.0,0.0,1.0])
+# according to CoF2.cif (setting with a,b equal, c shorter, type cif to check)
+# H-M P4_2/mnm group 136, six atoms in the cell, in this order
+# Co at 0.00000 0.00000 0.00000 (2b site)  
+# the symmetry replica is generated at 0.5000 0.5000 0.5000
+# http://www.cryst.ehu.es/cgi-bin/cryst/programs/nph-normsets?&norgens=&gnum=136 
+# F at 0.30600 0.30600 0.00000  (4f site)
+# the symmetry replicas are generated at 1--x 1-x 0, 0.5+x 0.5-x, 0.5, 0.5-x,0.5+x, 0.5
 cof.mm.fc= np.array([[0.0+0.j, 0.0+0.j, 2.6+0.j],[0.0+0.j, 0.0+0.j, -2.6+0.j], 
                               [0.0+0.j, 0.0+0.j, 0.0+0.j],[0.0+0.j, 0.0+0.j,  0.0+0.j],
                               [0.0+0.j, 0.0+0.j, 0.0+0.j],[0.0+0.j, 0.0+0.j,  0.0+0.j] ])
 
-   
-radius=find_largest_sphere(cof,[100, 100, 100])
+#show_structure(cof,visualizationTool='V')  # show_structure(cof,supercell=[1,1,2],visualizationTool='V')
+n=18
 
-
+radius=find_largest_sphere(cof,[n,n,n]) 
+B_dip = np.linalg.norm(locfield(cof, 's', [n,n,n] ,radius)[0].D,axis=0)
+print('R = {:.1f}, B_dip = {:.4f} T'.format(radius,B_dip))
 npoints = 11
 n = np.logspace(0.53,2,npoints,dtype=int)
 k = -1
