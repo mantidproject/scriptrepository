@@ -50,7 +50,7 @@ print("Radius: ", radius)
 print("Expected answer: [ 0.0035 -0.039  -0.0131] B_dip = 0.04127550110183053 T")
 
 
-#show_structure(la2cuo4,visualizationTool='V')
+show_structure(la2cuo4,visualizationTool='V')
 la2cuo4.current_mm_idx=0
 r=locfield(la2cuo4, 's', [100, 100, 100] ,radius)
 for v in r:
