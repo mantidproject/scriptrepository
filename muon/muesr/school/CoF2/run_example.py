@@ -42,7 +42,7 @@ cof.mm.fc= np.array([[0.0+0.j, 0.0+0.j, 2.6+0.j],[0.0+0.j, 0.0+0.j, -2.6+0.j],
                               [0.0+0.j, 0.0+0.j, 0.0+0.j],[0.0+0.j, 0.0+0.j,  0.0+0.j],
                               [0.0+0.j, 0.0+0.j, 0.0+0.j],[0.0+0.j, 0.0+0.j,  0.0+0.j] ])
 
-#show_structure(cof,visualizationTool='V')  # show_structure(cof,supercell=[1,1,2],visualizationTool='V')
+show_structure(cof,visualizationTool='V')  # show_structure(cof,supercell=[1,1,2],visualizationTool='V')
 n=18
 
 radius=find_largest_sphere(cof,[n,n,n]) 
