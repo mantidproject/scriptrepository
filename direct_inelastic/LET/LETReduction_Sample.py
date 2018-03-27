@@ -55,7 +55,7 @@ class LETReduction(ReductionWrapper):
       prop['det_cal_file'] = 'det_corrected_cycle153.dat'
       prop['bleed'] = False
       prop['norm_method']='current'
-      prop['detector_van_range']=[4.8,5.2]
+      prop['detector_van_range']=[4.5,5.5]
       prop['background_range'] = [92000,98000] # TOF range for the calculating flat background
       prop['hardmaskOnly']='hard_2015_1_9Tmagnet_0to90.msk' # Use diag (hardmaskPlus option) to enhance hard masks
       prop['check_background']=False
