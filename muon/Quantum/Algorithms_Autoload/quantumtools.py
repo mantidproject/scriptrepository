@@ -1,17 +1,18 @@
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
-## Version 1.02, December 2015
+## Version 1.04, August 2018
 import numpy
 import math
-import time
-from mantid.api import *
-from mantid.kernel import *
-from mantid.simpleapi import *
-from collections import Counter
-import re
+#import time
+#from mantid.api import *
+#from mantid.kernel import *
+#from mantid.simpleapi import *
+#from collections import Counter
+#import re
 import numbers
 import bisect
 numpy.set_printoptions(linewidth=100)
+# defer importing CrystalField until/if it is needed
 
 def normalised(vec):
 	# intended for 3 element 1d vectors
@@ -92,6 +93,14 @@ def AxialHFT(A,D,axis):
 	axisn=normalised(axis)
 	rr=numpy.outer(axisn,axisn)
 	return numpy.identity(3)*(A-D/2)+rr*(D*3/2)
+
+def NonAxialHFT(A1,A2,A3,axis1,axis2):
+	# generate nonaxial tensor. "axes" need not be normalised
+	xyz1=normalised(axis1)
+	xyz3=normalised(numpy.cross(axis1,axis2))
+	xyz2=normalised(numpy.cross(xyz3,axis1))
+	return A1*numpy.outer(xyz1,xyz1)+A2*numpy.outer(xyz2,xyz2)+A3*numpy.outer(xyz3,xyz3)      
+
 
 def addHyperfine(Ham,spin1,spin2,A):
 	# Ham=hamiltonian
@@ -175,7 +184,7 @@ def addDipolar(Ham,spin1,spin2,r1,gamma1,r2,gamma2):
 	#print t3
 	#print "Ham="
 	#print Ham
-	Ham[...]=Ham[...]+Dmag*(t0-3*t3)
+	Ham[...]=Ham[...]+Dmag*(t0-3*t3) # WARNING doesn't cope with anisotropic g-values (yet)
 	#print "now Ham="
 	#print Ham
 	#print "implemented"
@@ -184,6 +193,46 @@ def addQuadrupole(Ham,spin,nutensor):
 	# tensor can use same algorithm as HFC.. maybe with scaling or offset?
 	addHyperfine(Ham,spin,spin,nutensor)
 	
+def addSmallHam(Ham,spin,smallHam):
+	# smallHam for one spin only. Assume spin (z) runs from +J to -J as usual
+	N=spin.shape[1]
+	ns=smallHam.shape[0]
+	# scan spin until next m_z value found -> m1
+	# m2=m1*ns
+	# mapping = (i/m1)%ns
+	# loop i
+	# loop js in range(ns)
+	# process [i,(i%m1)+js*m1+(i/m2)*m2] with [(i/m1)%ns, js]
+	m1=-1
+	for i in range(1,N):
+		if(spin[2,i,i] != spin[2,0,0]):
+			m1=i
+			break
+	if(m1<=0):
+		raise IndexError("Can't find m1")
+	m2=m1*ns
+	for i in range(N):
+		for js in range(ns):
+			Ham[i,(i%m1)+js*m1+(i/m2)*m2] += smallHam[(i/m1)%ns,js]
+
+def calcCFHam(J,terms,cache={}):
+	# crystal fields
+	# arb spin J (did know element earlier)
+	# dict of series of terms Bnn=value
+	# built in cache
+	key=(J,tuple(sorted(terms.items())))
+	if key in cache:
+		return cache[key]
+	else:
+		from CrystalField import CrystalField
+		meV_to_MHz=0.001*1.602E-19/6.654E-34/1.E6
+		cfobj=CrystalField('S'+str((J-1)/2.0), 'C1',**terms)
+		y=cfobj.getHamiltonian()*meV_to_MHz
+		if(len(cache)>100):
+			cache.clear()
+		cache[key]=y
+		return y
+
 def createInitialDensMat(spin,polvec):
 	# fully polarised spin-1/2 in direction polvec, others unpolarised
 	# special case "powder" if polvec=None?
@@ -211,6 +260,59 @@ def createDetectorOp(spin,polvec):
 	# matching special case "powder"?
 	rho=numpy.tensordot(spin,normalised(polvec),axes=[[0],[0]])
 	return rho
+
+def BoltzmannDensityMatrix(Ham,kT,spin=None):
+	# generate smaller Hamiltonian with one spin excluded (if required)
+	# solve Ham
+	# populate levels according to Boltzmann stats (temperature=kT)
+	# return to original basis states
+	# expand to original size (if some removed)
+	if(spin is not None):
+		N=spin.shape[-1]
+		m1=-1
+		for i in range(1,N):
+			if(spin[2,i,i] != spin[2,0,0]):
+				m1=i
+				break
+		if(m1<=0):
+			raise IndexError("Can't find m1")
+		for i in range(m1,N,m1):
+			if(spin[2,i,i]==spin[2,0,0]):
+				m2=i
+				break
+		else:
+			m2=N
+		ns=m2/m1
+		N2=N/ns
+		#print "sizes: N=",N,"m1=",m1,"m2=",m2,"ns=",ns,"N2=",N2
+		# subset indices (one state of spin):
+		subset=numpy.zeros([N2],dtype=int)
+		for k in range(N/m2):
+			subset[k*m1:(k+1)*m1]=range(k*m2,k*m2+m1,1)
+		#print "subset=",subset
+		newHam=numpy.zeros([N2,N2],dtype=complex)
+		for k in range(ns):
+			newHam += Ham[numpy.ix_(subset+k*m1,subset+k*m1)]
+		cutHam=newHam/ns
+	else:
+		cutHam=Ham
+	egval,evec=numpy.linalg.eigh(cutHam)
+	evecstar=numpy.conj(evec)
+	ground=numpy.amin(egval)
+	eval2=egval-ground # have lowest state at E=0 to avoid exponential overflows with low T and large splittings (crystal field etc)
+	rpop=numpy.exp(-eval2/kT)
+	pnorm=numpy.sum(rpop)
+	rho0=numpy.diag(rpop/pnorm) # in eigenstates
+	# transform rho back to original basis states
+	rho1a=numpy.dot(evec,rho0) # start[j,k]*evec[k.l]
+	rho1=numpy.tensordot(rho1a,evecstar,(1,1) )
+	if(spin is not None):
+		fullRho=numpy.zeros_like(Ham)
+		for k in range(ns):
+			fullRho[numpy.ix_(subset+k*m1,subset+k*m1)] += rho1
+		return fullRho/ns
+	else:
+		return rho1
 
 def solveDensityMat(Ham,start,detect,timeend=float("Inf"),tzeros=None):
 	# diagonalise Ham
@@ -481,6 +583,13 @@ def ConvolveTimeResolutionListed(omega,ccos,csin,funcs):
 			af1=(3/so**3)*(numpy.sin(so)-so*numpy.cos(so))
 			af2=1-so**2/10+so**4/280-so**6/15120 # + ... series expansion for omega*sigma ~ 0
 			af=numpy.where(numpy.abs(so)>1.E-3,af1,af2)
+		elif(code=="p3"):
+			# parabolic, cubed (empirical ISIS pulse shape)
+			# f(t)=const*(1-(t/tau)^2)^3 from -tau to +tau
+			so=sigma*omega
+			af1= 105.0*(3.0*(5.0-2.0*so**2)*numpy.sin(so) + so*(so**2-15.0)*numpy.cos(so))/so**7
+			af2 = 1.0 -1.0/18.0*(so**2) # +...
+			af=numpy.where(numpy.abs(so)>1.E-1,af1,af2)
 		elif(code=="c"):
 			# half Cosine
 			# f(t)=(1/tau) cos(t/tau) from -tau*pi/2 to tau*pi/2
@@ -497,6 +606,22 @@ def ConvolveTimeResolutionListed(omega,ccos,csin,funcs):
 			# f(t)=1/tau *exp(-t/tau) from 0 to +inf
 			af=1./(1+sigma**2*omega**2)
 			afc=-af*sigma*omega
+		elif(code=="e0"):
+			# exponential tail, time offset to allow for calibrated t0
+			# f(t)=1/tau *exp(-t/tau) from -tau to +inf
+			so=omega*sigma
+			cso=numpy.cos(so)
+			sso=numpy.sin(so)
+			so21=so**2+1
+			af=(cso + so*sso)/so21
+			afc=-(so*cso - sso)/so21
+		elif(code=="t"):
+			# simple time offset, for fitting data where t0 is not well defined (+ means muons arrive later than expected)
+			so=omega*sigma
+			af=numpy.cos(so)
+			afc=-numpy.sin(so)
+		else:
+			raise Exception("Pulse width code "+code+" not known")
 		if(afc is None):
 			ccos[:]=ccos*af
 			csin[:]=csin*af
@@ -526,6 +651,15 @@ def ConvolveTimeResDynListed(omega,ccossin,funcs):
 			# f(t)=(1/tau/sqrt2pi) exp(-(t/tau)^2/2) from -inf to +inf
 			af=numpy.exp((omega*sigma)**2/2)
 			# warning, diverges for fast relaxing components unless t is large! Need cutoff?
+		#elif(code=="gt"):
+			# Gaussian, truncated at 2sigma
+			# integral of exp(-x^2/t^2/2) * exp(L*x) = -sqrt(pi/2)*tau*exp((Lambda^2*tau^2/2)*erf((Lambda*tau^2/2-x)/(tau*sqrt2))
+			# normalise by integral of exp(-x^2/t^2/2) = sqrt(pi/2)*tau*erf(x/sqrt2/tau)
+			# so exp(Lambda^2*tau^2/2)*(erf((Lambda*tau+2)/sqrt2)-erf((Lambda*tau-2)/sqrt2)) / erf(sqrt2)
+			# not implemented yet since numpy doesn't have erf() and cmath doesn't have erf either! Scipy does, if really necessary. Best to use erfc.
+			#sq2=math.sqrt(2.0)
+			#esq2=math.erf(sq2)
+			#af=numpy.exp((omega*sigma)**2/2)*(numpy.erf((omega*sigma+2)/sq2)-numpy.erf((omega*sigma-2)/sq2))/esq2
 		elif(code=="l"):
 			# Lorentzian
 			# f(t)=(1/pi)*tau^2/(t^2+tau^2) from -inf to +inf
@@ -541,6 +675,13 @@ def ConvolveTimeResDynListed(omega,ccossin,funcs):
 			af1=(3/so**3)*(numpy.cosh(so)*so-numpy.sinh(so)) # division 0^3 by 0^3 risk!
 			af2=1+so**2/10+so**4/280+so**6/15120 # + ... series expansion for omega*sigma ~ 0
 			af=numpy.where(numpy.abs(so)>1.E-3,af1,af2)
+		elif(code=="p3"):
+			# parabolic, cubed (empirical ISIS pulse shape)
+			# f(t)=const*(1-(t/tau)^2)^3 from -tau to +tau
+			so=sigma*omega/1.0j # for equivalence with non dynamic
+			af1= 105.0*(3.0*(5.0-2.0*so**2)*numpy.sin(so) + so*(so**2-15.0)*numpy.cos(so))/so**7
+			af2 = 1.0 -1.0/18.0*(so**2) # +...
+			af=numpy.where(numpy.abs(so)>1.E-1,af1,af2)
 		elif(code=="c"):
 			# half Cosine
 			# f(t)=(1/tau) cos(t/tau) from -tau*pi/2 to tau*pi/2
@@ -557,7 +698,29 @@ def ConvolveTimeResDynListed(omega,ccossin,funcs):
 			# exponential tail
 			# f(t)=1/tau *exp(-t/tau) from 0 to +inf
 			af=1./(1+sigma*omega) # only for slow relaxation omega*Re(sigma)<1
+		elif(code=="e0"):
+			# exponential tail, time offset to allow for calibrated t0
+			# f(t)=1/tau *exp(-t/tau) from -sigma to +inf
+			af=numpy.exp(omega*sigma)/(1+sigma*omega) # only for slow relaxation omega*Re(sigma)<1
+		elif(code=="et"):
+			# exponential tail, truncated at 2sigma
+			# integral exp(-t/sigma)*exp(-t*omega)=sigma/(sigma*omega+1)*(1-exp(-2*(omega*sigma+1)))
+			# normalise, integral exp(-t/sigma) = sigma*(1-exp(-2))
+			# f(t)=1/tau *exp(-t/tau) from 0 to +inf
+			so1=1.0+sigma*omega
+			em2=1.0-math.exp(-2.0)
+			af=(1-numpy.exp(-2*so1))/so1/em2
+			# limiting case if 1-sigma*omega = epsilon: (1-exp(2epsilon)/epsilon ~ 1-1+2eps-4eps^2../eps/(1+exp(-2))
+			#af2=(2.0-1.0*so1+so1**2/3.0-so1**3/12.0)/em2 # + ...
+			#af=numpy.where(numpy.abs(so1)>1E-3,af1,af2)
+			# in practice, errors unlikely!
+		elif(code=="t"):
+			# simple time offset, for fitting data where t0 is not well defined (+ means muons arrive later than expected)
+			so=omega*sigma
+			af=numpy.exp(-so)
 		ccossin[:]=ccossin*af
+	# squash terms that have amplitude Inf or NaN, hopefully very fast relaxing terms that vanish before start
+	ccossin[:]=numpy.nan_to_num(ccossin)
 
 # generator/iterator for regular orientation choices
 def uniformLF(N):
@@ -713,6 +876,67 @@ def randomPQ(N):
 		rr=math.sqrt(x4**2+y4**2+z4**2)
 		yield ([x,y,z],[x3/r,y3/r,z3/r],[x4/rr,y4/rr,z4/rr],[x3/r,y3/r,z3/r])
 
+def uniformPhi(N,detphi): # more general version combining uniformTF and uniformPQ with variable detector phase angle
+	cdp=math.cos(detphi)
+	sdp=math.sin(detphi)
+	for i in range(N):
+		# field axis
+		z=(2*i+0.5)/N-1
+		phi=i*2*math.pi/math.e
+		s=math.sqrt(1-z*z)
+		cp=math.cos(phi)
+		x=cp*s
+		sp=math.sin(phi)
+		y=sp*s
+		# rf and detector axis rotated faster round field axis (relative to phi2=0 pointing at z axis)
+		# "x" axis for rotating vector along tangent:
+		z2=s
+		x2=-cp*z
+		y2=-sp*z
+		# "y" axis
+		# z3=0
+		x3=sp
+		y3=-cp
+		phi2=i*2*math.pi*math.e
+		cp2=math.cos(phi2)
+		sp2=math.sin(phi2)
+		x4=x2*cp2+x3*sp2
+		y4=y2*cp2+y3*sp2
+		z4=z2*cp2
+		# 4th perp axis (note sign)
+		x5=y4*z-z4*y
+		y5=z4*x-x4*z
+		z5=x4*y-y4*x
+		yield ([x,y,z],[x4,y4,z4],[x4*cdp+x5*sdp,y4*cdp+y5*sdp,z4*cdp+z5*sdp],[x4,y4,z4])
+
+def randomPhi(N,detphi):
+	cdp=math.cos(detphi)
+	sdp=math.sin(detphi)
+	for i in range(N):
+		# first axis for B, beam
+		z=numpy.random.random()*2-1
+		phi=numpy.random.random()*2*math.pi
+		s=math.sqrt(1-z*z)
+		x=math.cos(phi)*s
+		y=math.sin(phi)*s
+		# second random axis
+		z2=numpy.random.random()*2-1
+		phi2=numpy.random.random()*2*math.pi
+		s2=math.sqrt(1-z2*z2)
+		x2=math.cos(phi2)*s2
+		y2=math.sin(phi2)*s2
+		# third axis perpendicular to 1st for RF, det
+		x3=(y*z2-z*y2)
+		y3=(z*x2-x*z2)
+		z3=(x*y2-y*x2)
+		r=math.sqrt(x3**2+y3**2+z3**2)
+		# 4th perp axis (note sign)
+		x4=y3*z-z3*y
+		y4=z3*x-x3*z
+		z4=x3*y-y3*x
+		rr=math.sqrt(x4**2+y4**2+z4**2)
+		yield ([x,y,z],[x3/r,y3/r,z3/r],[x3/r*cdp+x4/rr*sdp,y3/r*cdp+y4/rr*sdp,z3/r*cdp+z4/rr*sdp],[x3/r,y3/r,z3/r])
+
 def uniformTF(N):
 	for i in range(N):
 		# field axis as before
@@ -761,14 +985,49 @@ def randomTF(N):
 		r=math.sqrt(x3**2+y3**2+z3**2)
 		yield ([x,y,z],[x3/r,y3/r,z3/r])
 
-def NullIter(X):
-	# for single crystals
-	yield X
+def inhomogeneousLF(N):
+	for i in range(N):
+		# for modelling inhomogeneous fields for liquid ALCs
+		# field axis hard coded as [001], beam and detector parallel
+		# distribution for "RF"
+		# use with "bmag 1.5 0 0.001" for 1.5T +- 1mT field
+		z=(2*i+0.5)/N-1
+		phi=i*2*math.pi/math.e
+		s=math.sqrt(1-z*z)
+		cp=math.cos(phi)
+		x=cp*s
+		sp=math.sin(phi)
+		y=sp*s
+		yield ([0.0,0.0,1.0],[0.0,0.0,1.0],[0.0,0.0,1.0],[x,y,z])
 
-def ListIter(X):
-	# listed orientations such as all inequivalent [111] axes
-	for y in X:
-		yield y
+# following two no longer needed, use iter() built in function instead
+#def NullIter(X):
+#	# for single crystals
+#	yield X
+
+#def ListIter(X):
+#	# listed orientations such as all inequivalent [111] axes
+#	for y in X:
+#		yield y
+
+def GoniometerIterator(iter,mat):
+	# decorator, rotate all axes by "mat"
+	for r in iter:
+		if(len(r)==3):
+			yield numpy.dot(r,mat)
+		else:
+			yield [numpy.dot(x,mat) for x in r]
+			
+def CrystalIterator(iter,eqvs):
+	# decorator, rotate in turn by each of matrices corresponding to equivalent sites
+	# pass through inversion flag "True" or "False"
+	for r in iter:
+		if(len(r)==3):
+			for (mat,iflag,name) in eqvs:
+				yield (numpy.dot(r,mat),iflag)
+		else:
+			for (mat,iflag,name) in eqvs:
+				yield ([numpy.dot(x,mat) for x in r],iflag)
 
 def GenericOrient(which,N,M0,B0,R0):
 	# generic, selectable iterator
@@ -791,6 +1050,56 @@ def GenericOrient(which,N,M0,B0,R0):
 	else: # (which==0):
 		yield M0,B0
 
+
+def getCrystalEquivalents(spGrp, unCell, refpt, allowInversion=True):
+	# all matrices describing point group?
+	# pick a matrix/op for each equivalent point to refpt
+	# but only for that subset of refpt's which have inequivalent rotations
+	# i.e. eliminate the refpts which can be reached by translation alone from the already chosen set
+	# also eliminate those by inversion alone from another (if permitted, i.e. no local magnetic fields or pre polarised spins)
+	# if the equivalent point is at a centre of inversion then disregard above, return only non-inverted operations
+	# finally invert if necessary so all are RH (determinant=+1), return inverted flag.
+	refptV=numpy.array(refpt)
+	epts=[[refptV,numpy.eye(3),+1,'x,y,z']]
+	B=numpy.array(unCell.getB())
+	Bi=unCell.getBinv()
+	epsX=B[0,:] # numpy.dot(V3D(1,0,0),unCell.getB())
+	epsY=B[1,:] # numpy.dot(V3D(0,1,0),unCell.getB())
+	epsZ=B[2,:] # numpy.dot(V3D(0,0,1),unCell.getB())
+	ops=spGrp.getSymmetryOperations()
+	# get matrices anyway and identify translation or inversion ones
+	mats=[None]*len(ops)
+	transOps=[]
+	for i,op in enumerate(ops):
+		newpt=op.transformCoordinates(refptV)
+		newX=numpy.dot(op.transformCoordinates(refptV+epsX)-newpt,Bi)
+		newY=numpy.dot(op.transformCoordinates(refptV+epsY)-newpt,Bi)
+		newZ=numpy.dot(op.transformCoordinates(refptV+epsZ)-newpt,Bi)
+		mats[i]=numpy.array((newX,newY,newZ))
+		if(numpy.allclose(mats[i],numpy.eye(3))):
+			transOps.append(op,) # translation
+			print "translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i])
+		if(numpy.allclose(mats[i],numpy.eye(3)*-1)):
+			transOps.append(op) # inversion (+ translation)
+			print "translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i])
+
+	for i,op in enumerate(ops):
+		if(op.getIdentifier() != 'x,y,z'):
+			isinvop=numpy.linalg.det(mats[i])
+			newpt=op.transformCoordinates(refptV)
+			uniq=True
+			for old in epts:
+				if(allowInversion or (isinvop*old[2]>0)): # only consider equal-handed ops as equivalent?
+					for tt in transOps:
+						if uniq and numpy.allclose((numpy.array(tt.transformCoordinates(newpt)-old[0])+0.5) % 1.0, 0.5, rtol=0.0, atol=1.E-6):
+							uniq=False
+							old[3]=old[3]+" & "+op.getIdentifier()
+			if(uniq):
+				epts.append([newpt,mats[i],isinvop,op.getIdentifier()])
+				print "selected additional operation",op.getIdentifier(),"with det=",isinvop
+	
+	return [((m[1],False,m[3]) if numpy.linalg.det(m[1])>0 else (-m[1],True,"Inv "+m[3])) for m in epts]
+	
 def buildDynamicHam(Hams):
 	# assemble Hamiltonians (list/tuple = Hams) into Big Ham,for rho, consider taking lower triangle only and unrolling by rows
 	# A[0,0] A[0,1] A[0,2]
