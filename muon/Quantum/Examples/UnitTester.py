@@ -27,7 +27,7 @@ for f in files:
 				LoadNexus(Filename=os.path.join(directory,r),OutputWorkspace=rw)
 			QuantumTableDrivenSimulation(ModelTable=fw,Results=sw) # might throw an error, let it be printed
 			if(r in files):
-				cm=CompareWorkspaces(rw,sw,Tolerance=1.E-7)
+				cm=CompareWorkspaces(rw,sw,Tolerance=1.E-7,CheckSpectraMap=False)
 				if(cm[0]):
 					print "simulation output as expected"
 					nsims=nsims+1
@@ -73,7 +73,7 @@ for f in files:
 			Fit(Function=FnString,InputWorkspace=dw,WorkspaceIndex=0,Output=bn,MaxIterations=0,CreateOutput=True)
 			RenameWorkspace(bn+"_Workspace",gw)
 			if(mtd[dw].getNumberHistograms() > 1):
-				cm=CompareWorkspaces(dw,gw,Tolerance=1.E-7)
+				cm=CompareWorkspaces(dw,gw,Tolerance=1.E-7,CheckSpectraMap=False)
 				if(cm[0]):
 					print "Fit ran, initial guess curve as expected"
 					nfits=nfits+1
