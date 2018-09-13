@@ -104,10 +104,11 @@ def processHifiCam(filename):
 			EnableLogging=False)
 	
 		#print fplist
-		(YesNo, CostFn, CovarMat, Params,Workspace)=fplist	
+		(YesNo, CostFn, CovarMat, Params,Workspace,Function,CostFn2)=fplist	
 		(X0,Y0,XSig,YSig,Skew,Background,Intens,CostF2)=Params.column(1)
 		(eX0,eY0,eXSig,eYSig,eSkew,eBackground,eIntens,eCostF2)=Params.column(2)
-	except:
+	except Exception as e:
+		print "error fitting or processing? ",e
 		(X0,Y0,XSig,YSig,Skew,Background,Intens,CostF2)=[0.0]*8
 		(eX0,eY0,eXSig,eYSig,eSkew,eBackground,eIntens,eCostF2)=[0.0]*8
 		
@@ -142,7 +143,7 @@ DPARS["HIFI"]={"machine":"NDXHIFI","data":"//hifi/data/hifi%08d.nxs","tgbegin":0
 MACHINES0 = DPARS.keys()
 
 CPARS={} # how to get camera data
-CPARS["HIFI"]={"data":"//ndlt626/Users/Public/Documents/sxvh9usb/Tune Sept2016/IMG%d.fit","finder":getRecentFile,"processor":processHifiCam}
+CPARS["HIFI"]={"data":"//ndlt626/Users/Public/Documents/sxvh9usb/HIFI Sept2018/IMG%d.fit","finder":getRecentFile,"processor":processHifiCam}
 #CPARS["MUSR"]={finder=TakeMusrPic,processor=processMusrCam} # filenames specified by user
 CAMERAS0=CPARS.keys()
 
