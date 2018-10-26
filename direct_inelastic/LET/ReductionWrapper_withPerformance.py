@@ -17,6 +17,7 @@ import os
 import re
 import time
 import platform
+import subprocess
 from six import iteritems
 from abc import abstractmethod
 
@@ -75,7 +76,9 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
             def tick(self,fileID):
                 start_time = self._tick_time;
                 end_time  = time.time()
+                pv = subprocess.check_output(['free','-m'])
                 self.fh.write("*** ---> File {0} processed in {1:.2f}sec\n".format(fileID,end_time-start_time))
+                self.fh.write("***      {0}".format(fileID,pv))                
                 self.fh.flush()
                 self._tick_time = end_time
                 
@@ -89,7 +92,8 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
         host = platform.node()
         host = host.replace('.','_')
         host = host.replace('-','_')
-        log_file_name = "LET_Performance_node_{0}.txt".format(host)
+        inst  = config.getInstrument()
+        log_file_name = "{0}_performance_node_{1}.txt".format(inst.name(),host)
         if self.reducer.sum_runs:
 # --------### sum runs provided ------------------------------------###
             with time_logger(log_file_name) as log:
