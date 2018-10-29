@@ -115,15 +115,15 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
         host = host.replace('.','_')
         host = host.replace('-','_')
         inst  = config.getInstrument()
-		count = 1
-		inst_name = inst.name()
+        count = 1
+        inst_name = inst.name()
         log_file_name = "{0}_performance_{1}_test{2}.txt".format(inst_name,host,count)
         filepath = os.path.dirname(os.path.realpath(__file__))		
-		ff = os.path.join(filepath,log_file_name)
-		while os.path.isfile(ff):
-			count = count+1;
-			log_file_name = "{0}_performance_{1}_test{2}.txt".format(inst_name,host,count)
-			ff = os.path.join(filepath,log_file_name)
+        ff = os.path.join(filepath,log_file_name)
+        while os.path.isfile(ff):
+            count = count+1;
+            log_file_name = "{0}_performance_{1}_test{2}.txt".format(inst_name,host,count)
+            ff = os.path.join(filepath,log_file_name)
 			
         print (' ******************* storing performance data to file: ',log_file_name)
         if self.reducer.sum_runs:
