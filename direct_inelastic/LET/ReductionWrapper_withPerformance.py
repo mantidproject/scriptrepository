@@ -21,6 +21,7 @@ import subprocess
 from six import iteritems
 from abc import abstractmethod
 import resource
+import math
 
 # R0921 abstract class not referenced -- wrong, client references it.
 # pylint: disable=too-many-instance-attributes, R0921
@@ -89,11 +90,17 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
                 res_memory = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024)           
                 ch_memory = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss/(1024)
                 self.fh.write("*** ---> File {0} processed in {1:.2f}sec\n".format(fileID,end_time-start_time))                
-                self.fh.write("*** Self Memory: {0}Kb; Kids memory {1}Kb\n".format(res_memory,ch_memory))
-                pv = subprocess.check_output(['free','-m'])
-                pvs = pv.split('\n')                
-                self.fh.write("***      {0}\n".format(pvs[1]))
-                self.fh.write("***      {0}\n".format(pvs[2]))
+                self.fh.write("*** Self Memory: {0}Kb; Kids memory {1}Kb\n".format(math.ceil(res_memory),math.ceil(ch_memory)))
+                try:
+                    pv = subprocess.check_output(['free','-m'])
+                    pvs = pv.split('\n')                
+                    self.fh.write("***      {0}\n".format(pvs[1]))
+                    self.fh.write("***      {0}\n".format(pvs[2]))
+                except:
+                    #ClearCache(True,True,True,True,True,True,True)                    
+                    #self.fh.write("***      Can not launch subprocess to evaluate free memory. Clearing all Mantid Caches\n")
+                    self.fh.write("***      Can not launch subprocess to evaluate free memory.\n")
+                    
                 self.fh.flush()
                 self._tick_time = end_time
                 
