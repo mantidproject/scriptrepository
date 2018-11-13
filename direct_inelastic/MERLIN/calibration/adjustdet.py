@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import scipy
 from scipy.optimize import fmin
@@ -7,23 +8,44 @@ import itertools as iter
 
 
 #script to take fitted values and make adjustments to det_corr file
-def adjust_detector_MER(fit_res,det_corrfile):
+def adjust_detector_MER(fit_res,det_source_file):
+    # Inputs:
+    # fit_res --  the file produced by tubecalib.py file (in csv format)
+    # det_source_file --  the ASCII file containing calibration information from the previous cycle.
+    # Outputs: 
+    # The file with name det_source_file +'_corrected.dat' containing the calibration information
+    #
+    # both source fit_res file and det_corr_file should be located in the script directory.
+    #    
+    fit_res = os.path.basename(fit_res)
+    det_source_file  = os.path.basename(det_source_file)
+    run_dir = os.path.dirname(os.path.realpath(__file__))
+    fit_res = os.path.join(run_dir,fit_res)
+    full_det_source_file = os.path.join(run_dir,det_source_file )
+
+    finall_corr_file =   os.path.splitext(det_source_file)
+    finall_corr_file  = finall_corr_file[0]+'_corrected.dat'
+    finall_corr_file_fp = os.path.join(run_dir,finall_corr_file)
+    
     tub_fit = np.genfromtxt(fit_res,
-                                    names="col1, col2, col3, col4, col5, col6, col7, col8",
-                                    dtype = (int, float, float, float, float, float, float, float))
-    det = np.genfromtxt(det_corrfile,
+                                    names="Tube_id, tube_start, peak1, peak2, peak3, peak4, peak5, tube_end",
+                                    dtype = (int, float, float, float, float, float, float, float),
+                                    skip_header=True,delimiter=',')
+    det = np.genfromtxt(full_det_source_file,
                                     names="detno, offset, l2, code, 2theta, phi, w_x, w_y, w_z, f_x, f_y, f_z, a_x, a_y, a_z, det1, det2, det3, det4",
                                     skip_header=12,
                                     dtype =(int, float, float, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float))
-    fid = open('det_corr_mytest.dat','w')
+
     #take first 12 lines from original det_corr file and copy across into the new version
-    with open(det_corrfile) as myfile:
+    with open(full_det_source_file) as myfile:
         head = list(iter.islice(myfile,12))
+
+    fid = open(finall_corr_file_fp,'w')
     for item in head:
         fid.write(item)
     
     tube = det['detno']/10000
-    num_tubes = len(open(fit_res).readlines())
+    num_tubes = tub_fit.size
     degrad_conv = 180/np.pi
     
     tube_len_short = 1.234              #active length of short tubes
@@ -37,19 +59,19 @@ def adjust_detector_MER(fit_res,det_corrfile):
     true_pos = [-0.48, -0.21, -0.15, 0, 0.15, 0.28, 0.48]       #fractional positions of stripes taken from calibration bin
     true_pos = np.array(true_pos)*tube_len_long
     
-    for count in range(0,num_tubes):
-        tube_fix = tub_fit['col1'][count]
-        fit_par = [tub_fit['col2'][count],tub_fit['col3'][count],tub_fit['col4'][count],tub_fit['col5'][count],tub_fit['col6'][count],
-        tub_fit['col7'][count],tub_fit['col8'][count]]
+    for tub_num in range(0,num_tubes):
+        tube_id = tub_fit['Tube_id'][tub_num]
+        fit_par = [tub_fit['tube_start'][tub_num],tub_fit['peak1'][tub_num],tub_fit['peak2'][tub_num],tub_fit['peak3'][tub_num],tub_fit['peak4'][tub_num],
+        tub_fit['peak5'][tub_num],tub_fit['tube_end'][tub_num]]
 
-        if tube_fix/10==31:
+        if tube_id/10==31:
             tube_type=1             #short upper tube
-        elif tube_fix/10==32:
+        elif tube_id/10==32:
             tube_type=2             #short lower tube
         else:
             tube_type=0             #long tube
         
-        index = np.nonzero(tube==tube_fix)
+        index = np.nonzero(tube==tube_id)
         dist_old = det['l2'][index]
         th_old = det['2theta'][index]
         phi_old = det['phi'][index]
@@ -61,13 +83,13 @@ def adjust_detector_MER(fit_res,det_corrfile):
             true_pos = np.array(true_pos)*tube_len_long
             ideal_det_pos = -0.5*tube_len_long + 0.5*xbin_long + np.array(range(0,nDet))*xbin_long
         elif tube_type==1:
-            fit_par = [tub_fit['col6'][count],tub_fit['col7'][count],tub_fit['col8'][count]]
+            fit_par = [tub_fit['peak4'][tub_num],tub_fit['peak5'][tub_num],tub_fit['tube_end'][tub_num]]
             true_pos = [0.15, 0.28, 0.48]       #fractional positions of stripes taken from calibration bin
             true_pos = np.array(true_pos)*tube_len_long 
             fit_pos = high_short_tube_pos + ((np.array(fit_par))/512)*tube_len_short
             ideal_det_pos = high_short_tube_pos + 0.5*xbin_short + np.array(range(0,nDet))*xbin_short
         elif tube_type==2:
-            fit_par = [tub_fit['col2'][count],tub_fit['col3'][count],tub_fit['col4'][count]]
+            fit_par = [tub_fit['tube_start'][tub_num],tub_fit['peak1'][tub_num],tub_fit['peak2'][tub_num]]
             true_pos = [-0.48, -0.21, -0.15]       #fractional positions of stripes taken from calibration bin
             true_pos = np.array(true_pos)*tube_len_long
             fit_pos = low_short_tube_pos + ((np.array(fit_par))/512)*tube_len_short
@@ -75,9 +97,9 @@ def adjust_detector_MER(fit_res,det_corrfile):
         else:
             error('Adjust Detectors - Invalid argument')
         
-        print fit_par
-        print fit_pos
-        print true_pos
+        print 'Tube N',tub_num,'With ID: ',tube_id,' has peaks fitted at: ',fit_par
+        print 'True peaks positions: ',fit_pos
+        print 'Stripes positions: '  ,true_pos
         
         z_new = tube_correction(true_pos,fit_pos,ideal_det_pos)
                 
@@ -96,7 +118,12 @@ def adjust_detector_MER(fit_res,det_corrfile):
             .format(det['detno'][index][i], det['offset'][index][i], det['l2'][index][i], det['code'][index][i], det['2theta'][index][i], det['phi'][index][i], det['w_x'][index][i], det['w_y'][index][i], 
             det['w_z'][index][i],det['f_x'][index][i], det['f_y'][index][i], det['f_z'][index][i], det['a_x'][index][i], det['a_y'][index][i], det['a_z'][index][i], det['det1'][index][i], 
             det['det2'][index][i], det['det3'][index][i], det['det4'][index][i]))
-            
+    #------------------------------------------------------------------------------------
+    print ('*************************************************************')
+    print ('*** Detectors have been calibrated                        ***')    
+    print ('*** The name of the file with calibration information is: {0}'.format(finall_corr_file));
+    print ('*** The file is located in folder: {0}'.format(run_dir))
+    print ('*************************************************************')
     
 def mysph2cart(az,elev,r):
     z = r*np.sin(elev)
@@ -115,5 +142,10 @@ def tube_correction(true_pos,meas_pos,ideal_det_pos):
     z_new = np.poly1d(p)(ideal_det_pos)
     return z_new
 
-    
-adjust_detector_MER('results.dat','det_corr_174_process_5.dat')
+if __name__ == "__main__":    
+    # Inputs:
+   # 1 the file produced by tubecalib.py file (in csv format)
+   # 2 the file containing calibration information from the previous cycle.
+	adjust_detector_MER('calibratioon_res_doors-1_9.csv','det_corr_182_process_5.dat')
+    #Outputs:
+    # The procedure writes calibrated file with the name {2}_corrected.dat

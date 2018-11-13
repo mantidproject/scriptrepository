@@ -1,4 +1,8 @@
+# extra multiplier: measured transmission is lower; dividing by lower number, hence need to lowering the final result, i.e. divide by 1.05
+# radius apertures - done
 # attenuators
+# Errors: if trying to reduce time slice larger than the total time of the measurement: Error message & Stop
+
 
 import numpy as np
 
@@ -6,7 +10,6 @@ from mantid.api import MatrixWorkspaceProperty, IEventWorkspaceProperty, Propert
 from mantid.api import DataProcessorAlgorithm, AlgorithmFactory
 from mantid.api import AnalysisDataService, AlgorithmManager
 from mantid.kernel import Direction, FloatArrayProperty, FloatBoundedValidator, FloatArrayMandatoryValidator, Logger
-from mantid.api import IMaskWorkspace
 
 
 class SANSDataProcessor(DataProcessorAlgorithm):
@@ -140,19 +143,25 @@ class SANSDataProcessor(DataProcessorAlgorithm):
                              # This works only when transmission is True. Problems starts when it is not...
                              doc='transmission_fit')
 
-    def validateInputs(self):
+        self.declareProperty(MatrixWorkspaceProperty('OutputWorkspaceQ1dSumOfCounts', '', direction=Direction.Output),
+                             doc='determined by Q1D')
+        self.declareProperty(
+            MatrixWorkspaceProperty('OutputWorkspaceQ1dSumOfNormFactors', '', direction=Direction.Output),
+            doc='determined by Q1D')
+
+    def validateinputs(self):
         inputs = dict()
 
         ws_sam = self.getProperty("InputWorkspace").value
-        ws_samMsk = self.getProperty("InputMaskingWorkspace").value
+        ws_sammsk = self.getProperty("InputMaskingWorkspace").value
 
         ws_blk = self.getProperty("BlockedBeamWorkspace").value
         ws_emp = self.getProperty("EmptyBeamSpectrumShapeWorkspace").value
         ws_sen = self.getProperty("SensitivityCorrectionMatrix").value
 
-        ws_tranSam = self.getProperty("TransmissionWorkspace").value
-        ws_tranEmp = self.getProperty("TransmissionEmptyBeamWorkspace").value
-        ws_tranMsk = self.getProperty("TransmissionMaskingWorkspace").value
+        ws_transam = self.getProperty("TransmissionWorkspace").value
+        ws_tranemp = self.getProperty("TransmissionEmptyBeamWorkspace").value
+        ws_tranmsk = self.getProperty("TransmissionMaskingWorkspace").value
 
         scale = self.getProperty("ScalingFactor").value
         thickness = self.getProperty("SampleThickness").value
@@ -167,9 +176,12 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         elif not ws_sam.isHistogramData():
             inputs["InputWorkspace"] = "has to be a histogram"
 
-        if ws_samMsk:
-            isinstance(ws_samMsk, IMaskWorkspace)
-                       
+        if ws_sammsk:
+            if type(ws_sammsk).__name__ != 'MaskWorkspace':
+                inputs["InputMaskingWorkspace"] = "has to be a MaskWorkspace"
+            elif ws_samMsk.getNumberHistograms() != sam_histograms:
+                inputs["InputMaskingWorkspace"] = "must have same number of spectra as the InputWorkspace"
+
         if ws_blk:
             if not ws_blk.isHistogramData():
                 inputs["BlockedBeamWorkspace"] = "has to be a histogram"
@@ -189,20 +201,22 @@ class SANSDataProcessor(DataProcessorAlgorithm):
             elif ws_sen.getAxis(0).getUnit().symbol():
                 inputs["SensitivityCorrectionMatrix"] = "has to be unitless"
 
-        tran_histograms = ws_tranSam.getNumberHistograms()
+        tran_histograms = ws_transam.getNumberHistograms()
         if tran_histograms <= 0:
             inputs["TransmissionWorkspace"] = "hast to contain at least one spectrum"
-        elif not ws_tranSam.isHistogramData():
+        elif not ws_transam.isHistogramData():
             inputs["TransmissionWorkspace"] = "has to be a histogram"
 
-        if ws_tranEmp.getNumberHistograms() != tran_histograms:
+        if ws_tranemp.getNumberHistograms() != tran_histograms:
             inputs["TransmissionEmptyBeamWorkspace"] = "must have same number of spectra as the TransmissionWorkspace"
         elif not ws_tranEmp.isHistogramData():
             inputs["TransmissionEmptyBeamWorkspace"] = "has to be a histogram"
 
-        if ws_tranMsk:
-            isinstance(ws_tranMsk, IMaskWorkspace)
-              
+        if type(ws_tranmsk).__name__ != 'MaskWorkspace':
+            inputs["TransmissionMaskingWorkspace"] = "has to be a MaskWorkspace"
+        elif ws_tranmsk.getNumberHistograms() != sam_histograms:
+            inputs["TransmissionMaskingWorkspace"] = "must have same number of spectra as the TransmissionWorkspace"
+
         if scale <= 0.0:
             inputs["ScalingFactor"] = "has to be greater than zero"
 
@@ -223,15 +237,15 @@ class SANSDataProcessor(DataProcessorAlgorithm):
 
         # -- Get Arguments --
         ws_sam = self.getProperty("InputWorkspace").value
-        ws_samMsk = self.getProperty("InputMaskingWorkspace").value
+        ws_sammsk = self.getProperty("InputMaskingWorkspace").value
 
         ws_blk = self.getProperty("BlockedBeamWorkspace").value
         ws_emp = self.getProperty("EmptyBeamSpectrumShapeWorkspace").value
         ws_sen = self.getProperty("SensitivityCorrectionMatrix").value
 
-        ws_tranSam = self.getProperty("TransmissionWorkspace").value
-        ws_tranEmp = self.getProperty("TransmissionEmptyBeamWorkspace").value
-        ws_tranMsk = self.getProperty("TransmissionMaskingWorkspace").value
+        ws_transam = self.getProperty("TransmissionWorkspace").value
+        ws_tranemp = self.getProperty("TransmissionEmptyBeamWorkspace").value
+        ws_tranmsk = self.getProperty("TransmissionMaskingWorkspace").value
 
         scale = self.getProperty("ScalingFactor").value
         thickness = self.getProperty("SampleThickness").value
@@ -255,38 +269,38 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         reduce_2d = self.getProperty("reduce_2D").value
 
         # -- Masking --
-        if ws_samMsk:
-            self._apply_mask(ws_sam, ws_samMsk)
+        if ws_sammsk:
+            self._apply_mask(ws_sam, ws_sammsk)
 
-        if ws_tranMsk:
-            self._apply_mask(ws_tranSam, ws_tranMsk)
-            self._apply_mask(ws_tranEmp, ws_tranMsk)
+        if ws_tranmsk:
+            self._apply_mask(ws_transam, ws_tranmsk)
+            self._apply_mask(ws_tranemp, ws_tranmsk)
 
         # -- Convert to Wavelength --  Only for the External time mode - choppers
         if time_mode:
             ws_sam = self._convert_units(ws_sam, "Wavelength")
-            ws_tranSam = self._convert_units(ws_tranSam, "Wavelength")
-            ws_tranEmp = self._convert_units(ws_tranEmp, "Wavelength")
+            ws_transam = self._convert_units(ws_transam, "Wavelength")
+            ws_tranemp = self._convert_units(ws_tranemp, "Wavelength")
 
         # -- Transmission -- 
         # Intuitively one would think rebin for NVS data is not needed, but it does;
         # not perfect match in binning leads to error like "not matching intervals for calculate_transmission"
 
         ws_sam = self._rebin(ws_sam, binning_wavelength, preserveevents=False)
-        ws_tranSam = self._rebin(ws_tranSam, binning_wavelength_transm, preserveevents=False)
+        ws_transam = self._rebin(ws_transam, binning_wavelength_transm, preserveevents=False)
         
-        ws_tranEmp = self._rebin(ws_tranEmp, binning_wavelength_transm, preserveevents=False)
+        ws_tranemp = self._rebin(ws_tranemp, binning_wavelength_transm, preserveevents=False)
 
-        ws_tranroi = self._mask_to_roi(ws_tranMsk)
+        ws_tranroi = self._mask_to_roi(ws_tranmsk)
 
         self.sanslog.information("FitMethod " + fitmethod)
         self.sanslog.information("PolynomialOrder " + polynomialorder)
 
-        ws_tran = self._calculate_transmission(ws_tranSam, ws_tranEmp, ws_tranroi, fitmethod, polynomialorder,
+        ws_tran = self._calculate_transmission(ws_transam, ws_tranemp, ws_tranroi, fitmethod, polynomialorder,
                                                binning_wavelength_transm)
 
-        ws_tranemp_scale = self._get_frame_count(ws_tranEmp)
-        ws_transam_scale = self._get_frame_count(ws_tranSam)
+        ws_tranemp_scale = self._get_frame_count(ws_tranemp)
+        ws_transam_scale = self._get_frame_count(ws_transam)
 
         f = self._single_valued_ws(ws_tranemp_scale / ws_transam_scale)
         ws_tran = self._multiply(ws_tran, f)
@@ -302,7 +316,7 @@ class SANSDataProcessor(DataProcessorAlgorithm):
             ws_blk_scaling = self._single_valued_ws(ws_sam_time / ws_blk_time)
 
             # remove estimated blk counts from sample workspace        
-            self._apply_mask(ws_blk, ws_samMsk)  # masking blocked beam the same way as sample data
+            self._apply_mask(ws_blk, ws_sammsk)  # masking blocked beam the same way as sample data
             if time_mode:
                 ws_blk = self._convert_units(ws_blk, "Wavelength")
             ws_blk = self._rebin(ws_blk, binning_wavelength, preserveevents=False)
@@ -330,9 +344,8 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         ws_emp_time = self._get_frame_count(ws_emp)
         ws_sam_time = self._get_frame_count(ws_sam)
         scale_full = scale * (ws_emp_time / ws_sam_time)
-        # extra multiplier is needed because measured transmission is ~5% lower; we need to divide result by lower number, hence need to lowering the final result, i.e. divide by 1.05        
-        f = self._single_valued_ws(scale_full / (thickness*1.05))
-        
+        f = self._single_valued_ws(scale_full / thickness)
+
         if reduce_2d:
             q_max = binning_q[2]
             q_delta = binning_q[1]
@@ -470,10 +483,10 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         AnalysisDataService.remove("_ws")
         return alg.getProperty("DetectorList").value
 
-    def _calculate_transmission(self, ws_tranSam, ws_tranEmp, ws_tranroi, fitmethod, polynomialorder, binning):
+    def _calculate_transmission(self, ws_transam, ws_tranemp, ws_tranroi, fitmethod, polynomialorder, binning):
         alg = self.createChildAlgorithm("CalculateTransmission")
-        alg.setProperty("SampleRunWorkspace", ws_tranSam)
-        alg.setProperty("DirectRunWorkspace", ws_tranEmp)
+        alg.setProperty("SampleRunWorkspace", ws_transam)
+        alg.setProperty("DirectRunWorkspace", ws_tranemp)
         alg.setProperty("TransmissionROI", ws_tranroi)
         alg.setProperty("RebinParams", binning)
         alg.setProperty("FitMethod", fitmethod)  # new
@@ -482,10 +495,10 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         alg.execute()
         return alg.getProperty("OutputWorkspace").value
 
-    def _wide_angle_correction(self, ws_sam, ws_tranSam):
+    def _wide_angle_correction(self, ws_sam, ws_transam):
         alg = self.createChildAlgorithm("SANSWideAngleCorrection")
         alg.setProperty("SampleData", ws_sam)
-        alg.setProperty("TransmissionData", ws_tranSam)
+        alg.setProperty("TransmissionData", ws_transam)
         alg.execute()
         return alg.getProperty("OutputWorkspace").value
 
@@ -531,6 +544,7 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         alg.setProperty("SolidAngleWeighting", solidangleweighting)
         alg.setProperty("RadiusCut", radiuscut)
         alg.setProperty("WaveCut", wavecut)
+        alg.setProperty("OutputParts", True)
         alg.setProperty("ExtraLength", extralength)
         alg.setProperty("QResolution", qresolution)
         # transmission and beam shape correction
@@ -543,6 +557,9 @@ class SANSDataProcessor(DataProcessorAlgorithm):
         if pixeladj:
             alg.setProperty("PixelAdj", pixeladj)
         alg.execute()
+        self.setProperty("OutputWorkspaceQ1dSumOfCounts", alg.getProperty("SumOfCounts").value)
+        self.setProperty("OutputWorkspaceQ1dSumOfNormFactors", alg.getProperty("sumOfNormFactors").value)
+        # return result
         return alg.getProperty("OutputWorkspace").value
 
     def _qxy(self, ws_sam, q_max, q_delta, pixeladj, wavelengthadj, accountforgravity, solidangleweighting,

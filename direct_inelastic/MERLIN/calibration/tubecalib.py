@@ -15,7 +15,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
     Load(Filename='MER'+str(run)+'.raw', OutputWorkspace='w1')
     Rebin(InputWorkspace='w1', OutputWorkspace='w1', Params='1500,100,9000')
     mylen = len(args)
-    fid = open('results.dat','w')
+
     
     all_ids = []
     w1 = mtd['w1']
@@ -36,10 +36,12 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
     if mylen==0:
         doorstart = 1
         doorend = 9
+        cal_info = 'doors-1_9'
     if mylen==1:
         bank = args[0]
         doorstart = bank
         doorend = bank
+        cal_info = 'door-{0}'.format(bank)
     if mylen==2:
         bank = args[0]
         pack = args[1]
@@ -47,6 +49,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         doorend = bank
         packstart[bank-1] = pack
         packend[bank-1] = pack
+        cal_info = 'door-{0}_pack-{1}'.format(bank,pack)
     if mylen==3:
         bank = args[0]
         pack = args[1]
@@ -57,17 +60,22 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         packend[bank-1] = pack
         tubestart = tube
         tubeend = tube
+        cal_info = 'door-{0}_pack-{1}_tube-{2}'.format(bank,pack,tube)
         print doorstart
         print packstart
         print tubestart
-    
-    
-    for banks in range(doorstart,doorend+1):
-        for packs in range(packstart[np.array(banks)-1],packend[np.array(banks)-1]+1):
-            for tubes in range(tubestart,tubeend+1):
-                tubeget = int(str(banks)+str(packs)+str(tubes))
-                print tubeget
-                myindex = np.nonzero(det_tubes==tubeget)
+
+    run_dir = os.path.dirname(os.path.realpath(__file__))
+    file = os.path.join(run_dir,'calibratioon_res_{0}.csv'.format(cal_info))
+    fid = open(file,'w')
+    fid.write(' Tube_id, start, peak1, peak2, peak3, peak4, peak5, end\n')
+
+    for bank in range(doorstart,doorend+1):
+        for pack in range(packstart[np.array(bank)-1],packend[np.array(bank)-1]+1):
+            for tube in range(tubestart,tubeend+1):
+                tube_id = int(str(bank)+str(pack)+str(tube))
+                print tube_id
+                myindex = np.nonzero(det_tubes==tube_id)
                 spec_tube = np.array(spec_num)[[myindex[0]]]
                 spec_min = int(min(spec_tube))
                 spec_max = int(max(spec_tube))
@@ -81,17 +89,17 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
                 middle = 0
                 right_end = 0
                 if max(yval)!=0:
-                    myout = myfit_data(banks,packs,tubes,yval,mylen)
+                    myout = myfit_data(bank,pack,tube,yval,mylen)
                 if myout is not None:
-                    print tubeget,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6]
-                    fid.write('{0:3.0f} {1:0.2f} {2:0.2f} {3:0.2f} {4:0.2f} {5:0.2f} {6:0.2f} {7:0.2f}\n'.format(tubeget,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6]))
+                    print tube_id,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6]
+                    fid.write('{0:3.0f}, {1:0.2f}, {2:0.2f}, {3:0.2f}, {4:0.2f}, {5:0.2f}, {6:0.2f}, {7:0.2f}\n'.format(tube_id,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6]))
                 else:
                     plt.show(1)
                     raise RuntimeError('Could not fit')
     fid.close()
 
  
-def myfit_data(banks,packs,tubes,Intensity,mylen):
+def myfit_data(bank,pack,tube,Intensity,mylen):
     error = np.sqrt(Intensity)
     position = range(1,513)
     left_end = 0
@@ -182,11 +190,12 @@ def myfit_data(banks,packs,tubes,Intensity,mylen):
     maxim = []
     maxim = np.where(np.array(Intensity)==maxint)[0]
     maxim = maxim+5
-    if maxim>510:
-        maxim = 510
     if len(maxim)>1:
         maxim = maxim[np.where(np.logical_and(maxim>468,maxim<511))]
         maxim = maxim[0]
+    if maxim > 510:
+        maxim = 510
+        
 
     minint = min(np.array(Intensity[maxim:510]))
     minim = []
@@ -239,10 +248,10 @@ def myfit_data(banks,packs,tubes,Intensity,mylen):
 
 #fitting stripes
     stripes = [] #create empty list
-    if np.logical_and(banks==3,packs==1): #dealing with half length tubes
+    if np.logical_and(bank==3,pack==1): #dealing with half length tubes
         vals=np.array([85,115,240,270])
         addval=3
-    elif np.logical_and(banks==3,packs==2): 
+    elif np.logical_and(bank==3,pack==2): 
         vals=np.array([310,340,390,420])
         addval=6
     else: #dealing with standard tubes
@@ -281,7 +290,7 @@ def myfit_data(banks,packs,tubes,Intensity,mylen):
         # fitting the data with fmin
         p, fopt, iter, funcallas, warnflag = fmin(emf, p0, args=(pos,I),maxiter=1000,ftol=1e-06,maxfun=5000,full_output=True)
         if np.logical_or(warnflag==1,warnflag==2):
-            if np.logical_or(np.logical_and(banks!=3,packs!=1),np.logical_and(banks!=3,packs!=2)):
+            if np.logical_or(np.logical_and(bank!=3,pack!=1),np.logical_and(bank!=3,pack!=2)):
                 left_end = 0
                 middle = 0
                 right_end = 0
@@ -297,18 +306,17 @@ def myfit_data(banks,packs,tubes,Intensity,mylen):
         print stripe1
         stripes.append(stripe1)
 
-    if np.logical_and(banks==3,packs==1): 
+    if np.logical_and(bank==3,pack==1): 
         return (0,0,0,0,stripes[0],stripes[1],right_end)
-    elif np.logical_and(banks==3,packs==2): 
+    elif np.logical_and(bank==3,pack==2): 
         return (left_end,stripes[0],stripes[1],0,0,0,0)
-    elif np.logical_and(np.logical_and(banks==3,packs==3),1<=tubes<=3): 
+    elif np.logical_and(np.logical_and(bank==3,pack==3),1<=tube<=3): 
         return (left_end,stripes[0],stripes[1],256,stripes[3],stripes[4],right_end)
     else:
         return (left_end,stripes[0],stripes[1],stripes[2],stripes[3],stripes[4],right_end)
     
     
 def endf(c,x):          #error function to fit end of tubes
-    
     if c[3]<0:
         c[3]=0
     
@@ -321,7 +329,8 @@ def midf(c,x):          #gaussian function to fit stripes
     
     return c[3] + c[0]*np.exp(-(x-c[1])**2/(2*c[2]*c[2]))
 
-#####################################################################
-#This is the line to actually run the script
-tube_calibrate_MER(38594,1000,9000,3)   #In this example an optional argument is given to just look at door 3.
+if __name__ == "__main__":
+    #####################################################################
+    #This is the line to actually run the script
+    tube_calibrate_MER(42385,1000,9000)   #In this example an optional argument is given to just look at door 3.
 #####################################################################
