@@ -7,13 +7,17 @@ from shutil import copyfile
 
 def create_MERInst_Files(run,one2onepar,one2oneold,one2onenew,ringmap):
     one_2one_par_file = create_one2onepar(run,one2onepar)
+    create_ringmap(one_2one_par_file,ringmap)    
     create_one2onemap(one2oneold,one2onenew)
-    create_ringmap(one_2one_par_file,ringmap)
+
 
 # script to make one2one.par file - partially using Mantid script
 def create_one2onepar(run,one2onepar):
     Load(Filename='MER'+str(run)+'.nxs', OutputWorkspace='w1')
-    run_dir = os.path.dirname(os.path.realpath(__file__))
+    #######run_dir = os.path.dirname(os.path.realpath(__file__))
+      
+    
+    run_dir =  config['defaultsave.directory']
     tmp_file = os.path.join(run_dir,'test.par')
     SavePAR('w1',tmp_file)
     
@@ -40,7 +44,7 @@ def create_one2onepar(run,one2onepar):
 #script to create rings mapping file. Inputs are the appropriate one2one.par file for the cycle (from which the 2theta values are taken
 #and the other argument is the name of the rings.map file you want to create for this cycle
 def create_ringmap(one2onepar,ringmap):
-    run_dir = os.path.dirname(os.path.realpath(__file__))    
+    run_dir = config['defaultsave.directory']
     ringmap= os.path.join(run_dir,os.path.basename(ringmap)) 
     
     fid = open(ringmap,'w')    
