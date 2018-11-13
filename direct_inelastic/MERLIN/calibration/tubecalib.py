@@ -12,7 +12,7 @@ start = time.time()
 
 def tube_calibrate_MER(run,tmin,tmax,*args):    
     #*args takes the form of 'bank' 'pack' 'tube'. If no arguments are given the whole detector array is fitted.
-    Load(Filename='MER'+str(run)+'.raw', OutputWorkspace='w1')
+    Load(Filename='MER'+str(run)+'.s02', OutputWorkspace='w1')
     Rebin(InputWorkspace='w1', OutputWorkspace='w1', Params='1500,100,9000')
     mylen = len(args)
 
@@ -65,8 +65,10 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         print packstart
         print tubestart
 
-    run_dir = os.path.dirname(os.path.realpath(__file__))
-    file = os.path.join(run_dir,'calibratioon_res_{0}.csv'.format(cal_info))
+    run_dir =  config['defaultsave.directory']
+    targ_file_name =  'calibratioon_res_{0}.csv'.format(cal_info)
+    
+    file = os.path.join(run_dir,targ_file_name )
     fid = open(file,'w')
     fid.write(' Tube_id, start, peak1, peak2, peak3, peak4, peak5, end\n')
 
@@ -97,6 +99,13 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
                     plt.show(1)
                     raise RuntimeError('Could not fit')
     fid.close()
+    print('***********************************************')
+    print('*** Calibration info is written in file: {0}'.format(targ_file_name));
+    print('*** Located in folder: {0}'.format(run_dir));    
+    print('***********************************************')    
+    
+    
+    
 
  
 def myfit_data(bank,pack,tube,Intensity,mylen):
@@ -332,5 +341,5 @@ def midf(c,x):          #gaussian function to fit stripes
 if __name__ == "__main__":
     #####################################################################
     #This is the line to actually run the script
-    tube_calibrate_MER(42385,1000,9000)   #In this example an optional argument is given to just look at door 3.
+    tube_calibrate_MER(42387,1000,9000)   #In this example an optional argument is given to just look at door 3.
 #####################################################################
