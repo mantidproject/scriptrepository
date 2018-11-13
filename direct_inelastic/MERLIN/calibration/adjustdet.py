@@ -19,7 +19,7 @@ def adjust_detector_MER(fit_res,det_source_file):
     #    
     fit_res = os.path.basename(fit_res)
     det_source_file  = os.path.basename(det_source_file)
-    run_dir = os.path.dirname(os.path.realpath(__file__))
+    run_dir =  config['defaultsave.directory']
     fit_res = os.path.join(run_dir,fit_res)
     full_det_source_file = os.path.join(run_dir,det_source_file )
 
