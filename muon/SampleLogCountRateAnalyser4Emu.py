@@ -3,7 +3,9 @@ Run this script on the Mantid Script window
 Collates detector counts and various parameters as a function of run number
 Outputs are in two tables, from which you can make graphs
 Written by Koji Yokoyama on 23 Oct. 2018
-Hint: just give run numbers first and try running the code
+Updated on 17 Jan. 2019
+Hint: just give run numbers first and try running the code.
+Sometimes date_time format needs a tweak.
 *WIKI*"""
 
 import time
@@ -52,8 +54,8 @@ class GetPropertyFromRnum(object):
 
 # About your runs
 datapath = "\\\emu\data\EMU000"
-rnum_start = 86090
-rnum_end = 86317
+rnum_start = 86492
+rnum_end = 88126
 # Table for detector array. This is for EMU
 ring_dic = {
 'ring_F1': [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46],
@@ -101,21 +103,21 @@ for n in range(rnum_start,rnum_end + 1):
 		date_time_array = map(str,np.array(logdat.val2))
 		relative_times = [] # Makes a list of times (in absolute time) for the logged value.
 		for date_time in date_time_array:
-			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000+0100")) - time0 -3600)	
+			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000")) - time0)	
 		frames_array = map(float,np.array(logdat.val3))
 		number_of_frames = frames_array[np.argmax(relative_times)] # Take the largest time for the final value
 		# Total counts from Beamlog_Total_Counts
 		date_time_array = map(str,np.array(logdat.val4))
 		relative_times = []
 		for date_time in date_time_array:
-			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000+0100")) - time0 -3600)		
+			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000")) - time0)		
 		total_counts_array = map(float,np.array(logdat.val5))
 		total_counts = total_counts_array[np.argmax(relative_times)]
 		# Slits
 		date_time_array = map(str,np.array(logdat.val6))
 		relative_times = []
 		for date_time in date_time_array:
-			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000+0100")) - time0 -3600)		
+			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000")) - time0)		
 		slits_array = map(float,np.array(logdat.val7))
 		relative_times_reduced = [] # Interested only in times (absolute time) after the start of run. Trims tables for time and log value
 		slits_array_reduced = []
@@ -129,7 +131,7 @@ for n in range(rnum_start,rnum_end + 1):
 		date_time_array = map(str,np.array(logdat.val8))
 		relative_times = []
 		for date_time in date_time_array:
-			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000+0100")) - time0 -3600)		
+			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000")) - time0)		
 		ts1_current_array = map(float,np.array(logdat.val9))
 		relative_times_reduced = []
 		ts1_current_array_reduced = []
@@ -143,7 +145,7 @@ for n in range(rnum_start,rnum_end + 1):
 		date_time_array = map(str,np.array(logdat.val10))
 		relative_times = []
 		for date_time in date_time_array:
-			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000+0100")) - time0 -3600)		
+			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000")) - time0)		
 		field_array = map(float,np.array(logdat.val11))
 		relative_times_reduced = []
 		field_array_reduced = []
@@ -157,7 +159,7 @@ for n in range(rnum_start,rnum_end + 1):
 		date_time_array = map(str,np.array(logdat.val12))
 		relative_times = []
 		for date_time in date_time_array:
-			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000+0100")) - time0 -3600)		
+			relative_times.append(time.mktime(time.strptime(date_time,"%Y-%m-%dT%H:%M:%S.000000000")) - time0)		
 		t20_array = map(float,np.array(logdat.val13))
 		relative_times_reduced = []
 		t20_array_reduced = []
@@ -175,7 +177,13 @@ for n in range(rnum_start,rnum_end + 1):
 		for diclabel in ring_dic:
 			rnum_detcounts = rnum_detcounts + map(lambda x: x/number_of_frames, logdat.dicsum[diclabel])
 		det_table.addRow(rnum_detcounts)
-		
+
 		print("Run ",n," processed")
-	except:
+	except Exception as e:
 		print("Run ",n," was not processed")
+		print '===Error==='
+		print 'type:' + str(type(e))
+		print 'args:' + str(e.args)
+		print 'message:' + e.message
+		print 'e itself:' + str(e)
+		
