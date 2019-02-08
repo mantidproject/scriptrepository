@@ -15,13 +15,13 @@ import datetime
 import numpy as np
 import math
 
-muonfile = "//hifi/data/cycle_16_3/HIFI%08d.nxs"
-camfile = "C:/your_path/IMG%d.FIT"
+muonfile = "//emu/data/emu%08d.nxs"
+camfile = "//olympic/Babylon5/Scratch/Koji_/Tune_Feb2019/IMG%d.FIT"
 export_image = "yes" # converts graphs into JPG files 
 export_img_file_directory = "C:/your_path/"
-piclist = range(2815,2850 +1)
-runlist = range(108048,108052 +1) # run numbers from the measurement
-beamline_par1 = "Steer_VSM1" # Refer to the sample logs to find the parameter name
+piclist = range(282,332 +1)
+runlist = range(88283,88292 +1) # run numbers from the measurement
+beamline_par1 = "UQ13C_CURR" # Refer to the sample logs to find the parameter name
 resultname = beamline_par1
 
 # ***change these parameters depending on your local time***
@@ -29,8 +29,8 @@ format_paramlog = "%Y-%m-%dT%H:%M:%S.000000000" # in normal time "%Y-%m-%dT%H:%M
 adjust = 0 # this is 0 in normal time and 3600 in summer time.
 
 # cam parameters for analysis
-image_scale = 198.6 # Pixels per cm.  198.6 for EMU, and 80.0 for HiFi images (1/2 pixels in HiFi)
-mask = [0,1391,0,1039] # 120,590,80,440 for HiFi 0,1391,0,1039 for Emu
+image_scale = 99.3 # Pixels per cm.  99.3 for EMU (when 1/2 pixels), and 80.0 for HiFi images (also 1/2 pixels)
+mask = [0,695,0,519] # 120,590,80,440 for HiFi 0,695,0,519 for Emu
 
 clear_windows = "" # Close existing windows? "yes" or ""
 
@@ -136,7 +136,7 @@ print results
 
 # Creates the result table
 tt=WorkspaceFactory.createTable()
-columns=["Run","Image",beamline_par1,"Slits","rate","X0","eX0","Y0","eY0","XSig","eXSig","YSig","eYSig","Skew","eSkew","Background","eBackground","Intens","eIntens","Major","Minor"]
+columns=["Run","Image",beamline_par1,"Slits","rate","X0","eX0","Y0","eY0","XSig","eXSig","YSig","eYSig","Skew","eSkew","Background","eBackground","Intens","eIntens","Major","Minor","Phi"]
 for co in columns:
 	if(co=="Run" or co=="Image"):
 		tt.addColumn("int",co,6)
@@ -210,6 +210,7 @@ for i in piclist:
 				r["eIntens"]=eIntens
 				r["Major"]=Major
 				r["Minor"]=Minor
+				r["Phi"]=Phi
 				r["Image"]=i
 				r["PeakInt"]=PeakInt
 				r["XOverall"]=XSig/SFac
@@ -220,9 +221,9 @@ for i in piclist:
 					RightScaleMin = Background
 					RightScaleMax = Background + Amplitude
 					LeftScaleMin = -0.2
-					LeftScaleMax = 6.8
+					LeftScaleMax = 6.0
 					BottomScaleMin = -0.2
-					BottomScaleMax = 8.8
+					BottomScaleMax = 8.0
 					g=plot2D(img)
 					g2=plotSpectrum(EllipseCurves,[0,1,2])
 					mergePlots(g,g2)
