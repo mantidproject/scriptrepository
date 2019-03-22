@@ -212,13 +212,6 @@ class EnergyWindowScan(DataProcessorAlgorithm):
         divide_alg.setProperty("OutputWorkspace", self._scan_ws + '_eisf')
         divide_alg.execute()
 
-        delete_alg.setProperty("Workspace", self._scan_ws + '_el_elf')
-        delete_alg.execute()
-        delete_alg.setProperty("Workspace", self._scan_ws + '_inel_elf')
-        delete_alg.execute()
-        delete_alg.setProperty("Workspace", self._scan_ws + '_total_elf')
-        delete_alg.execute()
-
         x_values = mtd[self._scan_ws + '_el_eq1'].readX(0)
         num_hist = mtd[self._scan_ws + '_el_eq1'].getNumberHistograms()
         if len(x_values) < 2 and self._msdfit:
