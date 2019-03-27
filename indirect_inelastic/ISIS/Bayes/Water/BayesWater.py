@@ -138,7 +138,7 @@ class BayesWater(PythonAlgorithm):
         logger.information('Sample is ' + self._sam_ws)
         logger.information('Resolution is ' + self._res_ws)
 
-        CheckAnalysers(self._sam_ws, self._res_ws)
+        CheckAnalysersOrEFixed(self._sam_ws, self._res_ws)
         efix = getEfixed(self._sam_ws)
         theta, Q = GetThetaQ(self._sam_ws)
 
