@@ -55,6 +55,8 @@ class IndirectQuickRun(DataProcessorAlgorithm):
                              doc='Range of background to subtract from raw data in time of flight.')
         self.declareProperty(FloatArrayProperty(name='InelasticRange'),
                              doc='Range of background to subtract from raw data in time of flight.')
+        self.declareProperty(FloatArrayProperty(name='TotalRange'),
+                             doc='Energy range for the total energy component.')
 
         self.declareProperty(name='SampleEnvironmentLogName', defaultValue='sample',
                              doc='Name of the sample environment log entry')
@@ -91,6 +93,7 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         scan_alg.setProperty('SpectraRange', self._spectra_range)
         scan_alg.setProperty('ElasticRange', self._elastic_range)
         scan_alg.setProperty('InelasticRange', self._inelastic_range)
+        scan_alg.setProperty('TotalRange', self._total_range)
         scan_alg.setProperty('DetailedBalance', Property.EMPTY_DBL)
         scan_alg.setProperty('GroupingMethod', 'Individual')
         scan_alg.setProperty('SampleEnvironmentLogName', self._sample_log_name)
@@ -250,6 +253,12 @@ class IndirectQuickRun(DataProcessorAlgorithm):
                 issues['InelasticRange'] = 'Range must contain exactly two items'
             elif inelastic_range[0] > inelastic_range[1]:
                 issues['InelasticRange'] = 'Range must be in format: lower,upper'
+        total_range = self.getProperty('TotalRange').value
+        if inelastic_range is not None:
+            if len(total_range) != 2:
+                issues['TotalRange'] = 'Range must contain exactly two items'
+            elif total_range[0] > total_range[1]:
+                issues['TotalRange'] = 'Range must be in format: lower,upper'
 
         return issues
 
@@ -273,6 +282,7 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         self._spectra_range = self.getProperty('SpectraRange').value
         self._elastic_range = self.getProperty('ElasticRange').value
         self._inelastic_range = self.getProperty('InelasticRange').value
+        self._total_range = self.getProperty('TotalRange').value
 
         self._sample_log_name = self.getPropertyValue('SampleEnvironmentLogName')
         self._sample_log_value = self.getPropertyValue('SampleEnvironmentLogValue')
@@ -405,6 +415,13 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         logger.information('Creating file : %s' % inel_eq2_path)
         self._save_ws(self._scan_ws + '_inel_eq2', inel_eq2_path)
 
+        total_eq1_path = os.path.join(workdir, self._scan_ws + '_total_eq1.nxs')
+        logger.information('Creating file : %s' % total_eq1_path)
+        self._save_ws(self._scan_ws + '_inel_eq1', total_eq1_path)
+        inel_eq2_path = os.path.join(workdir, self._scan_ws + '_total_eq2.nxs')
+        logger.information('Creating file : %s' % _total_eq2)
+        self._save_ws(self._scan_ws + '_inel_eq2', _total_eq2)
+
         eisf_path = os.path.join(workdir, self._scan_ws + '_eisf.nxs')
         logger.information('Creating file : %s' % eisf_path)
         self._save_ws(self._scan_ws + '_eisf', eisf_path)
@@ -421,8 +438,10 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         import mantidplot as mp
         mp.plotSpectrum(self._scan_ws + '_el_eq1', 0, error_bars=True)
         mp.plotSpectrum(self._scan_ws + '_inel_eq1', 0, error_bars=True)
+        mp.plotSpectrum(self._scan_ws + '_total_eq1', 0, error_bars=True)
         mp.plotSpectrum(self._scan_ws + '_el_eq2', 0, error_bars=True)
         mp.plotSpectrum(self._scan_ws + '_inel_eq2', 0, error_bars=True)
+        mp.plotSpectrum(self._scan_ws + '_total_eq2', 0, error_bars=True)
         mp.plotSpectrum(self._scan_ws + '_eisf', 0, error_bars=True)
         if self._msdfit:
             mp.plotSpectrum(self._scan_ws + '_msd', 1, error_bars=True)
