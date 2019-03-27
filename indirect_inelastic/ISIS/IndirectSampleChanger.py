@@ -23,6 +23,7 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
     _spectra_range = None
     _elastic_range = None
     _inelastic_range = None
+    _total_range = None
     _sample_log_name = None
     _sample_log_value = None
     _msdfit = False
@@ -65,6 +66,8 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
         self.declareProperty(FloatArrayProperty(name='InelasticRange',
                                                 validator=FloatArrayLengthValidator(2)),
                              doc='Range of background to subtract from raw data in time of flight.')
+        self.declareProperty(FloatArrayProperty(name='TotalRange'),
+                             doc='Energy range for the total energy component.')
 
         self.declareProperty(name='MsdFit', defaultValue=False,
                              doc='Run msd fit')
@@ -105,6 +108,7 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
             scan_alg.setProperty('SpectraRange', self._spectra_range)
             scan_alg.setProperty('ElasticRange', self._elastic_range)
             scan_alg.setProperty('InelasticRange', self._inelastic_range)
+            scan_alg.setProperty('TotalRange', self._total_range)
             scan_alg.setProperty('DetailedBalance', Property.EMPTY_DBL)
             scan_alg.setProperty('GroupingMethod', 'Individual')
             scan_alg.setProperty('SampleEnvironmentLogName', self._sample_log_name)
@@ -123,12 +127,15 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
             eisf_ws = scan_ws + '_eisf'
             el_elt_ws = scan_ws + '_el_elt'
             inel_elt_ws = scan_ws + '_inel_elt'
-            output_workspaces = [q1_ws, q2_ws, eisf_ws, el_elt_ws, inel_elt_ws]
+            tot_elt_ws = scan_ws + '_total_elt'
+#            output_workspaces = [q1_ws, q2_ws, eisf_ws, el_elt_ws, inel_elt_ws, tot_elt_ws]
+            output_workspaces = [q1_ws, eisf_ws, el_elt_ws, inel_elt_ws, tot_elt_ws]
 
-        if self._plot:
-            self._plot_scan(output_workspaces)
-            if self._msdfit:
-                mp.plotSpectrum(scan_ws + '_msd', 1, error_bars=True)
+            if self._plot:
+                for ws in output_workspaces:
+                    mp.plotSpectrum(ws, 0, error_bars=True)
+                if self._msdfit:
+                    mp.plotSpectrum(scan_ws + '_msd', 0, error_bars=True)
 
         if self._widthfit:
             result_workspaces = list()
@@ -184,6 +191,7 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
         self._spectra_range = self.getProperty('SpectraRange').value
         self._elastic_range = self.getProperty('ElasticRange').value
         self._inelastic_range = self.getProperty('InelasticRange').value
+        self._total_range = self.getProperty('TotalRange').value
  
         self._sample_log_name = 'Position'
         self._sample_log_value = 'last_value'
@@ -320,7 +328,7 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
             self._save_ws(input_ws + '_msd_fit', msd_fit_path)
 
 #        if self._widthfit:
-#            mp.plotSpectrum(input_ws + '_Diffusion', 0, error_bars=True)
+#            mp.plotSpectrum(self._output_ws + '_Diffusion', 0, error_bars=True)
 
 
 AlgorithmFactory.subscribe(IndirectSampleChanger)  # Register algorithm with Mantid
