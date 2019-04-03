@@ -128,14 +128,18 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
             el_elt_ws = scan_ws + '_el_elt'
             inel_elt_ws = scan_ws + '_inel_elt'
             tot_elt_ws = scan_ws + '_total_elt'
+            msd_ws = scan_ws + '_msd'
 #            output_workspaces = [q1_ws, q2_ws, eisf_ws, el_elt_ws, inel_elt_ws, tot_elt_ws]
             output_workspaces = [q1_ws, eisf_ws, el_elt_ws, inel_elt_ws, tot_elt_ws]
+            if self._msdfit:
+                output_workspaces.append(msd_ws)
 
             if self._plot:
                 for ws in output_workspaces:
                     mp.plotSpectrum(ws, 0, error_bars=True)
-                if self._msdfit:
-                    mp.plotSpectrum(scan_ws + '_msd', 0, error_bars=True)
+
+            if self._save:
+                self._save_output(output_workspaces)
 
         if self._widthfit:
             result_workspaces = list()
@@ -175,6 +179,9 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
                 result_workspaces.append(result + '_Result')
                 chi_workspaces.append(result + '_ChiSq')
 
+                if self._plot:
+                    mp.plotSpectrum(result + '_ChiSq', [0, 1], error_bars=False)
+                    mp.plotSpectrum(result + '_Result', 0, error_bars=True)
 
     def _setup(self):
         self._run_first = self.getProperty('FirstRun').value
@@ -301,34 +308,16 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
     def _save_output(self, input_ws):
         from mantid.simpleapi import SaveNexusProcessed
         workdir = config['defaultsave.directory']
-        el_eq1_path = os.path.join(workdir, input_ws + '_el_eq1.nxs')
-        logger.information('Creating file : %s' % el_eq1_path)
-        self._save_ws(input_ws + '_el_eq1', el_eq1_path)
-        el_eq2_path = os.path.join(workdir, input_ws + '_el_eq2.nxs')
-        logger.information('Creating file : %s' % el_eq2_path)
-        self._save_ws(input_ws + '_el_eq2', el_eq2_path)
+        for ws in input_ws:
+            path = os.path.join(workdir, ws + '.nxs')
+            logger.information('Creating file : %s' % path)
+            self._save_ws(ws, path)
 
-        inel_eq1_path = os.path.join(workdir, input_ws + '_inel_eq1.nxs')
-        logger.information('Creating file : %s' % inel_eq1_path)
-        self._save_ws(input_ws + '_inel_eq1', inel_eq1_path)
-        inel_eq2_path = os.path.join(workdir, input_ws + '_inel_eq2.nxs')
-        logger.information('Creating file : %s' % inel_eq2_path)
-        self._save_ws(input_ws + '_inel_eq2', inel_eq2_path)
-
-        eisf_path = os.path.join(workdir, input_ws + '_eisf.nxs')
-        logger.information('Creating file : %s' % eisf_path)
-        self._save_ws(input_ws + '_eisf', eisf_path)
-
-        if self._msdfit:
-            msd_path = os.path.join(workdir, input_ws + '_msd.nxs')
-            logger.information('Creating file : %s' % msd_path)
-            self._save_ws(input_ws + '_msd', msd_path)
-            msd_fit_path = os.path.join(workdir, input_ws + '_msd_fit.nxs')
-            logger.information('Creating file : %s' % msd_fit_path)
-            self._save_ws(input_ws + '_msd_fit', msd_fit_path)
-
-#        if self._widthfit:
-#            mp.plotSpectrum(self._output_ws + '_Diffusion', 0, error_bars=True)
+    def _save_ws(self, input_ws, filename):
+        save_alg = self.createChildAlgorithm("SaveNexus", enableLogging=False)
+        save_alg.setProperty("InputWorkspace", input_ws)
+        save_alg.setProperty("Filename", filename)
+        save_alg.execute()
 
 
 AlgorithmFactory.subscribe(IndirectSampleChanger)  # Register algorithm with Mantid
