@@ -16,6 +16,7 @@ class IndirectQuickRun(DataProcessorAlgorithm):
     _spectra_range = None
     _elastic_range = None
     _inelastic_range = None
+    _total_range = None
     _sample_log_name = None
     _sample_log_value = None
     _msdfit = False
@@ -403,36 +404,36 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         workdir = config['defaultsave.directory']
         el_eq1_path = os.path.join(workdir, self._scan_ws + '_el_eq1.nxs')
         logger.information('Creating file : %s' % el_eq1_path)
-        self._save_ws(self._scan_ws + '_el_eq1', el_eq1_path)
+        self._save_group(self._scan_ws + '_el_eq1', el_eq1_path)
         el_eq2_path = os.path.join(workdir, self._scan_ws + '_el_eq2.nxs')
         logger.information('Creating file : %s' % el_eq2_path)
-        self._save_ws(self._scan_ws + '_el_eq2', el_eq2_path)
+        self._save_group(self._scan_ws + '_el_eq2', el_eq2_path)
 
         inel_eq1_path = os.path.join(workdir, self._scan_ws + '_inel_eq1.nxs')
         logger.information('Creating file : %s' % inel_eq1_path)
-        self._save_ws(self._scan_ws + '_inel_eq1', inel_eq1_path)
+        self._save_group(self._scan_ws + '_inel_eq1', inel_eq1_path)
         inel_eq2_path = os.path.join(workdir, self._scan_ws + '_inel_eq2.nxs')
         logger.information('Creating file : %s' % inel_eq2_path)
-        self._save_ws(self._scan_ws + '_inel_eq2', inel_eq2_path)
+        self._save_group(self._scan_ws + '_inel_eq2', inel_eq2_path)
 
         total_eq1_path = os.path.join(workdir, self._scan_ws + '_total_eq1.nxs')
         logger.information('Creating file : %s' % total_eq1_path)
-        self._save_ws(self._scan_ws + '_inel_eq1', total_eq1_path)
+        self._save_group(self._scan_ws + '_inel_eq1', total_eq1_path)
         inel_eq2_path = os.path.join(workdir, self._scan_ws + '_total_eq2.nxs')
         logger.information('Creating file : %s' % _total_eq2)
-        self._save_ws(self._scan_ws + '_inel_eq2', _total_eq2)
+        self._save_group(self._scan_ws + '_inel_eq2', _total_eq2)
 
         eisf_path = os.path.join(workdir, self._scan_ws + '_eisf.nxs')
         logger.information('Creating file : %s' % eisf_path)
-        self._save_ws(self._scan_ws + '_eisf', eisf_path)
+        self._save_group(self._scan_ws + '_eisf', eisf_path)
 
         if self._msdfit:
             msd_path = os.path.join(workdir, self._scan_ws + '_msd.nxs')
             logger.information('Creating file : %s' % msd_path)
-            self._save_ws(self._scan_ws + '_msd', msd_path)
+            self._save_group(self._scan_ws + '_msd', msd_path)
             msd_fit_path = os.path.join(workdir, self._scan_ws + '_msd_fit.nxs')
             logger.information('Creating file : %s' % msd_fit_path)
-            self._save_ws(self._scan_ws + '_msd_fit', msd_fit_path)
+            self._save_group(self._scan_ws + '_msd_fit', msd_fit_path)
 
     def _plot_result(self):
         import mantidplot as mp
@@ -466,7 +467,7 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         group_alg.execute()
         mtd.addOrReplace(output_ws, group_alg.getProperty("OutputWorkspace").value)
 
-    def _save_ws(self, input_ws, filename):
+    def _save_group(self, input_ws, filename):
         save_alg = self.createChildAlgorithm("GroupWorkspaces", enableLogging=False)
         save_alg.setProperty("InputWorkspace", input_ws)
         save_alg.setProperty("Filename", filename)
