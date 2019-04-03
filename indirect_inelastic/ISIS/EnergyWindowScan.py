@@ -45,6 +45,7 @@ class EnergyWindowScan(DataProcessorAlgorithm):
     _background_range = None
     _elastic_range = None
     _inelastic_range = None
+    _total_range = None
     _rebin_string = None
     _detailed_balance = None
     _grouping_method = None
