@@ -52,11 +52,14 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         self.declareProperty(IntArrayProperty(name='SpectraRange', values=[0, 1],
                                               validator=IntArrayMandatoryValidator()),
                              doc='Comma separated range of spectra number to use.')
-        self.declareProperty(FloatArrayProperty(name='ElasticRange'),
-                             doc='Range of background to subtract from raw data in time of flight.')
-        self.declareProperty(FloatArrayProperty(name='InelasticRange'),
-                             doc='Range of background to subtract from raw data in time of flight.')
-        self.declareProperty(FloatArrayProperty(name='TotalRange'),
+        self.declareProperty(FloatArrayProperty(name='ElasticRange',
+                                                validator=FloatArrayLengthValidator(2)),
+                             doc='Energy range for the total energy component.')
+        self.declareProperty(FloatArrayProperty(name='InelasticRange',
+                                                validator=FloatArrayLengthValidator(2)),
+                             doc='Energy range for the total energy component.')
+        self.declareProperty(FloatArrayProperty(name='TotalRange',
+                                                validator=FloatArrayLengthValidator(2)),
                              doc='Energy range for the total energy component.')
 
         self.declareProperty(name='SampleEnvironmentLogName', defaultValue='sample',
