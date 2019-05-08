@@ -62,11 +62,12 @@ class IndirectSampleChanger(DataProcessorAlgorithm):
                              doc='Comma separated range of spectra number to use.')
         self.declareProperty(FloatArrayProperty(name='ElasticRange',
                                                 validator=FloatArrayLengthValidator(2)),
-                             doc='Range of background to subtract from raw data in time of flight.')
+                             doc='Energy range for the elastic energy component.')
         self.declareProperty(FloatArrayProperty(name='InelasticRange',
                                                 validator=FloatArrayLengthValidator(2)),
-                             doc='Range of background to subtract from raw data in time of flight.')
-        self.declareProperty(FloatArrayProperty(name='TotalRange'),
+                             doc='Energy range for the inelastic energy component.')
+        self.declareProperty(FloatArrayProperty(name='TotalRange',
+                                                validator=FloatArrayLengthValidator(2)),
                              doc='Energy range for the total energy component.')
 
         self.declareProperty(name='MsdFit', defaultValue=False,
