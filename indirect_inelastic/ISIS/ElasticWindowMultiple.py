@@ -314,10 +314,8 @@ def _extract_sensor_name(run, instrument):
 
 
 def _extract_position_from_run(instrument, run):
-    position1 = instrument.getNumberParameter("Workflow.SamplePosition1")[0]
-    position2 = instrument.getNumberParameter("Workflow.SamplePosition2")[0]
-    position3 = instrument.getNumberParameter("Workflow.SamplePosition3")[0]
-    sample_position = [position1, position2, position3]
+    sample_position = instrument.getStringParameter("Workflow.SamplePositions")[0].split(',')
+    logger.warning(str(sample_position))
 
     if 'SAMP_POSN' in run:
         position = run['SAMP_POSN'].value[-1]
