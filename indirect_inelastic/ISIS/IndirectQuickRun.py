@@ -421,10 +421,10 @@ class IndirectQuickRun(DataProcessorAlgorithm):
 
         total_eq1_path = os.path.join(workdir, self._scan_ws + '_total_eq1.nxs')
         logger.information('Creating file : %s' % total_eq1_path)
-        self._save_group(self._scan_ws + '_inel_eq1', total_eq1_path)
+        self._save_group(self._scan_ws + '_total_eq1', total_eq1_path)
         inel_eq2_path = os.path.join(workdir, self._scan_ws + '_total_eq2.nxs')
         logger.information('Creating file : %s' % _total_eq2)
-        self._save_group(self._scan_ws + '_inel_eq2', _total_eq2)
+        self._save_group(self._scan_ws + '_total_eq2', _total_eq2)
 
         eisf_path = os.path.join(workdir, self._scan_ws + '_eisf.nxs')
         logger.information('Creating file : %s' % eisf_path)
@@ -472,8 +472,8 @@ class IndirectQuickRun(DataProcessorAlgorithm):
 
     def _save_group(self, input_ws, filename):
         save_alg = self.createChildAlgorithm("GroupWorkspaces", enableLogging=False)
-        save_alg.setProperty("InputWorkspace", input_ws)
-        save_alg.setProperty("Filename", filename)
+        save_alg.setProperty("InputWorkspaces", input_ws)
+        save_alg.setProperty("OutputWorkspace", filename)
         save_alg.execute()
 # Register algorithm with Mantid
 AlgorithmFactory.subscribe(IndirectQuickRun)
