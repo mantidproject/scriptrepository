@@ -429,7 +429,32 @@ class Reduce():
             grouped_SF  = GroupDetectors(SF, MapFile=rings_map,PreserveEvents=False,Behaviour='Average')
             SaveNXSPE(grouped_SF, Filename=SF_out, Efixed=ei, KiOverKfScaling=False)
 
+#---------------------------------------------------------------------------
 
+    def one2one_output(self):
+
+        print("Outputting one2one nxspe files...")
+
+        if self.separate:
+            ext1 = "coh"
+            ext2 = "inc"
+        else:
+            ext1 = "NSF"
+            ext2 = "SF"
+
+        for ei in self.energies:
+            NSF_in  = "PLET_{0}_{1:<3.2f}meV_{2}".format(self.label,ei,ext1)
+            SF_in   = "PLET_{0}_{1:<3.2f}meV_{2}".format(self.label,ei,ext2)
+            NSF_out  = "PLET_{0}_{1:<3.2f}meV_{2}_One2One.nxspe".format(self.label,ei,ext1)
+            SF_out   = "PLET_{0}_{1:<3.2f}meV_{2}_One2One.nxspe".format(self.label,ei,ext2)
+            NSF = mtd[NSF_in]
+            SF  = mtd[SF_in]
+            if not "Masking" in mtd:
+                LoadMask('let',InputFile=self.mask,RefWorkspace=NSF)
+            MaskDetectors(NSF,MaskedWorkspace="Masking")
+            SaveNXSPE(NSF,Filename=NSF_out,Efixed=ei, KiOverKfScaling=False)
+            MaskDetectors(SF,MaskedWorkspace="Masking")
+            SaveNXSPE(SF, Filename=SF_out, Efixed=ei, KiOverKfScaling=False)
 
 
 
