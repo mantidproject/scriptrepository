@@ -29,7 +29,8 @@ data.correct_data()             # corrects the data for finite polarization and 
 
 data.components()               # combines the NSF and SF components to produce Coherent and Incoherent XS
 
-data.rings_output()             # outputs the combined data (if components is run) or the NSF/SF data (if not)
+data.one2one_output()           # outputs the combined data (if components is run) or the NSF/SF data (if not)
+data.rings_output()             # in rings or one2one format
 
 
 #print test.__dict__
