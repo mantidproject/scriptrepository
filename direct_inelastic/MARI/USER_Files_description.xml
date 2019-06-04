@@ -23,6 +23,10 @@
     <replace var  ="MARIReduction_Sample" by_var="MARIReduction_$cycleID$"/>  
     <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>
   </file_to_copy>
+  <file_to_copy file_name="template_mari_dos.py" copy_as="reduce_mari_dos.py">
+    <replace var  ="MARIReduction_Sample" by_var="MARIReduction_$cycleID$"/>  
+    <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>
+  </file_to_copy>
   
 
 </user_files_description>
