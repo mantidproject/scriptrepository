@@ -1,4 +1,4 @@
-﻿#pylint: disable=invalid-name
+#pylint: disable=invalid-name
 """ Sample MARI reduction script """
 import os,sys
 from numpy import *
@@ -31,7 +31,7 @@ class MARIReduction(ReductionWrapper):
         #prop['incident_energy'] = 50
         #prop['energy_bins'] = [-20,0.1,49]
         prop['incident_energy'] = [20, 5.5]
-        prop['energy_bins'] = [-10, 0.005, 0.95]
+        prop['energy_bins'] = [-1, 0.005, 0.97]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files. 
@@ -76,7 +76,7 @@ class MARIReduction(ReductionWrapper):
         #prop['fakewb'] = True
         #
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        prop['hard_mask_file'] = "mari_mask2019.msk"
+        #prop['hard_mask_file'] = "mari_mask2019.msk"
         prop['det_cal_file'] = ''
         # Comment out the next line if you want to use the data run for background masking
         #prop['mask_run'] = 25035
@@ -202,7 +202,7 @@ class MARIReduction(ReductionWrapper):
                             bad.append(iy)
 
                     badtof = xx[bad]
-                    for id in range(141): # Mask only the petal detectors # ws.getNumberHistograms()):
+                    for id in range(ws.getNumberHistograms()):
                          ev = ws.getEventList(id)
                          for tof in badtof:
                             ev.maskTof(tof-0.075, tof+0.225)
@@ -356,7 +356,7 @@ class MARIReduction(ReductionWrapper):
 def reduced_filename(runs, ei, is_sum, prefix=None):
     runs = [runs] if not isinstance(runs, list) else runs
     is_sum = is_sum if len(runs) > 1 else False
-    if prefix is None:
+    if not prefix:
         prefix = 'MAR{}to{}sum'.format(runs[0], runs[-1]) if is_sum else 'MAR{}'.format(runs[0])
     return '{}_Ei{:<3.2f}meV'.format(prefix, ei)
 
@@ -394,10 +394,10 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
 
     multirun = False
     if hasattr(ei, '__len__') and len(ei) > 1:
-        prop_man.energy_bins=[-10, 1./400., 0.97]
+        prop_man.energy_bins=[-1, 1./400., 0.97]
         multirun = True if sum_runs else False
     elif ei != 'auto':
-        prop_man.energy_bins=[-10*ei, ei/400., 0.97*ei]
+        prop_man.energy_bins=[-1*ei, ei/400., 0.97*ei]
 
     if ( sam_rmm!=0 and sam_mass!=0 ) :
         prop_man.sample_mass=sam_mass
@@ -602,6 +602,11 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
     if isinstance(runno, dict):
         runs_dict = runno
     else:
+        if not hasattr(runno, '__len__') or isinstance(runno, six.string_types):
+            runno = [runno]
+        if sum_runs and len(runno)==1:
+            sum_runs = False
+
         if 'temperature' not in kwargs:
             raise ValueError('No sample temperature given')
         temperature = kwargs.pop('temperature')
@@ -613,6 +618,12 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
                 runs_dict[None][temperature]['background'] = kwargs.pop('background')
         else:
             runs_dict = {'MAR{}'.format(run): {temperature: {'data':run}} for run in runno}
+            if monovan and sam_mass:
+                for ky in runs_dict.keys():
+                    runs_dict[ky]['sam_mass'] = sam_mass
+            if monovan and sam_rmm:
+                for ky in runs_dict.keys():
+                    runs_dict[ky]['sam_rmm'] = sam_rmm
             if 'background' in kwargs:
                 background = kwargs.pop('background')
                 for idx, run in enumerate(runno):
@@ -628,6 +639,8 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
             config['defaultsave.directory'] = wd
         for tt in list(ws_dict[sam].keys()):
             def_ei = runs_dict[sam][tt]['ei'] if 'ei' in runs_dict[sam][tt] else global_ei
+            if not hasattr(def_ei, '__len__'):
+                def_ei = [def_ei]
             ws_ei = [ws.getEFixed(1) for ws in ws_dict[sam][tt]['data']]
             id_ei = [np.argsort([np.abs(ei1-ei0) for ei1 in ws_ei])[0] for ei0 in def_ei]
             data_ws = [ws_dict[sam][tt]['data'][id_ei[ii]] for ii in range(len(ws_ei))]
