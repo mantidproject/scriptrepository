@@ -89,7 +89,8 @@ def create_one2onemap(one2oneold,one2onenew):
     copyfile(one2oneold,one2onenew)
 
 if __name__ == "__main__":	
-	create_MERInst_Files(42385,'mynew_one2one.par','one2one_182.map','mynew_one2one.map','mynew_ring.map')    
-	#create_one2onemap('one2one_174.map','mynew_one2one.map')
-	#create_one2onepar(37394,'mynew_one2one.par')
-	#create_ringmap('mynew_one2one.par','mynew_ring.map')    
+    repository_path = '/usr/local/mprogs/InstrumentFiles/merlin'
+    create_MERInst_Files(42385,'mynew_one2one.par','one2one_182.map','mynew_one2one.map','mynew_ring.map')
+    #create_one2onemap('one2one_174.map','mynew_one2one.map')
+    #create_one2onepar(37394,'mynew_one2one.par')
+    #create_ringmap('mynew_one2one.par','mynew_ring.map')
