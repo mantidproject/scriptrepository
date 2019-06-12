@@ -19,7 +19,7 @@ sum_runs=False
 ei=30
 
 # White vanadium run number
-wbvan=21790
+wbvan=25779
 # Default save directory
 config['defaultsave.directory'] = '/instrument/MARI/RBNumber/USER_RB_FOLDER' #data_dir 
 
@@ -37,9 +37,9 @@ remove_bkg = True
 # If necessary, add any sequence of reduction paramerters defined in MARIParameters.xml file 
 # to the end ot the illiad string using the form: property=value 
 # (e.g.:  iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs,check_background=False)
-iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs,check_background=remove_bkg)
+iliad_mari(runno, ei, wbvan, monovan, sam_mass, sam_rmm, sum_runs, check_background=remove_bkg)
 
-# edit next command manually
-#ComputeIncoherentDOS(InputWorkspace='MAR0Reduced#59.57_SQW', 
-#Temperature=5, QSumRange='4,12', EnergyBinning='0,Ei/100,0.9*Ei', 
-#OutputWorkspace='MAR0Reduced#59.57_SQW_incdos')
+# To run reduction _and_ compute density of states together uncomment this and comment iliad_mari above
+# bkgruns and runno can be lists, which means those runs will be summed, and the sum is reduced
+#bkgruns = 20941
+#iliad_dos(runno, wbvan, ei, monovan, sam_mass, sam_rmm, sum_runs, background=bkgrun, temperature=5)

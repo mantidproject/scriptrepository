@@ -20,19 +20,20 @@ class MAPSReduction(ReductionWrapper):
        #
        prop['incident_energy'] = [120]
        prop['energy_bins'] =[-0.1,0.05,0.9]
-
+       #
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
        prop['sample_run'] =25636 #'MAP21968.s01,MAP21968.s02,MAP21968.raw'  # 'MAP0000.raw'# [21384,21385]
        prop['wb_run'] = 25545
        #
-       prop['sum_runs'] = False # set to true to sum everything provided to sample_run
-       #                        # list
+       prop['sum_runs'] = False # set to true to sum everything provided to sample_run list
+       #
        # Absolute units reduction properties. Set prop['monovan_run']=None to do relative units
        prop['monovan_run'] = None #21803  #  vanadium run in the same configuration as your sample 
        #prop['sample_mass'] = 41.104
        #prop['sample_rmm'] = 398.9439
+       #prop['vanadium-mass'] = 32.94
        return prop
 #------------------------------------------------------------------------------------#
    @AdvancedProperties
@@ -50,7 +51,7 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "MAPS_rings.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
       #prop['hardmaskOnly']="4to1_164.msk" # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_171.msk"
+      prop['hard_mask_file'] = "4to1_184_msk.xml"
       prop['run_diagnostics'] = True
       prop['bkgd_range'] = [15000,19000]
       prop['normalise_method']='current'

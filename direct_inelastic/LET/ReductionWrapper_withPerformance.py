@@ -20,6 +20,8 @@ import platform
 import subprocess
 from six import iteritems
 from abc import abstractmethod
+import resource
+import math
 
 # R0921 abstract class not referenced -- wrong, client references it.
 # pylint: disable=too-many-instance-attributes, R0921
@@ -63,8 +65,17 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
                 self.fh = -1;
             def __enter__(self):
                 self.fh = open(self._log_file,"w")
-                lt= time.localtime(self._start_time )                
+                lt= time.localtime(self._start_time )        
+                res_memory = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024);
+                ch_memory = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss/(1024)
                 self.fh.write("*** Test started:  {0}/{1}/{2} at {3}:{4}\n".format(lt.tm_mday,lt.tm_mon,lt.tm_year,lt.tm_hour,lt.tm_min))
+                self.fh.write("*** Self Memory: {0}Kb; Kids memory {1}Kb\n".format(res_memory,ch_memory))
+                pv = subprocess.check_output(['free','-m'])
+                pvs = pv.split('\n')                
+                self.fh.write("***      {0}\n".format(pvs[0]))                
+                self.fh.write("***      {0}\n".format(pvs[1]))
+                self.fh.write("***      {0}\n".format(pvs[2]))
+                
                 self.fh.flush()
                 return self
             def __exit__(self, type, value, traceback):
@@ -76,9 +87,20 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
             def tick(self,fileID):
                 start_time = self._tick_time;
                 end_time  = time.time()
-                pv = subprocess.check_output(['free','-m'])
-                self.fh.write("*** ---> File {0} processed in {1:.2f}sec\n".format(fileID,end_time-start_time))
-                self.fh.write("***      {0}".format(fileID,pv))                
+                res_memory = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/(1024)           
+                ch_memory = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss/(1024)
+                self.fh.write("*** ---> File {0} processed in {1:.2f}sec\n".format(fileID,end_time-start_time))                
+                self.fh.write("*** Self Memory: {0}Kb; Kids memory {1}Kb\n".format(math.ceil(res_memory),math.ceil(ch_memory)))
+                try:
+                    pv = subprocess.check_output(['free','-m'])
+                    pvs = pv.split('\n')                
+                    self.fh.write("***      {0}\n".format(pvs[1]))
+                    self.fh.write("***      {0}\n".format(pvs[2]))
+                except:
+                    #ClearCache(True,True,True,True,True,True,True)                    
+                    #self.fh.write("***      Can not launch subprocess to evaluate free memory. Clearing all Mantid Caches\n")
+                    self.fh.write("***      Can not launch subprocess to evaluate free memory.\n")
+                    
                 self.fh.flush()
                 self._tick_time = end_time
                 
@@ -93,7 +115,17 @@ class ReductionWrapper_withPerformance(ReductionWrapper):
         host = host.replace('.','_')
         host = host.replace('-','_')
         inst  = config.getInstrument()
-        log_file_name = "{0}_performance_node_{1}.txt".format(inst.name(),host)
+        count = 1
+        inst_name = inst.name()
+        log_file_name = "{0}_performance_{1}_test{2}.txt".format(inst_name,host,count)
+        filepath = os.path.dirname(os.path.realpath(__file__))		
+        ff = os.path.join(filepath,log_file_name)
+        while os.path.isfile(ff):
+            count = count+1;
+            log_file_name = "{0}_performance_{1}_test{2}.txt".format(inst_name,host,count)
+            ff = os.path.join(filepath,log_file_name)
+			
+        print (' ******************* storing performance data to file: ',log_file_name)
         if self.reducer.sum_runs:
 # --------### sum runs provided ------------------------------------###
             with time_logger(log_file_name) as log:

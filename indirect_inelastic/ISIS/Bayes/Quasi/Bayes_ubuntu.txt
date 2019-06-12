@@ -1,0 +1,13 @@
+Bayes fitting routines
+
+The fitting programs are written in Fortran & F2Py is used to link them to Python.
+The *.so files are not distributed in the build because the versions of linux & numpy have to be correct.
+
+The file IndirectImport.py needs to be checked for the correct version numbers and replace the version in /opt/Mantid/scripts/Inelastic.
+
+The file IndirectBayes.py and the 3 *.so also go into this directory.
+
+The files BayesQuasi.py & BayesStretch.py go into /opt/Mantid/plugins/python/algorithms/WorkflowAlgorithms
+
+
+

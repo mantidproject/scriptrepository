@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pylab as py
 from shutil import copyfile
@@ -5,18 +6,27 @@ from shutil import copyfile
 # there is no need to create phx files as these are saved within the nxspe file
 
 def create_MERInst_Files(run,one2onepar,one2oneold,one2onenew,ringmap):
-    create_one2onepar(run,one2onepar)
+    one_2one_par_file = create_one2onepar(run,one2onepar)
+    create_ringmap(one_2one_par_file,ringmap)    
     create_one2onemap(one2oneold,one2onenew)
-    create_ringmap(one2onepar,ringmap)
+
 
 # script to make one2one.par file - partially using Mantid script
 def create_one2onepar(run,one2onepar):
-    Load(Filename='MER'+str(run)+'.raw', OutputWorkspace='w1')
-    SavePAR('w1','test.par')
+    Load(Filename='MER'+str(run)+'.nxs', OutputWorkspace='w1')
+    #######run_dir = os.path.dirname(os.path.realpath(__file__))
+      
+    
+    run_dir =  config['defaultsave.directory']
+    tmp_file = os.path.join(run_dir,'test.par')
+    SavePAR('w1',tmp_file)
+    
+    one2onepar= os.path.basename(one2onepar)    
+    one2onepar = os.path.join(run_dir,one2onepar)    
     
     fid = open(one2onepar, 'w')
     
-    data = np.genfromtxt('test.par',
+    data = np.genfromtxt(tmp_file,
                                         names="l2, 2theta, azi, pwid, phigh, crud",
                                         skip_header=1,
                                         dtype=(float, float, float, float, float, float))
@@ -29,12 +39,15 @@ def create_one2onepar(run,one2onepar):
         fid.write('{0:8.3f} {1:8.3f} {2:8.3f} {3:8.3f} {4:8.3f}\n'.format(data['l2'][i],data['2theta'][i],data['azi'][i],pixwid,pixhigh))
 
     fid.close()
+    return one2onepar
 
 #script to create rings mapping file. Inputs are the appropriate one2one.par file for the cycle (from which the 2theta values are taken
 #and the other argument is the name of the rings.map file you want to create for this cycle
 def create_ringmap(one2onepar,ringmap):
-    fid = open(ringmap,'w')
+    run_dir = config['defaultsave.directory']
+    ringmap= os.path.join(run_dir,os.path.basename(ringmap)) 
     
+    fid = open(ringmap,'w')    
     det = np.genfromtxt(one2onepar,
                                     names="l2, 2theta, phi, pwid, phigh",
                                     skip_header=1,
@@ -75,7 +88,8 @@ def create_ringmap(one2onepar,ringmap):
 def create_one2onemap(one2oneold,one2onenew):
     copyfile(one2oneold,one2onenew)
 
-create_MERInst_Files(37394,'mynew_one2one.par','one2one_174.map','mynew_one2one.map','mynew_ring.map')    
-#create_one2onemap('one2one_174.map','mynew_one2one.map')
-#create_one2onepar(37394,'mynew_one2one.par')
-#create_ringmap('mynew_one2one.par','mynew_ring.map')    
+if __name__ == "__main__":	
+	create_MERInst_Files(42385,'mynew_one2one.par','one2one_182.map','mynew_one2one.map','mynew_ring.map')    
+	#create_one2onemap('one2one_174.map','mynew_one2one.map')
+	#create_one2onepar(37394,'mynew_one2one.par')
+	#create_ringmap('mynew_one2one.par','mynew_ring.map')    
