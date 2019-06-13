@@ -188,7 +188,15 @@ def check_calibration_options(cycle_end_list):
       Inputs: 
         cycle_end_list -- the dictionary, defining the cycle index as the function of the cycle end date
        Ouput:
-       repository_path -- the path to InstrumentFiles repository as the 
+       repository_path -- the path to InstrumentFiles repository if such repository exists or 
+                                    the path to working directory if it does not.
+       commit_changes  -- True if the generated files expect to be committed to public repository. 
+                                       False if they are not. The files will not be committed if the 
+                                       repository does not exsits or the current cycle is undefined. 
+                                       
+       cycle_index   -- the text index of the cycle to build calibration files for or
+                                future if the current date is not within the known cycles list.
+       
     '''
     # Check if we can immidiately commit our files to remote repository
     if platform == 'win32': # windows
