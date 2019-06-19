@@ -75,7 +75,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
                 print '*** Preparing to commit to public repostiory file: {0}'.format(the_file)
                 new_instrument_files_list.append(one2one_full_map)
            else:
-                print '*** The file {0} does not exist in {1} so not committing it to public respository'.format(a_file,working_dir) 
+                print '*** --- Not committing file: {0} to public repository. It does not exist in: {1}'.format(a_file,working_dir) 
         commit_files_to_svn(repository_path,new_instrument_files_list,cycle_index)
     else:
         print '*** Changes will not be commited as folder: {0} does not exist'.format(repository_path)        
@@ -107,7 +107,7 @@ def commit_files_to_svn(svn_directory_path,fileslist,cycle_tag='current'):
      print '*** Updating svn repository with {0} existing and {1} new generated MERLIN insrument files'.format(len(fileslist),n_added_files)
          
      message = '-m\" Merlin autocommitted instrument files for cycle: '+cycle_tag+'\"'
-     command = 'svn commit '+message+'; exit 0'
+     command = 'svn commit '+message+'; exit 0;'
      out= subprocess.check_output(command ,cwd = svn_directory_path,stderr=subprocess.STDOUT,shell=True)
      print out
       
