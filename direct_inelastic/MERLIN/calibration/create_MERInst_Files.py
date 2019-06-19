@@ -96,16 +96,20 @@ def commit_files_to_svn(svn_directory_path,fileslist,cycle_tag='current'):
           if os.path.exists(targ):
             copyfile(file,targ) 
           else:
-            copyfile(file,targ)               
-            ierr = subprocess.check_output(['svn','add',targ],cwd = svn_directory_path)
-            if not ierr:
-                n_added_files += 1
+             copyfile(file,targ) 
+             n_added_files += 1            
+             out = subprocess.check_output(['svn','add',targ],cwd = svn_directory_path,stderr=subprocess.STDOUT,shell=True)
+             if len(out)>0:
+                 print out
+     
      if n_added_files > 0:
-         print '*** Added {0} files to svn script repository'.format(n_added_files)
-     print '*** Updating svn repository with {0} generated MERLIN insrument files'.format(len(fileslist))
+         print '*** Added {0} new files to svn script repository'.format(n_added_files)
+     print '*** Updating svn repository with {0} existing and {1} new generated MERLIN insrument files'.format(len(fileslist),n_added_files)
          
      message = '-m\" Merlin autocommitted instrument files for cycle: '+cycle_tag+'\"'
-     subprocess.check_output(['svn','commit',message],cwd = svn_directory_path)
+     command = 'svn commit '+message+'; exit 0'
+     out= subprocess.check_output(command ,cwd = svn_directory_path,stderr=subprocess.STDOUT,shell=True)
+     print out
       
 
 # script to make one2one.par file - partially using Mantid script
@@ -185,7 +189,15 @@ def check_calibration_options(cycle_end_list):
       Inputs: 
         cycle_end_list -- the dictionary, defining the cycle index as the function of the cycle end date
        Ouput:
-       repository_path -- the path to InstrumentFiles repository as the 
+       repository_path -- the path to InstrumentFiles repository if such repository exists or 
+                                    the path to working directory if it does not.
+       commit_changes  -- True if the generated files expect to be committed to public repository. 
+                                       False if they are not. The files will not be committed if the 
+                                       repository does not exsits or the current cycle is undefined. 
+                                       
+       cycle_index   -- the text index of the cycle to build calibration files for or
+                                future if the current date is not within the known cycles list.
+       
     '''
     # Check if we can immidiately commit our files to remote repository
     if platform == 'win32': # windows
