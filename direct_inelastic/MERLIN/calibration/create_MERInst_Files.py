@@ -107,7 +107,7 @@ def commit_files_to_svn(svn_directory_path,fileslist,cycle_tag='current'):
      print '*** Updating svn repository with {0} existing and {1} new generated MERLIN insrument files'.format(len(fileslist),n_added_files)
          
      message = '-m\" Merlin autocommitted instrument files for cycle: '+cycle_tag+'\"'
-     command = 'svn commit '+message+'; exit 0;'
+     command = 'svn commit '+message+';\n exit 0;'
      out= subprocess.check_output(command ,cwd = svn_directory_path,stderr=subprocess.STDOUT,shell=True)
      print out
       
