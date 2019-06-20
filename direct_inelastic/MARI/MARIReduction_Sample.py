@@ -691,7 +691,7 @@ def mari_normalise_background(background_int, white_int, second_white_int=None):
         background_int =  Divide(LHSWorkspace=background_int,RHSWorkspace=hmean,WarnOnZeroDivide='0')
         DeleteWorkspace(hmean)
 
-if __name__ == "__main__":
+if __name__ == "__main__" or __name__ == "__builtin__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
 #------------------------------------------------------------------------------------#

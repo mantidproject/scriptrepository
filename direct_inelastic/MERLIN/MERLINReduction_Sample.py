@@ -137,7 +137,7 @@ class MERLINReduction(ReductionWrapper):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MER',web_var)
 #
-if __name__ == "__main__":
+if __name__ == "__main__" or __name__ == "__builtin__":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
 #------------------------------------------------------------------------------------#
