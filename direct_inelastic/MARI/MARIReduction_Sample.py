@@ -396,7 +396,7 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
     if hasattr(ei, '__len__') and len(ei) > 1:
         prop_man.energy_bins=[-1, 1./400., 0.97]
         multirun = True if sum_runs else False
-    elif ei != 'auto':
+    elif ei != 'auto' and not hasattr(ei, '__len__'):
         prop_man.energy_bins=[-1*ei, ei/400., 0.97*ei]
 
     if ( sam_rmm!=0 and sam_mass!=0 ) :
