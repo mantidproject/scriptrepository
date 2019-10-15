@@ -177,20 +177,6 @@ if __name__ == "__main__" or __name__ == "__builtin__":
     #  search path checking after time specified below.
     rd.wait_for_file = 0  # waiting time interval in seconds
 
-### Define a run number to validate reduction against future changes    #############
-    # After reduction works well and all settings are done and verified, 
-    # take a run number with good reduced results and build validation
-    # for this result. 
-    # Then place the validation run together with this reduction script.
-    # Next time, the script will run reduction and compare the reduction results against
-    # the results obtained earlier.
-    #rd.validate_run_number = 21968  # Enabling this property disables normal reduction
-    # and forces reduction to reduce run specified here and compares results against
-    # validation file, processed earlier or calculate this file if run for the first time.
-    #This would ensure that reduction script have not changed,
-    #allow to identify the reason for changes if it was changed 
-    # and would allow to recover the script,used to produce initial reduction
-    #if changes are unacceptable.
 
 ####get reduction parameters from properties above, override what you want locally ###
    # and run reduction. Overriding would have form:

@@ -3,6 +3,7 @@
 import os,sys
 from numpy import *
 from mantid import *
+from Direct.AbsorptionShapes import *
 from Direct.ReductionWrapper import *
 from mantid.simpleapi import *
 from mantid.kernel import funcinspect
@@ -20,12 +21,12 @@ class MARIReduction(ReductionWrapper):
            a user usually wants to change
 
         MARI Instrument scientist beware!!!!
-        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or 
+        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or
             in section __name__=='__main__' below if you do not use iliad_mari
         """
         prop = {}
         # if energy is specified as a list (even with single value e.g. ei=[81])
-        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
+        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
         #prop['incident_energy'] = 50
@@ -34,7 +35,7 @@ class MARIReduction(ReductionWrapper):
         prop['energy_bins'] = [-1, 0.005, 0.97]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
-        # unless you going to sum these files. 
+        # unless you going to sum these files.
         # The range of numbers or run number is used when you run reduction from PC.
 
         # If you "save" a run without ending it, you have to give the file name
@@ -59,11 +60,11 @@ class MARIReduction(ReductionWrapper):
            scientist
 
            separation between simple and advanced properties depends
-           on scientist, experiment and user.   All are necessary for reduction 
+           on scientist, experiment and user.   All are necessary for reduction
            to work properly
 
         MARI Instrument scientist beware!!!!
-        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or 
+        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or
             in section __name__=='__main__' below if you do not use iliad_mari
         """
         prop = {}
@@ -93,18 +94,86 @@ class MARIReduction(ReductionWrapper):
         prop['check_background']=False
         prop['bkgd-range-min']=18000
         prop['bkgd-range-max']=19000
+        # Uncomment two following properties to correct for absorption
+        # on sample or sample container during the experiment.
+        # 1) Define the sample material and sample shape:
+        #
+        #prop['correct_absorption_on'] = Cylinder(['Fe'],{'Height':10,'Radius':2})
+        #
+        #  The shapes currently available are:
+        #  Cylinder, FlatPlate, HollowCylinder and Sphere
+        # Each class accepts two parameters, namely dictionary or list describing
+        # sample material, as accepted by SetSampleMaterial algorithm
+        # and Shape parameters as accepted by SetSample algorithm.
+
+        # Go to iPython window, type from AbsorptionShapes import * and type
+        # help(Cylinder),
+        # help(Sphere) or help(anAbsorptionShape) to learn more about different
+        # ways of setting the material and shape parameters:
+        ##----------------------------
+        # 2) Optionally provide additional parameters defining speed and accuracy of the
+        #    absorption corrections algorithm in abs_corr_info dictionary.
+        #
+        #prop['abs_corr_info'] = {'is_mc':True}
+        #
+        #Two generic algorithms are currently available to
+        #    correct for absorption:
+        # a) MonteCarloAbsorption (invoked by 'is_mc':True key of abs_corr_info
+        #    property and by default)
+        # and
+        # b) AbsorptionCorrections (invoked by 'is_fast':True key of
+        #    abs_corr_info property). This algorithm has number of optimizations
+        #    for the special shapes cases and need further scientific validations
+
+        # All other properties, to be provided in the input dictionary of this
+        # property are the non-sample related properties of the
+        # correspondent correction algorithm.
+
         return prop
 
     @iliad
     def reduce(self,input_file=None,output_directory=None):
-        """Method executes reduction over single file
+        """ Method executes reduction over single file
+          Modify only if custom pre or post-processing is needed, namely:
+        """
 
-          Overload only if custom reduction is needed or 
-          special features are requested
+        """
+            Define custom preprocessing procedure, to be applied to the whole
+            run, obtained from the instrument before diagnostics is applied
+        1) Get access to the pointer to the input workspace
+            (the workspace will be loaded  and calibrated at this point if it has not been done yet)
+            using sample_run property class:
+            run_ws = PropertyManager.sample_run.get_worksapce()
+
+        2) Get access to any property defined in Instrument_Properties.xml file
+           or redefined in the reduction script:
+           properties = self.reducer.prop_man
+
+        e.g:
+        RunNumber = properties.sample_run
+        ei = properties.incident_energy
+
+            Perform custom preprocessing procedure (with the values you specified)
+        preprocessed_ws = custom_preprocessing_procedure(run_ws,RunNumber,ei,...)
+        3) Store preprocessed workspace in the sample_run property for further analysis from preprocessing
+            for the case where the workspace name have changed in the Analysis Data Service
+            (this situation is difficult to predict so better always do this operation)
+        PropertyManager.sample_run.synchronize_ws(preprocessed_ws)
         """
         output = ReductionWrapper.reduce(self,input_file,output_directory)
-        # Autoreduction returns workspace list, so for compartibility with autoreduction 
+        # Auto-reduction returns workspace list, so for compatibility with auto-reduction
         # we better process any output as reduction list
+        """ Defined custom post-processing procedure, in the way, similar to
+            the preprocessing procedure, using the WS pointer, returned by the reduction procedure
+            above. If the run is reduced in multirep mode, the WS is the list of the reduced
+            workspace pointers, so the procedure should be applied to each workspace.
+
+            At this stage standard saving had already been done, so save your results
+            if you need them in a future:
+            for i in range(0:len(WS)):
+                SaveNexus(WS[i],Filename = 'CustomFilenameN%d.nxs'.format(i))
+        """
+
         if not isinstance(output,list):
             output = [output]
         for ws in output:
@@ -307,7 +376,42 @@ class MARIReduction(ReductionWrapper):
                     return results[0]
                 else:
                     return results
+    def do_preprocessing(self,reducer,ws):
+        """ Custom function, applied to each run or every workspace, the run is divided to
+            in multirep mode
+            Applied after diagnostics but before any further reduction is invoked.
+            Inputs:
+            self    -- initialized instance of the instrument reduction class
+            reducer -- initialized instance of the reducer
+                       (DirectEnergyConversion class initialized for specific reduction)
+            ws         the workspace, describing the run or partial run in multirep mode
+                       to preprocess
 
+            By default, does nothing.
+            Add code to do custom preprocessing.
+            Must return pointer to the preprocessed workspace
+        """
+        return ws
+      #
+    def do_postprocessing(self,reducer,ws):
+        """ Custom function, applied to each reduced run or every reduced workspace,
+            the run is divided into, in multirep mode.
+            Applied after reduction is completed but before saving the result.
+
+            Inputs:
+            self    -- initialized instance of the instrument reduction class
+            reducer -- initialized instance of the reducer
+                       (DirectEnergyConversion class initialized for specific reduction)
+            ws         the workspace, describing the run or partial run in multirep mode
+                       after reduction to postprocess
+            By default, does nothing.
+            Add code to do custom postprocessing.
+            Must return pointer to the postprocessed workspace.
+            The postprocessed workspace should be consistent with selected save method.
+            (E.g. if you decide to convert workspace units to wavelength, you can not save result as nxspe)
+        """
+        return ws
+    #
     def set_custom_output_filename(self):
         """define custom name of output files if standard one is not satisfactory
 
@@ -322,7 +426,7 @@ class MARIReduction(ReductionWrapper):
             # Note -- properties have the same names as the list of advanced and
             # main properties
             # Note: the properties are stored in prop_man class and accessed as
-            # below. 
+            # below.
             ei = PropertyManager.incident_energy.get_current()
             # sample run is more then just list of runs, so we use
             # the formalization below to access its methods
@@ -336,19 +440,16 @@ class MARIReduction(ReductionWrapper):
         # Uncomment this to use standard file name generating function
         #return None
 
-    def validation_file_place(self):
-        """Redefine this to the place, where validation file, used in conjunction with
-         'validate_run' property, located. Here it defines the place to this script folder.
-          but if this function is disabled, by default it looks for/places it 
-         in a default save directory"""
-        return os.path.split(os.path.realpath(__file__))[0]
-
     def __init__(self,web_var=None):
         """ sets properties defaults for the instrument with Name"""
         ReductionWrapper.__init__(self,'MAR',web_var)
         object.__setattr__(self.reducer.prop_man, 'remove_streaks', False)
         object.__setattr__(self.reducer.prop_man, 'fakewb', False)
         object.__setattr__(self.reducer.prop_man, 'filename_prefix', '')
+        Mt = MethodType(self.do_preprocessing, self.reducer)
+        DirectEnergyConversion.__setattr__(self.reducer,'do_preprocessing',Mt)
+        Mt = MethodType(self.do_postprocessing, self.reducer)
+        DirectEnergyConversion.__setattr__(self.reducer,'do_postprocessing',Mt)
 
 #------------------------------------------------------------------------------
 
@@ -362,7 +463,7 @@ def reduced_filename(runs, ei, is_sum, prefix=None):
 
 def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
     """Helper function, which allow to run MARIReduction in old iliad way
-     inputs: 
+     inputs:
         runno       -- one or list of run numbers to process
         ei            -- incident energy or list of incident energies
         wbvan      --  white beam vanadium run number or file name of the vanadium
@@ -373,7 +474,7 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
         **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
                          written in the form property=value
         NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
-                  and def_main properties functions. They of course may be overwritten here. 
+                  and def_main properties functions. They of course may be overwritten here.
     """
     rd = MARIReduction()
     # set up advanced and main properties, specified in code above
@@ -729,28 +830,14 @@ if __name__ == "__main__" or __name__ == "__builtin__":
     #  search path checking after time specified below.
     rd.wait_for_file = 0  # waiting time interval in seconds
 
-### Define a run number to validate reduction against future changes    #############
-    # After reduction works well and all settings are done and verified, 
-    # take a run number with good reduced results and build validation
-    # for this result. 
-    # Then place the validation run together with this reduction script.
-    # Next time, the script will run reduction and compare the reduction results against
-    # the results obtained earlier.
-    #rd.validate_run_number = 21968  # Enabling this property disables normal reduction
-    # and forces reduction to reduce run specified here and compares results against
-    # validation file, processed earlier or calculate this file if run for the first time.
-    #This would ensure that reduction script have not changed,
-    #allow to identify the reason for changes if it was changed 
-    # and would allow to recover the script,used to produce initial reduction
-    #if changes are unacceptable.
 
 ####get reduction parameters from properties above, override what you want locally ###
    # and run reduction.  Overriding would have form:
-   # rd.reducer.prop_man.property_name (from the dictionary above) = new value e.g. 
+   # rd.reducer.prop_man.property_name (from the dictionary above) = new value e.g.
    # rd.reducer.prop_man.energy_bins = [-40,2,40]
-   # or 
+   # or
    ## rd.reducer.prop_man.sum_runs = False
-   # 
+   #
 ###### Run reduction over all run numbers or files assigned to ######
     # sample_run variable
 
@@ -761,3 +848,6 @@ if __name__ == "__main__" or __name__ == "__builtin__":
     # usual way to go is to reduce workspace and save it internally
 
     rd.run_reduction()
+
+###### Test absorption corrections to find optimal settings for corrections algorithm         ######
+#     corr = rd.eval_absorption_corrections()
