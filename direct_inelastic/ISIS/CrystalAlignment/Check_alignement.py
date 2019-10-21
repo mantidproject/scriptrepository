@@ -58,12 +58,11 @@ psi0 = 0  # The rot angle defined as psi0
 import numpy as np
 mantid2horace = np.matrix([ [0, 0, 1], [1, 0, 0], [0, 1, 0] ])
 UB = wk.sample().getOrientedLattice().getUB()
-B = wk.sample().getOrientedLattice().getB()
-ang = (psi - rot) * np.pi / 180
+ang = (psi0 - rot) * np.pi / 180
 rotmat = np.matrix([ [np.cos(ang), -np.sin(ang), 0], [np.sin(ang), np.cos(ang), 0], [0, 0, 1] ])
-U = np.linalg.solve(rotmat * mantid2horace * UB, B)
-uVector = U[:,0]
-vVector = U[:,1]
+UBinv = np.linalg.inv(rotmat * mantid2horace * UB)
+uVector = UBinv[:,0] / np.linalg.norm(UBinv[:,0])
+vVector = UBinv[:,1] / np.linalg.norm(UBinv[:,1])
 print uVector,vVector
 # To get rotation angles from this w.r.t. some defined u,v vectors, use the crystal_pars_correct() function in Horace, e.g.:
 #[~, ~, dpsi, gl, gs] = crystal_pars_correct(uFromMantid, vFromMantid, alatt, angdeg, 0, 0, 0, 0, eye(3), uDesired, vDesired)
