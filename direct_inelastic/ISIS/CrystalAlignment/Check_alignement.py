@@ -49,12 +49,24 @@ CopySample(InputWorkspace='SingleCrystalPeakTable', OutputWorkspace='MER16000', 
 # First input is the 'SingleCrystalPeakTable' 
 # and the second is the sample run you want to copy the UB matrix on
 
-#To convert UB to u,v (use the script interpreter window):
-
+#To convert UB to u,v (in Horace convention; use the script interpreter window):
 wk=mtd['MER16000']
-uVector=wk.sample().getOrientedLattice().getuVector()
-vVector=wk.sample().getOrientedLattice().getvVector()
+rot = 0   # The rot angle of the white beam run
+psi0 = 0  # The rot angle defined as psi0 
+
+# In Mantid, z||beam, x horizontal _|_ to beam and y is vertical; in Horace x||beam, y is horizontal _|_ beam and z is vertical
+import numpy as np
+mantid2horace = np.matrix([ [0, 0, 1], [1, 0, 0], [0, 1, 0] ])
+UB = wk.sample().getOrientedLattice().getUB()
+B = wk.sample().getOrientedLattice().getB()
+ang = (psi - rot) * np.pi / 180
+rotmat = np.matrix([ [np.cos(ang), -np.sin(ang), 0], [np.sin(ang), np.cos(ang), 0], [0, 0, 1] ])
+U = np.linalg.solve(rotmat * mantid2horace * UB, B)
+uVector = U[:,0]
+vVector = U[:,1]
 print uVector,vVector
+# To get rotation angles from this w.r.t. some defined u,v vectors, use the crystal_pars_correct() function in Horace, e.g.:
+#[~, ~, dpsi, gl, gs] = crystal_pars_correct(uFromMantid, vFromMantid, alatt, angdeg, 0, 0, 0, 0, eye(3), uDesired, vDesired)
 
 # You can set different axix of the goniometer using the command: SetGoniometer(Workspace,name, x,y,z, 1/-1 (1 for ccw, -1 for cw rotation)). A number of degrees can be used instead of name. 
 #X, Y, Z components of the vector of the axis of rotation. Right-handed coordinates with +Z=beam direction; +Y=Vertically up (against gravity); +X to the left.
