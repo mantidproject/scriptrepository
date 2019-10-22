@@ -18,17 +18,17 @@ config['defaultsave.directory'] = '/instrument/MAPS/RBNumber/USER_RB_FOLDER' #da
 #=========================================================================================================================================
 
 #run number
-runno=[21385]
+runno=[37395]
 sum_files = False
 
 #incident neutron energy
-ei=[450]
+ei=[200]
 
 #white beam vanadium run number
-wbvan=21376
+wbvan=36501
 
 #Energy bins in processed data [lo,step,hi]
-rebin_pars=[-50,2.5,425]
+rebin_pars=[-0.5,0.002,0.95]
 
 #Monochromatic vanadium run number (for absolute units normalisation) - put [] if not using
 #Sample mass (g), sample relative molar mass (both zero if not using)
@@ -37,13 +37,13 @@ sam_mass=0
 sam_rmm=0
 
 # hard mask file for the cycle
-hard_mask_file = "4to1_184_msk.xml"
+hard_mask_file = "4to1_192_msk.xml"
 
 #Process data as single crystal (4-to-1 detector mapping)
 wait_for_file=0
-iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_files,wait_for_file=wait_for_file,hard_mask_file=hard_mask_file)
+iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_files,wait_for_file=wait_for_file,map_file="4to1.map",hard_mask_file=hard_mask_file)
 
 #Process data as powder (rings mapping)
-iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_files,hard_mask_file=hard_mask_file)
+#iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_files,hard_mask_file=hard_mask_file)
 
 
