@@ -1,5 +1,7 @@
-""" This is a script that  produces a 2x2 figure containing sinusoidal waveforms, 
-two of which have error bars """
+"""
+This is a script that  produces a 2x2 figure containing sinusoidal waveforms, 
+two of which have error bars. this is another bit of doc rext to see if it updates
+"""
 
 
 # The following line helps with future compatibility with Python 3
