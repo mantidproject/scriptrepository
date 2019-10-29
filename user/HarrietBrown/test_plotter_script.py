@@ -3,6 +3,7 @@ This is a script that  produces a 2x2 figure containing sinusoidal waveforms,
 two of which have error bars. this is another bit of doc rext to see if it updates
 testing autoupdate
 Another change so it belongs to me
+Make another change
 """
 
 
