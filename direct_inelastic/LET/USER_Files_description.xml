@@ -14,7 +14,7 @@
     The values of these variables are taken from archive for current cycle and user
   -->
  <!--Simple file copying -->  
-  <file_to_copy file_name="LETReduction_2020abs_sample.py" copy_as="LETReduction_$cycleID$.py"/>
+  <file_to_copy file_name="LETReduction_2018_sample.py" copy_as="LETReduction_$cycleID$.py"/>
 
 
 </user_files_description>

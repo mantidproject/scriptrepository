@@ -13,15 +13,15 @@
     not full rb folder path (/home/wkc26243/RB1501020), 
     The values of these variables are taken from archive for current cycle and user
   -->
- <!--Simple file copying   
-  <file_to_copy file_name="MAPSReduction_SampleAbs.py" copy_as="MAPSReduction_Sample.py"/>
-  -->
+ <!--Simple file copying     -->
+  <file_to_copy file_name="MAPSReduction.py" copy_as="MAPSReduction_$cycleID$.py"/>
+
  <!--Advanced file copying 
     Variables have to be either strings or strings with variables, described above
-  -->    
+
   <file_to_copy file_name="MAPSReduction.py" copy_as="MAPSReduction_$cycleID$.py">
         <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>  
   </file_to_copy>
  
-
+  -->    
 </user_files_description>

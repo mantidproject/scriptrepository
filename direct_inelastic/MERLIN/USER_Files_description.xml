@@ -14,7 +14,7 @@
     The values of these variables are taken from archive for current cycle and user
   -->
  <!--Simple file copying -->  
-  <file_to_copy file_name="MERLINReduction_SampleAbs.py" copy_as="MERLINReduction_$cycleID$.py"/>
+  <file_to_copy file_name="MERLINReduction_Sample.py" copy_as="MERLINReduction_$cycleID$.py"/>
 
 
 </user_files_description>
