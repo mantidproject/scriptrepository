@@ -1,6 +1,7 @@
 """ Sample MAPS reduction script """ 
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
+#from __future__ import (absolute_import, division, print_function, unicode_literals)
 import os
 #
 from mantid import *
@@ -158,7 +159,7 @@ class MAPSReduction(ReductionWrapper):
       return results
       #
 
-    def do_preprocessing(self,reducer,ws):
+   def do_preprocessing(self,reducer,ws):
         """ Custom function, applied to each run or every workspace, the run is divided to
             in multirep mode
             Applied after diagnostics but before any further reduction is invoked.
@@ -176,7 +177,7 @@ class MAPSReduction(ReductionWrapper):
         return ws
       #
 
-    def do_postprocessing(self,reducer,ws):
+   def do_postprocessing(self,reducer,ws):
         """ Custom function, applied to each reduced run or every reduced workspace,
             the run is divided into, in multirep mode.
             Applied after reduction is completed but before saving the result.
@@ -198,8 +199,8 @@ class MAPSReduction(ReductionWrapper):
         """
         return ws
     #
-    def set_custom_output_filename(self):
-        """define custom name of output files if standard one is not satisfactory
+   def set_custom_output_filename(self):
+      """define custom name of output files if standard one is not satisfactory
 
           In addition to that, example of accessing complex reduction properties
           Simple reduction properties can be accessed as e.g.: value= prop_man.sum_runs
@@ -231,7 +232,7 @@ class MAPSReduction(ReductionWrapper):
       # Uncomment this to use standard file name generating function
       #return None
     #
-    def eval_absorption_corrections(self,test_ws=None):
+   def eval_absorption_corrections(self,test_ws=None):
         """ The method to evaluate the speed and efficiency of the absorption corrections procedure,
             before applying your corrections to the whole workspace and all sample runs.
 
@@ -295,7 +296,7 @@ class MAPSReduction(ReductionWrapper):
 
 #------------------------------------------------------------------------------------------------
 
-    def __init__(self,web_var=None):
+   def __init__(self,web_var=None):
        """ sets properties defaults for the instrument with Name"""
        ReductionWrapper.__init__(self,'MAP',web_var)
        Mt = MethodType(self.do_preprocessing, self.reducer)
@@ -352,11 +353,11 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_ru
         if key == 'save_file_name':
             filename_present = True;
             if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
-                  print "**************************************************************************************"
-                  print "*** WARNING: you can not set up single file name for list of files or list of energies"
-                  print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
-                  print "*** to calculate file name as function of each incident energy and run number."
-                  print "**************************************************************************************"                  
+                  print ("**************************************************************************************")
+                  print ("*** WARNING: you can not set up single file name for list of files or list of energies")
+                  print ("*** change ''set_custom_output_filename'' function, which returns lamda function used ")
+                  print ("*** to calculate file name as function of each incident energy and run number.")
+                  print ("**************************************************************************************")
                   continue
         if key == 'wait_for_file':
             rd.wait_for_file = kwargs['wait_for_file']
