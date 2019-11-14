@@ -7,6 +7,10 @@ import os
 from mantid import *
 from Direct.ReductionWrapper import *
 
+# path and default directory
+sys.path.insert(0,'/instrument/MAPS/RBNumber/USER_RB_FOLDER');
+config['defaultsave.directory'] = '/instrument/MAPS/RBNumber/USER_RB_FOLDER'
+
 class MAPSReduction(ReductionWrapper):
 #------------------------------------------------------------------------------------#
    @MainProperties
