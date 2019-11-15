@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.kernel import *
 from mantid.simpleapi import *
 #import math
@@ -66,7 +67,7 @@ class Create2DALCMap(PythonAlgorithm):
 				  except:
 					ylogval=float(ws.getRun().getProperty(logname).value)			  
 			  if(ylogval<=oldlogval and nmax>=1000000):
-				 print "Out of sequence run found, ending"
+				 print("Out of sequence run found, ending")
 				 oldlogval=10000001.0 # end now
 			  else:
 				  self.log().information(logname+"="+str(ylogval))
@@ -74,7 +75,7 @@ class Create2DALCMap(PythonAlgorithm):
 				  Rebunch(InputWorkspace='__ALCmap_raw',OutputWorkspace='__ALCmap_fine',NBunch=NBunch)
 				  AsymmetryCalc(InputWorkspace='__ALCmap_fine',OutputWorkspace='__ALCmap_asym',ForwardSpectra='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32',BackwardSpectra='33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64',Alpha='1.0')
 				  ws=CropWorkspace(InputWorkspace='__ALCmap_asym',OutputWorkspace=wsname1,XMin=StartTime,XMax=EndTime)
-				  print logname+"="+str(ylogval)+" increment="+str(ylogval-oldlogval)
+				  print(logname+"="+str(ylogval)+" increment="+str(ylogval-oldlogval))
 				  oldlogval=ylogval
 				  filelist.append((ylogval,wsname1))
 				  vi=vi+1
@@ -82,9 +83,9 @@ class Create2DALCMap(PythonAlgorithm):
 				  DeleteWorkspace("__ALCmap_fine")
 				  DeleteWorkspace("__ALCmap_asym")
 		  except Exception as e:
-			  print e
-			  print e.__repr__()
-			  print "run out of data"
+			  print(e)
+			  print(e.__repr__())
+			  print("run out of data")
 			  oldlogval=10000001.0 # end now, run maybe not found?
 		  progRep.report()
 		# assemble conjoined run

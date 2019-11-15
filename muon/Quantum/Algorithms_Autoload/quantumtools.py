@@ -1,6 +1,7 @@
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
 ## Version 1.04, August 2018
+from __future__ import print_function
 import numpy
 import math
 #import time
@@ -68,7 +69,7 @@ def createSpinMat(spins):
 	if(N>100000):
 		raise Exception("Problem almost certainly too big to try")
 	if(N>1024):
-		print "fairly big problem, prepare for out of memory errors"
+		print("fairly big problem, prepare for out of memory errors")
 	# print ([Nsp,3]+spins+spins)
 	spmat=numpy.zeros((Nsp,3,N,N),dtype=complex)
 	# fill me (exact copy of Fortran QUANTUM including possible scale errors)
@@ -288,7 +289,7 @@ def BoltzmannDensityMatrix(Ham,kT,spin=None):
 		# subset indices (one state of spin):
 		subset=numpy.zeros([N2],dtype=int)
 		for k in range(N/m2):
-			subset[k*m1:(k+1)*m1]=range(k*m2,k*m2+m1,1)
+			subset[k*m1:(k+1)*m1]=list(range(k*m2,k*m2+m1,1))
 		#print "subset=",subset
 		newHam=numpy.zeros([N2,N2],dtype=complex)
 		for k in range(ns):
@@ -1078,10 +1079,10 @@ def getCrystalEquivalents(spGrp, unCell, refpt, allowInversion=True):
 		mats[i]=numpy.array((newX,newY,newZ))
 		if(numpy.allclose(mats[i],numpy.eye(3))):
 			transOps.append(op,) # translation
-			print "translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i])
+			print("translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]))
 		if(numpy.allclose(mats[i],numpy.eye(3)*-1)):
 			transOps.append(op) # inversion (+ translation)
-			print "translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i])
+			print("translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]))
 
 	for i,op in enumerate(ops):
 		if(op.getIdentifier() != 'x,y,z'):
@@ -1096,7 +1097,7 @@ def getCrystalEquivalents(spGrp, unCell, refpt, allowInversion=True):
 							old[3]=old[3]+" & "+op.getIdentifier()
 			if(uniq):
 				epts.append([newpt,mats[i],isinvop,op.getIdentifier()])
-				print "selected additional operation",op.getIdentifier(),"with det=",isinvop
+				print("selected additional operation",op.getIdentifier(),"with det=",isinvop)
 	
 	return [((m[1],False,m[3]) if numpy.linalg.det(m[1])>0 else (-m[1],True,"Inv "+m[3])) for m in epts]
 	
@@ -1533,8 +1534,8 @@ def solveRFDensityMat(Ham0,Ham1,Ham1i,omegaRF,start,detect,detecti,RRFharmonic,t
 	minamp=numpy.amin(ampls)
 	maxamp=numpy.amax(ampls)
 	if(minamp<0.999 or maxamp>1.001):
-		print "eigenvalues are not normalised? ts=",tslices," e=2**",eslices
-		print ampls
+		print("eigenvalues are not normalised? ts=",tslices," e=2**",eslices)
+		print(ampls)
 	# print "t=",tslices," e=2**",eslices," Egvals=",eval
 
 	# debug tests: eigenvectors should be orthogonal!

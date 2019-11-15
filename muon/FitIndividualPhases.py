@@ -1,3 +1,4 @@
+from __future__ import print_function
 import math
 import numpy
 
@@ -25,7 +26,7 @@ class FitIndividualPhases(PythonAlgorithm):
         fsl=[]
         bsl=[]
         if gw.getNumberHistograms() != inputWS.getNumberHistograms():
-            print "oops, grouping for wrong instrument?"
+            print("oops, grouping for wrong instrument?")
         for i in range(gw.getNumberHistograms()):
             if gw.dataY(i)[0]==fgi:
                 fsl.append(gw.getDetector(i).getID())
@@ -59,9 +60,9 @@ class FitIndividualPhases(PythonAlgorithm):
             iv["p"+str(i)]=fr0.Function["p"+str(i)]
             iv["w"+str(i)]=fr0.Function["w"+str(i)]
             fittedw.append(fr0.Function["w"+str(i)])
-        for k in iv.keys():
+        for k in list(iv.keys()):
             if k[0]=="w":
-                print "fitted freq",iv[k],"or",iv[k]/2/math.pi/0.01355,"G with ampl=",iv["a"+k[1:]]
+                print("fitted freq",iv[k],"or",iv[k]/2/math.pi/0.01355,"G with ampl=",iv["a"+k[1:]])
 
         # bulk fit TF and re-generate workspace
         NS=inputWS.getNumberHistograms()
@@ -76,7 +77,7 @@ class FitIndividualPhases(PythonAlgorithm):
         for i in range(NS):
             t1bin=int(numpy.searchsorted(inputWS.dataX(i),t1))
             hs=numpy.sum(inputWS.dataY(i)[t1bin:])
-            print "histogram",i,"sum of good counts=",hs
+            print("histogram",i,"sum of good counts=",hs)
             if(hs>100):
                 dt=inputWS.dataX(i)[1]-inputWS.dataX(i)[0]
                 iv["n0"]=hs*dt/2.197*math.exp(t1/2.197)
@@ -97,11 +98,11 @@ class FitIndividualPhases(PythonAlgorithm):
                     outWS.dataE(i)[j*2]=ed["a"+str(j+1)]
                     outWS.dataY(i)[j*2+1]=p
                     outWS.dataE(i)[j*2+1]=ed["p"+str(j+1)]
-                outWS.dataX(i)[:]=range(2*NF+2)
+                outWS.dataX(i)[:]=list(range(2*NF+2))
                 outWS.dataY(i)[2*NF]=fr.Function["n0"]
                 outWS.dataE(i)[2*NF]=ed["n0"]
             else:
-                outWS.dataX(i)[:]=range(2*NF+2)
+                outWS.dataX(i)[:]=list(range(2*NF+2))
                 outWS.dataY(i)[:]=[0.0]*(2*NF+1)
                 empties.append(i)
                 
@@ -111,9 +112,9 @@ class FitIndividualPhases(PythonAlgorithm):
         if(empties):
             MaskDetectors(outWS,WorkspaceIndexList=empties)
         # summary
-        print "frequencies:"
+        print("frequencies:")
         for i in range(NF):
-            print FreqGuesses[i]," optimised to ",iv["w"+str(i+1)]," with amplitude",iv["a"+str(i+1)]
+            print(FreqGuesses[i]," optimised to ",iv["w"+str(i+1)]," with amplitude",iv["a"+str(i+1)])
         self.setProperty("OutputWorkspace",outWS)
         self.setProperty("FittedFrequencies",fittedw)
 

@@ -34,7 +34,7 @@ class MERLINReduction(ReductionWrapper_withPerformance):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] =  range(41624,42308) #range(41624,42308)#range(24003,24011) # 'MER23700.n001'
+       prop['sample_run'] =  list(range(41624,42308)) #range(41624,42308)#range(24003,24011) # 'MER23700.n001'
        #prop['sample_run'] =  range(41624,41700)#range(24003,24011) # 'MER23700.n001'
        prop['wb_run'] = 40954 #'40954.raw'
        #

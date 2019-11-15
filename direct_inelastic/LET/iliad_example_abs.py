@@ -1,6 +1,7 @@
 """
 The sample script for LET absolute units reduction
 """
+from __future__ import print_function
 from qtiGenie import *
 iliad_setup('let')
 
@@ -15,7 +16,7 @@ if len(save_dir) ==0 :
     config['defaultsave.directory']=os.getcwd()
     save_dir = config.getString('defaultsave.directory')
     
-print "Data will be saved into: ",save_dir
+print("Data will be saved into: ",save_dir)
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
 config.appendDataSearchDir('/home/let/Desktop/LET_maps') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
@@ -51,7 +52,7 @@ LoadRaw(Filename=str(wb),OutputWorkspace="wb_wksp") # load whitebeam
  
 for run in run_no:     #loop around runs
         fname='LET0000'+str(run)+'.nxs'
-        print ' processing file ', fname
+        print(' processing file ', fname)
         LoadEventNexus(Filename=fname,OutputWorkspace='w1',SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='1')
         Rebin(InputWorkspace='w1_monitors',OutputWorkspace='mon',Params=[1000,100,90000])
         ExtractSingleSpectrum(InputWorkspace='mon',OutputWorkspace='mon',WorkspaceIndex='5')  #extract monitor 6
@@ -63,15 +64,15 @@ for run in run_no:     #loop around runs
         # this section finds all the transmitted incident energies
         if len(ei) == 0:
             ei = find_chopper_peaks('mon');
-        print ei
+        print(ei)
         if run == run_no[0]:
             ei = [ '%.2f' % elem for elem in ei ]
-        print 'energies transmitted are:'
+        print('energies transmitted are:')
         print (ei)
  
         
         for ind,energy in enumerate(ei):
-            print "Reducing around energy: {0}".format(float(energy))
+            print("Reducing around energy: {0}".format(float(energy)))
             (energybin,tbin,t_elastic) = find_binning_range(energy,ebin,25.,23.5,4.1,1.6);
 
             Rebin(InputWorkspace='w1',OutputWorkspace='w1reb',Params=tbin,PreserveEvents='1')        
@@ -80,7 +81,7 @@ for run in run_no:     #loop around runs
             energybin=[ebin[0]*energy,ebin[1]*energy,ebin[2]*energy]
             energybin = [ '%.4f' % elem for elem in energybin ] 
             ebinstring=str(energybin[0])+','+str(energybin[1])+','+str(energybin[2])
-            print ebinstring
+            print(ebinstring)
             argi={};
             argi['save_format']=''
             argi['fixei']=False
@@ -92,7 +93,7 @@ for run in run_no:     #loop around runs
             argi['hardmaskOnly']=file
 
 
-            for kk,val in argi.iteritems():
-                print "arguments :" ,kk,val
+            for kk,val in argi.items():
+                print("arguments :" ,kk,val)
             out=iliad("wb_wksp","w1reb",energy,ebinstring,mapping,MonoVanRun,**argi)
             SaveNXSPE(out,'LET'+str(run)+'_'+str(energy)+'mask_mev.nxspe') #

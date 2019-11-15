@@ -1,6 +1,7 @@
 """
 Updated version of rocking curve scan.py, using FilterEvents
 """
+from __future__ import print_function
 import numpy as np
 ang_name='CCR12Rot'
 ang_deriv='CCR12RotDeriv'
@@ -9,7 +10,7 @@ t_off=0.0
 step=0.2
 ang_bins=np.arange(160-step/2,169+step/1.5,step)
 
-runs=range(12956,12966+1)			#list of runs that have the same condition
+runs=list(range(12956,12966+1))			#list of runs that have the same condition
 datadir="/SNS/ARCS/IPTS-4041/0/"		#Data directory	
 run_num = str(runs[0])
 filename=datadir+run_num+"/NeXus/ARCS_"+run_num+"_event.nxs"
@@ -28,7 +29,7 @@ LoadNexus(Filename=r'/SNS/users/vua/Mantid/Angle_binning_reduction/mask5_exclude
 MaskDetectors("w",MaskedWorkspace="MaskWorkspace")
 w=mtd["w"]
 rate = np.absolute(np.array(w.getRun()[ang_deriv].value)).mean()
-print "Rate(deg/sec)):",rate
+print("Rate(deg/sec)):",rate)
 ang_list_plus=[]
 ang_list_minus=[]
 int_plus=[]
@@ -89,5 +90,5 @@ yp=np.array(int_plus)
 ym=np.array(int_minus)
 cp=(xp*yp).sum()/yp.sum()
 cm=(xm*ym).sum()/ym.sum()
-print "Center-of-Mass - Plus:",cp,"Minus:",cm,"Difference:",cp-cm
-print "Estimated time offset:", t_off + (cp-cm)/rate/2
+print("Center-of-Mass - Plus:",cp,"Minus:",cm,"Difference:",cp-cm)
+print("Estimated time offset:", t_off + (cp-cm)/rate/2)

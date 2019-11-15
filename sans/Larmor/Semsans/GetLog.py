@@ -5,7 +5,7 @@ import datetime
 import numpy as np
 import re
 import xml.etree.cElementTree
-from runtypes import QuickData, RunData
+from .runtypes import QuickData, RunData
 
 class GetLog(PythonAlgorithm):
 
@@ -97,7 +97,7 @@ class GetLog(PythonAlgorithm):
 
         d = {}
         for run in temp:
-            if run.sample in d.keys():
+            if run.sample in list(d.keys()):
                 d[run.sample].append(run)
             else:
                 d[run.sample] = [run]
@@ -112,7 +112,7 @@ class GetLog(PythonAlgorithm):
         my_table.addColumn("int", "Can Trans run")
         my_table.addColumn("int", "Direct Trans run")
 
-        for k, v in d.items():
+        for k, v in list(d.items()):
             for run in v:
                 my_table.addRow(
                     [run.number, run.sample,
@@ -124,7 +124,7 @@ class GetLog(PythonAlgorithm):
 
         my_table = WorkspaceFactory.createTable()
         my_table.addColumn("str", "Name")
-        for k, _ in d.items():
+        for k, _ in list(d.items()):
             my_table.addRow([k])
         self.setProperty("SamplesTable", my_table)
 

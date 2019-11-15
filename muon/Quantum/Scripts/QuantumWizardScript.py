@@ -174,7 +174,7 @@ except:
 if(spins.count('') + ns != len(spins)):
 	raise Exception("Please don't leave gaps, I'm confused!")
 spins=spins[:ns]
-quadmap=map(lambda x: PeriodicTable[x][0]>2,spins)
+quadmap=[PeriodicTable[x][0]>2 for x in spins]
 # unique names for multiple identical nuclei
 for i in range(ns-1):
 	if spins[i] in spins[i+1:]:
@@ -404,7 +404,7 @@ for i in range(allowedLoops):
 		elif(lv=='Relaxation rate of Electron'):
 			pars["loop"+str(i)+"par"]="relax(e)"
 		elif(lv=='Conversion rates'):
-			keys=pars.keys()
+			keys=list(pars.keys())
 			for j in range(len(keys)):
 				if(keys[j][0:7]=="convert"):
 					pars["loop"+str(i)+"par"]=keys[j]
@@ -428,7 +428,7 @@ Table=CreateEmptyTableWorkspace()
 Table.addColumn("str","Code")
 Table.addColumn("str","Value")
 
-for (cod,valu) in pars.items():
+for (cod,valu) in list(pars.items()):
 	Table.addRow([cod,valu])
 
 for i in range(20):
@@ -443,7 +443,7 @@ nh=mtd["Results"].getNumberHistograms()
 if(nh ==1):
 	plotSpectrum("Results",0)
 elif(nh <= 5):
-	plotSpectrum("Results",range(nh))
+	plotSpectrum("Results",list(range(nh)))
 else:
 	plot2D("results")
 	

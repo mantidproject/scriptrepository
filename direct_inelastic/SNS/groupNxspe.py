@@ -8,12 +8,12 @@ from numpy import *
 r_0 = [33008,33009]  
 r_180 = [33383,33384]
 # -0 < Omega CCR < -90
-r1 = range(33012,33193)
-r2 = range(33385,33566)
+r1 = list(range(33012,33193))
+r2 = list(range(33385,33566))
 # -30 < Omega CCR < -60
-r3 = range(33573,33635)
+r3 = list(range(33573,33635))
 # -90 < Omega CCR < -180
-r4 = range(33196,33377)
+r4 = list(range(33196,33377))
 All_runs = r1+r2+r3+r4 + r_0 + r_180
 
 # 50 meV

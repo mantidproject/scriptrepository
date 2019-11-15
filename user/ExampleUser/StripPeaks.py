@@ -2,6 +2,7 @@
 #
 # Using StripPeaks + dialog boxes
 #
+from __future__ import print_function
 
 LoadRawDialog(OutputWorkspace="GEM40979")
 alg= AlignDetectorsDialog("GEM40979",OutputWorkspace="aligned")
@@ -16,4 +17,4 @@ g1 = plotSpectrum(["focussed","stripped"],5)
 
 # Rescale the x-axis to show an interesting region
 g1.activeLayer().setScale(Layer.Bottom,0,2.3)
-print "Done!"
+print("Done!")

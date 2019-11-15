@@ -1,4 +1,5 @@
 #from DirectEnergyConversion import *
+from __future__ import print_function
 import time as time
 try:
     import dgreduce    
@@ -36,8 +37,8 @@ class data2D:
 		wksp_in=self.wksp_name
 		wksp_new_name=wksp_in.getName()+'_SQW'
 		wksp_newDisp=wksp_new_name+'display'
-		if kwargs.has_key('fast'):
-			print 'Using fast rebin'
+		if 'fast' in kwargs:
+			print('Using fast rebin')
 			tmpdat=self.sqwfast(self.wksp_name,qbin)
 			Transpose(InputWorkspace='tmpdat',OutputWorkspace=wksp_newDisp)
 			RenameWorkspace(InputWorkspace=tmpdat,OutputWorkspace=wksp_new_name)
@@ -45,7 +46,7 @@ class data2D:
 			self.data=mtd[wksp_new_name]
 			self.data_disp=mtd[wksp_newDisp]
 		else:
-			print 'Using intersecting area rebin'
+			print('Using intersecting area rebin')
 			#need a method to get max and min angles
 			tmpdat=self.sqw(self.wksp_name,qbin)
 			
@@ -78,7 +79,7 @@ class data2D:
 		except:
 			if n<=2:
 				n=3
-			print "Failure of Gaussian smooth revert to averaging"	
+			print("Failure of Gaussian smooth revert to averaging")	
 			SmoothData(InputWorkspace=self.data_disp,OutputWorkspace=self.data_disp,NPoints=n)
 			if len(args)==1:
 				self.display()
@@ -164,9 +165,9 @@ class data2D:
 		try:
 			n,r=funcreturns.lhs_info('both')
 			name=r[0]
-			if kwargs.has_key('shoelace'):
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+			if 'shoelace' in kwargs:
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',over=True,cutName=name,shoelace=True,Handle=fighandle)
 					else:
@@ -174,8 +175,8 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',cutName=name,shoelace=True)
 			else:
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',over=True,cutName=name,Handle=fighandle)
 					else:
@@ -183,9 +184,9 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',cutName=name)
 		except:		
-			if kwargs.has_key('shoelace'):
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+			if 'shoelace' in kwargs:
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',over=True,shoelace=True,Handle=fighandle)
 					else:
@@ -193,8 +194,8 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',shoelace=True)
 			else:
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='e',over=True,Handle=fighandle)
 					else:
@@ -212,9 +213,9 @@ class data2D:
 		try:
 			n,r=funcreturns.lhs_info('both')
 			name=r[0]
-			if kwargs.has_key('shoelace'):
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+			if 'shoelace' in kwargs:
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get_key('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',over=True,cutName=name,shoelace=True,Handle=fighandle)
 					else:
@@ -222,8 +223,8 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',cutName=name,shoelace=True)
 			else:
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',over=True,cutName=name,Handle=fighandle)
 					else:
@@ -231,9 +232,9 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',cutName=name)
 		except:		
-			if kwargs.has_key('shoelace'):
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+			if 'shoelace' in kwargs:
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',over=True,shoelace=True,Handle=fighandle)
 					else:
@@ -241,8 +242,8 @@ class data2D:
 				else:
 					self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',shoelace=True)
 			else:
-				if kwargs.has_key('over'):
-					if kwargs.has_key('Handle'):
+				if 'over' in kwargs:
+					if 'Handle' in kwargs:
 						fighandle=kwargs.get('Handle')
 						self.cut(self.data,intmin,intmax,cutmin,delcut,cutmax,along='q',over=True,Handle=fighandle)
 					else:
@@ -256,14 +257,14 @@ class data2D:
 		#		   wkspIn= input data
 		
 		#deal with the call type and where to get the output workspace name from
-		if kwargs.has_key('wkspout'):
+		if 'wkspout' in kwargs:
 			cut_name=kwargs.get('wkspout')
 		else:
 			n,r=funcreturns.lhs_info('both')
 			cut_name=r[0]
 		
 		if direction == 'x':
-			if kwargs.has_key('wkspIn'):
+			if 'wkspIn' in kwargs:
 				wkspinName=kwargs.get('wkspIn')	
 				Rebin2D(InputWorkspace=wkspinName,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
 				
@@ -271,7 +272,7 @@ class data2D:
 				Rebin2D(InputWorkspace=self.data,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
 		
 		if direction == 'y':
-			if kwargs.has_key('wkspin'):
+			if 'wkspin' in kwargs:
 				wkspinName=kwargs.get('wkspin')	
 				Rebin2D(InputWorkspace=wkspinName,OutputWorkspace=cut_name,Axis1Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),Axis2Binning=str(minX)+','+str(delX)+','+str(maxX),UseFractionalArea='1')
 				Transpose(InputWorkspace=cut_name,OutputWorkspace=cut_name)
@@ -327,8 +328,8 @@ class data2D:
 	
 	def display(self,*args):
 		data=self.data_disp	
-		print type(data)
-		print self.wksp_name.getName()
+		print(type(data))
+		print(self.wksp_name.getName())
 		#dat=self.data.importMatrixWorkspace().plotGraph2D()
 		#out=importMatrixWorkspace(data.getName())
 		out=importMatrixWorkspace(self.wksp_name.getName()+'_SQWdisplay')
@@ -392,7 +393,7 @@ class data2D:
 			SofQW(wksp_in,OutputWorkspace=wksp_out,QAxisBinning=qbin,EMode="Direct",EFixed=str(ei))
 			return mtd[wksp_out]
 		except:
-			print 'no output workpsace defined'
+			print('no output workpsace defined')
 
 	def integrate(self,qmin,qmax,emin,emax):
 		'''Integrate a region of S(q,w)
@@ -405,7 +406,7 @@ class data2D:
 		value=zeros(2)
 		value[0]=tmpWksp.extractY()[0]
 		value[1]=tmpWksp.extractE()[0]
-		print 'Integral between ',qmin,' to ',qmax,' A^-1 and ',emin,'to ',emax,'mev =',value[0],'+/-',value[1]
+		print('Integral between ',qmin,' to ',qmax,' A^-1 and ',emin,'to ',emax,'mev =',value[0],'+/-',value[1])
 		DeleteWorkspace('tmpWksp')
 		return value
 		
@@ -421,7 +422,7 @@ class data2D:
 		y=tmpWksp.extractY()[0]
 		Err=tmpWksp.extractE()[0]
 		value=(Err/y)*100
-		print 'percent error in bin ',qmin,' to ',qmax,' A^-1 and ',emin,'to ',emax,'mev =',value[0]
+		print('percent error in bin ',qmin,' to ',qmax,' A^-1 and ',emin,'to ',emax,'mev =',value[0])
 		DeleteWorkspace('tmpWksp')
 		return value[0]
 	
@@ -434,15 +435,15 @@ class data2D:
 		along=e
 		'''
 		
-		if kwargs.has_key('along') and kwargs.get('along')=='q' or kwargs.has_key('along') and kwargs.get('along')=='Q':
+		if 'along' in kwargs and kwargs.get('along')=='q' or 'along' in kwargs and kwargs.get('along')=='Q':
 		
 			#axis2 is |Q|, axis1 is energy transfer
-			if kwargs.has_key('cutName'):
+			if 'cutName' in kwargs:
 				cut_name=kwargs.get('cutName')
 			else:
 				cut_name='Cut from '+str(self.wksp_name)+' integrating '+str(intMin)+' and '+str(intMax)+' meV'
 			
-			if kwargs.has_key('shoelace'):
+			if 'shoelace' in kwargs:
 				Rebin2D(InputWorkspace=wksp,OutputWorkspace=cut_name,Axis1Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),Axis2Binning=str(minX)+','+str(delX)+','+str(maxX),UseFractionalArea='1')
 			else:
 				Rebin2D(InputWorkspace=wksp,OutputWorkspace=cut_name,Axis1Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),Axis2Binning=str(minX)+','+str(delX)+','+str(maxX))
@@ -450,8 +451,8 @@ class data2D:
 			Transpose(InputWorkspace=cut_name,OutputWorkspace=cut_name)
 
 			
-			if kwargs.has_key('over'):
-				if kwargs.has_key('Handle'):
+			if 'over' in kwargs:
+				if 'Handle' in kwargs:
 					fighandle=kwargs.get('Handle')
 					lgr=fighandle# handle of the fig from the dict to plot over onto
 					self.fignum=self.fignum+1
@@ -461,7 +462,7 @@ class data2D:
 					mergePlots(graph,lgr)
 				else:				
 					plotover=self.fignum #assumes that the plot over will be the last plotted figure
-					print plotover
+					print(plotover)
 					lgr=self.figure_dict.get(self.fignum)[1]#gets the handle of the last fig from the dict
 					
 					self.fignum=self.fignum+1
@@ -478,22 +479,22 @@ class data2D:
 				
 				active_layer = graph.activeLayer()
 			
-		if kwargs.has_key('along') and kwargs.get('along')=='e' or kwargs.has_key('along') and kwargs.get('along')=='E':
-			if kwargs.has_key('cutName'):
+		if 'along' in kwargs and kwargs.get('along')=='e' or 'along' in kwargs and kwargs.get('along')=='E':
+			if 'cutName' in kwargs:
 				cut_name=kwargs.get('cutName')
 			else:
 				cut_name='Cut from '+str(self.wksp_name)+' integrating '+str(intMin)+' and '+str(intMax)+' A^-1'
 			
 			#axis2 is |Q|, axis1 is energy transfer
 			
-			if kwargs.has_key('shoelace'):
+			if 'shoelace' in kwargs:
 				Rebin2D(InputWorkspace=wksp,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax),UseFractionalArea='1' )
 			else:
 				Rebin2D(InputWorkspace=wksp,OutputWorkspace=cut_name,Axis1Binning=str(minX)+','+str(delX)+','+str(maxX),Axis2Binning=str(intMin)+','+str(intMax-intMin)+','+str(intMax))
 			ReplaceSpecialValues(InputWorkspace=cut_name,OutputWorkspace=cut_name,NaNValue='0',InfinityValue='0')
 			
-			if kwargs.has_key('over'):
-				if kwargs.has_key('Handle'):
+			if 'over' in kwargs:
+				if 'Handle' in kwargs:
 					fighandle=kwargs.get('Handle')
 					lgr=fighandle# handle of the fig from the dict to plot over onto
 					self.fignum=self.fignum+1
@@ -503,7 +504,7 @@ class data2D:
 					mergePlots(graph,lgr)
 				else:				
 					plotover=self.fignum #assumes that the plot over will be the last plotted figure
-					print plotover
+					print(plotover)
 					lgr=self.figure_dict.get(self.fignum)[1]#gets the handle of the last fig from the dict
 					
 					self.fignum=self.fignum+1
@@ -519,7 +520,7 @@ class data2D:
 				self.figure_dict.setdefault(self.fignum,plot)
 				
 				active_layer = graph.activeLayer()
-		if kwargs.has_key('cutName'):
+		if 'cutName' in kwargs:
 			return mtd[kwargs.get('cutName')]
 		else:
 			return

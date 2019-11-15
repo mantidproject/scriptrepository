@@ -5,6 +5,7 @@
 # 17/12/12 this for GDW at 4m WITH FLAT BKG SUBTRACTION, fit to trans is OFF,, this one integrates RATIOS of I(Q)
 # Q ranges for ratios also expanded to suit the large detector X offset on this data set.
 #Make the reduction module available
+from __future__ import print_function
 from ISISCommandInterface import *
 # NEW
 from mantid.simpleapi import *
@@ -153,7 +154,7 @@ for ii in range(nIterations):
 	#	normE = mtd["integral"].readE(0)[0]
 	#	print wav1,wav2,QA,QB,norm,normE
 	# ratio full wavelength data over chosen Q range
-		print wav1,wav2,QA,QB
+		print(wav1,wav2,QA,QB)
 		ratio='ratio_'+str(wav1)+'_'+str(wav2)
 	# NEW x3 lines
 		CropWorkspace(reducedAll,OutputWorkspace=ratio,Xmin=QA,Xmax=QB)
@@ -167,7 +168,7 @@ for ii in range(nIterations):
 		QAA= mtd["integral"].readX(0)[0]
 		norm = mtd["integral"].readY(0)[0]/(QBB-QAA)
 		normE = mtd["integral"].readE(0)[0]/(QBB-QAA)
-		print QAA,QBB,norm,normE
+		print(QAA,QBB,norm,normE)
 		scaleX.append(wav1)
 		int=mtd["integral"].readY(0)[0]
 		scaleY.append(norm*(wav2-wav1))
@@ -206,7 +207,7 @@ for ii in range(nIterations):
 	next=next+1
 	i=i+1
 	#====================================================================================================
-print "Last iteration of new direct beam file was "+newdirectfile
+print("Last iteration of new direct beam file was "+newdirectfile)
 #====================================================================================================
 #
 #  add results of loop to original plot
@@ -238,7 +239,7 @@ det = wksp.getDetector(11000)
 # then check the coords for the shift 
 out=str(det.getPos())
 # NEED to read X&Y coords from string "out" here 
-print "det is  "+out 
+print("det is  "+out) 
 #
 #
 # D_H or D_V  sums, need get these into a gui
@@ -313,7 +314,7 @@ Integration("D_T_LOQ","D_LOQ_integral",3500,43500)
 #
 import sys
 sys.path.append("C:/Mantidinstall/scripts/SANS")
-print sys.path
+print(sys.path)
 import SANSUtility
 # D_T for nine blocks when dae playing up  in cycle 09/1 or 09/2
 wksp="SANS2D00001674"
@@ -328,14 +329,14 @@ i=0
 namelist=["A TL","D TC","G TR","B ML","E MC","H MR","C BL","F BC","I BR"]
 masklist=["h0>h127,v64>v191","h0>h127,v0>v63,v128>v191","h0>h127,v0>v127","h0>h63,h128>h191,v64>v191","h0>h63,h128>h191,v0>v63,v128>v191","h0>h63,h128>h191,v0>v127","h63>h191,v64>v191","h63>h191,v0>v63,v128>v191","h63>h191,v0>v127"]
 for name in namelist:
-	print "i= "+str(i)
+	print("i= "+str(i))
 	# guess "orientation"
 	list = SANSUtility.ConvertToSpecList(masklist[i], spec1, dimdet,'0')
 	CropWorkspace(wksp, OutputWorkspace = "D_T "+name+tag, StartWorkspaceIndex=(spec1-1), EndWorkspaceIndex=str(spec1+192*192-2))
 	SANSUtility.MaskBySpecNumber("D_T "+name+tag, list)
 	SumSpectra("D_T "+name+tag,"D_T "+name+tag)
 	i=i+1
-print "done"
+print("done")
 for wext in namelist:
 	wsp="D_T "+wext
 	if wext==namelist[0]:
@@ -377,11 +378,11 @@ file=reduced.split('_')
 # BUG here if we have not actually run the full range of WLIST
 first = file[0]+'_'+str(wlist[0])+'_'+str(wlist[len(wlist)-1])
 # need to see if "first" exists, else then use outlist[0] ?
-print first
+print(first)
 plt = plotSpectrum(first, 0)
 layer=plt.activeLayer()
 layer.setTitle(file[0])
-print i
+print(i)
 #print outlist[6]
 #
 for i in range(len(outlist)):
@@ -394,6 +395,6 @@ SaveRKH(first,filename,Append='0')
 # now save all the partial ranges to file
 for i in range(len(outlist)):
 	SaveRKH(outlist[i],filename,Append='1')
-print "Written to "+filename
+print("Written to "+filename)
 #
 #

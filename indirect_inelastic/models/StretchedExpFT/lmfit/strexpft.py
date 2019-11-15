@@ -168,7 +168,7 @@ def test_lineshapes(tau, beta, y):
     params = model.guess(y, x=None)
     # Stray away from optimal parameters
     [params[name].set(value=val) for name, val in
-     dict(amplitude=3.0, center=0.0002, tau=50.0, beta=1.5).items()]
+     list(dict(amplitude=3.0, center=0.0002, tau=50.0, beta=1.5).items())]
     r = model.fit(y, params, x=x)
     all_params = 'tau beta amplitude center'.split()
     assert_allclose([tau, beta, 1.0, 0.0],

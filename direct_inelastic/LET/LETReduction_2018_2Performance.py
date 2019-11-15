@@ -28,7 +28,7 @@ class LETReduction(ReductionWrapper_withPerformance):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(53518,53609) # 'LET18547.n001'
+       prop['sample_run'] = list(range(53518,53609)) # 'LET18547.n001'
        prop['wb_run'] = 51744  # monovan run number 
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run

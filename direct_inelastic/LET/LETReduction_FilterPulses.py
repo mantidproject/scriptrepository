@@ -1,4 +1,5 @@
 """ Sample LET reduction script """ 
+from __future__ import print_function
 import os,sys
 #os.environ["PATH"] = r"c:/Mantid/Code/builds/br_master/bin/Release;"+os.environ["PATH"]
 from mantid import *
@@ -29,7 +30,7 @@ class LETReduction(ReductionWrapper):
        # the range of files to reduce. This range ignored when deployed from autoreduction,
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
-       prop['sample_run'] = range(26772, 26811) # 'LET18547.n001'
+       prop['sample_run'] = list(range(26772, 26811)) # 'LET18547.n001'
        prop['wb_run'] = 25653   # monovan run number 
        #
        prop['sum_runs'] = False # set to true to sum everything provided to sample_run
@@ -87,7 +88,7 @@ class LETReduction(ReductionWrapper):
           Overload only if custom reduction is needed or 
           special features are requested
       """
-      print 'Input file: ',input_file
+      print('Input file: ',input_file)
       if input_file:
           self.reducer.prop_man.sample_run = input_file
       ws = PropertyManager.sample_run.get_workspace()
@@ -150,19 +151,19 @@ def filter_ts1_pulses(ws,peak_period=20000,peak_res = 30):
     xmin = 0 #x_s[0]
     xmax = x_s[-1]
     #ws=Rebin(ws,OutputWorkspace=ws.name(),Params=[xmin,xmax,10],PreserveEvents=1)
-    bin_ranges = range(int(xmin),int(xmax),peak_period)
+    bin_ranges = list(range(int(xmin),int(xmax),peak_period))
     nb = len(bin_ranges)-1
 
     ws_list = []
     r_min = xmin
-    print "Splitting input workspace {0} into {1} time intervals excluding specified periods".format(ws.name(),nb)
+    print("Splitting input workspace {0} into {1} time intervals excluding specified periods".format(ws.name(),nb))
     for ind,x_min in enumerate(bin_ranges):
         r_max = x_min + peak_period-1
         if r_max > xmax:
             r_max = xmax
         if r_max<=r_min:
             continue
-        print 'Step #{0}/{1}; r_min={2}, r_max={3}'.format(ind+1,nb,r_min,r_max)
+        print('Step #{0}/{1}; r_min={2}, r_max={3}'.format(ind+1,nb,r_min,r_max))
         part  = FilterByXValue(ws,OutputWorkspace ='{0}_{1}'.format(ws.name(),ind+1),XMin=r_min,XMax=r_max)
         ws_list.append(part)
 		

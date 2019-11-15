@@ -3,6 +3,7 @@
 This algorithm calculates integrated counts for each spectrum (normalised per frame) from a range of files to be loaded and places into a single workspace. The "time" axis is now in clock time (hours from 00:00 on the day the first of the runs began) with the time between runs considered as belonging to the run just ended, apart from the last one.
 
 *WIKI*"""
+from __future__ import print_function
 
 import time
 import datetime
@@ -85,14 +86,14 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 				thispath=file1[:j1]+"auto_A.tmp" # should really try all of them and pick newest!
 				wstuple=LoadMuonNexus(filename=thispath,OutputWorkspace="__CopyLogsTmp")
 				gotToCurrentRun=True
-			print len(wstuple)
+			print(len(wstuple))
 			if(len(wstuple)<=6):
 				ws=wstuple[0] # plain run
 			else:
 				ws=wstuple[5] # first period, should overlap with same log data in each
 			prog_reporter.report("Loading")
 			if(gotToCurrentRun and int(ws.getRun().getProperty("run_number").value) != ff):
-				print "temporary file is for the previous run, probably no new one started"
+				print("temporary file is for the previous run, probably no new one started")
 				break
 			if(ff==firstnum):
 				times=numpy.zeros(1)
@@ -120,12 +121,12 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 				temps[ss]=numpy.append(temps[ss],ws2.readY(ss)[0]/ws.getRun().getProperty("goodfrm").value/bc)
 			times[-1]=((datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value,"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds())/3600
 			times=numpy.append(times,((datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_end").value,"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds())/3600)
-			print "finished file ",thispath
+			print("finished file ",thispath)
 			DeleteWorkspace(ws2)
 			if(gotToCurrentRun):
 				break
-		print "time zero for result is ", begin
-		print "size might be X=",len(times)," and Y=",len(temps[0])
+		print("time zero for result is ", begin)
+		print("size might be X=",len(times)," and Y=",len(temps[0]))
 		ows=WorkspaceFactory.create(ws,NVectors=ws.getNumberHistograms(),XLength=len(times),YLength=len(temps[0]))
 		ows.setYUnitLabel("Counts per Frame")
 		# ows.getAxis(0).setUnit("hours") would be nice...

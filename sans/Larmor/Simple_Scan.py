@@ -1,3 +1,4 @@
+from __future__ import print_function
 from matplotlib.pyplot import errorbar, plot, show
 import numpy as np
 import SANSroutines as lm
@@ -76,7 +77,7 @@ def scan_axis(axis,startval,endval,npoints,frms,rtitle,usem4=0):
         a1=gen.get_spectrum(1,i+1)
         msig=sum(a1['signal'])*100.0
         mesig=(math.sqrt(msig))
-        print "msig="+str(msig)+" mesig="+str(mesig)
+        print("msig="+str(msig)+" mesig="+str(mesig))
         # get the interesting monitor
         if usem4 < 1:
             a1=gen.get_spectrum(11,i+1)
@@ -88,10 +89,10 @@ def scan_axis(axis,startval,endval,npoints,frms,rtitle,usem4=0):
             a1=gen.get_spectrum(4,i+1)
             sig=sum(a1['signal'])*100.0
             esig=math.sqrt(sig)
-        print "sig="+str(sig)+" esig="+str(esig)
+        print("sig="+str(sig)+" esig="+str(esig))
         yval[i]=(sig/msig)
         eval[i]=(math.sqrt((sig/(msig*msig))+(sig*sig/(msig*msig*msig))))
-        print "yval="+str(yval[i])+" esig="+str(eval[i])
+        print("yval="+str(yval[i])+" esig="+str(eval[i]))
         ax.errorbar(xval[i], yval[i], eval[i], fmt = 'ko')
         fig1.canvas.draw()
         mpl.pause(0.001)
@@ -164,7 +165,7 @@ def scan_axis_mantid(axis,startval,endval,npoints,frms,rtitle,usem4=0):
         a1=gen.get_spectrum(1,i+1)
         msig=sum(a1['signal'])*100.0
         mesig=(math.sqrt(msig))
-        print "msig="+str(msig)+" mesig="+str(mesig)
+        print("msig="+str(msig)+" mesig="+str(mesig))
         # get the interesting monitor
         if usem4 < 1:
             a1=gen.get_spectrum(11,i+1)
@@ -176,10 +177,10 @@ def scan_axis_mantid(axis,startval,endval,npoints,frms,rtitle,usem4=0):
             a1=gen.get_spectrum(4,i+1)
             sig=sum(a1['signal'])*100.0
             esig=math.sqrt(sig)
-        print "sig="+str(sig)+" esig="+str(esig)
+        print("sig="+str(sig)+" esig="+str(esig))
         yval[i]=(sig/msig)
         eval[i]=(math.sqrt((sig/(msig*msig))+(sig*sig/(msig*msig*msig))))
-        print "yval="+str(yval[i])+" esig="+str(eval[i])
+        print("yval="+str(yval[i])+" esig="+str(eval[i]))
         gui_cmd(ax.errorbar,xval[i], yval[i], eval[i], fmt = 'ko')
         gui_cmd(fig1.canvas.draw)
         gui_cmd(mpl.pause,0.001)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from PyQt4 import QtCore, QtGui
 import os
 from mantidsimple import *
@@ -639,7 +640,7 @@ class Ui_MAGGOTWindow(object):
 		PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'C:/')
 	#Extracts File Path
 	for i in range(1,len(PathandName)):
-		if PathandName[len(PathandName)-i] <> '/' :
+		if PathandName[len(PathandName)-i] != '/' :
 			PathandName=PathandName
 		else:
 			break
@@ -647,7 +648,7 @@ class Ui_MAGGOTWindow(object):
 	filepath=PathandName[0:(len(PathandName)-i+1)]
 	#Extracts File Name
 	for j in range(1,len(PathandName)):
-		if PathandName[len(PathandName)-j] <> '_' :
+		if PathandName[len(PathandName)-j] != '_' :
 			PathandName=PathandName
 		else:
 			break
@@ -667,7 +668,7 @@ class Ui_MAGGOTWindow(object):
 		PathandName = dialog.getOpenFileName(caption='Select NMR Files',directory=r'C:/')
 	#Extracts File Path
 	for i in range(1,len(PathandName)):
-		if PathandName[len(PathandName)-i] <> '/' :
+		if PathandName[len(PathandName)-i] != '/' :
 			PathandName=PathandName
 		else:
 			break
@@ -675,7 +676,7 @@ class Ui_MAGGOTWindow(object):
 	filepath=PathandName[0:(len(PathandName)-i+1)]
 	#Extracts File Name
 	for j in range(1,len(PathandName)):
-		if PathandName[len(PathandName)-j] <> '_' :
+		if PathandName[len(PathandName)-j] != '_' :
 			PathandName=PathandName
 		else:
 			break
@@ -773,9 +774,9 @@ class Ui_MAGGOTWindow(object):
 ##error if no files fit or all files fitted
 	except:
 		if i == n0:
-			print 'Error: Initial filepath incorrect.'
+			print('Error: Initial filepath incorrect.')
 		elif n0 < i <= n+1 :
-			print 'All NMR files fitted.'
+			print('All NMR files fitted.')
 ##close params file
 	NMRDIAG.close()
 	A_NMR.close()		
@@ -848,33 +849,33 @@ class Ui_MAGGOTWindow(object):
 			LoadAscii(Filename=Filepath+PreFile+str(i),OutputWorkspace=PreFile)
 			Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Frequency)+'.0,p=0.000000',InputWorkspace=PreFile  ,Output=PreFile+'res',StartX='0.002',EndX='0.19999',CalcErrors=True)
 			table = mtd[str(PreFile)+'res_Parameters']	
-			print 'Amplitude is ' + str(abs(table.cell(0,1))) + ' mV.'	
+			print('Amplitude is ' + str(abs(table.cell(0,1))) + ' mV.')	
 			PreSum=PreSum+abs(table.cell(0,1))
 		
 	except: 
 		if i==1:
-			print 'Error: only 1 PreFile attempted'
+			print('Error: only 1 PreFile attempted')
 		else: 
 			#print i
-			print PreSum
+			print(PreSum)
 			PreAverage = float(PreSum)/(float(i-1))
-			print PreAverage
+			print(PreAverage)
 
 	try:
 		for i in range (1, (1000)):	
 			LoadAscii(Filename=Filepath+PostFile+str(i),OutputWorkspace=PostFile)
 			Fit(Function='name=UserFunction,Formula=A*exp(-(x/T2))*cos(2*'+str(pi)+'*(f*x+p)),A=0.0004,T2=0.1,f='+str(Frequency)+'.0,p=0.000000',InputWorkspace=PostFile  ,Output=PostFile+'res',StartX='0.002',EndX='0.19999',CalcErrors=True)
 			table = mtd[str(PostFile)+'res_Parameters']
-			print 'Amplitude is ' + str(abs(table.cell(0,1))) + ' mV.'
+			print('Amplitude is ' + str(abs(table.cell(0,1))) + ' mV.')
 			PostSum=PostSum+abs(table.cell(0,1))
 	except:
 		if i==1:
-			print 'Error: only 1 PostFile attempted'
+			print('Error: only 1 PostFile attempted')
 		else:
 			#print i
-			print PostSum
+			print(PostSum)
 			PostAverage = float(PostSum)/(float(i-1))
-			print PostAverage
+			print(PostAverage)
 	
 	if self.Use_LPP.isChecked() == True : 
 		try: 
@@ -888,8 +889,8 @@ class Ui_MAGGOTWindow(object):
 					p=p
 		except: 
 			if i==1:
-				print 'Error: only 1 PreFile attempted'
-		print 'p from first is '+str(p)
+				print('Error: only 1 PreFile attempted')
+		print('p from first is '+str(p))
 		try:
 			for i in range (1, 1000):
 				LoadAscii(Filename=Filepath+PostFile+str(i),OutputWorkspace=PostFile)
@@ -901,12 +902,12 @@ class Ui_MAGGOTWindow(object):
 					p=p
 		except: 
 			if i==1:
-				print 'Error: only 1 PostFile attempted'
-		print 'p from second is '+str(p)
+				print('Error: only 1 PostFile attempted')
+		print('p from second is '+str(p))
 	else: 
 		p=0
 		
 	
 	F=((1/(float(1-self.LPP_Value.value())**float(p)))*((float(PostSum))/(float(PreSum))))**(1/float(self.LPF_FinalNMR.value()))
-	print 'Loss per flip is ' +str(1-F)
+	print('Loss per flip is ' +str(1-F))
 	self.LPF_Result.setText(str(1-F))

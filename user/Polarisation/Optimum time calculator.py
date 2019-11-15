@@ -1,3 +1,4 @@
+from __future__ import print_function
 from numpy import *
 from pylab import *
 
@@ -40,7 +41,7 @@ gui_cmd(plot,t,DS)
 ##find optimum time(point of intersect)
 DS0=-a-Tup*log(1-(1/(nl*lmda*Pol))*arccosh((cosh(nl*lmda*Pol*(1-exp(-a/Tup)))+cosh(nl*lmda*Pol*(1-exp(-(a+r)/Tup)))+4*cosh(nl*lmda*Pol*(1-exp(-(2*a+r)/(2*Tup)))) )/6 ))
 
-print 'Optimum time for this wavelength is '+str(DS0)+' hours'
+print('Optimum time for this wavelength is '+str(DS0)+' hours')
 
 ##create wavelength error graph
 x=arange(0,15.05,0.05)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.api import *
 from mantid.simpleapi import *
 import csv, math, sys
@@ -63,7 +64,7 @@ def evaluate_files_list(numbers):
     for number in numbers.split(","):
         if "-" in number:
             start, end = number.split("-")
-            nrs = range(int(start), int(end) + 1)
+            nrs = list(range(int(start), int(end) + 1))
             expanded.extend(nrs)
         else:
             expanded.append(int(number))
@@ -125,7 +126,7 @@ def AttenuationCorrection(att_pos, data_before_May_2016):
     """ Bilby has four attenuators; before May 2016 there were only two. Value of the attenuators are hard coded here and being used for the I(Q) scaling in Q1D """
 
     if (data_before_May_2016):
-        print "You stated data have been collected before May, 2016, i.e. using old attenuators. Please double check."
+        print("You stated data have been collected before May, 2016, i.e. using old attenuators. Please double check.")
         if (att_pos == 2.0 or att_pos == 4.0):
             #print "Wrong attenuators value; Either data have been collected after May, 2016, or something is wrong with hdf file"
             #sys.exit()
@@ -181,7 +182,7 @@ def wavelengh_slices(wavelength_intervals, binning_wavelength_ini, wav_delta):
         else:                                                                          # if reminder is greater than 0, to trancate the maximum wavelength in the range
             n = math.floor((wav2 - wav1)/wav_delta)
             max_wave_length = wav1 + n*wav_delta           
-            print ('\n WARNING: because of your set-up, maximum wavelength to consider for partial reduction is only %4.2f \n' %max_wave_length)
+            print(('\n WARNING: because of your set-up, maximum wavelength to consider for partial reduction is only %4.2f \n' %max_wave_length))
 
         # number of wavelength range intervals 
         n = int(n)

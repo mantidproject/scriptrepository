@@ -1,6 +1,7 @@
 """
 Scan a magnet, take data on three machines, analyse it, plot results
 """
+from __future__ import print_function
 
 # deal with Limits on Blocks. Does cset(block, value=too_large) raise an exception?
 
@@ -130,12 +131,12 @@ DPARS={} # how to analyse data
 DPARS["MUSR"]={"machine":"NDXMUSR","data":"//musr/data/musr%08d.nxs","tgbegin":0.5,"tgend":10.0,"p1begin":-0.23,"p1end":-0.1,"promptbegin":-0.4,"promptend":-0.3,"pulse":2}
 DPARS["EMU"]={"machine":"NDXEMU","data":"//emu/data/emu%08d.nxs","tgbegin":0.5,"tgend":10.0,"p1begin":0.1,"p1end":0.23,"promptbegin":-0.2,"promptend":0.0,"pulse":1}
 DPARS["HIFI"]={"machine":"NDXHIFI","data":"//hifi/data/hifi%08d.nxs","tgbegin":0.5,"tgend":10.0,"p1begin":0.1,"p1end":0.23,"promptbegin":-0.2,"promptend":0.0,"pulse":1}
-MACHINES0 = DPARS.keys()
+MACHINES0 = list(DPARS.keys())
 
 CPARS={} # how to get camera data
 CPARS["HIFI"]={"data":"//ndlt626/Users/Public/Documents/sxvh9usb/Test for Sept2016/IMG%d.fit","finder":getRecentFile,"processor":processHifiCam}
 #CPARS["MUSR"]={finder=TakeMusrPic,processor=processMusrCam} # filenames specified by user
-CAMERAS0=CPARS.keys()
+CAMERAS0=list(CPARS.keys())
 
 
 if(TESTMODE_DAQ is True):
@@ -152,30 +153,30 @@ if(TESTMODE_DAQ is True):
 			self.states[mac]="SETUP"
 			self.frames[mac]=0
 			self.runnums[mac]=self.startrunnums[mac]
-			print "registered "+str(mac)
+			print("registered "+str(mac))
 		def run_on_all(self,code,**kwds):
 			if(code=="get_run_state"):
 				return self.states
 			if(code=="begin"):
-				print "doing BEGIN, "+str(kwds)
-				for m in self.states.keys():
+				print("doing BEGIN, "+str(kwds))
+				for m in list(self.states.keys()):
 					self.states[m]="RUNNING"
 					self.frames[m]=0
 				if("waitfor_frames" in kwds):
-					print "waiting for frames="+str(kwds["waitfor_frames"])
+					print("waiting for frames="+str(kwds["waitfor_frames"]))
 					time.sleep(1)
-					for m in self.states.keys():
+					for m in list(self.states.keys()):
 						self.frames[m]=kwds["waitfor_frames"]+1
 			if(code=="get_run_number"):
 				return self.runnums
 			if(code=="end"):
-				print "ending runs"
-				for m in self.states.keys():
+				print("ending runs")
+				for m in list(self.states.keys()):
 					self.states[m]="SETUP"
 					self.runnums[m]+=1
 			if(code=="abort"):
-				print "aborting runs"
-				for m in self.states.keys():
+				print("aborting runs")
+				for m in list(self.states.keys()):
 					self.states[m]="SETUP"
 else:
 	from multiple_dae_controller import MultipleDaeController
@@ -187,15 +188,15 @@ if(TESTMODE_BLOCKS):
 		blockvals[BLOCKNAMES[b]]=50.0
 	def cset(block=None,value=None,wait=False,lowlimit=-99999.9,highlimit=99999.9,**args):
 		if(len(args)==1):
-			block=args.keys()[0]
-			value=args.values()[0]
-		print "setting "+str(block)+" to "+str(value)
+			block=list(args.keys())[0]
+			value=list(args.values())[0]
+		print("setting "+str(block)+" to "+str(value))
 		blockvals[block]=value
 		if(wait):
-			print "waiting for value to stabilise"
+			print("waiting for value to stabilise")
 			time.sleep(1)
 	def cshow(block):
-		print "CSHOW: "+str(blockvals[block])
+		print("CSHOW: "+str(blockvals[block]))
 		return None
 	def cget(block):
 		if block in blockvals:
@@ -203,7 +204,7 @@ if(TESTMODE_BLOCKS):
 		else:
 			return None
 	def waitfor_block(block,lowlimit=-99999.9,highlimit=99999.9):
-		print "waiting for "+block+" to stabilise"
+		print("waiting for "+block+" to stabilise")
 		time.sleep(1)
 else:
 	from genie_python.genie_startup import *
@@ -227,7 +228,7 @@ def cached_get_block(block):
 	# get value from table tt (_Reference) if supplied
 	# return cached value if all close
 	# or raise exception
-	print "doing cget("+block+")"
+	print("doing cget("+block+")")
 	rbk=cget(BLOCKNAMES[block])["value"]
 	ca=mtd[CACHENAME]
 	cnames=ca.column(0)
@@ -510,7 +511,7 @@ class ChooseBestValue(PythonAlgorithm):
 			rmax=0.0
 			for row in tab:
 				rates=[]
-				for (key,val) in row.items():
+				for (key,val) in list(row.items()):
 					if(key[-4:]=="Rate"):
 						rates.append(val)
 				rthis=sum(rates)
@@ -523,14 +524,14 @@ class ChooseBestValue(PythonAlgorithm):
 			refvals[mag0]=cached_get_block(mag0)
 		toSet=setTune(refvals,mag,x)
 		try:
-			for tsb,tsv in toSet.items():
+			for tsb,tsv in list(toSet.items()):
 				#print "doing cached_cset(",tsb,",",tsv,",wait=True)"
 				cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 				#print "done the cached cset."
 			self.setProperty("BestValue",x)
 		except:
 			self.log().warning("Couldn't set one of the magnets, resetting all other values")
-			for tsb in toSet.keys():
+			for tsb in list(toSet.keys()):
 				tsv=refvals[tsb]
 				cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 			self.setProperty("BestValue",-1000.0)
@@ -581,7 +582,7 @@ class ScanMagnet(PythonAlgorithm):
 		controller.run_on_all("set_waitfor_sleep_interval",5)
 		statuses=controller.run_on_all("get_run_state")
 		errstr=""
-		for m,status in statuses.items():
+		for m,status in list(statuses.items()):
 			if(status != "SETUP"):
 				errstr=errstr+" "+m+"="+status
 		if(errstr != ""):
@@ -602,7 +603,7 @@ class ScanMagnet(PythonAlgorithm):
 				toSet=setTune(refvals,Mag,x)
 				#for (mag,value) in toSet.items():
 				#	cset(mag,value,wait=True)
-				for tsb,tsv in toSet.items():
+				for tsb,tsv in list(toSet.items()):
 					self.log().notice("doing cached_cset("+str(tsb)+","+str(tsv)+")")
 					cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"
 					#print "done cached cset."
@@ -618,7 +619,7 @@ class ScanMagnet(PythonAlgorithm):
 				controller.run_on_all("begin",waitfor_frames=frames) # assumes waits for this many frames to be reached on all before continuing
 				runs0=controller.run_on_all("get_run_number") # new method which will return a list of the run numbers in progress?
 				runs={}
-				for m,r in runs0.items():
+				for m,r in list(runs0.items()):
 					runs[m]=r[0] # real get_run_number returns tuple of number and an empty string!
 				self.log().notice("runs in progress are"+str(runs))
 				# ensure runs really have finished
@@ -628,7 +629,7 @@ class ScanMagnet(PythonAlgorithm):
 					finished=True
 					statuses=controller.run_on_all("get_run_state")
 					errstr=""
-					for m,status in statuses.items():
+					for m,status in list(statuses.items()):
 						if(status != "RUNNING"):
 							errstr=errstr+" "+m+"="+status
 					if(errstr != ""):
@@ -636,7 +637,7 @@ class ScanMagnet(PythonAlgorithm):
 						abandon=True # to get out of for() scan loop
 						break # out of while loop
 					allframes=controller.run_on_all("get_frames")
-					for m,ff in allframes.items():
+					for m,ff in list(allframes.items()):
 						self.log().notice(str(m)+" is at "+str(ff)+"frames out of "+str(frames))
 						if(ff<frames):
 							finished=False
@@ -659,7 +660,7 @@ class ScanMagnet(PythonAlgorithm):
 					cnums[i]=cs[0]
 				if(TESTMODE_DAQ=="abort"):
 					controller.run_on_all("abort") # end but don't fill the archive disks.
-					for mac in runs.keys():
+					for mac in list(runs.keys()):
 						runs[mac]-=1 # current run not saved, use the previous run instead!
 				else:
 					controller.run_on_all("end") # end and save them all.
@@ -670,7 +671,7 @@ class ScanMagnet(PythonAlgorithm):
 				Prog.report("Data collection")
 				tt.addRow([x]+runs2+cnums)
 
-		for tsb in toSet.keys():
+		for tsb in list(toSet.keys()):
 			tsv=refvals[tsb]
 			self.log().notice("doing cached_cset("+str(tsb)+","+str(tsv)+")")
 			cached_cset(tsb,tsv,wait=True) # all at once with one "Wait"

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from numpy import *
 import time
 units=1   #1 for hours, 60 for minutes, 3600 for secs
@@ -26,7 +27,7 @@ A_NPol= open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\A_NPo
 
 ##Open files,normalise to current
 for i in range(8893,8922+1):
-	print i
+	print(i)
 	Load(Filename=r'\\britannic\3He\LET Data\0213\LET0000'+str(i)+'.raw',OutputWorkspace='Filei',SpectrumList='40966')
 	try:
 		NormaliseByCurrent(InputWorkspace='Filei',OutputWorkspace='Filei')

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 # Quantum/Mantid regression tests!
 # set of source Tables, all called xxx_Tab.nxs
@@ -9,8 +10,8 @@ createMissing=False
 forceCreation=False # even if file exists and may be different!
 
 directory=os.path.dirname(__file__)
-print directory
-files=map(str.lower,os.listdir(directory))
+print(directory)
+files=list(map(str.lower,os.listdir(directory)))
 nsims=0
 nfits=0
 ncreations=0
@@ -21,7 +22,7 @@ for f in files:
 		r=f[:-8]+"_reference.nxs"
 		sw=f[:-8]+"_simulation"
 		if((r in files) or createMissing):
-			print "testing simulation ",fw
+			print("testing simulation ",fw)
 			LoadNexus(Filename=os.path.join(directory,f),OutputWorkspace=fw)
 			if(r in files):
 				LoadNexus(Filename=os.path.join(directory,r),OutputWorkspace=rw)
@@ -29,22 +30,22 @@ for f in files:
 			if(r in files):
 				cm=CompareWorkspaces(rw,sw,Tolerance=1.E-7,CheckSpectraMap=False)
 				if(cm[0]):
-					print "simulation output as expected"
+					print("simulation output as expected")
 					nsims=nsims+1
 				else:
 					for cmr in cm[1]:
-						print cmr
+						print(cmr)
 					if(not forceCreation):
 						raise Exception(fw+" ran, but output wrong")
 			if((forceCreation or not(r in files)) and createMissing):
 				SaveNexus(InputWorkspace=sw,Filename=os.path.join(directory,r))
-				print "created output for ",fw
+				print("created output for ",fw)
 				ncreations=ncreations+1
 			# Plot it (intelligent)
 			if(mtd[sw].getNumberHistograms()>5 and mtd[sw].getAxis(1).isNumeric()):
 				plot2D(sw)
 			else:
-				plotSpectrum(sw,range(mtd[sw].getNumberHistograms()))
+				plotSpectrum(sw,list(range(mtd[sw].getNumberHistograms())))
 
 # files for use as Fit Function
 # table xxx_Fn.nxs, fit real data xxx_Data.nxs (spectrum 0)
@@ -69,28 +70,28 @@ for f in files:
 			for row in mtd[ipw]:
 				Pars.append(row['Name'].split(".")[-1]+"="+str(row['Value']))
 			FnString="name=QuantumTableDrivenFunction"+str(len(Pars)-3)+","+",".join(Pars[:-1]) # note there's Scale and Baseline, and omit Cost Function
-			print "testing fit function from ",f," with ",len(Pars)-3," parameters"
+			print("testing fit function from ",f," with ",len(Pars)-3," parameters")
 			Fit(Function=FnString,InputWorkspace=dw,WorkspaceIndex=0,Output=bn,MaxIterations=0,CreateOutput=True)
 			RenameWorkspace(bn+"_Workspace",gw)
 			if(mtd[dw].getNumberHistograms() > 1):
 				cm=CompareWorkspaces(dw,gw,Tolerance=1.E-7,CheckSpectraMap=False)
 				if(cm[0]):
-					print "Fit ran, initial guess curve as expected"
+					print("Fit ran, initial guess curve as expected")
 					nfits=nfits+1
 				else:
 					for cmr in cm[1]:
-						print cmr
+						print(cmr)
 					if(not forceCreation):
 						raise Exception(f+" ran, but output wrong")
 			if((forceCreation or not(mtd[dw].getNumberHistograms() > 1)) and createMissing):
 				SaveNexus(InputWorkspace=gw,Filename=os.path.join(directory,d))
-				print "created output for ",f
+				print("created output for ",f)
 				ncreations=ncreations+1
 			# and now fit properly
 			Fit(Function=FnString,InputWorkspace=dw,WorkspaceIndex=0,Output=bn,CreateOutput=True)
 			# plot function and fit
 			plotSpectrum(ww,[0,1])
 
-print nsims," simulation and ",nfits," fit function tests successfully completed!"
+print(nsims," simulation and ",nfits," fit function tests successfully completed!")
 if(ncreations>0):
-	print ncreations," tests run for the firat time and results saved"
+	print(ncreations," tests run for the firat time and results saved")

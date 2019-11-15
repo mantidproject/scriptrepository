@@ -1,3 +1,4 @@
+from __future__ import print_function
 from math import *
 from mantid.simpleapi import *
 from mantid.api import WorkspaceGroup
@@ -28,7 +29,7 @@ class LinearDetector():
         self.specular = specular
         self.detectortype = "Linear"
         try:
-            self.nbackgroundspectra = len(range(*self.btm_background))+len(range(*self.top_background))
+            self.nbackgroundspectra = len(list(range(*self.btm_background)))+len(list(range(*self.top_background)))
         except: pass
     def croptodetector(self, inputworkspace, suffix = 'det'):
         CropWorkspace(InputWorkspace=inputworkspace,OutputWorkspace=inputworkspace+suffix,StartWorkspaceIndex=self.minspec-1,EndWorkspaceIndex=self.maxspec-1)
@@ -42,8 +43,8 @@ babylarmor = LinearDetector(specular = 120, minspec = 4, maxspec = 125, floodfil
 
 current_detector = wsf_detector
 
-print "Current default detector is: "+current_detector.name
-print "Change by setting the current_detector in this module (ask your local contact)."
+print("Current default detector is: "+current_detector.name)
+print("Change by setting the current_detector in this module (ask your local contact).")
 
 rad2deg=180.0/pi
 
@@ -69,14 +70,14 @@ def addRuns(runlist,wname):
         Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors="Include")
     except:
         Load(str(runlist[0]),OutputWorkspace=output,LoadMonitors=1)
-        print "after load"
+        print("after load")
         if isinstance(mtd[output], WorkspaceGroup):
             numperiods = mtd[output].getNumberOfEntries()
 
             for period in range(1,numperiods+1):
                 suffix = "_"+str(period)
                 if isinstance(mtd[output+suffix],IEventWorkspace):
-                    print "in event"
+                    print("in event")
                     Rebin(output+suffix,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb'+suffix)
                     Rebin(output+'_monitors'+suffix,'5.0,20.0,100000.0',OutputWorkspace=output+"monreb"+suffix)
                     ConjoinWorkspaces(output+'monreb'+suffix,output+'reb'+suffix,CheckOverlapping=True)
@@ -84,7 +85,7 @@ def addRuns(runlist,wname):
                     #DeleteWorkspace(output+'_monitors')
             
         elif isinstance(mtd[output],IEventWorkspace):
-            print "in event"
+            print("in event")
             Rebin(output,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace=output+'reb')
             Rebin(output+'_monitors','5.0,20.0,100000.0',OutputWorkspace=output+'monreb')
             ConjoinWorkspaces(output+'monreb',output+'reb',CheckOverlapping=True)
@@ -130,14 +131,14 @@ def addRuns(runlist,wname):
         
         except:
             Load(str(runlist[0]),OutputWorkspace="wtemp",LoadMonitors=1)
-            print "after load"
+            print("after load")
             if isinstance(mtd["wtemp"], WorkspaceGroup):
                 numperiods = mtd["wtemp"].getNumberOfEntries()
 
                 for period in range(1,numperiods+1):
                     suffix = "_"+str(period)
                     if isinstance(mtd["wtemp"+suffix],IEventWorkspace):
-                        print "in event"
+                        print("in event")
                         Rebin("wtemp"+suffix,'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb'+suffix)
                         Rebin("wtemp"+'_monitors'+suffix,'5.0,20.0,100000.0',OutputWorkspace="wtemp"+"monreb"+suffix)
                         ConjoinWorkspaces("wtemp"+'monreb'+suffix,"wtemp"+'reb'+suffix,CheckOverlapping=True)
@@ -145,7 +146,7 @@ def addRuns(runlist,wname):
                         #DeleteWorkspace(output+'_monitors')
             
             elif isinstance(mtd["wtemp"],IEventWorkspace):
-                print "in event"
+                print("in event")
                 Rebin("wtemp",'5.0,20.0,100000.0',PreserveEvents=False,OutputWorkspace="wtemp"+'reb')
                 Rebin("wtemp"+'_monitors','5.0,20.0,100000.0',OutputWorkspace="wtemp"+'monreb')
                 ConjoinWorkspaces("wtemp"+'monreb',"wtemp"+'reb',CheckOverlapping=True)
@@ -206,13 +207,13 @@ def parseRunList(istring):
                         tstr[j].strip()
                         tstr2=tstr[j].split('-')
                         tstr3=tstr2[1].split(':')
-                        r1=range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1]))
+                        r1=list(range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1])))
                         for k in r1:
                             rlist2.append(str(k))
                     elif tstr[j].find('-') >=0:
                         tstr[j].strip()
                         tstr2=tstr[j].split('-')
-                        r1=range(int(tstr2[0]),int(tstr2[1])+1)
+                        r1=list(range(int(tstr2[0]),int(tstr2[1])+1))
                         for k in r1:
                             rlist2.append(str(k))
                     else:
@@ -222,13 +223,13 @@ def parseRunList(istring):
                     rlist1[i].strip()
                     tstr2=rlist1[i].split('-')
                     tstr3=tstr2[1].split(':')
-                    r1=range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1]))
+                    r1=list(range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1])))
                     for k in r1:
                         rlist2.append(str(k))
                 elif rlist1[i].find('-')>=0:
                     rlist1[i].strip()
                     tstr2=rlist1[i].split('-')
-                    r1=range(int(tstr2[0]),int(tstr2[1])+1)
+                    r1=list(range(int(tstr2[0]),int(tstr2[1])+1))
                     for k in r1:
                         rlist2.append(str(k))
                 else:
@@ -262,13 +263,13 @@ def floodnorm(wkspName,floodfile='',floodopt='default'):
    else:
       flood_file = floodfile
    
-   print "using flood normalisation file "+flood_file
+   print("using flood normalisation file "+flood_file)
     
    flood_wksp = current_detector.nickname + "_flood"
    if  flood_wksp not in mtd:
        LoadNexusProcessed(Filename=flood_file,OutputWorkspace=flood_wksp)
        if current_detector.idf:
-        print "change idf"
+        print("change idf")
         LoadInstrument(flood_wksp, Filename = current_detector.idf,RewriteSpectraMap=False)
        ConvertUnits(flood_wksp, Target='Wavelength', OutputWorkspace =  flood_wksp)
         
@@ -400,7 +401,7 @@ def nrtestfn(runlist,wnames):
 def removeoutlayer(wksp):
     ''' remove counts from bins where there are so few counts it makes a mess of the polarisation
     calculation'''
-    print "removeoutlayer called"
+    print("removeoutlayer called")
     a1=mtd[wksp]
     nspec=a1.getNumberHistograms()
     x=a1.readX(0)
@@ -630,9 +631,9 @@ def nrCalcSEConst(RFFrequency,poleShoeAngle):
         B=34.288
     else:
         #B=2.0*34.288
-        print "\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
-        print "STOP IT!!!  You will NOT run the RF system above 1 MHz!"
-        print "\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
+        print("\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+        print("STOP IT!!!  You will NOT run the RF system above 1 MHz!")
+        print("\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
         raise Exception("Spin Echo breaking attempt")
     h=6.62607e-34
     m=1.67493e-27
@@ -645,7 +646,7 @@ def nrCalcSEConst(RFFrequency,poleShoeAngle):
     th0=float(poleShoeAngle)
     th0=-0.0000000467796*(th0**5)+0.0000195413*(th0**4)-0.00326229*(th0**3)+0.271767*(th0**2)-10.4269*th0+198.108
     c1=Gl*m*2.0*B*L/(2.0*pi*h*tan(th0*pi/180.0)*1.0e20)
-    print "10A: "+str(c1*1e8)+", 4A: "+str(c1*1e8*4**2/100)
+    print("10A: "+str(c1*1e8)+", 4A: "+str(c1*1e8*4**2/100))
     return c1*1e8
     
 def plotSEconst(RFFrequency):
@@ -653,7 +654,7 @@ def plotSEconst(RFFrequency):
     poleshoestopangle = 90.0
     rffrequency = str(RFFrequency)
     angles = np.linspace(poleshoestartangle,poleshoestopangle, 100)
-    print angles
+    print(angles)
     SEC10 = [nrCalcSEConst(rffrequency, x) for x in angles]
     SEC4 = [y*4**2/10**2 for y in SEC10]
     
@@ -752,7 +753,7 @@ def nrSERGISFn(runList,nameList,P0runList,P0nameList,incidentAngles,SEConstants,
                 #a1=2.0*float(incAngles[k])+atan((float(minSpec)-float(specChan))*current_detector.pixelsize/3.63)*180.0/pi
                 #print str(2.0*float(incAngles[k]))+" "+str(atan((float(minSpec)-float(specChan))*1.2e-3/3.63)*180.0/pi)+" "+str(a1)
                 RotateInstrumentComponent(wksp+"det","DetectorBench",X="-1.0",Angle=str(a1))
-                GroupDetectors(InputWorkspace=wksp+"det",OutputWorkspace=wksp+"sum",WorkspaceIndexList=range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1),KeepUngroupedSpectra="0")
+                GroupDetectors(InputWorkspace=wksp+"det",OutputWorkspace=wksp+"sum",WorkspaceIndexList=list(range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1)),KeepUngroupedSpectra="0")
                 Divide(LHSWorkspace=wksp+"sum",RHSWorkspace=wksp+"mon",OutputWorkspace=wksp+"norm")
                 Divide(LHSWorkspace=wksp+"det",RHSWorkspace=wksp+"mon",OutputWorkspace=wksp+"detnorm")
                 floodnorm(wksp+"detnorm",floodopt=dofloodnorm)
@@ -824,20 +825,20 @@ def nrSERGISFn(runList,nameList,P0runList,P0nameList,incidentAngles,SEConstants,
 #
 def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gparams,floodfile='',subbgd=0,btmbgd=current_detector.btm_background,topbgd=current_detector.top_background,qgroup=0,dofloodnorm=True,usewkspname=0,sf=1.0,diagnostics=0):
     nlist=parseNameList(nameList)
-    print nlist
-    print usewkspname
-    print current_detector.nspec
+    print(nlist)
+    print(usewkspname)
+    print(current_detector.nspec)
     #logger.notice("This is the sample nameslist:"+str(nlist))
     if(usewkspname==0):
         rlist=parseRunList(runList)
     else:
         rlist=parseNameList(runList)
-        print rlist
+        print(rlist)
     logger.notice("This is the sample runlist:"+str(rlist))
     dlist=parseNameList(DBList)
     #logger.notice("This is the Direct Beam nameslist:"+str(dlist))
     incAngles=parseNameList(incidentAngles)
-    print incAngles
+    print(incAngles)
     #logger.notice("This incident Angles are:"+str(incAngles))
 
     if(usewkspname==0):
@@ -861,7 +862,7 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
                    DeleteWorkspace(j)
             RenameWorkspace(InputWorkspace="wtemp",OutputWorkspace=i)
         ConvertUnits(InputWorkspace=i,OutputWorkspace=i,Target="Wavelength",AlignBins="1")
-        print i
+        print(i)
         a1=mtd[i]
         nspec=a1.getNumberHistograms()
         if nspec == 4:
@@ -894,8 +895,8 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
             RotateInstrumentComponent(i+"det","DetectorBench",X="-1.0",Angle=str(twotheta))
             if (subbgd==1):
                 # Calculate a background correction
-                GroupDetectors(i+"det",OutputWorkspace=i+"bgd2",WorkspaceIndexList=range(*btmbgd),KeepUngroupedSpectra="0")
-                GroupDetectors(i+"det",OutputWorkspace=i+"bgd1",WorkspaceIndexList=range(*topbgd),KeepUngroupedSpectra="0")
+                GroupDetectors(i+"det",OutputWorkspace=i+"bgd2",WorkspaceIndexList=list(range(*btmbgd)),KeepUngroupedSpectra="0")
+                GroupDetectors(i+"det",OutputWorkspace=i+"bgd1",WorkspaceIndexList=list(range(*topbgd)),KeepUngroupedSpectra="0")
                 Plus(i+"bgd1",i+"bgd2",OutputWorkspace=i+"bgd")
                 wbgdtemp=mtd[i+"bgd"]/((btmbgd[1]-btmbgd[0])+(topbgd[1]-topbgd[0]))
                 DeleteWorkspace(i+"bgd1")
@@ -910,7 +911,7 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
                 Rebin(InputWorkspace=i+"det",OutputWorkspace=i+"det",Params=reb)
                 CropWorkspace(InputWorkspace=i+"det",OutputWorkspace=i+"detQ",StartWorkspaceIndex=int(minSpec)-current_detector.minspec,EndWorkspaceIndex=int(maxSpec)-current_detector.minspec)
                 ConvertUnits(InputWorkspace=i+"detQ",OutputWorkspace=i+"detQ",Target="MomentumTransfer",AlignBins="1")
-                GroupDetectors(i+"detQ",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(maxSpec)-int(minSpec)+1),KeepUngroupedSpectra="0")
+                GroupDetectors(i+"detQ",OutputWorkspace=i+"sum",WorkspaceIndexList=list(range(int(maxSpec)-int(minSpec)+1)),KeepUngroupedSpectra="0")
                 ConvertUnits(InputWorkspace=i+"sum",OutputWorkspace=i+"sum",Target="Wavelength",AlignBins="1")
                 Rebin(InputWorkspace=i+"sum",OutputWorkspace=i+"sum",Params=reb)
                 CropWorkspace(InputWorkspace=i,OutputWorkspace=i+"mon",StartWorkspaceIndex=mon_spec,EndWorkspaceIndex=mon_spec)
@@ -923,7 +924,7 @@ def nrNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpara
                 Rebin(InputWorkspace=i+"mon",OutputWorkspace=i+"mon",Params=reb)
                 Rebin(InputWorkspace=i+"det",OutputWorkspace=i+"det",Params=reb)
                 #GroupDetectors(InputWorkspace=i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-5,int(maxSpec)-5+1),KeepUngroupedSpectra="0")
-                GroupDetectors(InputWorkspace=i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-6,int(maxSpec)-6+1),KeepUngroupedSpectra="0")
+                GroupDetectors(InputWorkspace=i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=list(range(int(minSpec)-6,int(maxSpec)-6+1)),KeepUngroupedSpectra="0")
             Divide(LHSWorkspace=i+"sum",RHSWorkspace=i+"mon",OutputWorkspace=i+"norm")
             Divide(LHSWorkspace=i+"det",RHSWorkspace=i+"mon",OutputWorkspace=i+"detnorm")
             if dlist[k]  == "none":
@@ -1008,9 +1009,9 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
         else:
             #CropWorkspace(InputWorkspace=i,OutputWorkspace=i+"det",StartWorkspaceIndex=current_detector.minspec-1,EndWorkspaceIndex=current_detector.maxspec-1) #old ld start=4 end=243, WorkSpaceIndex = Spectrum-1 
             current_detector.croptodetector(i)
-            print "short wavelengths: "+i+"det"
+            print("short wavelengths: "+i+"det")
             floodnorm(i+"det",floodfile,floodopt=dofloodnorm)
-            GroupDetectors(i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1),KeepUngroupedSpectra="0")
+            GroupDetectors(i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=list(range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1)),KeepUngroupedSpectra="0")
             Divide(i+"sum",i+"mon",OutputWorkspace=i+"norm")
             ReplaceSpecialValues(i+"norm","0.0","0.0","0.0","0.0", OutputWorkspace=i+"norm")
             
@@ -1033,9 +1034,9 @@ def nrDBFn(runListShort,nameListShort,runListLong,nameListLong,nameListComb,minS
         else: 
             #CropWorkspace(InputWorkspace=i,OutputWorkspace=i+"det",StartWorkspaceIndex=current_detector.minspec-1,EndWorkspaceIndex=current_detector.maxspec-1) 
             current_detector.croptodetector(i)
-            print "long wavelengths: "+i+"det"
+            print("long wavelengths: "+i+"det")
             floodnorm(i+"det",floodfile,floodopt=dofloodnorm)
-            GroupDetectors(i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1),KeepUngroupedSpectra="0") #+1 for range function
+            GroupDetectors(i+"det",OutputWorkspace=i+"sum",WorkspaceIndexList=list(range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1)),KeepUngroupedSpectra="0") #+1 for range function
             Divide(i+"sum",i+"mon",OutputWorkspace=i+"norm")
             ReplaceSpecialValues(i+"norm","0.0","0.0","0.0","0.0",OutputWorkspace=i+"norm")
         
@@ -1153,13 +1154,13 @@ def NRCombineDatafn(RunsNameList,CombNameList,applySFs,SFList,SFError,scaleOptio
         if scaleOption != "2":
             Divide("i"+str(i)+"1temp","i"+str(i)+"2temp",OutputWorkspace="sf"+str(i))
             a1=mtd["sf"+str(i)]
-            print "sf"+str(i)+"="+str(a1.readY(0))+" +/- "+str(a1.readE(0))
+            print("sf"+str(i)+"="+str(a1.readY(0))+" +/- "+str(a1.readE(0)))
             sfs.append(str(a1.readY(0)[0]))
             sferrs.append(str(a1.readE(0)[0]))
         else:
             Divide("i"+str(i)+"2temp","i"+str(i)+"1temp",OutputWorkspace="sf"+str(i))
             a1=mtd["sf"+str(i)]
-            print "sf"+str(i)+"="+str(a1.readY(0))+" +/- "+str(a1.readE(0))
+            print("sf"+str(i)+"="+str(a1.readY(0))+" +/- "+str(a1.readE(0)))
             sfs.append(str(a1.readY(0)[0]))
             sferrs.append(str(a1.readE(0)[0]))
         DeleteWorkspace("i"+str(i)+"1temp")
@@ -1269,7 +1270,7 @@ def nrPNRCorrection(UpWksp,DownWksp,calibration=0):
     elif (calibration == 5):
     # Constants Based on Runs 36680-36691 and 36692-36695 analyser -0.1deg
     # RF Flippers on polariser and analyser side 0.5MHz November 2015
-        print "Applying pnr corrections 5, Nov 2015 0.5MHz"
+        print("Applying pnr corrections 5, Nov 2015 0.5MHz")
         crho=[0.944514,0.026548,-0.003837,0.000168]
         calpha=[0.944022,0.025639,-0.0035,0.000145]
         cAp=[0.980605,-0.002201,-0.00097,0.000014]
@@ -1357,7 +1358,7 @@ def nrPACorrection(UpUpWksp,UpDownWksp,DownUpWksp,DownDownWksp,calibration=0):
     elif (calibration == 4):
     # Constants Based on Runs 36680-36691 and 36692-36695 analyser -0.1deg
     # RF Flippers on polariser and analyser side 0.5MHz November 2015
-        print "Applying corrections 4, Nov 2015"
+        print("Applying corrections 4, Nov 2015")
         crho=[0.944514,0.026548,-0.003837,0.000168]
         calpha=[0.944022,0.025639,-0.0035,0.000145]
         cAp=[0.980605,-0.002201,-0.00097,0.000014]
@@ -1485,8 +1486,8 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
             if (nper>2):
                 for j in range(2,nper):
                     Plus("wbgdsum","bgdtemp"+"_"+pnums[j],OutputWorkspace="wbgdsum")
-            GroupDetectors("wbgdsum",OutputWorkspace="bgd2",WorkspaceIndexList=range(*current_detector.btm_background),KeepUngroupedSpectra="0")
-            GroupDetectors("wbgdsum",OutputWorkspace="bgd1",WorkspaceIndexList=range(*current_detector.top_background),KeepUngroupedSpectra="0")
+            GroupDetectors("wbgdsum",OutputWorkspace="bgd2",WorkspaceIndexList=list(range(*current_detector.btm_background)),KeepUngroupedSpectra="0")
+            GroupDetectors("wbgdsum",OutputWorkspace="bgd1",WorkspaceIndexList=list(range(*current_detector.top_background)),KeepUngroupedSpectra="0")
             Plus("bgd1","bgd2",OutputWorkspace="bgd")
             wbgdtemp=mtd["bgd"]/(current_detector.nbackgroundspectra*nper)
             DeleteWorkspace("bgdtemp")
@@ -1495,7 +1496,7 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
             DeleteWorkspace("bgd2")
             DeleteWorkspace("bgd")
           except:
-            print "Background subtraction failed for some reason. Perhaps you are running the point detector?"
+            print("Background subtraction failed for some reason. Perhaps you are running the point detector?")
             
         wksp=i
         ConvertUnits(InputWorkspace=wksp,OutputWorkspace=wksp,Target="Wavelength",AlignBins="1")
@@ -1518,7 +1519,7 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
             #MoveInstrumentComponent(wksp+"det","DetectorBench",Y=str((current_detector.centrespectrum-float(minSpec))*current_detector.pixelsize))
             # factor of 2 because we need 2theta and are given theta, second term in the sum corrects the angle if the reflection was misaligned
             a1=2.0*(float(incAngles[k]))+(atan((float(specChan)-current_detector.specular)*current_detector.pixelsize/current_detector.detectorposition)*rad2deg)
-            print "detectorangle: "+ str(a1/2.0)
+            print("detectorangle: "+ str(a1/2.0))
             #print str(2.0*float(incAngles[k]))+" "+str(atan((float(minSpec)-float(specChan))*1.2e-3/3.63)*180.0/pi)+" "+str(a1)
             RotateInstrumentComponent(wksp+"det","DetectorBench",X="-1.0",Angle=str(a1))
             floodnorm(wksp+"det",floodfile,floodopt=dofloodnorm)
@@ -1526,13 +1527,13 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
                 # Subract a per spectrum background
                 Minus(wksp+"det",wbgdtemp,OutputWorkspace=wksp+"det")
                 ResetNegatives(InputWorkspace=wksp+"det",OutputWorkspace=wksp+"det",AddMinimum='0',ResetValue="0.0")
-                GroupDetectors(wksp+"det",OutputWorkspace=wksp+"sum",WorkspaceIndexList=range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1),KeepUngroupedSpectra="0")
+                GroupDetectors(wksp+"det",OutputWorkspace=wksp+"sum",WorkspaceIndexList=list(range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1)),KeepUngroupedSpectra="0")
             # Experimental convert to Q before summing 
             if (qgroup==1):
                 Rebin(InputWorkspace=i+"det",OutputWorkspace=i+"det",Params=reb)
                 CropWorkspace(InputWorkspace=i+"det",OutputWorkspace=i+"detQ",StartWorkspaceIndex=int(minSpec)-current_detector.minspec,EndWorkspaceIndex=int(maxSpec)-current_detector.minspec)
                 ConvertUnits(InputWorkspace=i+"detQ",OutputWorkspace=i+"detQ",Target="MomentumTransfer",AlignBins="1")
-                GroupDetectors(i+"detQ",OutputWorkspace=i+"sum",WorkspaceIndexList=range(int(maxSpec)-int(minSpec)+1),KeepUngroupedSpectra="0")
+                GroupDetectors(i+"detQ",OutputWorkspace=i+"sum",WorkspaceIndexList=list(range(int(maxSpec)-int(minSpec)+1)),KeepUngroupedSpectra="0")
                 ConvertUnits(InputWorkspace=i+"sum",OutputWorkspace=i+"sum",Target="Wavelength",AlignBins="1")
                 Rebin(InputWorkspace=i+"sum",OutputWorkspace=i+"sum",Params=reb)
                 CropWorkspace(InputWorkspace=i,OutputWorkspace=i+"mon",StartWorkspaceIndex=mon_spec,EndWorkspaceIndex=mon_spec)
@@ -1541,7 +1542,7 @@ def nrPNRFn(runList,nameList,incidentAngles,DBList,specChan,minSpec,maxSpec,gpar
                 if not diagnostics:
                     DeleteWorkspace(i+"detQ")
             else:
-                GroupDetectors(wksp+"det",OutputWorkspace=wksp+"sum",WorkspaceIndexList=range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1),KeepUngroupedSpectra="0")
+                GroupDetectors(wksp+"det",OutputWorkspace=wksp+"sum",WorkspaceIndexList=list(range(int(minSpec)-current_detector.minspec,int(maxSpec)-current_detector.minspec+1)),KeepUngroupedSpectra="0")
             RebinToWorkspace(WorkspaceToRebin=wksp+"sum",WorkspaceToMatch=wksp+"mon",OutputWorkspace=wksp+"sum")
             Divide(LHSWorkspace=wksp+"sum",RHSWorkspace=wksp+"mon",OutputWorkspace=wksp+"norm")
             RebinToWorkspace(WorkspaceToRebin=wksp+"det",WorkspaceToMatch=wksp+"mon",OutputWorkspace=wksp+"det")

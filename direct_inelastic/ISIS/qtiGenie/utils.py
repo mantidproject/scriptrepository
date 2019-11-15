@@ -6,16 +6,17 @@
 |=============================================================================|=======|	
 1                                                                            80   <tab>
 '''
+from __future__ import print_function
 import sys, os
 import dis, inspect, opcode
 def ls():
-	print os.getcwd()	
+	print(os.getcwd())	
 	files=os.listdir(os.getcwd())
 	for i in range(0,len(files)):
 
-                print files[i]
+                print(files[i])
 def pwd():
-	print os.getcwd()
+	print(os.getcwd())
 def cd(dir_str):
 	os.chdir(dir_str)
 def lineno():
@@ -112,12 +113,12 @@ def decompile(code_object):
  
 # Print the byte code in a human readable format
 def pretty_print(instructions):
-	print '%5s %-20s %3s  %5s  %-20s  %s' %  ('OFFSET', 'INSTRUCTION', 'OPCODE', 'ARG', 'TYPE', 'VALUE')
+	print('%5s %-20s %3s  %5s  %-20s  %s' %  ('OFFSET', 'INSTRUCTION', 'OPCODE', 'ARG', 'TYPE', 'VALUE'))
 	for (offset, op, name, argument, argtype, argvalue) in instructions:
-		print '%5d  %-20s (%3d)  ' % (offset, name, op),
+		print('%5d  %-20s (%3d)  ' % (offset, name, op), end=' ')
 		if argument != None:
-			print '%5d  %-20s  (%s)' % (argument, argtype, argvalue),
-		print
+			print('%5d  %-20s  (%s)' % (argument, argtype, argvalue), end=' ')
+		print()
 
 def expecting():
 	#{{{

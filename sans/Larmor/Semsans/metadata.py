@@ -227,12 +227,12 @@ def get_log(runs):
 
     d = {}
     for run in temp:
-        if run.sample in d.keys():
+        if run.sample in list(d.keys()):
             d[run.sample].append(run)
         else:
             d[run.sample] = [run]
 
-    for k, v in d.items():
+    for k, v in list(d.items()):
         my_table = CreateEmptyTableWorkspace()
         my_table.addColumn("int", "Run Number")
         my_table.addColumn("str", "Sample")
