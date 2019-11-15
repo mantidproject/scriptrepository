@@ -2,6 +2,7 @@ from __future__ import print_function, unicode_literals
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
 ## Version 1.04, August 2018
+from __future__ import print_function
 import numpy
 import math
 #import time
