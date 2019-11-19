@@ -1,4 +1,10 @@
+from __future__ import print_function
 import offspec_red as nr
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload(nr)
 #last modified:12/05/2016 
 #by: njs
@@ -20,7 +26,7 @@ def getLog(w,log_name):
         try:
           h=mtd[w]
         except:
-          print "Can't get Workspace handle"
+          print("Can't get Workspace handle")
         #
         # Get access to SampleDetails
 	s=h.getRun().getLogData(log_name).value
@@ -104,7 +110,7 @@ def loadlatest(currentrun=None):
                 endings.append(filelist[1])
             except: pass   
     sortedendings = sorted(endings)
-    print targetname+'.n'+sortedendings[-1]
+    print(targetname+'.n'+sortedendings[-1])
     return targetname+'.n'+sortedendings[-1]
 
 def loaddata(rnum, path = '//ndloffspec1/L/RawData/',loadcrpt=0):
@@ -116,7 +122,7 @@ def loaddata(rnum, path = '//ndloffspec1/L/RawData/',loadcrpt=0):
               updatefile=loadlatest(str(rnum))   
               Load(Filename='z:/'+updatefile, OutputWorkspace=str(rnum), LoaderName='LoadEventNexus', LoadMonitors=True)
             else:
-              print 'trying to load crpt snapshot'
+              print('trying to load crpt snapshot')
               Load('z:/snapshot_crpt.nxs', OutputWorkspace=str(rnum), LoaderName='LoadEventNexus', LoadMonitors=True)
         #except: 
         #    raise Exception('Could not find data')
@@ -257,8 +263,11 @@ def QxQzcuts(name, qzmin=None, qzmax=None,plot=False):
         yscale('log')
 
 
-def offspecPlot(wksp, (xmin, xmax), (ymin,ymax), (zmin,zmax),logscale='z'):
+def offspecPlot(wksp, xrange, yrange, zrange,logscale='z'):
     
+    (xmin, xmax) = xrange
+    (ymin,ymax) = yrange
+    (zmin,zmax) = zrange
     p = plot2D(wksp)
     l=p.activeLayer()
     l.setScale(0, ymin, ymax)

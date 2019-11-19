@@ -1,16 +1,22 @@
+from __future__ import print_function
 from mantid import config
 from MAPSReduction_Sample import *
 import time
 import os
 import datetime
 import sys
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 try:
     #Note: due to the mantid-python implementation, one needs to run this 
     #script in Mantid  script window  TWICE!!!  to deploy  the the changes made to MAPSReduction_Sample.py file.
     sys.path.insert(0,'/instrument/MAPS/RBNumber/USER_RB_FOLDER');    #<- template parameter, modified on isiscompute to correct user
     reload(sys.modules['MAPSReduction_Sample'])
 except:
-    print "*** WARNING can not reload MAPSReduction_Sample file"
+    print("*** WARNING can not reload MAPSReduction_Sample file")
     pass
 
 config['defaultsave.directory'] = '/instrument/MAPS/RBNumber/USER_RB_FOLDER' #data_dir 

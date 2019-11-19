@@ -5,22 +5,24 @@
   - email to <mantid-help@mantidproject.org>
 '''
 from __future__ import print_function
+
 import string
 import os
 import sys
 import re
 import numpy as np
 from collections import OrderedDict
-if sys.version.split('.')[:2] < list(('3', '4')):
-    from imp import reload
-else:
-    from importlib import reload
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 
 import mantid.api as mapi
 import mantid.simpleapi as msapi
 import mantid.kernel as mkrnl
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-import seqFitStretchedExFT
+import seqFitStretchedExFT # don't need from . as have __init__.py in dir
 
 
 reload(seqFitStretchedExFT)
@@ -148,7 +150,7 @@ name=LinearBackground,A0=${f1_A0},A1=${f1_A1}
         # Find out selected workspaces and sort from lowest to highest
         selectedwi = self.getProperty("SelectedWI").value
         if not selectedwi.any():
-            selectedwi = np.array(range(mapi.mtd[self.getPropertyValue("DataWorkspace")].getNumberHistograms()))
+            selectedwi = np.array(list(range(mapi.mtd[self.getPropertyValue("DataWorkspace")].getNumberHistograms())))
         selectedwi.sort()
         selectedwi = selectedwi[::-1] # from Highest to lowest
         self.setProperty("SelectedWI", selectedwi)
@@ -206,7 +208,7 @@ name=LinearBackground,A0=${f1_A0},A1=${f1_A1}
         """
         template = string.Template(self._fitTpl)
         # Find initial guess values
-        kwargs = {key:str(self.getProperty(prop).value) for prop,key in self._propvalue2key.items()}
+        kwargs = {key:str(self.getProperty(prop).value) for prop,key in list(self._propvalue2key.items())}
         if wi >= 0:
             kwargs.update({"wi":str(wi)})
         return template.safe_substitute(**kwargs)  # this self._fitTpl is owned by object, not class
@@ -228,7 +230,7 @@ name=LinearBackground,A0=${f1_A0},A1=${f1_A1}
         # Iterate over the table contents
         for row in parmtable:
             name = row['Name'].replace('.', '_')  # name of the fitting parameter
-            for propvalue, key in self._propvalue2key.items():
+            for propvalue, key in list(self._propvalue2key.items()):
                 if name == key:
                     factor = 1.0
                     if name == "f0_f1_f1_Tau":

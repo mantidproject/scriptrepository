@@ -40,6 +40,7 @@ Created on Wed Mar  6 09:05:08 2013
 
 @author: gesner
 """
+from __future__ import print_function
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 
 import json
@@ -48,7 +49,7 @@ from os.path import join
 import time
 import compiler
 import sys
-import commands
+import subprocess
 import re
 
 re_default_author = re.compile('Author: (?P<author>.+) <(?P<email>.+)>')
@@ -192,7 +193,7 @@ def get_description(path):
 
 def get_author(path):
     try:
-        output = commands.getstatusoutput("git log -1 "+path)[1]
+        output = subprocess.getstatusoutput("git log -1 "+path)[1]
         spec_m = re.search(re_signed_author,output)
         if spec_m:
             return spec_m.group('author')

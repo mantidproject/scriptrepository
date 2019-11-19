@@ -1,8 +1,14 @@
 ## SECOND ONE
+from __future__ import print_function
 
 from mantid.api import *
 import csv
 import BilbyCustomFunctions_Reduction
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload (BilbyCustomFunctions_Reduction)
 
 #============================================================================================================================================#
@@ -75,10 +81,10 @@ for current_file in files_to_subtract:
     header_line.append(['background file name: ' + background_file])
     header_line.append(['Constant to subtract from sample scattering = ' + str(scale_subtr)])
     header_line.append(['Background multiplier = ' + str(scale_mult)])
-    print header_line
+    print(header_line)
 # writing header in the file
     for line in header_line:
-        print line
+        print(line)
         with open(sub_file_output, 'ab') as f_out:
             wr = csv.writer(f_out, delimiter=',', lineterminator='\n')
             wr.writerow(line)

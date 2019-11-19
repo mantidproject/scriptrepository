@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid import config
 from MARIReduction_Sample import *
 import time
@@ -5,13 +6,18 @@ import os
 import datetime
 import sys
 import numpy as np
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 try:
     #Note: due to the mantid-python implementation, one needs to run this 
     #script in Mantid  script window  TWICE!!!  to deploy the the changes made to MARIReduction_2018_4.py file.
     sys.path.insert(0,'/instrument/MARI/RBNumber/USER_RB_FOLDER/')
     reload(sys.modules['MARIReduction_Sample'])
 except:
-    print "*** WARNING can not reload MARIReduction_Sample file"
+    print("*** WARNING can not reload MARIReduction_Sample file")
     pass
     
 # START EDITING HERE
@@ -38,11 +44,11 @@ load_reduce = True
 # ssf is the self-shielding factor and msd is the mean-square displacement per sample and temperature
 runs = {        
     'Sample_1': {'sam_mass':0, 'sam_rmm':0,
-                           5: {'data': range(25478,25485), 'background': range(25492,25500), 'recalc':True, 'ssf':1., 'msd':0.}, 
+                           5: {'data': list(range(25478,25485)), 'background': list(range(25492,25500)), 'recalc':True, 'ssf':1., 'msd':0.}, 
                      },
     'Sample_2': {'sam_mass':0, 'sam_rmm':0,
-                           5: {'data': range(25506,25516), 'background': range(25492,25500), 'recalc':True, 'ssf':1., 'msd':0.}, 
-                           300: {'data': range(25526,25536), 'background': range(25501,25510), 'recalc':True, 'ssf':1., 'msd':0.}, 
+                           5: {'data': list(range(25506,25516)), 'background': list(range(25492,25500)), 'recalc':True, 'ssf':1., 'msd':0.}, 
+                           300: {'data': list(range(25526,25536)), 'background': list(range(25501,25510)), 'recalc':True, 'ssf':1., 'msd':0.}, 
                      },
 }
 

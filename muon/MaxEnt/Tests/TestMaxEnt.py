@@ -26,7 +26,7 @@ class TestMaxEntMUSR(unittest.TestCase):
         actual_ws = mtd[actual_ws_name]
         expected_ws = LoadNexus(os.path.join(SCRIPT_DIR, expected_file_name))
         result = CheckWorkspacesMatch(Workspace1=actual_ws, Workspace2=expected_ws)
-        self.assertEquals(result, "Success!", "\"%s\"" % result)
+        self.assertEqual(result, "Success!", "\"%s\"" % result)
 
     def test_fit_and_fix_checked(self):
         self.max_ent_alg.setProperty("FitDeadTimes", True)
