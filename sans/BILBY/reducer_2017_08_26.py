@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid import *
 import numpy as np
 import numpy as np
@@ -5,6 +6,11 @@ import os, csv, math
 from mantid.kernel import Logger
 
 import BilbyCustomFunctions_Reduction
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload (BilbyCustomFunctions_Reduction)
 
 ansto_logger = Logger("AnstoDataReduction")
@@ -120,7 +126,7 @@ except:
 reduce_2D_input = current_reduction_settings[0]["reduce_2D"].lower()
 reduce_2D = BilbyCustomFunctions_Reduction.string_boolean(reduce_2D_input)
 if reduce_2D: 
-    print "2D reduction is performing. Q interval and number of points are taking into account; Q-binning intervals are ignored."
+    print("2D reduction is performing. Q interval and number of points are taking into account; Q-binning intervals are ignored.")
     try:
         number_data_points_2D = float(current_reduction_settings[0]["2D_number_data_points"]) # for 2D Q-binning is not intuitive, hence only number of points is needed
     except:
@@ -167,13 +173,13 @@ for current_file in files_to_reduce:
         external_mode = True #This is needed for old files, where the ToF/mono mode value has not been recorded
 
     if (not external_mode): # Internal frame source has been used during data collection; it is not always NVS only, one can have both, NVS and choppers running for this mode
-        print "Internal frame source. Binning range is taken from the sample scattering data." 
+        print("Internal frame source. Binning range is taken from the sample scattering data.") 
         binning_wavelength_ini = (ws_sam.readX(0)[0], ws_sam.readX(0)[ws_sam.blocksize()] - ws_sam.readX(0)[0], ws_sam.readX(0)[ws_sam.blocksize()])            
         binning_wavelength_transmission = binning_wavelength_ini      
         if wavelength_intervals:
             wavelength_intervals = False
-            print "NVS: monochromatic mode"
-            print "There is no sense to reduce monochromatic data on multiple wavelength; \"wavelength_intervals\" value changed to False."
+            print("NVS: monochromatic mode")
+            print("There is no sense to reduce monochromatic data on multiple wavelength; \"wavelength_intervals\" value changed to False.")
     else: # important for the case when NVS data is being analysed first, ie to be able to come back to the whole range & wavelength slices, if needed
             binning_wavelength_ini = binning_wavelength_ini_original
             binning_wavelength_transmission = binning_wavelength_transmission_original
@@ -200,7 +206,7 @@ for current_file in files_to_reduce:
     att_pos = float(ws_tranSam.run().getProperty("att_pos").value)
     
     scale = BilbyCustomFunctions_Reduction.AttenuationCorrection(att_pos, data_before_May_2016)
-    print "scale, aka attenuation factor", scale
+    print("scale, aka attenuation factor", scale)
        
     thickness = current_file["thickness [cm]"]
 
@@ -272,7 +278,7 @@ for current_file in files_to_reduce:
             n_2D = output_workspace.name() + '.png'
             SavePlot = os.path.join(os.path.expanduser(reduced_files_path), n_2D)
             plot2Dgraph.export(SavePlot)
-            print "2D File Exists:", os.path.exists(SavePlot)
+            print("2D File Exists:", os.path.exists(SavePlot))
             SaveNxs = os.path.join(os.path.expanduser(reduced_files_path), output_workspace.name() + '.nxs')
             SaveNISTDAT(output_workspace.name(), SaveNxs)
             if not plot_2D: plot2Dgraph.close() # is there more elegant way to do it? Problem is that plot2Dgraph creates and plot the graph file at the same time...
@@ -286,8 +292,8 @@ for current_file in files_to_reduce:
             n_1D = output_workspace.name() +".dat"       # 1D output file; name based on "base_output_name" construct
             savefile = os.path.join(os.path.expanduser(reduced_files_path), n_1D)          # setting up full path
             SaveAscii(InputWorkspace = output_workspace, Filename = savefile, WriteXError = True, WriteSpectrumID = False, Separator = "CSV") #saving file
-            print savefile
-            print "1D File Exists:", os.path.exists(savefile)            
+            print(savefile)
+            print("1D File Exists:", os.path.exists(savefile))            
 
 ### ================================================================================
 # - add subtraction of the background -- later

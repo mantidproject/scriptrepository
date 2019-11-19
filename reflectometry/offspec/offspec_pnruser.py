@@ -52,7 +52,13 @@ OFSreduce(runs, name, withpol = 'pnr')
 Reduces offspcular data
 
 '''
+from __future__ import print_function
 import offspec_red as nr
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload(nr)
 #last modified: 12/05/2016
 #by: njs
@@ -103,12 +109,12 @@ deg2rad = np.pi/180
 
 def print_calibrations():
     calibrations = nr.PolarisationCalibration.get_calibrations()
-    print "========================================\n"
-    for each in calibrations.keys():
-        print each + ":  "+calibrations[each].comment+"\n"
-    print "========================================\n"
-    print "Current calibration: "+nr.PolarisationCalibration.current.name
-    print "========================================\n"
+    print("========================================\n")
+    for each in list(calibrations.keys()):
+        print(each + ":  "+calibrations[each].comment+"\n")
+    print("========================================\n")
+    print("Current calibration: "+nr.PolarisationCalibration.current.name)
+    print("========================================\n")
     
 
 def PNRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = None, specular = None, diagnostics = False):
@@ -126,7 +132,7 @@ def PNRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = 
     tocombineup = ""
     tocombinedown = ""
     for run, angle, wname, thisspecular in zip(runs,angles,wkspnames,specular):
-        print "Runs: "+run+", angle: "+ str(angle)+", specular:"+str(thisspecular)+", name:"+name+str(wname)
+        print("Runs: "+run+", angle: "+ str(angle)+", specular:"+str(thisspecular)+", name:"+name+str(wname))
         nr.nrPNRFn(run,name+wname,str(angle),dbpnr,thisspecular,detectorlimits['low'],detectorlimits['high'],binningpars,floodfile="",qgroup=pnrqgroup,PNRwithPA=False,pnums=["1","2"],doCorrs=True, calibration = calibration, subbgd=bckg, diagnostics=diagnostics)
         qmin = fourpi*np.sin(angle*deg2rad)/lmax
         qmax = fourpi*np.sin(angle*deg2rad)/lmin
@@ -135,7 +141,7 @@ def PNRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = 
         tocombinedown = tocombinedown+name+wname+"normcorrRvQ_2,"
     tocombineup = tocombineup[:-1]
     tocombinedown = tocombinedown[:-1]
-    print tocombineup, tocombinedown
+    print(tocombineup, tocombinedown)
     try:
         a1=nr.NRCombineDatafn(tocombineup,name+"U","0","","","0",qlimits,str(scalefactor),"2",diagnostics=diagnostics)
         nr.NRCombineDatafn(tocombinedown,name+"D","2",a1[0],a1[1],"0",qlimits,str(scalefactor),"2",diagnostics=diagnostics)
@@ -163,9 +169,9 @@ def PAreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = N
 
     wkspnames = ('low','mid', 'high', 'veryhigh', 'extremelyhigh', 'toomany', 'waytoomany', '8', '9', '10')
     tocombineuu, tocombineud, tocombinedu, tocombinedd  = "", "", "", ""
-    print "Angles used: "+str(angles)
+    print("Angles used: "+str(angles))
     for run, angle, wname, thisspecular in zip(runs,angles,wkspnames, specular):
-        print "Runs: "+run+", angle: "+ str(angle)+", specular:"+str(thisspecular)+", name:"+name+str(wname)
+        print("Runs: "+run+", angle: "+ str(angle)+", specular:"+str(thisspecular)+", name:"+name+str(wname))
         nr.nrPNRFn(run,name+wname,str(angle),dbpa,thisspecular,str(detectorlimits['low']),str(detectorlimits['high']),binningpars,floodfile="",qgroup=paqgroup,PNRwithPA=True,pnums=["1","2","3","4"],doCorrs=True, calibration = calibration, subbgd=bckg, diagnostics=diagnostics)
         qmin = fourpi*np.sin(angle*deg2rad)/lmax
         qmax = fourpi*np.sin(angle*deg2rad)/lmin
@@ -185,7 +191,7 @@ def PAreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg = N
     tocombineud = tocombineud[:-1]
     tocombinedu = tocombinedu[:-1]
     tocombinedd = tocombinedd[:-1]
-    print tocombineuu+tocombineud+tocombinedu+tocombinedd
+    print(tocombineuu+tocombineud+tocombinedu+tocombinedd)
     try:
         a1=nr.NRCombineDatafn(tocombineuu,name+"UU","0","","","0",qlimits,str(scalefactor),"2", diagnostics=diagnostics)
         nr.NRCombineDatafn(tocombineud,name+"UD","2",a1[0],a1[1],"0",qlimits,str(scalefactor),"2",diagnostics=diagnostics)
@@ -221,7 +227,7 @@ def OFSreduce(runs, name, withpol = 'pnr', angle = None, qlimits = None, Nqx = N
     if not qlimits: qlimits = ofqlimits
     if not Nqx: Nqx = ofsNqx
     if not Nqz: Nqz = ofsNqz
-    print angle
+    print(angle)
     of.DSqxqz(runs,name,angle=angle,qxqzlimits=qlimits,binning=binningpars,Nqx=Nqx,Nqz=Nqz,withpol=withpol)    
     
  

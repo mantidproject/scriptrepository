@@ -1,4 +1,10 @@
+from __future__ import print_function
 import offspec_red as nr
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload(nr)
 #last modified: 12/05/2016
 #by: njs
@@ -18,7 +24,7 @@ def getLog(w,log_name):
         try:
           h=mtd[w]
         except:
-          print "Can't get Workspace handle"
+          print("Can't get Workspace handle")
         #
         # Get access to SampleDetails
 	s=h.getRun().getLogData(log_name).value
@@ -37,7 +43,7 @@ def loadlatest(currentrun=None):
                 endings.append(filelist[1])
             except: pass   
     sortedendings = sorted(endings)
-    print targetname+'.n'+sortedendings[-1]
+    print(targetname+'.n'+sortedendings[-1])
     return targetname+'.n'+sortedendings[-1]
 
 def writemap_csv(wksp,times,fname):
@@ -96,7 +102,7 @@ def loaddata(rnum, path = '//ndloffspec1/L/RawData/',loadcrpt=0):
               updatefile=loadlatest(str(rnum))   
               Load(Filename='z:/'+updatefile, OutputWorkspace=str(rnum), LoaderName='LoadEventNexus', LoadMonitors=True)
             else:
-              print 'trying to load crpt snapshot'
+              print('trying to load crpt snapshot')
               Load('z:/snapshot_crpt.nxs', OutputWorkspace=str(rnum), LoaderName='LoadEventNexus', LoadMonitors=True)
         #except: 
         #    raise Exception('Could not find data')
@@ -112,10 +118,10 @@ def timeslice(rnum,btime,etime,output,loadcrpt=0):
     a1=mtd[str(rnum)]
     gr=a1.getRun()
     tamps=gr.getProtonCharge()
-    print 'tamps=',str(tamps)
+    print('tamps=',str(tamps))
     a2=mtd[str(rnum)+'_slice']
     ua=a2.getRun().getProtonCharge()
-    print 'ua=',str(ua)
+    print('ua=',str(ua))
     monnorm=mtd[str(rnum)+'_monitors']*ua/tamps
     Rebin(monnorm,'5.0,20.0,100000.0',OutputWorkspace=str(rnum)+'monreb')
     ConjoinWorkspaces(str(rnum)+'monreb',str(rnum)+'_slicereb',CheckOverlapping=False)
@@ -130,7 +136,7 @@ def chopit(rnum,btime,etime,tslice,output,slicearray=None,usearray=0,sf=1.0, sav
     
     nslice=int((etime*1.0-btime)/(tslice*1.0))
     slicenames=[]
-    print 'nslice=',str(nslice)
+    print('nslice=',str(nslice))
     if usearray==0:
         slicearray=[]
         slicearray.append(btime)
@@ -145,9 +151,9 @@ def chopit(rnum,btime,etime,tslice,output,slicearray=None,usearray=0,sf=1.0, sav
         try:
             wksp=timeslice(rnum,btime2,etime2,output,loadcrpt=loadcrpt)
             slicenames.append(wksp)
-            print slicenames
+            print(slicenames)
         except:
-            print 'time slicing failed'
+            print('time slicing failed')
             break
         nr.nrNRFn("",wksp,"0.700","LDDB05k","114","110","120",binning,"",usewkspname=1,sf=sf)
         #Rebin(wksp+"RvQ","0.011,-0.025,0.09",OutputWorkspace=wksp+"RvQ")
@@ -164,7 +170,7 @@ def chopit(rnum,btime,etime,tslice,output,slicearray=None,usearray=0,sf=1.0, sav
         datatimes.append(0.5*(slicearray[i]+slicearray[i+1]))
     writemap_csv(output+'_allslices',datatimes,'C:/everything/userthings/'+output+'/'+output)
     if save:
-        print "\n Trying to save the following slices: \n"
+        print("\n Trying to save the following slices: \n")
         saveslices(output+'_allslices','C:/everything/userthings/'+output+'/')
 
 def saveslices(inputwksp, dir = None):
@@ -173,15 +179,15 @@ def saveslices(inputwksp, dir = None):
     else:
         userdirectory = "C:/everything/userthings/"
     spectrum = 0
-    print spectrum
+    print(spectrum)
     while True:
         try:
             filename = userdirectory + inputwksp + "_" + str(spectrum) + ".dat"
             SaveAscii(inputwksp, filename, SpectrumList = [spectrum], WriteSpectrumID = False, CommentIndicator = "#", Separator = "Tab", ColumnHeader = False)
             spectrum += 1
-            print spectrum
+            print(spectrum)
         except: 
-            print "End of slices reached, this one does not exist: " + str(spectrum)
+            print("End of slices reached, this one does not exist: " + str(spectrum))
             break
      
 #k.slice_the_data(rnum=run,output=name,angle = angle, start = start, tslice = tslice, nslices = nslices ,sarray=sarray,usearray=usearray, DB = kindb, sf=kinetic_scalefactor, qlimits = qlimits, dlimits = dlimits, userdirectory = savepath,binning=binningpars,loadcrpt=0, diagnostics = False)
@@ -193,7 +199,7 @@ def slice_the_data(rnum,output,angle = None,start = 0, tslice=None,nslices = Non
     if tslice or nslices: # if tslice or nslices exist they will take precedence over slicearray
         testws = loaddata(rnum,loadcrpt=loadcrpt)
         runtotaltime = getLog(testws, 'duration')
-        print "Total runtime in seconds: " + str(runtotaltime)
+        print("Total runtime in seconds: " + str(runtotaltime))
         DeleteWorkspace(testws)
         if nslices: 
             tslice = ceil((runtotaltime - start)/(nslices))
@@ -201,9 +207,9 @@ def slice_the_data(rnum,output,angle = None,start = 0, tslice=None,nslices = Non
         while slicearray[-1] < runtotaltime:
             slicearray.append(slicearray[-1]+tslice)
         slicearray[-1] = runtotaltime # lastentry is some random number > than total runduration, set equal to runduration, this means the last slice has a different length to the others
-        print "Time boundaries:\n" 
-        print slicearray
-        print "Start making slices:\n"
+        print("Time boundaries:\n") 
+        print(slicearray)
+        print("Start making slices:\n")
     for idx in range(len(slicearray)):
         try:
             start = slicearray[idx]; end = slicearray[idx+1]
@@ -223,7 +229,7 @@ def slice_the_data(rnum,output,angle = None,start = 0, tslice=None,nslices = Non
             ConjoinWorkspaces(output+'_allslices',slicenames[-1]+'RvQ',CheckOverlapping=0)
     DeleteWorkspace(slicenames[0]+'RvQ')  
     writemap_csv(output+'_allslices',datatimes,userdirectory + output + '/'+output)
-    print "\n Trying to save the following slices: \n"
+    print("\n Trying to save the following slices: \n")
     saveslices(output+'_allslices', userdirectory+ output + '/')
 
 def _offspecslice_simple(rnum,btime,etime,qmin,qmax,output, binning,theta, DB,loadcrpt=0):
@@ -239,7 +245,7 @@ def offspecslice(rnum,qmin,qmax,output, theta,binning, DB,start = 0, tslice=None
     if tslice or nslices: # if tslice or nslices exist they will take precedence over slicearray
         testws = loaddata(rnum,loadcrpt=loadcrpt)
         runtotaltime = getLog(testws, 'duration')
-        print "Total runtime in seconds: " + str(runtotaltime)
+        print("Total runtime in seconds: " + str(runtotaltime))
         DeleteWorkspace(testws)
         if nslices: 
             tslice = ceil((runtotaltime - start)/(nslices))
@@ -247,16 +253,16 @@ def offspecslice(rnum,qmin,qmax,output, theta,binning, DB,start = 0, tslice=None
         while slicearray[-1] < runtotaltime:
             slicearray.append(slicearray[-1]+tslice)
         slicearray[-1] = runtotaltime # lastentry is some random number > than total runduration, set equal to runduration, this means the last slice has a different length to the others
-        print "Time boundaries:\n" 
-        print slicearray
-        print "Start making slices:\n"
+        print("Time boundaries:\n") 
+        print(slicearray)
+        print("Start making slices:\n")
     for idx in range(len(slicearray)):
         try:
             start = slicearray[idx]; end = slicearray[idx+1]
             datatimes.append(0.5*(start+end)) # calculate the time for this dataset for saving later
-            print "\nCreated slice "+str(datatimes[-1])
+            print("\nCreated slice "+str(datatimes[-1]))
             _offspecslice_simple(rnum, start, end, qmin, qmax, output, binning=binning, theta=theta,DB=DB,loadcrpt=loadcrpt)
         except:
-            print datatimes
+            print(datatimes)
             break
 

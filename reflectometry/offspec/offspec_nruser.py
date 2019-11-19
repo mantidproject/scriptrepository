@@ -30,7 +30,13 @@ runs = ["36422","36423+36424","36425-36430"]
 name is the name of your resulting workspace/file
 
 '''
+from __future__ import print_function
 import offspec_red as nr
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload(nr)
 #last modified: 12/05/2016
 #by: njs
@@ -92,7 +98,7 @@ def NRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg= No
     tocombine = []
     for run, angle, wname, thisspecular in zip(runs,angles,wkspnames,specular):
         try:
-            print "Runs: "+run+", angle: "+ str(angle)+", specular: "+str(thisspecular)+", name:"+name+wname
+            print("Runs: "+run+", angle: "+ str(angle)+", specular: "+str(thisspecular)+", name:"+name+wname)
             nr.nrNRFn(run,name+wname,str(angle),dbnr,thisspecular,detectorlimits['low'],detectorlimits['high'],binningpars,qgroup=nrqgroup,floodfile="",subbgd=nrbackground, diagnostics=diagnostics)
             qmin = fourpi*np.sin(angle*deg2rad)/lmax
             qmax = fourpi*np.sin(angle*deg2rad)/lmin
@@ -106,7 +112,7 @@ def NRreduce(runs, name, angles=None, qlimits = None, scalefactor=None, bckg= No
             DeleteWorkspace(name+wname+'RvQ')
                 
     tocombine =  ','.join(tocombine)
-    print tocombine
+    print(tocombine)
     try:
         nr.NRCombineDatafn(tocombine,name,"0","","","0",qlimits,str(scalefactor),"2",diagnostics=diagnostics)
         plotSpectrum([name],0,1,2)
@@ -123,7 +129,7 @@ def OFSreduce(runs, name, withpol = False, angle = None, qlimits = None, Nqx = N
     if not qlimits: qlimits = ofqlimits
     if not Nqx: Nqx = ofNqx
     if not Nqz: Nqz = ofNqz
-    print angle
+    print(angle)
     #of.DSqxqz(runs,name,angle=angle,qxqzlimits=qlimits,binning=binningpars,Nqx=Nqx,Nqz=Nqz,withpol=withpol, dspec=detectorlimits['specular'], dmin=detectorlimits['low'], dmax=detectorlimits['high'])    
     of.DSqxqz(runs,name,angle=angle,qxqzlimits=qlimits,binning=binningpars,Nqx=Nqx,Nqz=Nqz,withpol=withpol) 
  
@@ -167,10 +173,10 @@ def tr_offspec(rnum,output, nslices=None, tslice= None, sarray = [], angle=None,
         if m:
             n = re.search('^wrong{1}(.*)detnorm{1}$', name)
             if n:
-                print name
+                print(name)
                 newname = re.sub('wrong',output, name)
                 newname = re.sub('detnorm','',newname)
-                print "newname: "+newname
+                print("newname: "+newname)
                 ConvertSpectrumAxis(InputWorkspace=name, OutputWorkspace=name, Target='SignedTheta')
                 ConvertToReflectometryQ(InputWorkspace=name, OverrideIncidentTheta=True, IncidentTheta=angle, Extents=qlimits, OutputAsMDWorkspace=False, OutputWorkspace=newname+"qxqz", NumberBinsQx=ofNqx, NumberBinsQz=ofNqz,OutputVertexes="somevertices")
                 CloneWorkspace(name,OutputWorkspace=newname+'detnorm')
