@@ -351,7 +351,7 @@ class MARIReduction(ReductionWrapper):
                             ws_list = []
                             for id, ws_out in enumerate(red_ws):
                                 print('--------------------')
-                                print((ws_out.name()))
+                                print(ws_out.name())
                                 print('--------------------')
                                 ws_list.append('{0}_{1}_SQW'.format(out_ws_name, id))
                                 RenameWorkspace(InputWorkspace=ws_out.name()+'_SQW', OutputWorkspace=ws_list[-1])

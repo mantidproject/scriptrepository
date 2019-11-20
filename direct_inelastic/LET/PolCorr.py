@@ -69,7 +69,7 @@ class Reduce():
                     NSF_run = run + 1
                     SF_run = run
 
-                print(("Loading quartz runs {0} (NSF) and {1} (SF) at {2:<3.2f}meV".format(NSF_run,SF_run, ei)))
+                print("Loading quartz runs {0} (NSF) and {1} (SF) at {2:<3.2f}meV".format(NSF_run,SF_run, ei))
                 NSF_quartz = LoadNXSPE(self.name_format.format(NSF_run, ei))
                 SF_quartz  = LoadNXSPE(self.name_format.format(SF_run, ei))
                 
@@ -115,8 +115,8 @@ class Reduce():
             fit_check = CreateWorkspace(np.linspace(1,256,num=256),np.array(fit))
 
             print("****************************************") 
-            print(("PF   = {0:1.3f} +/- {1:1.3f}".format(PF, PFe)))
-            print(("P_He = {0:1.3f} +/- {1:1.3f}".format(PHe, PHee)))
+            print("PF   = {0:1.3f} +/- {1:1.3f}".format(PF, PFe))
+            print("P_He = {0:1.3f} +/- {1:1.3f}".format(PHe, PHee))
             print("****************************************") 
 
 #-------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ class Reduce():
         times = []
         
         print("\nStarting get_helium_from_ROI...")
-        print(("Using {0} meV rep with PF={1}".format(ei,PF)))
+        print("Using {0} meV rep with PF={1}".format(ei,PF))
         print("****************************************************")        
         for run in self.sample_runs[::2]:
             if self.NSF_first:
@@ -151,7 +151,7 @@ class Reduce():
                 NSF_run = run + 1
                 SF_run = run
 
-            print(("Calculating P_He from ROI for runs NSF:{0} and SF:{1} at {2:<3.2f}meV ".format(NSF_run,SF_run,ei)))
+            print("Calculating P_He from ROI for runs NSF:{0} and SF:{1} at {2:<3.2f}meV ".format(NSF_run,SF_run,ei))
 
 # load data and extract dummy monitor spectra from ROI
             NSF_roi = Load("LET000{0}.nxs".format(NSF_run))
@@ -209,7 +209,7 @@ class Reduce():
         he_fit      = exp_decay(times, self.T1, self.PHe0)
         he_fit_ws   = CreateWorkspace(np.array(times),np.array(he_fit))
 
-        print(("\nInitial Cell polarization P0={0:1.3f}+/-{1:1.3f} with lifetime T1={2:3.2f}+/-{3:1.2f}".format(self.PHe0,self.PHe0e,-self.T1,self.T1e)))
+        print("\nInitial Cell polarization P0={0:1.3f}+/-{1:1.3f} with lifetime T1={2:3.2f}+/-{3:1.2f}".format(self.PHe0,self.PHe0e,-self.T1,self.T1e))
         print("************************************************************************") 
 
 #-------------------------------------------------------------------------------------
@@ -232,7 +232,7 @@ class Reduce():
         times = []
 
         print("\nStarting get_helium_parameters...")
-        print(("Using {0} meV rep with PF={1}".format(ei,PF)))
+        print("Using {0} meV rep with PF={1}".format(ei,PF))
         print("****************************************************")        
         for run in self.sample_runs[::2]:
             if self.NSF_first:
@@ -242,7 +242,7 @@ class Reduce():
                 NSF_run = run + 1
                 SF_run = run
 
-            print(("Calculating P_He for runs NSF:{0} and SF:{1} at {2:<3.2f}meV with TOF {3:>6.0f} us".format(NSF_run,SF_run,ei,TOF)))
+            print("Calculating P_He for runs NSF:{0} and SF:{1} at {2:<3.2f}meV with TOF {3:>6.0f} us".format(NSF_run,SF_run,ei,TOF))
 
 #load monitors and calculate flipping ratios
             NSF_monitors = LoadNexusMonitors("LET000{0}.nxs".format(NSF_run))
@@ -293,7 +293,7 @@ class Reduce():
         he_fit      = exp_decay(times, self.T1, self.PHe0)
         he_fit_ws   = CreateWorkspace(np.array(times),np.array(he_fit))
 
-        print(("\nInitial Cell polarization P0={0:1.3f}+/-{1:1.3f} with lifetime T1={2:3.2f}+/-{3:1.2f}".format(self.PHe0,self.PHe0e,-self.T1,self.T1e)))
+        print("\nInitial Cell polarization P0={0:1.3f}+/-{1:1.3f} with lifetime T1={2:3.2f}+/-{3:1.2f}".format(self.PHe0,self.PHe0e,-self.T1,self.T1e))
         print("************************************************************************") 
         
 #--------------------------------------------------------------------------
@@ -308,7 +308,7 @@ class Reduce():
 
             PF = next(PF_iter)
             print("****************************************")
-            print(("\ncorrect_data: Correcting {0:<3.2f}meV rep with PF={1} \n".format(ei,PF)))
+            print("\ncorrect_data: Correcting {0:<3.2f}meV rep with PF={1} \n".format(ei,PF))
             NSF_out = "PLET_{0}_{1:<3.2f}meV_NSF".format(self.label,ei)
             SF_out  = "PLET_{0}_{1:<3.2f}meV_SF".format(self.label,ei)   
 
@@ -340,7 +340,7 @@ class Reduce():
                     NSF_run = run + 1
                     SF_run = run
 
-                print(("Correcting runs NSF:{0} and SF:{1} at {2:<3.2f}meV".format(NSF_run,SF_run,ei)))
+                print("Correcting runs NSF:{0} and SF:{1} at {2:<3.2f}meV".format(NSF_run,SF_run,ei))
                 NSF_One2One = LoadNXSPE(self.name_format.format(NSF_run, ei))
                 SF_One2One  = LoadNXSPE(self.name_format.format(SF_run, ei))   
 
@@ -350,7 +350,7 @@ class Reduce():
                 PHe = self.PHe0 * np.exp(time / self.T1)
 
                 FAP = PF * np.tanh(opacity*(1.0/np.cos(gammaspace)*PHe))
-                print(("After {0:1.2f} hours, cell polarization is {1:1.3f}".format(time,PHe)))
+                print("After {0:1.2f} hours, cell polarization is {1:1.3f}".format(time,PHe))
                 flipping_ratio = (1.0 + FAP) / (1.0 - FAP)
                 transmission = np.exp(-opacity) * np.cosh(opacity * PHe)
                 Scharpf = (1.0 / (flipping_ratio - 1.0))

@@ -8,7 +8,6 @@ Sequential fit of QENS data to the Fourier trasnform of a stretched exponential
     Relaxation time follows a power-law: tau = taumax * (Qmin/Q)**alpha
     This script should be run in the "Script Window" of MantidPlot
 '''
-from __future__ import print_function
 
 from __future__ import (absolute_import, division, print_function)
 import re

@@ -253,7 +253,7 @@ for mag in mags:
 			Y0=fr[3].cell(0,1)
 			gradY=fr[3].cell(1,1)
 			DeleteWorkspace("tmpgrad")
-			print((mag,magref,X0,Y0,gradX,gradY))
+			print(mag,magref,X0,Y0,gradX,gradY))
 			tt2.addRow((mag,magref,X0,Y0,gradX,gradY))
 AnalysisDataService.addOrReplace(matrixname,tt2)
 
