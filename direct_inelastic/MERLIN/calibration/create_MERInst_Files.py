@@ -25,7 +25,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     
     #
     print ('*************************************************************')
-    print('*** Creating MERLIN instrument files within working directory: {0}'.format(working_dir)))   
+    print('*** Creating MERLIN instrument files within working directory: {0}'.format(working_dir))   
     print ('*************************************************************')
     new_instrument_files_list = []
     #-----------------------------------------------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ def check_calibration_options(cycle_end_list):
         commit_changes = True
     else:
         commit_changes = False
-        print('*** --- Can not find default repository path at {0} so no comitting to public repository will be attempted'.format(repository_path)))               
+        print('*** --- Can not find default repository path at {0} so no comitting to public repository will be attempted'.format(repository_path))
         repository_path = config['defaultsave.directory']
      # identify what cycle we are calibrating data for:
     cal_date = date.today()
@@ -227,9 +227,9 @@ def check_calibration_options(cycle_end_list):
          commit_changes = False
 
     print('*** for cycle: {0}'.format(cycle_index))  
-    print('*** Instrument files will be build in the folder {0}'.format(config['defaultsave.directory'])))                   
+    print('*** Instrument files will be build in the folder {0}'.format(config['defaultsave.directory']))
     if commit_changes:
-         print('*** and will be committed to the repository at {0}'.format(repository_path)))       
+         print('*** and will be committed to the repository at {0}'.format(repository_path))
     else:
          print('*** but will not be committed to a repository')
 
