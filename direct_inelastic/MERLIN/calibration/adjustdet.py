@@ -121,8 +121,8 @@ def adjust_detector_MER(fit_res,det_source_file):
     #------------------------------------------------------------------------------------
     print ('*************************************************************')
     print ('*** Detectors have been calibrated                        ***')    
-    print ('*** The name of the file with calibration information is: {0}'.format(finall_corr_file));
-    print ('*** The file is located in folder: {0}'.format(run_dir))
+    print('*** The name of the file with calibration information is: {0}'.format(finall_corr_file));
+    print('*** The file is located in folder: {0}'.format(run_dir))
     print ('*************************************************************')
     
 def mysph2cart(az,elev,r):
