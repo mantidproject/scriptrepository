@@ -185,9 +185,9 @@ for n in range(rnum_start,rnum_end + 1):
 		print("Run ",n," processed")
 	except Exception as e:
 		print("Run ",n," was not processed")
-		print '===Error==='
-		print 'type:' + str(type(e))
-		print 'args:' + str(e.args)
-		print 'message:' + e.message
-		print 'e itself:' + str(e)
+		print('===Error===')
+		print('type:' + str(type(e)))
+		print('args:' + str(e.args))
+		print('message:' + e.message)
+		print('e itself:' + str(e))
 		
