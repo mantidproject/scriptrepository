@@ -40,7 +40,6 @@ Created on Wed Mar  6 09:05:08 2013
 
 @author: gesner
 """
-from __future__ import print_function
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 
 import json
@@ -49,7 +48,10 @@ from os.path import join
 import time
 import compiler
 import sys
-import subprocess
+if sys.version_info < (2,7):
+	import commands as subprocess
+else:
+	import subprocess
 import re
 
 re_default_author = re.compile('Author: (?P<author>.+) <(?P<email>.+)>')
