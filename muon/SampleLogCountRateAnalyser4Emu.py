@@ -183,9 +183,9 @@ for n in range(rnum_start,rnum_end + 1):
 			rnum_detcounts = rnum_detcounts + [x/number_of_frames for x in logdat.dicsum[diclabel]]
 		det_table.addRow(rnum_detcounts)
 
-		print("Run ",n," processed"))
+		print("Run ",n," processed")
 	except Exception as e:
-		print("Run ",n," was not processed"))
+		print("Run ",n," was not processed")
 		print('===Error===')
 		print('type:' + str(type(e)))
 		print('args:' + str(e.args))
