@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import numpy as np
 import pylab as py
@@ -24,7 +25,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     
     #
     print ('*************************************************************')
-    print ('*** Creating MERLIN instrument files within working directory: {0}'.format(working_dir))    
+    print('*** Creating MERLIN instrument files within working directory: {0}'.format(working_dir))   
     print ('*************************************************************')
     new_instrument_files_list = []
     #-----------------------------------------------------------------------------------------------------------------------
@@ -32,7 +33,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     par_file_template = 'one2one_';
     one2onepar = par_file_template+cycle_index+'.par'
     full_one2one_par_file = create_one2onepar(run,one2onepar) 
-    print ('*** Have generated one2one par file: {0}'.format(full_one2one_par_file));
+    print('*** Have generated one2one par file: {0}'.format(full_one2one_par_file));
     new_instrument_files_list.append(full_one2one_par_file)
     #-----------------------------------------------------------------------------------------------------------------------    
     #rings map file:
@@ -40,7 +41,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     ringmap = rings_file_template + cycle_index+'.map'
 
     ring_map_full_file = create_ringmap(full_one2one_par_file,ringmap) 
-    print ('*** Have generated ring map file: {0}'.format(ring_map_full_file));    
+    print('*** Have generated ring map file: {0}'.format(ring_map_full_file));    
     new_instrument_files_list.append(ring_map_full_file)    
     #-----------------------------------------------------------------------------------------------------------------------     
     # one2one map file:
@@ -54,31 +55,31 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     else:
         one2one_old_full_map = os.path.join(repository_path,one2one_old_map)        
         if  not os.path.exists(one2one_old_full_map) :
-            print  '*** --> Can not generate one2one map file: {0} as the source file is not available'.format(one2one_map)
-            print  '*** --> Copy source file: {0} into working directory: {1}'.format(one2one_old_map,working_dir)
+            print('*** --> Can not generate one2one map file: {0} as the source file is not available'.format(one2one_map))
+            print('*** --> Copy source file: {0} into working directory: {1}'.format(one2one_old_map,working_dir))
             one2one_full_map = ''
         else:
             one2one_full_map = create_one2onemap(one2one_old_full_map,one2one_map)            
     if len(one2one_full_map)>0:
-        print  '*** Have generated one2one map: {0}'.format(one2one_full_map)
+        print('*** Have generated one2one map: {0}'.format(one2one_full_map))
         new_instrument_files_list.append(one2one_full_map)        
     #----------------------------------------------------------------------------------------------------------------------- 
     print ('*************************************************************')     
-    print ('*** File generation completed  and new files are placed in folder: {0}'.format(working_dir))
+    print('*** File generation completed  and new files are placed in folder: {0}'.format(working_dir))
     print ('*************************************************************')    
     if commit_changes:
-        print '*** Adding new files to the repository in svn folder: {0}'.format(repository_path)
+        print('*** Adding new files to the repository in svn folder: {0}'.format(repository_path))
         # check if the files to commit exist:
         for a_file in files2commit:        
            the_file  = os.path.join(working_dir,a_file)
            if os.path.exists(the_file):
-                print '*** Preparing to commit to public repostiory file: {0}'.format(the_file)
+                print('*** Preparing to commit to public repostiory file: {0}'.format(the_file))
                 new_instrument_files_list.append(one2one_full_map)
            else:
-                print '*** --- Not committing file: {0} to public repository. It does not exist in: {1}'.format(a_file,working_dir) 
+                print('*** --- Not committing file: {0} to public repository. It does not exist in: {1}'.format(a_file,working_dir)) 
         commit_files_to_svn(repository_path,new_instrument_files_list,cycle_index)
     else:
-        print '*** Changes will not be commited as folder: {0} does not exist'.format(repository_path)        
+        print('*** Changes will not be commited as folder: {0} does not exist'.format(repository_path))        
         
 def commit_files_to_svn(svn_directory_path,fileslist,cycle_tag='current'):
      ''' routine copies the list of input files  into svn directory, 
@@ -100,16 +101,16 @@ def commit_files_to_svn(svn_directory_path,fileslist,cycle_tag='current'):
              n_added_files += 1            
              out = subprocess.check_output(['svn','add',targ],cwd = svn_directory_path,stderr=subprocess.STDOUT,shell=True)
              if len(out)>0:
-                 print out
+                 print(out)
      
      if n_added_files > 0:
-         print '*** Added {0} new files to svn script repository'.format(n_added_files)
-     print '*** Updating svn repository with {0} existing and {1} new generated MERLIN insrument files'.format(len(fileslist),n_added_files)
+         print('*** Added {0} new files to svn script repository'.format(n_added_files))
+     print('*** Updating svn repository with {0} existing and {1} new generated MERLIN insrument files'.format(len(fileslist),n_added_files))
          
      message = '-m\" Merlin autocommitted instrument files for cycle: '+cycle_tag+'\"'
      command = 'svn commit '+message+';\n exit 0;'
      out= subprocess.check_output(command ,cwd = svn_directory_path,stderr=subprocess.STDOUT,shell=True)
-     print out
+     print(out)
       
 
 # script to make one2one.par file - partially using Mantid script
@@ -208,13 +209,13 @@ def check_calibration_options(cycle_end_list):
         commit_changes = True
     else:
         commit_changes = False
-        print ('*** --- Can not find default repository path at {0} so no comitting to public repository will be attempted'.format(repository_path))                
+        print('*** --- Can not find default repository path at {0} so no comitting to public repository will be attempted'.format(repository_path))
         repository_path = config['defaultsave.directory']
      # identify what cycle we are calibrating data for:
     cal_date = date.today()
     print ('*************************************************************')    
     print ('*** running MERLIN instrument files generation script')        
-    print  '*** Current date: ',cal_date.isoformat()
+    print('*** Current date: ',cal_date.isoformat())
     cycle_index = 'future'
     will_commit = 'will not be committed'
     # identify current cycle, when we are running the calibration
@@ -225,10 +226,10 @@ def check_calibration_options(cycle_end_list):
     if cycle_index == 'future':
          commit_changes = False
 
-    print '*** for cycle: {0}'.format(cycle_index)  
-    print('*** Instrument files will be build in the folder {0}'.format(config['defaultsave.directory']))                    
+    print('*** for cycle: {0}'.format(cycle_index))  
+    print('*** Instrument files will be build in the folder {0}'.format(config['defaultsave.directory']))
     if commit_changes:
-         print('*** and will be committed to the repository at {0}'.format(repository_path))        
+         print('*** and will be committed to the repository at {0}'.format(repository_path))
     else:
          print('*** but will not be committed to a repository')
 
@@ -248,8 +249,8 @@ if __name__ == "__main__":
     # The script stores all its results in Manit Default save directory and 
     
      # list of the known cycles with approximate  end dates:          
-    cycle_end_list = {date(2019,03,29):'184',date(2019,07,19):'191',date(2019,10,25):'192',\
-    date(2019,12,20):'193',date(2999,01,01):'future'}
+    cycle_end_list = {date(2019,0o3,29):'184',date(2019,0o7,19):'191',date(2019,10,25):'192',\
+    date(2019,12,20):'193',date(2999,0o1,0o1):'future'}
     
     # old one2one map file used as source for one2one map file used in current cycle
     one2one_source_map = 'one2one_182.map' 

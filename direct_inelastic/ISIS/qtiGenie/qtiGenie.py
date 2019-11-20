@@ -1,3 +1,4 @@
+from __future__ import print_function
 from xml.dom import minidom 
 from mantid.kernel import funcreturns
 from mantid.simpleapi import *
@@ -50,9 +51,9 @@ qtg_par["plotmkr"] = "";
 qtg_par["plotcolor"] = "red";
 mpl = 0
 if mpl==1:
-    print 'Using matplotlib graphics'
+    print('Using matplotlib graphics')
 if mpl==0:
-    print 'Using qtiplot graphics'
+    print('Using qtiplot graphics')
 
 
 save_dir = config.getString('defaultsave.directory')
@@ -74,7 +75,7 @@ iliad_reducer = dgreduce.getReducer
 
 #     iliad_set_calfile = dgreduce.set_cal_file
 os.chdir(save_dir)
-print 'Working directory set to: ',save_dir;
+print('Working directory set to: ',save_dir);
 
 #######################
 #######################
@@ -179,15 +180,15 @@ def fillqtiTable(data):
     
 #def arb_units(wb_run,sample_run,ei_guess,rebin,mapfile):
 def test(wb_run,sample_run,ei_guess,rebin,mapfile,**kwargs):
-    print wb_run,sample_run,ei_guess,rebin,mapfile,kwargs
+    print(wb_run,sample_run,ei_guess,rebin,mapfile,kwargs)
 
     for key in kwargs:
-        print "another keyword arg: %s: %s" % (key, kwargs[key])
+        print("another keyword arg: %s: %s" % (key, kwargs[key]))
     
     
-    if kwargs.has_key('fixei'):
+    if 'fixei' in kwargs:
         fix_ei = kwargs.get('fixei')
-        print fix_ei
+        print(fix_ei)
     
     
     
@@ -211,16 +212,16 @@ def listfiles():
     """
     aa= os.listdir(os.getcwd())
     for i in range(0,len(aa)):
-        print aa[i]
+        print(aa[i])
 def print_locals():
     a=locals()
     for i in range(0,len(a)):
-        print a[i]
+        print(a[i])
 
 def print_globals():
     a=locals()
     for i in range(0,len(a)):
-        print a[i]
+        print(a[i])
 
 
 ##instrument definitions
@@ -263,7 +264,7 @@ def setinst(iname=None):
             qtg_par[par_name]= values[0].attributes['val'].value
    
    
-    print "qtiGenie instrument set up to: ",qtg_par["instname"]
+    print("qtiGenie instrument set up to: ",qtg_par["instname"])
 
     
 def setmon_1_spec(spec):
@@ -272,26 +273,26 @@ def setmon_1_spec(spec):
     """
     global qtg_par
     qtg_par["mon1_spec"]=spec
-    print 'Monitor one spectrum changed to ',qtg_par["mon1_spec"]
+    print('Monitor one spectrum changed to ',qtg_par["mon1_spec"])
     return qtg_par["mon1_spec"]
 
 def showgpath():
     """
     shows the gloabal qtigenie variables
     """
-    print '----------------------------------------------------------'
-    print 'Global::: ', qtg_par["instname"], ': specific variables are:'
+    print('----------------------------------------------------------')
+    print('Global::: ', qtg_par["instname"], ': specific variables are:')
     
-    print 'Data directory::: ', os.getcwd(), ':'
+    print('Data directory::: ', os.getcwd(), ':')
     
-    print 'file extension::: ',qtg_par['data_file_ext'] , ':'
-    print 'dae path::: ', qtg_par["instdae"], ':'
+    print('file extension::: ',qtg_par['data_file_ext'] , ':')
+    print('dae path::: ', qtg_par["instdae"], ':')
     if qtg_par["norm-mon1-spec"] != "" :
-        print 'Monitor 1 spectrum' ,qtg_par["norm-mon1-spec"]
-        print 'Monitor 2 spectrum' ,qtg_par["ei-mon1-spec"]
-        print 'Monitor 3 spectrum' ,qtg_par["ei-mon2-spec"]
+        print('Monitor 1 spectrum' ,qtg_par["norm-mon1-spec"])
+        print('Monitor 2 spectrum' ,qtg_par["ei-mon1-spec"])
+        print('Monitor 3 spectrum' ,qtg_par["ei-mon2-spec"])
     else:
-        print 'No monitors are defined for this function'
+        print('No monitors are defined for this function')
     
     getgpath();
     
@@ -301,9 +302,9 @@ def getgpath(silent=False):
     """    
     current_path = config.getDataSearchDirs();
     if not(silent):
-        print 'inst_data:::'
+        print('inst_data:::')
         for i in range(0,len(current_path)):
-            print '         :::',current_path[i];
+            print('         :::',current_path[i]);
             
     return current_path;
 def addgpath(path):
@@ -319,7 +320,7 @@ def getspepath(silent=False):
     """    
     spepath=config.getString('defaultsave.directory')
     if not(silent):
-       print ' Default output data path:',spepath
+       print(' Default output data path:',spepath)
     
     return spepath;
      
@@ -359,10 +360,10 @@ def head(runnumber=0000000,keepWSwithResults=False):
     #enddate=parsWS.column('r_enddate') 
     #endtime=parsWS.column('r_endtime')
   
-    print 'RunID\t\t: '+instShort+header #+' to '+enddate+endtime
-    print 'Title\t\t: '+title     
+    print('RunID\t\t: '+instShort+header) #+' to '+enddate+endtime
+    print('Title\t\t: '+title)     
  
-    print 'Protons\t\t:', parsWS.column('r_gd_prtn_chrg')[0],' uAmps'
+    print('Protons\t\t:', parsWS.column('r_gd_prtn_chrg')[0],' uAmps')
 
     run_length = parsWS.column('r_dur')[0]
     if run_length > 3600 :
@@ -370,13 +371,13 @@ def head(runnumber=0000000,keepWSwithResults=False):
         run_length = run_length-hrs*3600
         mins= run_length/60
         sec = run_length - mins*60
-        print 'Run duration\t\t:', hrs,' hrs ',mins,' mins ',sec,' sec'
+        print('Run duration\t\t:', hrs,' hrs ',mins,' mins ',sec,' sec')
     elif run_length > 60:
         mins= run_length/60
         sec = run_length - mins*60
-        print 'Run duration\t\t:',mins,' mins ',sec,' sec' 
+        print('Run duration\t\t:',mins,' mins ',sec,' sec') 
     else:
-        print 'Run duration\t\t:',run_length,' sec'     
+        print('Run duration\t\t:',run_length,' sec')     
     
     #print 'More details available from Mantid RawFileInfo algorithm\n'
     if not(keepWSwithResults) :
@@ -411,7 +412,7 @@ def load(*args):
     wksp=r[0]
     if (args[0])=='dae': #runnumber == 'dae':
         dae_name = qtg_par["instdae"]
-        print 'Access DAE', dae_name
+        print('Access DAE', dae_name)
         awksp=LoadDAE(dae_name,OutputWorkspace=wksp)
         return mtd[wksp]
     else:
@@ -421,7 +422,7 @@ def load(*args):
         
         
         fullname=base_name+str(runnumber)
-        print fullname
+        print(fullname)
         awksp=Load(fullname,OutputWorkspace=wksp,Cache="Never")
         ConvertToDistribution(wksp)
         runinfo=RawFileInfo(fullname,GetRunParameters=True)
@@ -441,7 +442,7 @@ def load_spectra(runnumber,specmin,specmax):
 
     instname = qtg_par["instname"]   
     fullname=instname+str(runnumber)
-    print fullname
+    print(fullname)
     awksp=Load(fullname,OutputWorkspace=wksp,Cache="Never",SpectrumMin=specmin,SpectrumMax=specmax)
     ConvertToDistribution(wksp)
     runinfo=RawFileInfo(fullname,GetRunParameters=True)
@@ -469,7 +470,7 @@ def load_monitors(*args):
 
         instname = qtg_par["instname"]
         fullname=instname+str(runnumber)
-        print fullname
+        print(fullname)
 
         awksp=Load(fullname,OutputWorkspace=wksp,Cache="Never",LoadMonitors="Separate")
         try: 
@@ -486,7 +487,7 @@ def load_monitors(*args):
         return mtd[wksp+'_Monitors']
 
     else:
-        print 'error'
+        print('error')
 
 def getnumor(runnumber):
     """creates a string runnumber from interger input and pads with zerso to cope with isis 
@@ -534,7 +535,7 @@ def loadascii(name):
     n,r=funcreturns.lhs_info('both')
     wksp=r[0]
     fullname=os.getcwd()+'/'+name
-    print 'Loading ',fullname
+    print('Loading ',fullname)
     LoadAscii(fullname,OutputWorkspace=wksp,Separator="Tab",Unit="Empty")
     return mtd[wksp]
 
@@ -566,21 +567,21 @@ def whos():
     list all current loaded workspaces
     """
     names=mtd.getWorkspaceNames()
-    print 'Instrument name: ', qtg_par["instname"], '\t', 'Data Directory: ',os.getcwd()
-    print '---------------------------------------------------------------------------'
-    print 'WkSp Name', '\t', '\t', '\t', 'Allocated Mem', '\t', 'Title', '\t'
-    print '---------------------------------------------------------------------------'
+    print('Instrument name: ', qtg_par["instname"], '\t', 'Data Directory: ',os.getcwd())
+    print('---------------------------------------------------------------------------')
+    print('WkSp Name', '\t', '\t', '\t', 'Allocated Mem', '\t', 'Title', '\t')
+    print('---------------------------------------------------------------------------')
     for i in range(0,len(names)):
         name = names[i]
         tmp=mtd[name]
         mem=tmp.getMemorySize()/1024
         title=tmp.getTitle()
-        print name,'\t','\t','\t',mem,'Mb','\t',title
+        print(name,'\t','\t','\t',mem,'Mb','\t',title)
 def sync():
     names=mtd.getWorkspaceNames()
     for i in range(0,len(names)):
         name = names[i]
-        print name
+        print(name)
         #name = mtd[name]
         evalstr='global '+str(name)
         exec(evalstr)
@@ -590,7 +591,7 @@ def sync():
     
 def default_plotting(inp):
     global mpl	
-    print 'set default graphics to matplotlib (1) or qtiplot(0)'
+    print('set default graphics to matplotlib (1) or qtiplot(0)')
     mpl=inp
 
 def dspacing(wksp_in):
@@ -612,8 +613,8 @@ def get_ei(wksp_in,guess):
     mon3_spec = int(qtg_par["ei-mon2-spec"]);
     ei,mon2_peak,mon2_index=GetEi(wksp_in,mon2_spec,mon3_spec,guess)
     #ei = (wksp_in.getRun().getLogData("Ei").value)
-    print 'Incident Energy = ', ei, 'meV'
-    print 'Peak in monitor',mon2_index, 'at ', mon2_peak ,'usec'
+    print('Incident Energy = ', ei, 'meV')
+    print('Peak in monitor',mon2_index, 'at ', mon2_peak ,'usec')
     return ei,mon2_peak
 def diag(wb_wksp,run_wksp):
     """
@@ -632,7 +633,7 @@ def diag(wb_wksp,run_wksp):
     
     
     bad_dets=maskUnion(Run_SpectraList,WB_SpectraList)
-    print 'number of masked spectra = ', len(bad_dets)
+    print('number of masked spectra = ', len(bad_dets))
     return bad_dets
 
 def maskUnion(a,b):
@@ -671,14 +672,14 @@ def normalise(*args):
         wksp_in =  args[0]
         method  =  args[1]
         if method == 1:
-            print 'Normalise to monitor 1'
+            print('Normalise to monitor 1')
             #use defaults for the rest
             mon_spec=qtg_par["mon1_spec"]
             time_min=1000
             time_max=2000
                 
             if wksp_in.isDistribution():
-                print 'input wksp is distribution'				
+                print('input wksp is distribution')				
                 ConvertFromDistribution(wksp_in)
                 NormaliseToMonitor(InputWorkspace=wksp_in,OutputWorkspace=wksp_out,MonitorSpectrum=mon_spec,IntegrationRangeMin=time_min,IntegrationRangeMax=time_max,IncludePartialBins="1")
                 #put all data back to distriubution				
@@ -688,7 +689,7 @@ def normalise(*args):
                 NormaliseToMonitor(InputWorkspace=wksp_in,OutputWorkspace=wksp_out,MonitorSpectrum=mon_spec,IntegrationRangeMin=time_min,IntegrationRangeMax=time_max,IncludePartialBins="1")
 
         if method ==2:
-            print 'Normalise to current'
+            print('Normalise to current')
             NormaliseByCurrent(wksp_in, OutputWorkspace=wksp_out)
         
 
@@ -698,13 +699,13 @@ def normalise(*args):
         #assume normalise to monitor
         if method == 1:
             mon1_spec = qtg_par["mon1_spec"]
-            print 'Normalise to monitor ', args[1],'is spec ',mon1_spec,'between ',args[2],' and ',args[3],' usec'
+            print('Normalise to monitor ', args[1],'is spec ',mon1_spec,'between ',args[2],' and ',args[3],' usec')
             #use inputs for the rest
             mon_spec=mon1_spec
             time_min=str(args[2])
             time_max=str(args[3])
             if wksp_in.isDistribution():
-                print 'input wksp is distribution'				
+                print('input wksp is distribution')				
                 ConvertFromDistribution(wksp_in)
                 NormaliseToMonitor(InputWorkspace=wksp_in,OutputWorkspace=wksp_out,MonitorSpectrum=mon_spec,IntegrationRangeMin=time_min,IntegrationRangeMax=time_max,IncludePartialBins="1")
                 #put all data back to distriubution				
@@ -729,20 +730,20 @@ def integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax,*args,**kwarg
     integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax,xaxis_start_pos,xstep,normalise=mon,mon_range=[1000,2000])
     integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax,xaxis_start_pos,xstep,normalise=uamp)
     """
-    if kwargs.has_key('normalise'):
+    if 'normalise' in kwargs:
         norm_method = kwargs.get('normalise')
         if norm_method=='uamp':
-            print 'Normalise to uamps'
+            print('Normalise to uamps')
             norm=2
         elif norm_method=='mon':
-            print 'Normalise to monitor 1'
+            print('Normalise to monitor 1')
             norm=1
     
     else:
-        print 'default uamphr normalisation use keyword normalise to change'
+        print('default uamphr normalisation use keyword normalise to change')
         norm =2
 
-    if kwargs.has_key('normalise') and kwargs.get('normalise')=='mon' and kwargs.has_key('mon_range'):
+    if 'normalise' in kwargs and kwargs.get('normalise')=='mon' and 'mon_range' in kwargs:
         mon_int_range=kwargs.get('mon_range')
 
     jj=1
@@ -756,7 +757,7 @@ def integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax,*args,**kwarg
         temp = mtd.getTableWorkspace('Raw_RPB')
         uamps=temp.getDouble('r_gd_prtn_chrg', 0)
         if uamps==0:
-            print 'Integral from run ', i, 'is NaN because zero beam current'
+            print('Integral from run ', i, 'is NaN because zero beam current')
             outdat.setCell(1,jj,jj)
             outdat.setCell(2,jj,0)
             outdat.setCell(3,jj,0)
@@ -764,7 +765,7 @@ def integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax,*args,**kwarg
             #tmp=load(i)
             #RAE added:
             tmp=load_spectra(i,specmin,specmax)
-            if kwargs.has_key('normalise') and kwargs.get('normalise')=='mon' and kwargs.has_key('mon_range'):		
+            if 'normalise' in kwargs and kwargs.get('normalise')=='mon' and 'mon_range' in kwargs:		
                 out=normalise(tmp,norm,mon_int_range[0],mon_int_range[1])
             else:
                 out=normalise(tmp,norm)
@@ -777,7 +778,7 @@ def integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax,*args,**kwarg
                 outdat.setCell(1,jj,jj)
             outdat.setCell(2,jj,tmp.readY(0)[0])
             outdat.setCell(3,jj,tmp.readE(0)[0])
-            print 'Integral from run ', i, '=' ,tmp.readY(0)[0],'+/-',tmp.readE(0)[0]
+            print('Integral from run ', i, '=' ,tmp.readY(0)[0],'+/-',tmp.readE(0)[0])
         jj=jj+1
     mantidplot.plot(outdat,(1,2,3),2)
     return outdat
@@ -808,7 +809,7 @@ def integrate_maps_monitors_over_runs(runstart,runstop,tmin,tmax,mypath):
         temp = mtd.getTableWorkspace('Raw_RPB')
         uamps=temp.getDouble('r_gd_prtn_chrg', 0)
         if uamps==0:
-            print 'Integral from run ', i, 'is NaN because zero beam current'
+            print('Integral from run ', i, 'is NaN because zero beam current')
             outdat.setCell(1,jj,jj)
             outdat.setCell(2,jj,0)
             outdat.setCell(3,jj,0)
@@ -851,7 +852,7 @@ def integrate_maps_monitors_over_runs(runstart,runstop,tmin,tmax,mypath):
                         print('Unexpected item in the bagging area')
                         badflag=True
             if badflag:
-                print 'Integral from run ', i, 'is NaN because problem getting mon spectra'
+                print('Integral from run ', i, 'is NaN because problem getting mon spectra')
                 outdat.setCell(1,jj,jj)
                 outdat.setCell(2,jj,0)
                 outdat.setCell(3,jj,0)
@@ -869,7 +870,7 @@ def integrate_maps_monitors_over_runs(runstart,runstop,tmin,tmax,mypath):
                 outdat.setCell(1,jj,jj)
                 outdat.setCell(2,jj,tmp.readY(0)[0])
                 outdat.setCell(3,jj,tmp.readE(0)[0])
-                print 'Integral from run ', i, '=' ,tmp.readY(0)[0],'+/-',tmp.readE(0)[0]
+                print('Integral from run ', i, '=' ,tmp.readY(0)[0],'+/-',tmp.readE(0)[0])
         jj=jj+1
     mantidplot.plot(outdat,(1,2,3),2)
     return outdat
@@ -903,7 +904,7 @@ def etrans(*args):
     if len(args)==1:
         wksp_in=args[0]
         ei = float(wksp_in.getRun().getLogData("Ei").value())
-        print 'Converting to energy transfer ei = ', ei,'meV'
+        print('Converting to energy transfer ei = ', ei,'meV')
         
         ConvertUnits(InputWorkspace=wksp_in,OutputWorkspace=wksp_out,Target="DeltaE",EMode="Direct",EFixed=ei)
     
@@ -911,7 +912,7 @@ def etrans(*args):
         wksp_in=args[0]
         ei=args[1]
         
-        print 'Converting to energy transfer ei = ', ei, 'meV'
+        print('Converting to energy transfer ei = ', ei, 'meV')
         
         ConvertUnits(InputWorkspace=wksp_in,OutputWorkspace=wksp_out,Target="DeltaE",EMode="Direct",EFixed=ei)
 
@@ -968,7 +969,7 @@ def avrg_spectra(ws_name,index_min=0,index_max=sys.float_info.max,calc_sigma_avr
     nZeroSpectra   = pOutWS.getRun().getLogData("NumZeroSpectra").value
     if (calc_sigma_avrg):
         if nZeroSpectra>0:
-           print "->avrg_spectra:: ",nZeroSpectra," spectra out of: ",nUsedSpectra," have have been droped out due to no counts in it"          
+           print("->avrg_spectra:: ",nZeroSpectra," spectra out of: ",nUsedSpectra," have have been droped out due to no counts in it")          
 
         nUsedSpectra-= nZeroSpectra
         if(nUsedSpectra <=0) :
@@ -1041,7 +1042,7 @@ def integrate(*args):
         specrange_hi=args[4]-1
         Integration(InputWorkspace=wksp_in,OutputWorkspace=wksp_out,RangeLower=xrange_lo,RangeUpper=xrange_hi,StartWorkspaceIndex=specrange_lo,EndWorkspaceIndex=specrange_hi,IncludePartialBins="1")
     if wksp_out =='tmp_integral':
-        print 'Integral = ' ,mtd[wksp_out].readY(0)[0],'+/-',mtd[wksp_out].readE(0)[0]
+        print('Integral = ' ,mtd[wksp_out].readY(0)[0],'+/-',mtd[wksp_out].readE(0)[0])
         
     return mtd[wksp_out]
 def transpose(wksp_in):
@@ -1153,7 +1154,7 @@ def wccr_ang_maps(runnumber):
 
     tt=title[pos+5:ss]
     ang_str=tt.rstrip()
-    print "wccr angle is "+ang_str+" degrees"
+    print("wccr angle is "+ang_str+" degrees")
     ang_out=float(ang_str)
     return ang_out
 
@@ -1251,7 +1252,7 @@ def get_maps_spec(win,ang):
         specout=spec_lo+1
     #note final statement is to catch the case where angle specified is exactly between two detectors
     angout=w2_.readX(0)[specout-1]
-    print "Closest spectrum is no."+str(specout)+" with a scattering angle of "+str(angout)+" degrees"
+    print("Closest spectrum is no."+str(specout)+" with a scattering angle of "+str(angout)+" degrees")
     DeleteWorkspace("w2_")	
     return specout
 
@@ -1279,7 +1280,7 @@ def dscan_maps_analysis(run_start,run_end,d_lo,d_hi,specno):
         outdat.setCell(1,jj,wccr)
         outdat.setCell(2,jj,tmp.readY(0)[0])
         outdat.setCell(3,jj,tmp.readE(0)[0])
-        print 'Integral from run ', i, '=' ,tmp.readY(0)[0],'+/-',tmp.readE(0)[0]
+        print('Integral from run ', i, '=' ,tmp.readY(0)[0],'+/-',tmp.readE(0)[0])
         jj=jj+1
     mantidplot.plot(outdat,(1,2,3),2)
     DeleteWorkspace("wtmp1_")
@@ -1321,7 +1322,7 @@ def export_masks(ws,fileName='',returnMasks=False):
             # got real spectra ID, which would correspond real spectra num to spectra ID map
             ms = sp.getSpectrumNo();
         except Exception: 
-            print " Can not get spectra No: ",i
+            print(" Can not get spectra No: ",i)
             masks.append(ms) 
             continue        
         
@@ -1337,9 +1338,9 @@ def export_masks(ws,fileName='',returnMasks=False):
 
     nMasks = len(masks);
     if nMasks == 0:
-        print 'workspace ',ws_name,' have no masked spectra'
+        print('workspace ',ws_name,' have no masked spectra')
         return masks
-    print 'workspace ',ws_name,' have ',nMasks,' masked spectra'
+    print('workspace ',ws_name,' have ',nMasks,' masked spectra')
     
     filename=''
     if len(fileName)==0 :
@@ -1576,7 +1577,7 @@ def convertDetDataToNexus(detDotDatFileName):
         file.putdata(detTubeIndex)
         file.closedata()   
     except IOError as e:
-        print "IOError writing to file ",outFileName
+        print("IOError writing to file ",outFileName)
     # close detectors group
     file.closegroup()    
     file.close() 
@@ -1584,72 +1585,72 @@ def convertDetDataToNexus(detDotDatFileName):
 
 def help(*args):
     if len(args)==0:
-        print '!-------------------------------------------------------------------!'    
-        print '!                  Mantid Built in Fucntions                        !'
-        print '!-------------------------------------------------------------------!'            
+        print('!-------------------------------------------------------------------!')    
+        print('!                  Mantid Built in Fucntions                        !')
+        print('!-------------------------------------------------------------------!')            
         mantidHelp()
-        print '!-------------------------------------------------------------------!'    
-        print '!-------------------------------------------------------------------!'    
-        print '!                  qtiGenie functions                               !'
-        print '!-------------------------------------------------------------------!'    
-        print '\t''trim(dat,t1,t2) '
-        print '\t''listfiles() '
-        print '\t''setinst() '
-        print '\t''head(runnumber) '
-        print '\t''iv(wksp_in) '
-        print '\t''load(*args) '
-        print '\t''load_monitors(*args) '
-        print '\t''getnumor(runnumber) '
-        print '\t''loadascii(name) '
-        print '\t''ass(wksp) '	
-        print '\t''clear(wksp) '	
-        print '\t''whos() '
-        print '\t''default_plotting(inp) '
-        print '\t''dspacing(wksp_in) '
-        print '\t''get_ei(wksp_in,guess) '
-        print '\t''normalise(*args) '
-        print '\t''rebin(wksp_in,params) '
-        print '\t''integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax) '	
-        print '\t''Log(wksp_in) '	
-        print '\t''Ln(wksp_in) '
-        print '\t''etrans(*args) '
-        print '\t''sumspec(*args) '
-        print '\t''integrate(*args) '
-        print '\t''transpose(wksp_in) '
-        print '\t''pwksp(wksp,spec) '
-        print '\t''changecolour(*args) '
-        print '\t''changemarker(*args) '
-        print '\t''p(spec) '
-        print '\t''pe(spec) '
-        print '\t''getspec(spec) '
-        print '\t''get2d() '
-        print '\t''p2d(*args) '
-        print '\t''psurf(*args) '
-        print '\t''plus(a,b) '
-        print '\t''minus(a,b) '
-        print '\t''mult(a,b) '
-        print '\t''div(a,b) '         
-        print '\t''help() '
-        print '--------------------------------------------------------------------'	
-        print 'qtiGenie classes'
-        print '--------------------------------------------------------------------'
-        print 'class Data_1D() '
-        print '--------------------------------------------------------------------'
-        print '\t''__init__(Data_1D) '  
-        print '\t''plot(wksp) '
-        print '\t''plotwe(wksp) '
-        print '\t''Add_1d(wksp,factor) '
-        print '\t''Minus_1D(wksp,factor) '
-        print '\t''Multiply_1d(wksp,factor) '
-        print '\t''Divide_1d(wksp,factor) '
-        print '\t''integrate(wksp,t1,t2) '
-        print '\t''xscale(dat,t1,t2) '
-        print '--------------------------------------------------------------------'	
-        print 'class Data_2D()'
-        print '--------------------------------------------------------------------'
-        print '\t''__init__(Data_2D) '
-        print '\t''sumspec(wksp,*args) '
-        print '\t''sum2d(wsk,s1,s2) '
+        print('!-------------------------------------------------------------------!')    
+        print('!-------------------------------------------------------------------!')    
+        print('!                  qtiGenie functions                               !')
+        print('!-------------------------------------------------------------------!')    
+        print('\t''trim(dat,t1,t2) ')
+        print('\t''listfiles() ')
+        print('\t''setinst() ')
+        print('\t''head(runnumber) ')
+        print('\t''iv(wksp_in) ')
+        print('\t''load(*args) ')
+        print('\t''load_monitors(*args) ')
+        print('\t''getnumor(runnumber) ')
+        print('\t''loadascii(name) ')
+        print('\t''ass(wksp) ')	
+        print('\t''clear(wksp) ')	
+        print('\t''whos() ')
+        print('\t''default_plotting(inp) ')
+        print('\t''dspacing(wksp_in) ')
+        print('\t''get_ei(wksp_in,guess) ')
+        print('\t''normalise(*args) ')
+        print('\t''rebin(wksp_in,params) ')
+        print('\t''integrate_over_runs(runstart,runstop,tmin,tmax,specmin,specmax) ')	
+        print('\t''Log(wksp_in) ')	
+        print('\t''Ln(wksp_in) ')
+        print('\t''etrans(*args) ')
+        print('\t''sumspec(*args) ')
+        print('\t''integrate(*args) ')
+        print('\t''transpose(wksp_in) ')
+        print('\t''pwksp(wksp,spec) ')
+        print('\t''changecolour(*args) ')
+        print('\t''changemarker(*args) ')
+        print('\t''p(spec) ')
+        print('\t''pe(spec) ')
+        print('\t''getspec(spec) ')
+        print('\t''get2d() ')
+        print('\t''p2d(*args) ')
+        print('\t''psurf(*args) ')
+        print('\t''plus(a,b) ')
+        print('\t''minus(a,b) ')
+        print('\t''mult(a,b) ')
+        print('\t''div(a,b) ')         
+        print('\t''help() ')
+        print('--------------------------------------------------------------------')	
+        print('qtiGenie classes')
+        print('--------------------------------------------------------------------')
+        print('class Data_1D() ')
+        print('--------------------------------------------------------------------')
+        print('\t''__init__(Data_1D) ')  
+        print('\t''plot(wksp) ')
+        print('\t''plotwe(wksp) ')
+        print('\t''Add_1d(wksp,factor) ')
+        print('\t''Minus_1D(wksp,factor) ')
+        print('\t''Multiply_1d(wksp,factor) ')
+        print('\t''Divide_1d(wksp,factor) ')
+        print('\t''integrate(wksp,t1,t2) ')
+        print('\t''xscale(dat,t1,t2) ')
+        print('--------------------------------------------------------------------')	
+        print('class Data_2D()')
+        print('--------------------------------------------------------------------')
+        print('\t''__init__(Data_2D) ')
+        print('\t''sumspec(wksp,*args) ')
+        print('\t''sum2d(wsk,s1,s2) ')
     else:        
         execstr='print '+str(args[0])+'.__doc__'
         exec(execstr)
@@ -1657,8 +1658,8 @@ def help(*args):
         
 # set default instrument from Mantid configuration
 setinst();
-print 'You can change it by issuing setinst(InstrumentName) command'
-print 'where InstrumentName can be MER, MAR, MAP, LET, TSK or XSD'
+print('You can change it by issuing setinst(InstrumentName) command')
+print('where InstrumentName can be MER, MAR, MAP, LET, TSK or XSD')
         
 
 if __name__=="__main__":

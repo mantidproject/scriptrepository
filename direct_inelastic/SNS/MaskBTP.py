@@ -1,6 +1,7 @@
 """
 Mask banks, tubes, and pixels on ARCS/SEQUOIA/CNCS/HYSPEC 
 """
+from __future__ import print_function
 from numpy import arange
 from mantid import *
 from mantid.simpleapi import *
@@ -58,7 +59,7 @@ def MaskBTP(**kwargs):
     try:
         instrumentList.index(instrument)
     except:
-        print "Instrument not found"
+        print("Instrument not found")
         return detlist
     if (workspace==None):
         path=config["instrumentDefinition.directory"]

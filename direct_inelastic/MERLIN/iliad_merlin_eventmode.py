@@ -1,6 +1,7 @@
 """      
 MERLIN TRANSIENT REDUCTION SCRIPT MARCH 2014;
 """
+from __future__ import print_function
 from qtiGenie import *
 #from PySlice2 import *
 
@@ -87,7 +88,7 @@ if loadFreshWB:
 for sample_run in run_no:
      
     fname='MER00'+str(sample_run)+'.nxs'
-    print ' processing file ', fname
+    print(' processing file ', fname)
     #w1 = dgreduce.getReducer().load_data(run,'w1')
     Load(Filename=fname,OutputWorkspace='w1',LoadMonitors='1');
     
@@ -100,8 +101,8 @@ for sample_run in run_no:
      # this section finds all the transmitted incident energies if you have not provided them
     if len(ei) == 0:
         ei = find_chopper_peaks('w1_monitors');
-        print ei
-    print 'Energies transmitted are:'
+        print(ei)
+    print('Energies transmitted are:')
     print (ei)
 
     RenameWorkspace(InputWorkspace = 'w1',OutputWorkspace='w1_storage');
@@ -109,9 +110,9 @@ for sample_run in run_no:
                     
     #now loop around all energies for the run
     for ind,energy in enumerate(ei):
-        print "Reducing around energy: {0}".format(float(energy))
+        print("Reducing around energy: {0}".format(float(energy)))
         (energybin,tbin,t_elastic) = find_binning_range(energy,ebin);
-        print " Rebinning will be performed in the range: ",energybin
+        print(" Rebinning will be performed in the range: ",energybin)
         
         # if we calculate more then one energy, initial workspace will be used more then once. Is this enough for that?    
         #Rebin(InputWorkspace='w1',OutputWorkspace='w1reb',Params=tbin,PreserveEvents='1')                        

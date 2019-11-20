@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid import *
 from mantid.simpleapi import *
 from scipy.optimize import curve_fit

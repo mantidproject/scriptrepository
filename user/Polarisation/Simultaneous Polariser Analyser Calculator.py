@@ -1,3 +1,4 @@
+from __future__ import print_function
 from numpy import *
 import time
 #Opacity value needs to be changed in function for different cells
@@ -54,7 +55,7 @@ diagPol=open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\diagP
 diagAna=open(r'\\Britannic\3he\NMR\1 Current NMR Data\1Extracted Fit Data\\diagAna.csv', 'w')
 ##Load file and apply mask
 for i in range(Initial_File,Final_File+1):
-	print i
+	print(i)
 	LoadRaw(Filename=r'\\isis\inst$\ndxlet\instrument\data\cycle_12_5\LET0000'+str(i)+'.raw',OutputWorkspace='filei')
 	MaskDetectors(Workspace='filei',MaskedWorkspace='MaskWorkspace')
 	try:

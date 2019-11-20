@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 
 #from mantid.simpleapi import *
 import numpy as np
@@ -190,7 +191,7 @@ def multi_rep(efocus, freq1, freqpr, chop2Phase=5, chop3=False):
     
     
     if chop3 == False:    
-        print "no chop 3"
+        print("no chop 3")
         dist=[7.83,8.4, 15.66, 23.5] #distance to each chopper in m choppers are in a logical order now
         freq = [freqpr/2., 10.0, freq1/2., freq1]# the frequencies of the choppers
         nslot=[6 ,1,6, 2]# number of slots in each chopper. assume that they are equally spaced
@@ -208,7 +209,7 @@ def multi_rep(efocus, freq1, freqpr, chop2Phase=5, chop3=False):
         radius = [290, 545, 290,290, 290] # radius in mm of each disk at centre of window
         numDisk = [2, 1,1, 1, 2]
     lam = np.sqrt(81.82/efocus) # convert from energy to wavelenth
-    print freq
+    print(freq)
     samp_det = 3.5 #sample to detector distance
     chop_samp = 1.5 # final chopper to sample distance
     source_rep = 10 # rep rate of source
@@ -256,7 +257,7 @@ def multi_rep(efocus, freq1, freqpr, chop2Phase=5, chop3=False):
     res,percent=calcRes(Ei,[chop_times[0][0],chop_times[-1][0]],dist[-1]-dist[0],chop_samp,samp_det)
     flux=calcFlux(Ei,freq1,percent)
     for idx in range(len(Ei)):
-        print "For Ei {:3.2f} meV, the resolution is {:6.2f} ueV or {:3.1f}% and the flux {:1.0f} n/cm^2/s".format(Ei[idx],res[idx]*1000,percent[idx]*100,flux[idx])
+        print("For Ei {:3.2f} meV, the resolution is {:6.2f} ueV or {:3.1f}% and the flux {:1.0f} n/cm^2/s".format(Ei[idx],res[idx]*1000,percent[idx]*100,flux[idx]))
     plotFrame(lines, chop_times,dist,chop_samp,samp_det,frac_ei,Ei)    
     return lines, chop_times
     #return chop_times

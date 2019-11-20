@@ -1,3 +1,4 @@
+from __future__ import print_function
 import subprocess
 # install phase
 print(subprocess.Popen("python -m pip install --upgrade pip",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE).communicate())

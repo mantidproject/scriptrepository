@@ -130,7 +130,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
     fitstring_template = fitstring_template.replace("_RESOLUTION_", resolution.name())
     minE, maxE = erange  # Units are in meV
     nq = len(qvalues)
-    names = initguess.keys()  # Store the names of the parameters in a list
+    names = list(initguess.keys())  # Store the names of the parameters in a list
     chi2 = []     # store the Chi-square values of the fits for every Q
     results = []  # we will store in this list the fitted parameters for every Q
     funcStrings = []  # store the fitstring with the optimized values
@@ -151,7 +151,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
         funcString = funcString.replace("_Q_", str(qvalues[iq])) # momentum transfer
 
         # Update the model template string with the initial guess
-        for key, value in initguess.items():
+        for key, value in list(initguess.items()):
                 fitstring = fitstring.replace( key, str( value ) )
 
         # Call the Fit algorithm using the updated "fitstring".
@@ -177,7 +177,7 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
                         chi2.append(row['Value'])
 
         # Save the string representation with optimal values
-        for key, value in initguess.items():
+        for key, value in list(initguess.items()):
             funcString = funcString.replace(key, str(value))
         funcStrings.append(funcString)
 
@@ -227,12 +227,12 @@ def sequentialFit(resolution, data, fitstring_template, initguess, erange, qvalu
                 continue # skip to next workspace index
         # python dictionary holding  results for the fit of this workspace index
         result = results[ iq ]
-        for key,value in result.items():
-            if key not in other.keys():
+        for key,value in list(result.items()):
+            if key not in list(other.keys()):
                 other[key] = [value,]
             else:
                 other[key].append(value)
-        if "Chi2" not in other.keys():
+        if "Chi2" not in list(other.keys()):
             other["Chi2"] = [chi2[ iq ],]
         else:
             other["Chi2"].append(chi2[ iq ])

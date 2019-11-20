@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time
 import datetime
 import math
@@ -12,58 +13,58 @@ camfile="//ndlt626/Users/Public/Documents/sxvh9usb/Tune Sept2016/IMG%d.FIT"
 field=-4
 if(field==0):
 	# zero field
-	piclist= range(2820,3013)
-	runlist=range(108048,108068)
+	piclist= list(range(2820,3013))
+	runlist=list(range(108048,108068))
 	resultname="steeringZF2"
 	matrixname="steerMatZF2"
 elif(field==2500):
-	piclist= range(3013,3156)
-	runlist=range(108068,108088)
+	piclist= list(range(3013,3156))
+	runlist=list(range(108068,108088))
 	resultname="steering2500"
 	matrixname="steerMat2500"
 elif(field==5000):
-	piclist= range(3170,3278)
-	runlist=range(108088,108108)
+	piclist= list(range(3170,3278))
+	runlist=list(range(108088,108108))
 	resultname="steering5000"
 	matrixname="steerMat5000"
 elif(field==7500):
-	piclist= range(3278,3367)
-	runlist=range(108108,108128)
+	piclist= list(range(3278,3367))
+	runlist=list(range(108108,108128))
 	resultname="steering7500"
 	matrixname="steerMat7500"
 elif(field==10000):
-	piclist= range(3380,3478)
-	runlist=range(108128,108148)
+	piclist= list(range(3380,3478))
+	runlist=list(range(108128,108148))
 	resultname="steering10000"
 	matrixname="steerMat10000"
 elif(field==12500):
-	piclist= range(3478,3575)
-	runlist=range(108148,108168)
+	piclist= list(range(3478,3575))
+	runlist=list(range(108148,108168))
 	resultname="steering12500"
 	matrixname="steerMat12500"
 elif(field==15000):
-	piclist= range(3585,3671)
-	runlist=range(108168,108188)
+	piclist= list(range(3585,3671))
+	runlist=list(range(108168,108188))
 	resultname="steering15000"
 	matrixname="steerMat15000"
 elif(field==-1):
-	piclist= range(3722,3768)
-	runlist=range(108188,108200)
+	piclist= list(range(3722,3768))
+	runlist=list(range(108188,108200))
 	resultname="spotVsSlits"
 	matrixname="spotVsSlitsMat"
 elif(field==-2):
-	piclist= range(3782,3844)
-	runlist=range(108200,108204)
+	piclist= list(range(3782,3844))
+	runlist=list(range(108200,108204))
 	resultname="spotVsTFX"
 	matrixname="spotVsTFXMat"
 elif(field==-3):
-	piclist= range(3843,3883)
-	runlist=range(108204,108208)
+	piclist= list(range(3843,3883))
+	runlist=list(range(108204,108208))
 	resultname="spotVsTFY"
 	matrixname="spotVsTFYMat"
 elif(field==-4):
-	piclist= range(0,0)
-	runlist=range(108314,108323)
+	piclist= list(range(0,0))
+	runlist=list(range(108314,108323))
 	resultname="FlypastSlits40SEP"
 	matrixname="FlypastMat"
 # full fitted results
@@ -111,7 +112,7 @@ for run in runlist:
 	thisres["Field"]=ws.getRun().getProperty("sample_magn_field").value
 	thisres["Slits"]=ws.getRun().getProperty("Slits").value[-1]
 	results[run]=thisres
-print results
+print(results)
 #raise Exception("incomplete")
 
 tt=WorkspaceFactory.createTable()
@@ -133,9 +134,9 @@ for i in piclist: # range(5,405):
 	starttime=(datetime.datetime(*(time.strptime(img.getRun().getProperty("start_time").value.strip(),"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds()
 	endtime=(datetime.datetime(*(time.strptime(img.getRun().getProperty("end_time").value.strip(),"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds()
 	
-	for rn,r in results.items():
+	for rn,r in list(results.items()):
 		if(starttime>r["begin"] and endtime<r["end"]):
-			print "image",i,"taken during run",rn
+			print("image",i,"taken during run",rn)
 		
 			squash=MaskAndFlattenCameraImage(img,120,590,80,440)
 			
@@ -178,29 +179,29 @@ for i in piclist: # range(5,405):
 				r["XOverall"]=XSig/SFac
 				r["YOverall"]=YSig/SFac
 			except:
-				print "fit failed for image ",i
+				print("fit failed for image ",i)
 				# don't add to r, another image might be ok
 
 #print results
 
-for r in results.values():
+for r in list(results.values()):
 	if ("Image" in r) or (field==-4):
-		row=map(lambda x:r[x],columns)
+		row=[r[x] for x in columns]
 		tt.addRow(row)
 
 AnalysisDataService.addOrReplace(resultname,tt)
 
 # to test: select from here down, Execute Selection
 try:
-	print len(results)
+	print(len(results))
 except:
 	mm=mtd["steeringZF2"]
 	results={}
 	for r in mm:
-		print "Row->",r
+		print("Row->",r)
 		results[r["Run"]]=r
 
-print results
+print(results)
 
 # find sets
 if(field>=0):
@@ -219,9 +220,9 @@ for mag in mags:
 	del constmags[constmags.index(mag)]
 	sorter={}
 	common={}
-	for r in results.values():
+	for r in list(results.values()):
 		if "X0" in r:
-			key=tuple(map(lambda x:r[x],constmags))
+			key=tuple([r[x] for x in constmags])
 			if key not in sorter:
 				sorter[key]={}
 			sorter[key][r[mag]]=r
@@ -230,18 +231,18 @@ for mag in mags:
 			else:
 				common[r[mag]]=1
 		else:
-			print "run",r["Run"],"doesn't have a successfully fitted image"
-	magref=common.keys()[numpy.argmax(common.values())]
-	print mag,"relative to ",magref
-	for (sv,s) in sorter.items():
+			print("run",r["Run"],"doesn't have a successfully fitted image")
+	magref=list(common.keys())[numpy.argmax(list(common.values()))]
+	print(mag,"relative to ",magref)
+	for (sv,s) in list(sorter.items()):
 		if(len(s)>2):
 			# got a set of points
-			tmpM=numpy.array(map(lambda x:x[mag]-magref,s.values()))
-			print "found set of points for",constmags,"=",sv,"with",mag,"=",tmpM
-			tmpX=numpy.array(map(lambda x:x["X0"],s.values()))
-			tmpXe=numpy.array(map(lambda x:x["eX0"],s.values()))
-			tmpY=numpy.array(map(lambda x:x["Y0"],s.values()))
-			tmpYe=numpy.array(map(lambda x:x["eY0"],s.values()))
+			tmpM=numpy.array([x[mag]-magref for x in list(s.values())])
+			print("found set of points for",constmags,"=",sv,"with",mag,"=",tmpM)
+			tmpX=numpy.array([x["X0"] for x in list(s.values())])
+			tmpXe=numpy.array([x["eX0"] for x in list(s.values())])
+			tmpY=numpy.array([x["Y0"] for x in list(s.values())])
+			tmpYe=numpy.array([x["eY0"] for x in list(s.values())])
 			CreateWorkspace(DataX=tmpM,DataY=tmpX,DataE=tmpXe,NSpec=1,OutputWorkspace="tmpgrad")
 			fr=Fit(Function="name=LinearBackground",InputWorkspace="tmpgrad",Output="Xvs"+mag)
 			X0=fr[3].cell(0,1)
@@ -252,7 +253,7 @@ for mag in mags:
 			Y0=fr[3].cell(0,1)
 			gradY=fr[3].cell(1,1)
 			DeleteWorkspace("tmpgrad")
-			print (mag,magref,X0,Y0,gradX,gradY)
+			print(mag,magref,X0,Y0,gradX,gradY)
 			tt2.addRow((mag,magref,X0,Y0,gradX,gradY))
 AnalysisDataService.addOrReplace(matrixname,tt2)
 

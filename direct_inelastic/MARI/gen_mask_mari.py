@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.simpleapi import mtd, Load, CreateWorkspace, LoadInstrument
 import numpy as np
 from six import string_types

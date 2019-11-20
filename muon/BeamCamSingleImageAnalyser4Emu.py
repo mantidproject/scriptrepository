@@ -5,6 +5,7 @@ Uses classes from FlattenAndFitCamera.py and LoadBeamCameraFile.py
 Written by Koji Yokoyama on 23 Jan. 2019
 Hint: you will need to set: a scaling factor, initial values for fitting
 *WIKI*"""
+from __future__ import print_function
 
 import numpy
 import math
@@ -63,7 +64,7 @@ img=LoadBeamCameraFile(SourceFile=image_filename, FilterNoiseLevel='50', BinSize
 
 starttime=time.mktime(time.strptime(str(img.getRun().startTime()).strip(),"%Y-%m-%dT%H:%M:%S"))
 endtime=time.mktime(time.strptime(str(img.getRun().endTime()).strip(),"%Y-%m-%dT%H:%M:%S"))
-print "capture duration:", endtime-starttime, "sec \n Fit parameters:"
+print("capture duration:", endtime-starttime, "sec \n Fit parameters:")
 
 squash=MaskAndFlattenCameraImage(img,*mask)
 # Do fitting
@@ -92,19 +93,19 @@ XOverall=XSig/SFac
 YOverall=YSig/SFac
 Amplitude = Intens/XSig/YSig/math.sqrt(1+Skew**2/4) # peak
 
-print "X centre = ", X0
-print "Y centre = ", Y0
-print "Skew = ", Skew
-print "Background = ", Background
-print "Intensity = ", Intens
-print "Amplitude = ", Amplitude
-print "area1=",XOverall*YSig, " area2=",Major*Minor
+print("X centre = ", X0)
+print("Y centre = ", Y0)
+print("Skew = ", Skew)
+print("Background = ", Background)
+print("Intensity = ", Intens)
+print("Amplitude = ", Amplitude)
+print("area1=",XOverall*YSig, " area2=",Major*Minor)
 
 # Generates the result table with the parameter "par" and calculated fit params
 try:
 	tt = mtd["result_table"]
 except:
-	print "Workspace result_table doesn't exit. Creating one ..."
+	print("Workspace result_table doesn't exit. Creating one ...")
 	tt = WorkspaceFactory.createTable()
 	columns = [par_label,"X0","eX0","Y0","eY0","XSig","eXSig","YSig","eYSig","Skew","eSkew","Background","eBackground","Intens","eIntens","Major","Minor","Phi"]
 	for co in columns:

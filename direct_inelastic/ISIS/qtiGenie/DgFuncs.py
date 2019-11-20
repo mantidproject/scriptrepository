@@ -1,14 +1,15 @@
+from __future__ import print_function
 from mantid.simpleapi import *
 from numpy import *
 try:
 	from scipy import signal
 except:
-	print 'Scipy module not in scope'
+	print('Scipy module not in scope')
 	
 #uses the new api all input workpsaces are expected to have |Q| along X and Energy Transfer along Y
 def gofe(wkspin,T,dbwfac):
 	dat=mtd[wkspin]
-	print 'correcting workspace' , dat.name(),' to be the pdos with T=',T,'K and |U^2| as ',dbwfac 
+	print('correcting workspace' , dat.name(),' to be the pdos with T=',T,'K and |U^2| as ',dbwfac) 
 	x=dat.extractX()
 		
 	y=dat.extractY()
@@ -50,7 +51,7 @@ def gofe(wkspin,T,dbwfac):
 
 def byE(wkspin):
 	dat=mtd[wkspin]
-	print 'Flattening workspace' , dat.name() 
+	print('Flattening workspace' , dat.name()) 
 	x=dat.extractX()
 		
 	y=dat.extractY()
@@ -75,7 +76,7 @@ def byE(wkspin):
 def gaussSmooth(wkspin,n):
 	ReplaceSpecialValues(InputWorkspace=wkspin,OutputWorkspace=wkspin,NaNValue='0',InfinityValue='0')
 	dat=mtd[wkspin]
-	print 'Smoothing workspace' , dat.name(), 'by Gaussian convolution ',n,' times'
+	print('Smoothing workspace' , dat.name(), 'by Gaussian convolution ',n,' times')
 	
 	x=dat.extractX()	
 	y=dat.extractY()
@@ -120,7 +121,7 @@ def blur_image(im, n, ny=None) :
 
 def bose(wkspin,T):
 	dat=mtd[wkspin]
-	print 'correcting workspace ' , dat.name(),' by the Bose Factor with T=',T,'K' 
+	print('correcting workspace ' , dat.name(),' by the Bose Factor with T=',T,'K') 
 	x=dat.extractX()
 		
 	y=dat.extractY()
@@ -145,7 +146,7 @@ def bose(wkspin,T):
 	
 def DetailBalance(wkspin,T):
 	dat=mtd[wkspin]
-	print 'correcting workspace for DB' , dat.name(),' with T=',T,'K' 
+	print('correcting workspace for DB' , dat.name(),' with T=',T,'K') 
 	x=dat.extractX()
 		
 	y=dat.extractY()
@@ -169,7 +170,7 @@ def DetailBalance(wkspin,T):
 
 def perCm(wkspin):
 	dat=mtd[wkspin]
-	print 'converting energy units to per cm' 
+	print('converting energy units to per cm') 
 	x=dat.extractX()
 		
 	y=dat.extractY()
@@ -186,7 +187,7 @@ def perCm(wkspin):
 	return wkspOut
 def meV(wkspin):
 	dat=mtd[wkspin]
-	print 'converting energy units to meV' 
+	print('converting energy units to meV') 
 	x=dat.extractX()
 		
 	y=dat.extractY()

@@ -1,4 +1,5 @@
 # translation of FFT.for
+from __future__ import print_function
 import math
 import numpy as np
 
@@ -67,7 +68,7 @@ def fortran_FFT(kk,a,sn):
 		k=kk-1 # orig, log2(something)
 		m=n2 # orig
 		if(i-j)<0: # both less 1
-			print "swapping",i," with ",j
+			print("swapping",i," with ",j)
 			b=a[j] # label 2
 			a[j]=a[i]
 			a[i]=b
@@ -113,15 +114,15 @@ def fortran_FFT(kk,a,sn):
 #arr=np.random.uniform(-1.0,1.0,size=16)+1.j*np.random.uniform(-1.0,1.0,size=16)
 arr=np.zeros([16],dtype=np.complex)
 arr[1]=complex(1.0,2.0)
-print arr
+print(arr)
 
 
 
 numpyfft=np.fft.ifft(arr)
 fortranfft=fortran_FFT(4,arr,1.0)
 for i in range(16):
-	print numpyfft[i]*16
-print fortranfft
+	print(numpyfft[i]*16)
+print(fortranfft)
 
 # above Python code not yet working
 # comparison between numpy and original FORTRAN running under Intel FORTRAN compiler:

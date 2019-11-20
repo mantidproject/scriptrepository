@@ -2,6 +2,7 @@
  - Sequential fitting
  - Plot several quantities
 """
+from __future__ import print_function
 
 import re
 from os import path
@@ -38,7 +39,7 @@ function_string=\
    )"""
    
 function_string=re.sub(r"[\s\t\n]", "", function_string)  #remove spaces,tabs,newlines
-print function_string
+print(function_string)
 #Sequential fitting (more info in http://docs.mantidproject.org/nightly/algorithms/PlotPeakByLogValue-v1.html)
 inputs=';'.join([signal.name() + ',i%d' % i for i in range(signal.getNumberHistograms())])
 fitSeq=PlotPeakByLogValue(inputs,
@@ -80,18 +81,18 @@ ws=ExtractSpectra("signal_0_Workspace",StartWorkspaceIndex=0,EndWorkspaceIndex=1
 for i in range(1, signal.getNumberHistograms()):
     ws2 = ExtractSpectra("signal_"+str(i)+"_Workspace",StartWorkspaceIndex=0,EndWorkspaceIndex=1)
     ws = AppendSpectra(ws,ws2)
-plotSpectrum(ws, indices=range(ws.getNumberHistograms()),waterfall=1)
+plotSpectrum(ws, indices=list(range(ws.getNumberHistograms())),waterfall=1)
 
 #Prepare output for plotting the parameters (this is always the same, could be packaged into some function)
 column_names=fitSeq.getColumnNames()  #names of all fitting parameters
-print column_names
+print(column_names)
 n_parameters = (len(column_names)-2)/2
 x=fitSeq.column(0)*n_parameters
 y=list()
 for i in range(1,len(column_names)-1,2): y += fitSeq.column(i)
 yerr=list()
 for i in range(2,len(column_names)-1,2): yerr += fitSeq.column(i)
-print n_parameters,len(x),len(y),len(yerr)
+print(n_parameters,len(x),len(y),len(yerr))
 parms=CreateWorkspace(x,y,yerr,NSpec=n_parameters,UnitX="MomentumTransfer")
 
 #Plot the FWHM's

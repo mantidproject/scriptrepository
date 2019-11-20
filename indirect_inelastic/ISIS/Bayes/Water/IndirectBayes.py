@@ -3,6 +3,7 @@
 # Input : the Python list is padded to Fortrans length using procedure PadArray
 # Output : the Fortran numpy array is sliced to Python length using dataY = yout[:ny]
 #
+from __future__ import print_function
 from IndirectImport import *
 if is_supported_f2py_platform():
     QLr     = import_f2py("QLres")
@@ -129,7 +130,7 @@ def ReadWidthFile(readWidth,widthFile,numSampleGroups):
 				asc.append(line)
 			handle.close()
 
-		except Exception, e:
+		except Exception as e:
 			raise ValueError('Failed to read width file')
 
 		numLines = len(asc)
@@ -414,7 +415,7 @@ def read_ql_file(file_name, nl):
 	amp_error, FWHM_error, height_error = [], [], []
 
 	#iterate over each block of fit parameters in the file
-	for block_num in xrange(num_blocks):
+	for block_num in range(num_blocks):
 		lower_index = header_offset+(block_size*block_num)
 		upper_index = lower_index+block_size 
 		
@@ -422,12 +423,12 @@ def read_ql_file(file_name, nl):
 		line_pointer = yield_floats(asc[lower_index:upper_index])
 
 		#Q,AMAX,HWHM,BSCL,GSCL
-		line = line_pointer.next()
+		line = next(line_pointer)
 		Q, AMAX, HWHM, BSCL, GSCL = line
 		q_data.append(Q)
 
 		#A0,A1,A2,A4
-		line = line_pointer.next()
+		line = next(line_pointer)
 		block_height = AMAX*line[0]
 
 		#parse peak data from block
@@ -435,7 +436,7 @@ def read_ql_file(file_name, nl):
 		block_amplitude = []
 		for i in range(nl):		
 			#Amplitude,FWHM for each peak
-			line = line_pointer.next()
+			line = next(line_pointer)
 			amp = AMAX*line[0]
 			FWHM = 2.*HWHM*line[1]
 			block_amplitude.append(amp)
@@ -443,7 +444,7 @@ def read_ql_file(file_name, nl):
 		
 		#next parse error data from block
 		#SIG0
-		line = line_pointer.next()
+		line = next(line_pointer)
 		block_height_e = line[0]
 		
 		block_FWHM_e = []
@@ -451,12 +452,12 @@ def read_ql_file(file_name, nl):
 		for i in range(nl):
 			#Amplitude error,FWHM error for each peak
 			#SIGIK
-			line = line_pointer.next()
+			line = next(line_pointer)
 			amp = AMAX*math.sqrt(math.fabs(line[0])+1.0e-20)
 			block_amplitude_e.append(amp)
 			
 			#SIGFK
-			line = line_pointer.next()
+			line = next(line_pointer)
 			FWHM = 2.0*HWHM*math.sqrt(math.fabs(line[0])+1.0e-20)
 			block_FWHM_e.append(FWHM)
 	
@@ -880,9 +881,9 @@ def ResNormRun(vname,rname,erange,nbin,Verbose=False,Plot='None',Save=False):
 	theta,Q = GetThetaQ(vname)
 	efix = getEfixed(vname)
 	nres,ntr = CheckHistZero(rname)
-	print "begining erange calc"
+	print("begining erange calc")
 	nout,bnorm,Xdat,Xv,Yv,Ev = CalcErange(vname,0,erange,nbin)
-	print "end of erange calc"
+	print("end of erange calc")
 	Ndat = nout[0]
 	Imin = nout[1]
 	Imax = nout[2]

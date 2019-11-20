@@ -1,6 +1,7 @@
 """
 sample Direct inelastic reduction for MERLIN performed in absolute units
 """
+from __future__ import print_function
 from qtiGenie import *
 #from PySlice2 import *
 
@@ -17,7 +18,7 @@ if len(save_dir) ==0 :
     config['defaultsave.directory']=os.getcwd()
     save_dir = config.getString('defaultsave.directory')
     
-print "Data will be saved into: ",save_dir
+print("Data will be saved into: ",save_dir)
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
 config.appendDataSearchDir('/home/merlin/mprogs/InstrumentFiles/merlin') 
 # data (raw or nxs) run files -- values from data search directories can be modified here
@@ -60,7 +61,7 @@ for runfile in runs:
     w1=iliad("wb_wksp","run_wksp",ei,rebin_params,mapfile,MonoVanRun,**params)
 
     SaveNXSPE('w1',save_file)
-print "All done"
+print("All done")
 
 
 

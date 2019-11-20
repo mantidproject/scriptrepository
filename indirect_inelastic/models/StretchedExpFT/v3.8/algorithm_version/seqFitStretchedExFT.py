@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import string
 import re
@@ -82,7 +83,7 @@ class FitWorker(object):
             if mapi.AnalysisDataService.doesExist(outputWorkspace):
                 workspaceGroup = mapi.mtd[outputWorkspace]
                 for workspace in workspaceGroup:
-                    print workspace.name()
+                    print(workspace.name())
                     mapi.AnalysisDataService.remove(workspace.name())
                 mapi.AnalysisDataService.remove(outputWorkspace)
         for suffix in ("_Qdependence", "_QQdependence"):
@@ -110,7 +111,7 @@ class FitWorker(object):
             # 2: reference to the table workspace containing correlations between pair of parameters
             # 3: reference to the table workspace containing optimal parameter values
             # 4: reference to MatrixWorkspace containing the data, fit, and difference curves
-            print self._alg._applyGuess(wi=wi)
+            print(self._alg._applyGuess(wi=wi))
             try:
                 fitreport = msapi.Fit(self._alg._applyGuess(wi=wi),
                                       InputWorkspace=self._alg.getPropertyValue("DataWorkspace"),
@@ -160,7 +161,7 @@ class FitWorker(object):
         names = list()
         Y = list()
         E = list()
-        for prop, key in self._alg._propvalue2key.iteritems():
+        for prop, key in self._alg._propvalue2key.items():
             names.append(prop)
             values, errors = self.extractOptimalParameter(key.replace('_','.'))
             Y += values

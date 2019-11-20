@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.kernel import *
 from mantid.api import *
 import math
@@ -77,13 +78,13 @@ class AnalyseThresholdScans(PythonAlgorithm):
 	  
 	  #self.progress(0.25*vi/numruns)
 	  try:
-	    print "calling LoadMuonNexus with ",thisrunpath," and ",thisrunname
+	    print("calling LoadMuonNexus with ",thisrunpath," and ",thisrunname)
 	    thisoneX=LoadMuonNexus(filename=thisrunpath,OutputWorkspace=thisrunname,AutoGroup=agroup)
 	  except:
-	    print "no more runs to load"
+	    print("no more runs to load")
 	    break
 	  thisone=thisoneX[0]
-	  print "Comment field: [",thisone.getComment(),"]"
+	  print("Comment field: [",thisone.getComment(),"]")
 	  comnt=thisone.getComment()
 	  mv=comnt.find("mV")
 	  try:
@@ -94,7 +95,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 	    voltlist.append(volts)
 	    runnames.append(thisrunname)
 	    runhandles.append(thisone)
-	    print "threshold incrementing from ",oldvolts," to ",volts
+	    print("threshold incrementing from ",oldvolts," to ",volts)
 	    oldvolts=volts
 	  else:
 	    oldvolts=999999
@@ -115,7 +116,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 	  vi=vi+1
 
 	numruns=len(voltlist)
-	print "found sequence of ",numruns," runs with thresholds between ",voltlist[0]," and ",voltlist[-1]," mV"
+	print("found sequence of ",numruns," runs with thresholds between ",voltlist[0]," and ",voltlist[-1]," mV")
 
 # fitting..
 
@@ -162,7 +163,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 		  if(fr.cell("Value",1)<0):
 		   phfitted=phfitted+3.14159265 # correct for phase jumping negative
 		   afitted=-afitted
-		  print "hist ",i," freq=",bfitted," ampl=",afitted," phase ",phfitted," tau=", taufitted
+		  print("hist ",i," freq=",bfitted," ampl=",afitted," phase ",phfitted," tau=", taufitted)
 		  if(fml):
 			  taufitted=2.19703
 		  for vi in range(0,len(voltlist)):
@@ -329,7 +330,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 	    try:
 	      resw.dataE(i)[j]=fr.cell("Error",j)
 	    except:
-	      print "missing Error column from fit"
+	      print("missing Error column from fit")
 	      resw.dataE(i)[j]=0.0
 	  resw.dataX(i)[3]=5.0
 	  #print "fitted pulse height spectrum ",i," with mean=",fr.getDouble("Value",1)

@@ -1,6 +1,7 @@
 """
 Rocking scan (+ and - directions)
 """
+from __future__ import print_function
 import numpy as np
 
 ang_name='CCR12Rot'
@@ -25,7 +26,7 @@ e_minus=[]
 
 
 for i in np.arange(minpsi,maxpsi-step,step):
-	print i
+	print(i)
 	FilterByLogValue(InputWorkspace="w",OutputWorkspace="wi",LogName=ang_name,MinimumValue=i,MaximumValue=i+step)
 	if (mtd["wi"].getNumberEvents()>1):
 		FilterByLogValue(InputWorkspace="wi",OutputWorkspace="wip",LogName=ang_deriv,MinimumValue=0.,MaximumValue=1e100)

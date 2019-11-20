@@ -1,6 +1,7 @@
 """      
 LET TRANSIENT REDUCTION SCRIPT MARCH 2014;
 """
+from __future__ import print_function
 
 # program to crunch down event mode from LET and produce output SPE files. 
 # Program can automatically find all incident energies in rep rate mode and write out spe files in the # form of LET'run no: +ei'.spe
@@ -82,7 +83,7 @@ if loadFreshWB:
                         
 for sample_run in run_no:     
     fname='LET000'+str(sample_run)+'.nxs'
-    print ' processing file ', fname
+    print(' processing file ', fname)
     #print ' Det Cal file:  ', iliad_reducer().det_cal_file;
     #w1 = iliad_reducer().load_data(run,'w1')
     w1 =Load(Filename=fname,OutputWorkspace='w1',LoadMonitors='1');
@@ -98,8 +99,8 @@ for sample_run in run_no:
     if len(ei) == 0: 
         # does not currently work properly due to generig loader problem in Mabtid. Needs changes in qtiGenie and Mantid fixes
         ei = find_chopper_peaks('w1_monitors');
-        print 'Found energies: ',ei
-    print 'Energies reduced are:'
+        print('Found energies: ',ei)
+    print('Energies reduced are:')
     print (ei)
 
     RenameWorkspace(InputWorkspace = 'w1',OutputWorkspace='w1_storage');
@@ -107,9 +108,9 @@ for sample_run in run_no:
                     
     #now loop around all energies for the run
     for ind,energy in enumerate(ei):
-        print "Reducing around energy: {0}".format(float(energy))
+        print("Reducing around energy: {0}".format(float(energy)))
         (energybin,tbin,t_elastic) = find_binning_range(energy,ebin);
-        print " Rebinning will be performed in the range: ",energybin
+        print(" Rebinning will be performed in the range: ",energybin)
         
         # if we calculate more then one energy, initial workspace will be used more then once. Is this enough for that?    
         #Rebin(InputWorkspace='w1',OutputWorkspace='w1reb',Params=tbin,PreserveEvents='1')                        
@@ -138,5 +139,5 @@ for sample_run in run_no:
         SaveNXSPE(InputWorkspace=ws_name,Filename=ws_name+'.nxspe');
 
 elapsed = (time.clock() - start)	
-print "Time to complete reduction : {0: 5.2f} min ".format(elapsed/60)
+print("Time to complete reduction : {0: 5.2f} min ".format(elapsed/60))
 

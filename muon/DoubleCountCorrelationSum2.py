@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy
 """ For Dark Counts and other sparse runs 
 Correlates spectra looking for counts in S1 at time T1 and S2 at T2+dt
@@ -60,7 +61,7 @@ class DoubleCountCorrelationSum(PythonAlgorithm):
 			i1=-dtm
 		if(i2+dtm > Ylen):
 			i2=Ylen-dtm
-		print "processing bins [",i1,":",i2,"]"
+		print("processing bins [",i1,":",i2,"]")
 		if(i1<0 or i2<=i1 or i2>Ylen):
 			raise Exception("Oops, bin calculation mistake")
 		half=Nspec/2 # assume 2 banks

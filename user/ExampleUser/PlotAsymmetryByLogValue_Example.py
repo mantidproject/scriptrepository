@@ -16,6 +16,6 @@ if int(alg.getPropertyValue("Green")) < 1000:
     spectra_plot[2] = 'Green'
     spectra_plot[3] = 'Sum'
 
-gs = plotSpectrum(ws, spectra_plot.keys())
-for key, value in spectra_plot.iteritems():
+gs = plotSpectrum(ws, list(spectra_plot.keys()))
+for key, value in spectra_plot.items():
     gs.activeLayer().setCurveTitle(key, value)

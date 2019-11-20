@@ -1,4 +1,5 @@
 #pylint: disable=invalid-name,too-many-arguments,too-many-locals
+from __future__ import print_function
 
 """
 Bayes routines
@@ -220,7 +221,7 @@ def read_ql_file(file_name, nl):
 
     #iterate over each block of fit parameters in the file
     #each block corresponds to a single column in the final workspace
-    for block_num in xrange(num_blocks):
+    for block_num in range(num_blocks):
         lower_index = header_offset+(block_size*block_num)
         upper_index = lower_index+block_size
 
@@ -228,12 +229,12 @@ def read_ql_file(file_name, nl):
         line_pointer = yield_floats(asc[lower_index:upper_index])
 
         #Q,AMAX,HWHM,BSCL,GSCL
-        line = line_pointer.next()
+        line = next(line_pointer)
         Q, AMAX, HWHM, _, _ = line
         q_data.append(Q)
 
         #A0,A1,A2,A4
-        line = line_pointer.next()
+        line = next(line_pointer)
         block_height = AMAX*line[0]
 
         #parse peak data from block
@@ -241,7 +242,7 @@ def read_ql_file(file_name, nl):
         block_amplitude = []
         for _ in range(nl):
             #Amplitude,FWHM for each peak
-            line = line_pointer.next()
+            line = next(line_pointer)
             amp = AMAX*line[0]
             FWHM = 2.*HWHM*line[1]
             block_amplitude.append(amp)
@@ -249,7 +250,7 @@ def read_ql_file(file_name, nl):
 
         #next parse error data from block
         #SIG0
-        line = line_pointer.next()
+        line = next(line_pointer)
         block_height_e = line[0]
 
         block_FWHM_e = []
@@ -257,12 +258,12 @@ def read_ql_file(file_name, nl):
         for _ in range(nl):
             #Amplitude error,FWHM error for each peak
             #SIGIK
-            line = line_pointer.next()
+            line = next(line_pointer)
             amp = AMAX*math.sqrt(math.fabs(line[0])+1.0e-20)
             block_amplitude_e.append(amp)
 
             #SIGFK
-            line = line_pointer.next()
+            line = next(line_pointer)
             FWHM = 2.0*HWHM*math.sqrt(math.fabs(line[0])+1.0e-20)
             block_FWHM_e.append(FWHM)
 
@@ -676,9 +677,9 @@ def ResNormRun(vname,rname,erange,nbin,Plot='None',Save=False):
     nvan,ntc = CheckHistZero(vname)
     theta = GetThetaQ(vname)[0]
     efix = getEfixed(vname)
-    print "begining erange calc"
+    print("begining erange calc")
     nout,bnorm,Xdat,Xv,Yv,Ev = CalcErange(vname,0,erange,nbin)
-    print "end of erange calc"
+    print("end of erange calc")
     Ndat = nout[0]
     Imin = nout[1]
     Imax = nout[2]

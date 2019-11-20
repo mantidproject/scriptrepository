@@ -5,6 +5,7 @@
 # NOTE: All of the parameters that the user must specify are listed with 
 # instructive comments in the sample configuration file: ReduceSCD.config.
 #
+from __future__ import print_function
 import os
 import sys
 import pylab
@@ -87,11 +88,11 @@ else:
   full_name = temp_buffer.readline()
   full_name=full_name.strip()
   if not full_name.endswith('nxs'):
-    print "Exiting since the data_directory was not specified and"
-    print "findnexus failed for event NeXus file: " + instrument_name + " " + str(run)
+    print("Exiting since the data_directory was not specified and")
+    print("findnexus failed for event NeXus file: " + instrument_name + " " + str(run))
     exit(0)
 
-print "\nProcessing File: " + full_name + " ......\n"
+print("\nProcessing File: " + full_name + " ......\n")
 
 #
 # Name the files for this run
@@ -111,7 +112,7 @@ for line in Niggli_integrate_file:
     if lineList[0] == '5':
         detnum.append( lineList[1] )
 number_of_detectors = len( detnum )
-print '\nNumber of detectors is %d\n' % number_of_detectors
+print('\nNumber of detectors is %d\n' % number_of_detectors)
 Niggli_integrate_file.close()
 
 # load integrate file and UB matrix into peaks_ws
@@ -129,7 +130,7 @@ event_ws = LoadEventNexus( Filename=full_name,
 # the predicted peaks workspace, so that information can be used by the
 # PeakIntegration algorithm.
 #
-print "PREDICTING peaks to integrate...."
+print("PREDICTING peaks to integrate....")
 peaks_ws = PredictPeaks( InputWorkspace = peaks_ws,
             WavelengthMin = min_pred_wl, WavelengthMax = max_pred_wl,
             MinDSpacing = min_pred_dspacing, MaxDSpacing = max_pred_dspacing, 
@@ -171,7 +172,7 @@ for i in range(num_radius_steps):
     peak_radius = min_peak_radius + (i * radius_step)
     bkg_inner_radius = peak_radius
     bkg_outer_radius = bkg_inner_radius + bkg_width
-    print peak_radius
+    print(peak_radius)
     peaks_ws = IntegratePeaksMD( InputWorkspace=MDEW, PeakRadius=peak_radius,
                   CoordinatesToUse="Q (sample frame)",
               BackgroundOuterRadius=bkg_outer_radius, 
@@ -228,7 +229,7 @@ for i in range(num_radius_steps):
     # Print the results.
     #
     outString = '%10.3f%10d%10d%10d%10d%10d\n' % (peak_radius, sum, sig2, sig3, sig5, sig10)
-    print outString
+    print(outString)
     output.write(outString)
 
     input.close()
@@ -243,8 +244,8 @@ for i in range(4):
 os.remove( temp_integrate_file )                 
 output.close()
 end_time = time.time()
-print '\nReduced run ' + str(run) + ' in ' + str(end_time - start_time) + ' sec'
-print 'using config file ' + config_file_name 
+print('\nReduced run ' + str(run) + ' in ' + str(end_time - start_time) + ' sec')
+print('using config file ' + config_file_name) 
 
 #
 # Plot the results
@@ -293,7 +294,7 @@ pylab.savefig( plotTitle )   # plot saved
 pylab.ion()                  # turn on interactive mode
 pylab.show()
 
-raw_input('Type RETURN to continue.')
+input('Type RETURN to continue.')
 
 #
 # Plot stats vs radius for each detector individually
@@ -340,6 +341,6 @@ ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 pylab.savefig( plotTitle )   # plot saved
 pylab.show()
 
-raw_input('Type RETURN to exit.')
+input('Type RETURN to exit.')
 sys.exit(0)
 

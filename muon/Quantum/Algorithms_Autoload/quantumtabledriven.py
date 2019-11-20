@@ -1,6 +1,7 @@
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
 ## Version 1.04, August 2018
+from __future__ import print_function
 import numpy
 import math
 #import time
@@ -70,7 +71,7 @@ def ParseTableWorkspaceToDict(tw,di0={}):
 	textlists=("measure","spins","detectspin","initialspin","tzero","recycle","brf","morespin","crystal","goniometer")
 	freetext=("fitfunction","loop0par","loop1par","fit0par","fit1par","fit2par","fit3par","fit4par","fit5par","fit6par","fit7par","fit8par","fit9par") # do not parse at all (are on one line)
 	di=dict(di0) # copy
-	text = zip(map(str,tw.column(0)),map(str,tw.column(1)))
+	text = list(zip(list(map(str,tw.column(0))),list(map(str,tw.column(1)))))
 	for (c1,c2) in text:
 		if(c1 != "" and c1[0] != "#"):
 			if(c1 in freetext):
@@ -79,7 +80,7 @@ def ParseTableWorkspaceToDict(tw,di0={}):
 				val=c2.split(",")
 				kvl0s=c1.split("(")[0]
 				if(kvl0s not in textlists):
-					val=map(float,val)
+					val=list(map(float,val))
 				di[c1]=val
 	return di
 
@@ -231,7 +232,7 @@ def RunModelledSystemCached(pars,key,cache={},counter=[0]):
 	else:
 		if(len(cache)>200):
 			# clear some cache entries, least recently used
-			stale=sorted(cache.items(),key=lambda x: x[1][1])
+			stale=sorted(list(cache.items()),key=lambda x: x[1][1])
 			for obsolete in stale[0:50]:
 				del cache[obsolete[0]]
 		ax,yb,eb=RunModelledSystem(pars,None)
@@ -1055,8 +1056,8 @@ class ReplaceFitParsInTable(PythonAlgorithm):
 		else:
 			# search for the first one with right set of keys
 			selGroup=None
-			for g in groupedNames.values():
-				print "examining param group ",g
+			for g in list(groupedNames.values()):
+				print("examining param group ",g)
 				if('P0' in g):
 					if(selGroup):
 						raise Exception("More than one possible Quantum function found - please specify")
@@ -1065,7 +1066,7 @@ class ReplaceFitParsInTable(PythonAlgorithm):
 			if(not(selGroup)):
 				raise Exception("Didn't find a Quantum fit function")
 		pardict={}
-		for (pnam,val) in selGroup.items():
+		for (pnam,val) in list(selGroup.items()):
 			if(pnam[0]=="P" and pnam[1].isdigit()):
 				if(pnam[2:7]=="plusP"):
 					pnum1=int(pnam[1])
@@ -1091,11 +1092,11 @@ class ReplaceFitParsInTable(PythonAlgorithm):
 		if(min(pardict.keys())==0 and max(pardict.keys())==len(pardict)-1):
 			# good, conv to list
 			fps=[float("NaN")]*len(pardict)
-			for (i,v) in pardict.items():
+			for (i,v) in list(pardict.items()):
 				fps[i]=v
 		else:
-			print pardict
-			print min(pardict.keys()),max(pardict.keys()),len(pardict)
+			print(pardict)
+			print(min(pardict.keys()),max(pardict.keys()),len(pardict))
 			raise Exception("Some parameters seem to be missing")
 		if(numpy.any(numpy.isnan(fps))):
 			raise Exception("A parameter is NaN - not updating the table")
