@@ -2,7 +2,7 @@ from __future__ import print_function
 from genie_python.genie import *
 import numpy as np
 import matplotlib.pyplot as plt
-
+from six import moves
 import sys,os
 
 def groupname(name=''):  # Currently Broken. Unsure Why.
@@ -14,11 +14,11 @@ def groupname(name=''):  # Currently Broken. Unsure Why.
     '''
     if name=='':
         # Ask for a name
-        name=eval(input('What is your group name? '))
+        name=moves.input('What is your group name? ')
     if os.path.isdir('u:/%s'%name):
         os.chdir('u:/%s'%name)
     else:
-        answer=eval(input(r'Group directory %s not found in u:\. Make a new one? '%name))
+        answer=moves.input(r'Group directory %s not found in u:\. Make a new one? '%name)
         if answer == 'y' or answer == 'Y':
             print('u:/%s'%name)
             #os.mkdir('u:/%s'%name)            
@@ -150,7 +150,7 @@ def ascan(*args, **kwargs):
         abort()
     change(nperiods=Npts)
     begin(paused=True)
-    print(('#%s\t\tI/Io\t\tErr\t\tI\t\tIo'%BlockName))
+    print('#%s\t\tI/Io\t\tErr\t\tI\t\tIo'%BlockName)
     for i,x in enumerate(x_values):
         #cset(stheta=x)
         exec('cset(%s=x)'%BlockName)
@@ -170,7 +170,7 @@ def ascan(*args, **kwargs):
         else:
             y_values[i]=0.0
             e_values[i]=0.0
-        print(('%10.3f\t%10.3g\t%10.3g\t%10.3g\t%10.3g'%(x_values[i], y_values[i], e_values[i], CountsInI, CountsInIo)))
+        print('%10.3f\t%10.3g\t%10.3g\t%10.3g\t%10.3g'%(x_values[i], y_values[i], e_values[i], CountsInI, CountsInIo))
         # update the plot with the data
         line.set_ydata(y_values)
         bottoms.set_ydata(y_values - 0.5*e_values)
