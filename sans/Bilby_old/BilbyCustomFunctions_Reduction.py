@@ -182,7 +182,7 @@ def wavelengh_slices(wavelength_intervals, binning_wavelength_ini, wav_delta):
         else:                                                                          # if reminder is greater than 0, to trancate the maximum wavelength in the range
             n = math.floor((wav2 - wav1)/wav_delta)
             max_wave_length = wav1 + n*wav_delta           
-            print('\n WARNING: because of your set-up, maximum wavelength to consider for partial reduction is only %4.2f \n' %max_wave_length))
+            print('\n WARNING: because of your set-up, maximum wavelength to consider for partial reduction is only %4.2f \n' %max_wave_length)
 
         # number of wavelength range intervals 
         n = int(n)

@@ -33,7 +33,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     par_file_template = 'one2one_';
     one2onepar = par_file_template+cycle_index+'.par'
     full_one2one_par_file = create_one2onepar(run,one2onepar) 
-    print(('*** Have generated one2one par file: {0}'.format(full_one2one_par_file)));
+    print('*** Have generated one2one par file: {0}'.format(full_one2one_par_file));
     new_instrument_files_list.append(full_one2one_par_file)
     #-----------------------------------------------------------------------------------------------------------------------    
     #rings map file:
@@ -41,7 +41,7 @@ def create_MERInst_Files(run,commit_changes,repository_path,cycle_index,one2one_
     ringmap = rings_file_template + cycle_index+'.map'
 
     ring_map_full_file = create_ringmap(full_one2one_par_file,ringmap) 
-    print(('*** Have generated ring map file: {0}'.format(ring_map_full_file)));    
+    print('*** Have generated ring map file: {0}'.format(ring_map_full_file));    
     new_instrument_files_list.append(ring_map_full_file)    
     #-----------------------------------------------------------------------------------------------------------------------     
     # one2one map file:
