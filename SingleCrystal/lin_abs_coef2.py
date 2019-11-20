@@ -9,7 +9,7 @@ from __future__ import print_function
 # Version 2:
 # A.J. Schultz, August 2015
 
-if sys.version_info > (3,0):
+if sys.version_info > (3,):
     from tkinter import *
     import tkinter.simpledialog as tkSimpleDialog
 else:

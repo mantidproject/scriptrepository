@@ -116,7 +116,7 @@ from readSpecCoef import *
 from spectrumCalc import *
 from absor_sphere import *
 
-if sys.version_info > (3,0):
+if sys.version_info > (3,):
     from tkinter import *
     import tkinter.simpledialog as tkSimpleDialog
 else:
