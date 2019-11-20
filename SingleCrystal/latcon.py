@@ -15,7 +15,7 @@ from __future__ import print_function
 # 6 = Hexagonal
 # 7 = Cubic
 
-if sys.version_info > (3,0):
+if sys.version_info > (3,):
     from tkinter import *
     import tkinter.simpledialog as tkSimpleDialog
 else:
