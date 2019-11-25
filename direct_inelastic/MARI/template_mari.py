@@ -14,12 +14,12 @@ except:
     pass
 
 # Run number and Ei
-runno=20942
+runno=26644
 sum_runs=False
-ei=30
+ei=[30, 11.8]
 
 # White vanadium run number
-wbvan=25779
+wbvan=26584
 # Default save directory
 config['defaultsave.directory'] = '/instrument/MARI/RBNumber/USER_RB_FOLDER' #data_dir 
 

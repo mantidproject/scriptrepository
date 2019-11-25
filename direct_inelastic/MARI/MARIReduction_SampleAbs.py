@@ -1,11 +1,14 @@
 #pylint: disable=invalid-name
 """ Sample MARI reduction script """
-import os,sys
-from numpy import *
-from mantid import *
-from Direct.AbsorptionShapes import *
-from Direct.ReductionWrapper import *
+import os
+import sys
+try:
+    from Direct.AbsorptionShapes import Cylinder, FlatPlate, HollowCylinder, Sphere
+except ImportError:
+    pass
+from Direct.ReductionWrapper import ReductionWrapper, MainProperties, AdvancedProperties, iliad
 from mantid.simpleapi import *
+from Direct.DirectEnergyConversion import DirectEnergyConversion
 from mantid.kernel import funcinspect
 from mantid.dataobjects import EventWorkspace
 import six
@@ -13,6 +16,7 @@ import types
 from Direct.PropertyManager import PropertyManager
 import Direct
 import numpy as np
+from numpy import sqrt
 
 class MARIReduction(ReductionWrapper):
     @MainProperties
@@ -31,9 +35,9 @@ class MARIReduction(ReductionWrapper):
         #
         #prop['incident_energy'] = 50
         #prop['energy_bins'] = [-20,0.1,49]
-        prop['incident_energy'] = [20, 5.5]
+        prop['incident_energy'] = [30, 11.8]
         prop['energy_bins'] = [-1, 0.005, 0.97]
-        #
+        
         # the range of files to reduce. This range ignored when deployed from autoreduction,
         # unless you going to sum these files.
         # The range of numbers or run number is used when you run reduction from PC.
@@ -42,8 +46,8 @@ class MARIReduction(ReductionWrapper):
         #prop['sample_run'] = ['MAR25360.n001']
         # Otherwise just give the run number
         #prop['sample_run'] = [25362, 25363, 25364, 25365]
-        prop['sample_run'] = 25781
-        prop['wb_run'] = 25779
+        prop['sample_run'] = 26644
+        prop['wb_run'] = 26584
 
         prop['sum_runs'] = False # set to true to sum everything provided to sample_run
         #                        # list
@@ -56,12 +60,10 @@ class MARIReduction(ReductionWrapper):
     @AdvancedProperties
     def def_advanced_properties(self):
         """Set up advanced properties, describing reduction.
-           These are the properties, usually provided by an instrument
-           scientist
+           These are the properties, usually provided by an instrument scientist
 
-           separation between simple and advanced properties depends
-           on scientist, experiment and user.   All are necessary for reduction
-           to work properly
+           separation between simple and advanced properties depends on scientist, experiment and user.
+           All are necessary for reduction to work properly
 
         MARI Instrument scientist beware!!!!
         -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or
@@ -74,8 +76,7 @@ class MARIReduction(ReductionWrapper):
 
         # Next lines are for removing detector artifacts which should not be needed
         #prop['remove_streaks'] = True
-        #prop['fakewb'] = True
-        #
+        
         #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
         #prop['hard_mask_file'] = "mari_mask2019.msk"
         prop['det_cal_file'] = ''
@@ -83,7 +84,7 @@ class MARIReduction(ReductionWrapper):
         #prop['mask_run'] = 25035
         #prop['use_hard_mask_only'] = True
         prop['save_format'] = 'nxspe'
-        #
+        
         #prop['wb_integr_range'] = [2,10]
         prop['data_file_ext'] = '.nxs' # if two input files with the same name and
                                        # different extension found, what to prefer.
@@ -186,6 +187,50 @@ class MARIReduction(ReductionWrapper):
             Transpose(InputWorkspace=wsn+'_SQW', OutputWorkspace=wsn+'_SQW')
         return output
 
+    def shift_next_frame(self, reducer, ws):
+        """ For low energy reps (<4meV) on MARI the final monitor (or detector) is in the 2nd frame so we
+            need to shift the ToF by 20ms or the reduction will not be correct
+        """
+        cur_ei = PropertyManager.incident_energy.get_current()
+
+        wsn = ws.name()
+
+        already_shifted = False
+        if ws.run().hasProperty('is_frame_shifted') and 'No' not in ws.run().getProperty('is_frame_shifted').value:
+            already_shifted = True
+            both_shifted = 'Both' in ws.run().getProperty('is_frame_shifted').value
+
+        def do_shift(shift_type, shift_val, ws, reducer):
+            try:
+                mon_ws = ws.getMonitorWorkspace()
+                spec0 = 0
+            except RuntimeError:
+                mon_ws = ws
+                spec0 = 3
+            if shift_type == 'M3' or shift_type == 'Both':
+                ScaleX(mon_ws, shift_val, Operation='Add', IndexMin=2, IndexMax=3, OutputWorkspace=mon_ws.name())
+            if shift_type == 'Det' or shift_type == 'Both':
+                ScaleX(ws, shift_val, Operation='Add', IndexMin=spec0, IndexMax=ws.getNumberHistograms()-1, OutputWorkspace=ws.name())
+
+        if cur_ei < 3.1:    # Data and Mon3 will be in 2nd frame, shift all ToF by 20ms
+            if already_shifted and not both_shifted:
+                do_shift('Det', 20000, ws, reducer)
+            elif not already_shifted:
+                do_shift('Both', 20000, ws, reducer)
+            AddSampleLog(ws, 'is_frame_shifted', 'Both')
+        elif cur_ei < 4.01: # Mon3 is in 2nd frame so need to shift it by 20ms
+            if already_shifted and both_shifted:
+                do_shift('Det', -20000, ws, reducer)
+            elif not already_shifted:
+                do_shift('M3', 20000, ws, reducer)        
+            AddSampleLog(ws, 'is_frame_shifted', 'M3')
+        else:
+            if already_shifted:
+                do_shift('Both' if both_shifted else 'M3', -20000, ws, reducer)
+            AddSampleLog(ws, 'is_frame_shifted', 'No')
+
+        return ws
+
     def run_reduction(self, out_ws_name=None):
         """" Reduces runs one by one or sum all them together and reduce after this
 
@@ -197,42 +242,6 @@ class MARIReduction(ReductionWrapper):
             out_ws_name = r[0]
         except:
             pass
-
-        if not hasattr(PropertyManager.wb_run, '_old_get_workspace'):
-            PropertyManager.wb_run._old_get_workspace = PropertyManager.wb_run.get_workspace
-
-        old_wb_get_workspace = PropertyManager.wb_run._old_get_workspace
-        if self.reducer.prop_man.fakewb is True:
-            def new_wb_get_workspace(self):
-                ws = old_wb_get_workspace()
-                if ((self._run_number is not None and self._run_number != 25035)
-                    or ('25035' not in self._ws_name)) or ws.run().hasProperty('faked'):
-                    return ws
-                print("*** Faking Whitebeam run")
-                x = ws.extractX()
-                y = ws.extractY()
-                e = ws.extractE()
-                for ifake0, ifake1, ireal0, ireal1 in [[404, 440, 143, 179], [663, 699, 143, 179],
-                                [441, 470, 182, 211], [700, 729, 182, 211], [276, 371, 535, 630],
-                                [373, 378, 632, 637], [381, 386, 640, 645], [389, 394, 648, 653]]:
-                    for ifake, ireal in np.array([range(ifake0-1, ifake1), range(ireal0-1, ireal1)]).T:
-                        y[ifake, :] = y[ireal, :]
-                        e[ifake, :] = e[ireal, :]
-                # Masking is messed up if we use this fake white beam so put masks here directly...
-                for ifake in [351, 617, 846]:
-                    y[ifake,:] = y[ifake,:] * 0
-                    e[ifake,:] = e[ifake,:] * 0
-                for isp in range(ws.getNumberHistograms()):
-                    ws.setY(isp, y[isp, :])
-                    ws.setE(isp, e[isp, :])
-                AddSampleLog(ws, 'faked', 'already_faked')
-                return ws
-        else:
-            def new_wb_get_workspace(self):
-                ws = old_wb_get_workspace()
-                return ws
-
-        PropertyManager.wb_run.get_workspace = types.MethodType(new_wb_get_workspace, PropertyManager.wb_run)
 
         if not hasattr(PropertyManager.sample_run, '_old_get_workspace'):
             PropertyManager.sample_run._old_get_workspace = PropertyManager.sample_run.get_workspace
@@ -246,8 +255,8 @@ class MARIReduction(ReductionWrapper):
                     wsn = ws.name()
 
                     t0 = 221.75                          # ToF of first streak in us
-                    stp = 85.33333333333333              # ToF between streaks in us (==256/3)
-                    w1 = 150                             # Number of ToF bins too look for streak around expected position
+                    stp = 10.66666666666667              # ToF between streaks in us
+                    w1 = 25                              # Number of ToF bins too look for streak around expected position
                     w2 = 10                              # Number of ToF bins around streaks to calculate background level
                     spikes_tof = np.arange(t0, 20000, stp)
                     spikes_tof = np.round(spikes_tof * 4) / 4
@@ -277,7 +286,6 @@ class MARIReduction(ReductionWrapper):
                             ev.maskTof(tof-0.075, tof+0.225)
                     AddSampleLog(ws, 'unstreaked', 'unstreaked')
                     DeleteWorkspace(wsr)
-
                 return ws
 
         else:
@@ -286,6 +294,19 @@ class MARIReduction(ReductionWrapper):
                 return ws
 
         PropertyManager.sample_run.get_workspace = types.MethodType(new_get_workspace, PropertyManager.sample_run)
+
+        if not hasattr(PropertyManager.sample_run, '_old_chop_ws_part'):
+            PropertyManager.sample_run._old_chop_ws_part = PropertyManager.sample_run.chop_ws_part
+        old_chop_ws_part = PropertyManager.sample_run._old_chop_ws_part
+        eis = self.reducer.prop_man.incident_energy
+        if hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis):
+            def new_chop_ws_part(fn_self, origin, tof_range, rebin, chunk_num, n_chunks):
+                ws = self.shift_next_frame(self.reducer, origin if origin else fn_self.get_workspace())
+                return old_chop_ws_part(ws, tof_range, rebin, chunk_num, n_chunks)
+        else:
+            def new_chop_ws_part(self, origin, tof_range, rebin, chunk_num, n_chunks):
+                return old_chop_ws_part(origin, tof_range, rebin, chunk_num, n_chunks)
+        PropertyManager.sample_run.chop_ws_part = types.MethodType(new_chop_ws_part, PropertyManager.sample_run)
 
         # if this is not None, we want to run validation not reduction
         if self.validate_run_number:
@@ -376,6 +397,7 @@ class MARIReduction(ReductionWrapper):
                     return results[0]
                 else:
                     return results
+
     def do_preprocessing(self,reducer,ws):
         """ Custom function, applied to each run or every workspace, the run is divided to
             in multirep mode
@@ -391,6 +413,8 @@ class MARIReduction(ReductionWrapper):
             Add code to do custom preprocessing.
             Must return pointer to the preprocessed workspace
         """
+        if not ws.run().hasProperty('is_frame_shifted') and PropertyManager.incident_energy.get_current() < 4.01:
+            ws = self.shift_next_frame(reducer, ws)
         return ws
       #
     def do_postprocessing(self,reducer,ws):
@@ -446,9 +470,9 @@ class MARIReduction(ReductionWrapper):
         object.__setattr__(self.reducer.prop_man, 'remove_streaks', False)
         object.__setattr__(self.reducer.prop_man, 'fakewb', False)
         object.__setattr__(self.reducer.prop_man, 'filename_prefix', '')
-        Mt = MethodType(self.do_preprocessing, self.reducer)
+        Mt = types.MethodType(self.do_preprocessing, self.reducer)
         DirectEnergyConversion.__setattr__(self.reducer,'do_preprocessing',Mt)
-        Mt = MethodType(self.do_postprocessing, self.reducer)
+        Mt = types.MethodType(self.do_postprocessing, self.reducer)
         DirectEnergyConversion.__setattr__(self.reducer,'do_postprocessing',Mt)
 
 #------------------------------------------------------------------------------
@@ -482,21 +506,32 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
     rd.def_main_properties()
     prop_man = rd.reducer.prop_man
 
-#    if not hasattr(runno, '__len__') or isinstance(runno, six.string_types):
-#        runno = [runno]
+    if not hasattr(runno, '__len__') or isinstance(runno, six.string_types):
+        runno = [runno]
     if sum_runs and len(runno)==1:
         sum_runs = False
 
-    #assign input arguments:
+    intrunno = []
+    nonintruns = []
+    for rr in runno:
+        try:
+            rri = int(rr)
+        except (TypeError, ValueError):
+            if len(runno) == 1:
+                intrunno = runno[0]
+            else:
+                nonintruns.append(rr)
+        else:
+            intrunno.append(rr)
+
+    # assign input arguments:
     prop_man.incident_energy = ei
     prop_man.sum_runs = sum_runs
-    prop_man.sample_run = runno
+    prop_man.sample_run = intrunno
     prop_man.wb_run = wbvan
 
-    multirun = False
     if hasattr(ei, '__len__') and len(ei) > 1:
         prop_man.energy_bins=[-1, 1./400., 0.97]
-        multirun = True if sum_runs else False
     elif ei != 'auto' and not hasattr(ei, '__len__'):
         prop_man.energy_bins=[-1*ei, ei/400., 0.97*ei]
 
@@ -530,7 +565,20 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
 
     rd.reducer.prop_man = prop_man
     #rd.reducer.prop_man.save_file_name='mar'+str(runno)+'_ei'+str(int(round(ei)))
-    return rd.run_reduction(outws)
+    
+    if nonintruns:
+        rd_out = []
+        rd_out.append(rd.run_reduction(outws))
+        for rr in nonintruns:
+            prop_man.sample_run = rr
+            if 'bkgr_ws' in mtd:
+                DeleteWorkspace('bkgr_ws')
+            if 'bkgr_ws_source' in mtd:
+                DeleteWorkspace('bkgr_ws_source')
+            rd_out.append(rd.run_reduction(outws))
+        return rd_out
+    else:
+        return rd.run_reduction(outws)
 
 
 class Runs(object):
@@ -786,6 +834,12 @@ def mari_normalise_background(background_int, white_int, second_white_int=None):
     if second_white_int is None:
         if background_int.getNumberHistograms() == 919 and white_int.getNumberHistograms() == 918:
             background_int = CropWorkspace(background_int, StartWorkspaceIndex=1)
+        elif background_int.getNumberHistograms() == 922 and white_int.getNumberHistograms() == 919:
+            background_int = CropWorkspace(background_int, StartWorkspaceIndex=3)
+        elif background_int.getNumberHistograms() == 922 and white_int.getNumberHistograms() == 918:
+            background_int = CropWorkspace(background_int, StartWorkspaceIndex=4)
+        elif background_int.getNumberHistograms() == 918 and white_int.getNumberHistograms() == 919:
+            white_int = CropWorkspace(white_int, StartWorkspaceIndex=1)
         background_int =  Divide(LHSWorkspace=background_int,RHSWorkspace=white_int,WarnOnZeroDivide='0')
     else:
         hmean = 2.0*white_int*second_white_int/(white_int+second_white_int)
