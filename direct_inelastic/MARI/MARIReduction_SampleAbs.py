@@ -9,6 +9,7 @@ except ImportError:
 from Direct.ReductionWrapper import ReductionWrapper, MainProperties, AdvancedProperties, iliad
 from mantid.simpleapi import *
 from Direct.DirectEnergyConversion import DirectEnergyConversion
+from Direct.RunDescriptor import RunDescriptor
 from mantid.kernel import funcinspect
 from mantid.dataobjects import EventWorkspace
 import six
@@ -474,6 +475,8 @@ class MARIReduction(ReductionWrapper):
         DirectEnergyConversion.__setattr__(self.reducer,'do_preprocessing',Mt)
         Mt = types.MethodType(self.do_postprocessing, self.reducer)
         DirectEnergyConversion.__setattr__(self.reducer,'do_postprocessing',Mt)
+        PropertyManager.sample_run.load_file = types.MethodType(mari_load_file, PropertyManager.sample_run)
+        PropertyManager.wb_run.load_file = types.MethodType(mari_load_file, PropertyManager.wb_run)
 
 #------------------------------------------------------------------------------
 
@@ -832,19 +835,44 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
 def mari_normalise_background(background_int, white_int, second_white_int=None):
     """Normalize the background integrals"""
     if second_white_int is None:
-        if background_int.getNumberHistograms() == 919 and white_int.getNumberHistograms() == 918:
-            background_int = CropWorkspace(background_int, StartWorkspaceIndex=1)
-        elif background_int.getNumberHistograms() == 922 and white_int.getNumberHistograms() == 919:
-            background_int = CropWorkspace(background_int, StartWorkspaceIndex=3)
-        elif background_int.getNumberHistograms() == 922 and white_int.getNumberHistograms() == 918:
-            background_int = CropWorkspace(background_int, StartWorkspaceIndex=4)
-        elif background_int.getNumberHistograms() == 918 and white_int.getNumberHistograms() == 919:
-            white_int = CropWorkspace(white_int, StartWorkspaceIndex=1)
-        background_int =  Divide(LHSWorkspace=background_int,RHSWorkspace=white_int,WarnOnZeroDivide='0')
+        nbspec = background_int.getNumberHistograms()
+        nwspec = white_int.getNumberHistograms()
+        if nbspec > nwspec:
+            background_int = CropWorkspace(background_int, StartWorkspaceIndex=(nbspec - nwspec))
+        else:
+            white_int = CropWorkspace(white_int, StartWorkspaceIndex=(nwspec - nbspec))
+        background_int =  Divide(LHSWorkspace=background_int, RHSWorkspace=white_int, WarnOnZeroDivide='0')
     else:
         hmean = 2.0*white_int*second_white_int/(white_int+second_white_int)
-        background_int =  Divide(LHSWorkspace=background_int,RHSWorkspace=hmean,WarnOnZeroDivide='0')
+        background_int =  Divide(LHSWorkspace=background_int, RHSWorkspace=hmean, WarnOnZeroDivide='0')
         DeleteWorkspace(hmean)
+
+def mari_load_file(self,inst_name,ws_name,run_number=None,load_mon_with_workspace=False,filePath=None,fileExt=None,**kwargs):
+    """Load run for the instrument name provided. If run_numner is None, look for the current run"""
+
+    ok,data_file = self.find_file(RunDescriptor._holder,inst_name,run_number,filePath,fileExt,**kwargs)
+    if not ok:
+        self._ws_name = None
+        raise IOError(data_file)
+
+    try:#LoadEventNexus does not understand Separate and throws.
+        # And event loader always loads monitors separately, so this issue used to
+        # call appropritate load command
+        Load(Filename=data_file, OutputWorkspace=ws_name,LoadMonitors = 'Separate')
+    except ValueError: # if loader thrown, its probably event file rejected "separate" options
+        Load(Filename=data_file, OutputWorkspace=ws_name,LoadMonitors = True, MonitorsLoadOnly='Histogram')
+    RunDescriptor._logger("Loaded {0}".format(data_file),'information')
+
+    loaded_ws = mtd[ws_name]
+    if loaded_ws.getNumberHistograms() == 918:
+        mons = ExtractSingleSpectrum(ws_name, 0, OutputWorkspace='__tmpmon')
+        mons.getSpectrum(0).clearDetectorIDs()
+        mons.getSpectrum(0).setSpectrumNo(-1)
+        ConjoinWorkspaces('__tmpmon', ws_name)
+        RenameWorkspace('__tmpmon', OutputWorkspace=ws_name)
+        loaded_ws = mtd[ws_name]
+    return loaded_ws
+
 
 if __name__ == "__main__" or __name__ == "__builtin__":
 #------------------------------------------------------------------------------------#
