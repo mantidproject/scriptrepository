@@ -1,8 +1,10 @@
 from mantid.kernel import *
 from mantid.api import *
+from mantid.simpleapi import *
 import math
 import numpy
 import re
+import time
 
 class AnalyseThresholdScans(PythonAlgorithm):
 
@@ -143,6 +145,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 		fitAlg="Fit" # AlgorithmManager.create("Fit")
 		maskAlg=AlgorithmManager.create("MaskDetectors")
 		plusAlg=AlgorithmManager.create("Plus")
+		rebunchAlg=AlgorithmManager.create("Rebunch")
 
 		# load the workspaces and add them keeping individuals too
 		voltlist=[]
@@ -168,7 +171,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 						thisoneY=self.doChildAlg(loadInstAlg,Workspace=thisoneX1["OutputWorkspace"],RewriteSpectraMap=False,Filename=self.getProperty("IDF").value)
 					dgt=self.getProperty("GroupingTable").value
 					glist=[dgt.cell(iii,0) for iii in range(dgt.rowCount())]
-					gpat=",".join(map(lambda x:"+".join(map(lambda y:str(y-1),x)),glist))
+					gpat=",".join(["+".join([str(y-1) for y in x]) for x in glist])
 					thisoneX=self.doChildAlg(groupDetAlg,InputWorkspace=thisoneX1["OutputWorkspace"],GroupingPattern=gpat,OutputWorkspace=thisrunname)
 					#thisoneX=self.doChildAlg("MuonGroupDetectors",InputWorkspace=thisoneX1["OutputWorkspace"],DetectorGroupingTable=dgt,OutputWorkspace=thisrunname)
 				#thisoneX=LoadMuonNexus(filename=thisrunpath,OutputWorkspace=thisrunname,AutoGroup=agroup,DetectorGroupingTable="dgt")
@@ -176,6 +179,12 @@ class AnalyseThresholdScans(PythonAlgorithm):
 				self.log().notice("no more runs to load; "+str(e))
 				break
 			thisone=thisoneX["OutputWorkspace"]
+
+			# rebunch if bins are too small
+			if thisone.dataX(0)[1]-thisone.dataX(0)[0]<0.015:
+				self.log().notice("rebunching run")
+				rb=self.doChildAlg(rebunchAlg,InputWorkspace=thisone,NBunch=16,OutputWorkspace=thisrunname)
+				thisone=rb["OutputWorkspace"]
 				
 			self.log().notice("Comment field: ["+thisone.getComment()+"]")
 			if(len(thresholdsGiven)>0):
@@ -327,7 +336,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 			#fitalg.setProperty("")
 			fitalg=self.doChildAlg(fitAlg,InputWorkspace=bulkasym,Function=str(bulkfunc),StartX=t1,EndX=t1+12.0,CreateOutput=True,OutputParametersOnly=True,Output="bulk")
 			#ff=Fit(InputWorkspace=bulkasym,Function=bulkfunc,StartX=t1,EndX=t1+12.0,CreateOutput=True,Output="bulk")
-			fr=dict(map(lambda r:(r["Name"],r["Value"]),fitalg["OutputParameters"]))
+			fr=dict([(r["Name"],r["Value"]) for r in fitalg["OutputParameters"]])
 			bfitted=fr["f0.Frequency"]*2*math.pi
 			lamfitted=fr["f0.Lambda"]
 			phizero=fr["f0.Phi"]
@@ -370,11 +379,14 @@ class AnalyseThresholdScans(PythonAlgorithm):
 						if(fbz):
 							ties.append("b=0.0")
 						#ff.execute()
-						ff=self.doChildAlg(fitAlg,Function="name=UserFunction, Formula=1/(1/(n*(1+a*cos(x*"+str(bfitted)+"+p)*exp(-x/"+str(lamfitted)+"))*exp(-x/tau)+b)+d), n="+str(nguess)+", a=0.2, p="+str(phguess)+", b=0.01, d=0.001, tau=2.19703",
+						#print "fit function will be '"+"name=UserFunction, Formula=1/(1/(n*(1+a*cos(x*"+str(bfitted)+"+p)*exp(-x*"+str(lamfitted)+"))*exp(-x/tau)+b)+d), n="+str(nguess)+", a=0.2, p="+str(phguess)+", b=0.01, d=0.001, tau=2.19703"+"'"
+						ff=self.doChildAlg(fitAlg,Function="name=UserFunction, Formula=1/(1/(n*(1+a*cos(x*"+str(bfitted)+"+p)*exp(-x*"+str(lamfitted)+"))*exp(-x/tau)+b)+d), n="+str(nguess)+", a=0.2, p="+str(phguess)+", b=0.01, d=0.001, tau=2.19703",
 							InputWorkspace=sumd,StartX=t1,EndX=t1+12,CreateOutput=True,OutputParametersOnly=True,Ties=",".join(ties),WorkspaceIndex=i)
 						#ff=Fit(Function="name=UserFunction, Formula=1/(1/(n*(1+a*cos(x*"+str(bfitted)+"+p)*exp(-x/"+str(lamfitted)+"))*exp(-x/tau)+b)+d), n="+str(nguess)+", a=0.2, p="+str(phguess)+", b=0.01, d=0.001, tau=2.19703",
 						#	InputWorkspace="Summed",StartX=t1,EndX=t1+12,Output="fitresSpec",Ties=",".join(ties),WorkspaceIndex=i)
-						fr=dict(map(lambda r:(r["Name"],r["Value"]),ff["OutputParameters"]))
+						#for rrr in ff["OutputParameters"]:
+						#	print rrr
+						fr=dict([(r["Name"],r["Value"]) for r in ff["OutputParameters"]])
 						afitted=fr["a"]
 						#bfitted=fr["b"]
 						phfitted=fr["p"]
@@ -415,7 +427,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 						elif(bbefore<32):
 							ff=self.doChildAlg(fitAlg,Function=str(FlatBackground()),InputWorkspace=runhandles[vi],WorkspaceIndex=i,StartX=-999.0,EndX=bbefore,CreateOutput=True,OutputParametersOnly=True)
 							#ff=Fit(Function=FlatBackground(),InputWorkspace=runnames[vi],WorkspaceIndex=i,StartX=-999.0,EndX=bbefore)
-							frbg=dict(map(lambda r:(r["Name"],r["Value"]),ff["OutputParameters"]))
+							frbg=dict([(r["Name"],r["Value"]) for r in ff["OutputParameters"]])
 							ties.append("b="+str(frbg["A0"]))
 						if(not indPhases):
 							ties.append("p="+str(phfitted))
@@ -424,8 +436,8 @@ class AnalyseThresholdScans(PythonAlgorithm):
 							InputWorkspace=runhandles[vi],WorkspaceIndex=str(i),StartX=str(t1),EndX=32,CreateOutput=True,OutputParametersOnly=True,Ties=",".join(ties))
 						#ff=Fit(Function="name=UserFunction, Formula=1/(1/(n*(1+a*cos(x*"+str(bfitted)+"+p)*exp(-x*"+str(lamfitted)+"))*exp(-x/"+str(taufitted)+")+b)+d), n="+str(nguess)+", a=0.2, b=0.01, d=0.001, p="+str(phguess),
 						#	InputWorkspace=runnames[vi],WorkspaceIndex=str(i),StartX=str(t1),EndX=32,Output="fitres",Ties=",".join(ties))
-						fr=dict(map(lambda r:(r["Name"],r["Value"]),ff["OutputParameters"]))
-						fe=dict(map(lambda r:(r["Name"],r["Error"]),ff["OutputParameters"]))
+						fr=dict([(r["Name"],r["Value"]) for r in ff["OutputParameters"]])
+						fe=dict([(r["Name"],r["Error"]) for r in ff["OutputParameters"]])
 						Nfitted=fr["n"]
 						NfitE=fe["n"]
 						Afitted=fr["a"]
@@ -464,8 +476,8 @@ class AnalyseThresholdScans(PythonAlgorithm):
 						if(doPositrons):
 							ff=self.doChildAlg(fitAlg,Function=str(FlatBackground()),InputWorkspace=runhandles[vi],WorkspaceIndex=i,StartX=pktime-0.05,EndX=pktime+0.05,CreateOutput=True,OutputParametersOnly=True)
 							#ff=Fit(Function=FlatBackground(),InputWorkspace=runnames[vi],WorkspaceIndex=i,StartX=pktime-0.05,EndX=pktime+0.05,CreateOutput=True,Output="posfit")
-							pfr=dict(map(lambda r:(r["Name"],r["Value"]),ff["OutputParameters"]))
-							pfe=dict(map(lambda r:(r["Name"],r["Error"]),ff["OutputParameters"]))
+							pfr=dict([(r["Name"],r["Value"]) for r in ff["OutputParameters"]])
+							pfe=dict([(r["Name"],r["Error"]) for r in ff["OutputParameters"]])
 							procPos.dataX(i)[vi]=voltlist[vi]
 							procPos.dataY(i)[vi]=(pfr["A0"]-fr["b"])/nframes # counts/bin/frame
 							procPos.dataE(i)[vi]=pfe["A0"]/nframes # assume BG error is small by comparison
@@ -533,8 +545,8 @@ class AnalyseThresholdScans(PythonAlgorithm):
 							InputWorkspace=runhandles[vi],WorkspaceIndex=str(i),StartX=t1,EndX=t1+4,CreateOutput=True,OutputParametersOnly=True)
 						#ff=Fit(Function="name=UserFunction, Formula=1/(1/(n*exp(-x/tau)+b)+d), n="+str(nguess)+", b=0.01, d=0.001, tau=2.19703",
 						#	InputWorkspace=runnames[vi],WorkspaceIndex=str(i),StartX=str(t1),EndX=32,Output="fitres",Ties=",".join(ties))
-						fr=dict(map(lambda r:(r["Name"],r["Value"]),ff["OutputParameters"]))
-						fe=dict(map(lambda r:(r["Name"],r["Error"]),ff["OutputParameters"]))
+						fr=dict([(r["Name"],r["Value"]) for r in ff["OutputParameters"]])
+						fe=dict([(r["Name"],r["Error"]) for r in ff["OutputParameters"]])
 						proc.dataX(i)[vi]=voltlist[vi]
 						proc.dataY(i)[vi]=fr["A0"]/nframes/tres # counts/us/frame, mean including any BG
 						proc.dataE(i)[vi]=fe["A0"]/nframes/tres
