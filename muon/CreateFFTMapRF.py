@@ -1,9 +1,9 @@
 # runlist=range(20764,20795)
-runlist=range(130292,130308)
+runlist=list(range(130292,130308))
 wksplist=''
 for run in (runlist):
 	Load(Filename='//hifi/data/hifi00'+str(run)+'.nxs',OutputWorkspace='raw')
-	AsymmetryCalc(InputWorkspace='raw',OutputWorkspace='asym',ForwardSpectra=range(3,17)+range(49,65),BackwardSpectra=range(17,49),Alpha='1.0')
+	AsymmetryCalc(InputWorkspace='raw',OutputWorkspace='asym',ForwardSpectra=list(range(3,17))+list(range(49,65)),BackwardSpectra=list(range(17,49)),Alpha='1.0')
 	CropWorkspace(InputWorkspace='asym',OutputWorkspace='trim',XMin=3.9,XMax=33.0)
 #	Rebunch(InputWorkspace='trim',OutputWorkspace='bunch',NBunch='5')
 	# c1=0.2276 usually
