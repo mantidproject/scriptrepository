@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.api import *
 from mantid.kernel import *
 from mantid.simpleapi import *
@@ -33,10 +34,10 @@ class MaskAndFlattenCameraImage(PythonAlgorithm):
 			y2=iws.getNumberHistograms()
 
 		if(x1<0 or x2<=x1 or x2>len(iws.dataY(0))):
-			print "X1=",x1," X2=",x2," Xlimit=",len(iws.dataY(0))
+			print("X1=",x1," X2=",x2," Xlimit=",len(iws.dataY(0)))
 			raise Exception("X range error")
 		if(y1<0 or y2<=y1 or y2>iws.getNumberHistograms()):
-			print "Y1=",y1," Y2=",y2," Ylimit=",iws.getNumberHistograms()
+			print("Y1=",y1," Y2=",y2," Ylimit=",iws.getNumberHistograms())
 			raise Exception("Y range error")
 
 		ows=WorkspaceFactory.create("Workspace2D",NVectors=1,XLength=(x2-x1)*(y2-y1),YLength=(x2-x1)*(y2-y1))
@@ -73,7 +74,7 @@ class UnflattenCameraImage(PythonAlgorithm):
 		y2=((xy2-x2)/10000 ) + 1
 		x2=x2+1
 		if((x2-x1)*(y2-y1) != len(iws.dataX(spec))):
-			print "guessed x1=",x1," x2=",x2," y1=",y1," y2=",y2," length=", len(iws.dataX(spec))
+			print("guessed x1=",x1," x2=",x2," y1=",y1," y2=",y2," length=", len(iws.dataX(spec)))
 			raise Exception("Can't unflatten axes")
 		scale=self.getProperty("Scale").value
 
@@ -202,11 +203,11 @@ class DrawGaussianEllipse(PythonAlgorithm):
 			phi=math.pi/2.0+0.5*math.atan2(2*b,a-c) # math.cot**-1((a-c)/2/b)
 		
 		self.setProperty("MinorAxis",minor)
-		print "major axis length: ",major
+		print("major axis length: ",major)
 		self.setProperty("MajorAxis",major)
-		print "minor axis length: ",minor
+		print("minor axis length: ",minor)
 		self.setProperty("Rotation",phi)
-		print "rotation (degrees anticlockwise from x): ",phi*180.0/math.pi
+		print("rotation (degrees anticlockwise from x): ",phi*180.0/math.pi)
 		XM=major*math.cos(phi)
 		XL=-minor*math.sin(phi)
 		YM=major*math.sin(phi)
