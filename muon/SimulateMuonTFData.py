@@ -197,14 +197,14 @@ class SetupSimInstrument(PythonAlgorithm):
 			axnames={"+x":"1,0,0","+y":"0,1,0","+z":"0,0,1","-x":"-1,0,0","-y":"0,-1,0","-z":"0,0,-1"}
 			if(ax in axnames):
 				ax=axnames[ax]
-			axvec=V3D(*map(float,ax.split(",")))
+			axvec=V3D(*list(map(float,ax.split(","))))
 		axvec=axvec*(1.0/axvec.norm())
 
 		if not self.getProperty("MuonSpin").isDefault:
 			id=self.getProperty("MuonSpin").value
 			if(id in axnames):
 				id=axnames[id]
-			idvec=V3D(*map(float,id.split(",")))
+			idvec=V3D(*list(map(float,id.split(","))))
 		idvec=idvec*(1.0/idvec.norm())
 		
 		nr=dws.getNumberHistograms()
@@ -283,7 +283,7 @@ class SimulateMuonTFData(PythonAlgorithm):
 	def PyExec(self):
 		# get stuff
 		tab=self.getProperty('InstrumentSetupTable').value
-		inst=tab.keys()[0]
+		inst=list(tab.keys())[0]
 		orient=None
 		if "_" in inst:
 			(inst1,orient)=inst.split("_")
