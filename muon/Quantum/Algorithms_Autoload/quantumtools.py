@@ -1,3 +1,4 @@
+from __future__ import print_function
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
 ## Version 1.04, August 2018
@@ -61,6 +62,7 @@ def addZeemanC(HamIn,HamOut,spin,B,gamma):
 #	return Ham
 
 def createSpinMat(spins):
+	# print ("quantumtools in Python",18/10+19/10)
 	# spins = array of 2I+1
 	# returns matrix (i,alpha,N,N) where alpha=(x,y,z) and i iterates through spins
 	N=numpy.prod(spins)
@@ -68,7 +70,7 @@ def createSpinMat(spins):
 	if(N>100000):
 		raise Exception("Problem almost certainly too big to try")
 	if(N>1024):
-		print "fairly big problem, prepare for out of memory errors"
+		print ("fairly big problem, prepare for out of memory errors")
 	# print ([Nsp,3]+spins+spins)
 	spmat=numpy.zeros((Nsp,3,N,N),dtype=complex)
 	# fill me (exact copy of Fortran QUANTUM including possible scale errors)
@@ -213,7 +215,7 @@ def addSmallHam(Ham,spin,smallHam):
 	m2=m1*ns
 	for i in range(N):
 		for js in range(ns):
-			Ham[i,(i%m1)+js*m1+(i/m2)*m2] += smallHam[(i/m1)%ns,js]
+			Ham[i,(i%m1)+js*m1+(i//m2)*m2] += smallHam[(i//m1)%ns,js]
 
 def calcCFHam(J,terms,cache={}):
 	# crystal fields
@@ -282,12 +284,12 @@ def BoltzmannDensityMatrix(Ham,kT,spin=None):
 				break
 		else:
 			m2=N
-		ns=m2/m1
-		N2=N/ns
+		ns=m2//m1
+		N2=N//ns
 		#print "sizes: N=",N,"m1=",m1,"m2=",m2,"ns=",ns,"N2=",N2
 		# subset indices (one state of spin):
 		subset=numpy.zeros([N2],dtype=int)
-		for k in range(N/m2):
+		for k in range(N//m2):
 			subset[k*m1:(k+1)*m1]=range(k*m2,k*m2+m1,1)
 		#print "subset=",subset
 		newHam=numpy.zeros([N2,N2],dtype=complex)
@@ -337,7 +339,7 @@ def solveDensityMat(Ham,start,detect,timeend=float("Inf"),tzeros=None):
 	# detectedfreqs Eval(i)-Eval(j) ampl rhoij*Sji
 	# detected const dot(diag(rho),diag(s))
 	n=Ham.shape[0]
-	nc=n*(n-1)/2+1
+	nc=n*(n-1)//2+1
 	omega=numpy.empty(nc,dtype=float)
 	ccos=numpy.empty(nc,dtype=float)
 	csin=numpy.empty(nc,dtype=float)
@@ -1078,10 +1080,10 @@ def getCrystalEquivalents(spGrp, unCell, refpt, allowInversion=True):
 		mats[i]=numpy.array((newX,newY,newZ))
 		if(numpy.allclose(mats[i],numpy.eye(3))):
 			transOps.append(op,) # translation
-			print "translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i])
+			print ("translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]) )
 		if(numpy.allclose(mats[i],numpy.eye(3)*-1)):
 			transOps.append(op) # inversion (+ translation)
-			print "translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i])
+			print ("translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]) )
 
 	for i,op in enumerate(ops):
 		if(op.getIdentifier() != 'x,y,z'):
@@ -1096,7 +1098,7 @@ def getCrystalEquivalents(spGrp, unCell, refpt, allowInversion=True):
 							old[3]=old[3]+" & "+op.getIdentifier()
 			if(uniq):
 				epts.append([newpt,mats[i],isinvop,op.getIdentifier()])
-				print "selected additional operation",op.getIdentifier(),"with det=",isinvop
+				print ("selected additional operation",op.getIdentifier(),"with det=",isinvop)
 	
 	return [((m[1],False,m[3]) if numpy.linalg.det(m[1])>0 else (-m[1],True,"Inv "+m[3])) for m in epts]
 	
@@ -1255,7 +1257,7 @@ def addSpinRelaxation(ns,BigHam,state,spin,nu,pol,polmag):
 	# BigHam[I,I]-= lambda (all I)
 	# BigHam[I,J] += lambda/2 *beta(i,j) where I=(some others)+i, J=(same others)+j
 	# code from CreateSpinMat to scan over all index pairs where only named spin varies?
-	nqsq=BigHam.shape[0]/ns
+	nqsq=BigHam.shape[0]//ns
 	nq=spin.shape[1] # or numpy.prod(spins)
 	if(nq*nq != nqsq):
 		raise Exception("Spin matrix and BigHam sizes don't match")
@@ -1279,7 +1281,7 @@ def addSpinRelaxation(ns,BigHam,state,spin,nu,pol,polmag):
 			break
 	if(modv==-1):
 		modv=nq # this was the last listed spin
-	modw=modv/modu
+	modw=modv//modu
 	if((nq % modv) != 0):
 		raise Exception("Spins don't seem to divide Matrix correctly")
 	#print "spin ",spin,"stride=",modu,"range=",modv,"states=",modw
@@ -1316,7 +1318,7 @@ def addConversion(ns,BigHam,state1,state2,nu,rspins,pols):
 	# initially just coherent conversion...
 	# BigHam[H1,S1,S2,H2,S1,S2] += ionrate(H1 to H2) (H1 != H2)
 	# BigHam[H1,S1,S2,H1,S1,S2] -= sum_H2(ionrate(H1 to H2)) (H1 != H2)
-	nqsq=BigHam.shape[0]/ns
+	nqsq=BigHam.shape[0]//ns
 	for s1 in range(nqsq):
 		BigHam[state2*nqsq+s1,state1*nqsq+s1] += nu # [to, from]?
 		BigHam[state1*nqsq+s1,state1*nqsq+s1] -= nu
@@ -1533,8 +1535,8 @@ def solveRFDensityMat(Ham0,Ham1,Ham1i,omegaRF,start,detect,detecti,RRFharmonic,t
 	minamp=numpy.amin(ampls)
 	maxamp=numpy.amax(ampls)
 	if(minamp<0.999 or maxamp>1.001):
-		print "eigenvalues are not normalised? ts=",tslices," e=2**",eslices
-		print ampls
+		print ("eigenvalues are not normalised? ts=",tslices," e=2**",eslices)
+		print (ampls)
 	# print "t=",tslices," e=2**",eslices," Egvals=",eval
 
 	# debug tests: eigenvectors should be orthogonal!
@@ -1587,7 +1589,7 @@ def solveRFDensityMat(Ham0,Ham1,Ham1i,omegaRF,start,detect,detecti,RRFharmonic,t
 	# detectedfreqs Eval(i)-Eval(j) ampl rhoij*Sji
 	# detected const dot(diag(rho),diag(s))
 	n=Ham0.shape[0]
-	nc=n*(n-1)/2+1
+	nc=n*(n-1)//2+1
 	omega=numpy.empty(nc,dtype=float)
 	ccos=numpy.empty(nc,dtype=float)
 	csin=numpy.empty(nc,dtype=float)
