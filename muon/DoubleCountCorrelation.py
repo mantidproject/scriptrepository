@@ -1,3 +1,4 @@
+from __future__ import print_function
 """ For Dark Counts and other sparse runs 
 Generate a NSpec*NSpec workspace with 1 added to every bin where there is a non-zero number of counts in both of those spectra in the same time bin
 now just multiples bin contents, same for really sparse workspaces but meaningful if more counts present
@@ -32,7 +33,7 @@ class DoubleCountCorrelation(PythonAlgorithm):
 		Nspec=inWS.getNumberHistograms()
 		Xlen=len(inWS.readX(0))
 		Ylen=len(inWS.readY(0))
-		print "lengths ",Xlen,Ylen
+		print("lengths ",Xlen,Ylen)
 		
 		ows=WorkspaceFactory.create("Workspace2D",Nspec,Nspec+1,Nspec)
 		for j in range(Nspec):
@@ -40,15 +41,15 @@ class DoubleCountCorrelation(PythonAlgorithm):
 		#ows.replaceAxis(0,inWS.getAxis(1))
 		#ows.replaceAxis(1,inWS.getAxis(1))
 		ows.setYUnitLabel("Double Counts")
-		print inWS.dataX(0)
+		print(inWS.dataX(0))
 		i1=numpy.searchsorted(inWS.dataX(0),t1,side='left')
 		i2=numpy.searchsorted(inWS.dataX(0),t2,side='right')-1
-		print "requested bins [",i1,":",i2,"]"
+		print("requested bins [",i1,":",i2,"]")
 		if(i1+dt < 0):
 			i1=-dt
 		if(i2+dt > Ylen):
 			i2=Ylen-dt
-		print "processing bins [",i1,":",i2,"]"
+		print("processing bins [",i1,":",i2,"]")
 		if(i1<0 or i2<=i1 or i2>Ylen):
 			raise Exception("Oops, bin calculation mistake")
 		for s1 in range(Nspec):
