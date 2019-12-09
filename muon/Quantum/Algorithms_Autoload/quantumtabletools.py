@@ -1,3 +1,4 @@
+from __future__ import print_function
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
 ## Version 1.04, August 2018
@@ -737,7 +738,7 @@ def ParseAndIterateModel(pars):
 	# pre-check
 	if(dynstates>0):
 		if(not numpy.all(numpy.isfinite(pops))):
-			print "pops=",pops
+			print ("pops=",pops)
 			raise Exception("Inf or NaN found in population array")
 		for i in range(dssize):
 			if(not numpy.all(numpy.isfinite(Hams[i]))):
@@ -984,7 +985,7 @@ def processor_FittedCurve(pars,ybins,ebins,dest,asym):
 				if(matc2):
 					pff=pff[:matc2.start(2)]+str(fitstuff[3].column("Value")[i])+pff[matc2.end(2):]
 				else:
-					print "warning, couldn't find anywhere to recycle ",parname," into ",pff," using finder=",finder
+					print ("warning, couldn't find anywhere to recycle ",parname," into ",pff," using finder=",finder)
 		nextpars={"fitfunction":pff}
 	else:
 		nextpars=None
@@ -999,7 +1000,7 @@ def tidyup_FittedCurve(pars,x0,x1):
 	try:
 		DeleteWorkspace(pars["tmpws"])
 	except:
-		print "workspace '",pars["tmpws"],"' won't die!!!"
+		print ("workspace '",pars["tmpws"],"' won't die!!!")
 
 def processor_moments(pars,ybins,ebins,dest,bigomega,bigccos,bigcsin,numave):
 	# first or second moment, or amplitude, within freq range
@@ -1137,7 +1138,7 @@ def PreParseLoop(pars,hadaxis0,prog=None):
 					raise Exception("Too many nested loops")
 			lr=pars["loop"+str(loopctr)+"range"]
 			lpn=pars["loop"+str(loopctr)+"par"].split(";")
-			lpn=map(str.strip,lpn)
+			lpn=tuple(map(str.strip,lpn))
 			nv=len(lpn)
 			if(len(lr) != 2*nv+1):
 				raise Exception("mismatch between loop parameters and ranges")
@@ -1216,6 +1217,7 @@ def ParseMeasureType(pars,prog=None):
 	if "starttime" not in pars:
 		pars["starttime"]=(0.0,)
 	mtype=pars["measure"][0]
+	#print ("considering mtype=",mtype)
 	if(mtype=="integral"):
 		# expect par mulife=2.197, starttime=0, endtime=Inf
 		if "endtime" not in pars:
@@ -1225,6 +1227,7 @@ def ParseMeasureType(pars,prog=None):
 		method=2 # accumulate average P(t)
 		processor=processor_IntegralAsym
 	elif (mtype=="timespectra"):
+		#print ("entering parse measure type for timespectra")
 		# expect pars starttime=0, endtime=20,ntbins=1000
 		if "endtime" not in pars:
 			pars["endtime"]=(20.0,)
@@ -1324,11 +1327,11 @@ def ParseMeasureType(pars,prog=None):
 		else: # uniformly distributed events over whole range
 			tmpws.dataE(0)[:]=4.0/numpy.sqrt(eevents*(timebins[1:]-timebins[:-1])/(timebins[-1]-timebins[0]))
 		if (numpy.any(numpy.isnan(tmpws.dataE(0)))):
-			print "E has at least one NaN"
-			print tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1]
+			print ("E has at least one NaN")
+			print (tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1])
 		if (numpy.any(numpy.isinf(tmpws.dataE(0)))):
-			print "E has at least one Inf"
-			print tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1]
+			print ("E has at least one Inf")
+			print (tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1])
 			
 	PreParseLoop(pars,hadaxis0,prog) # get axis lengths
 	
@@ -1339,7 +1342,7 @@ def ParseMeasureType(pars,prog=None):
 
 	if("selectorient" in pars["axis1name"]):
 		x1axis=[m[2] for m in pars["_crystalEqvs"]]
-		print "added names to axis1"
+		print ("added names to axis1")
 
 	return (ybins,ebins,timebins,x0axis,x1axis,method,processor,tidyup)
 		
@@ -1406,6 +1409,7 @@ def ParseAndIterateLoop(pars):
 			yield(d,dest)
 
 def RunModelledSystem(pars0,prog=None):
+	# print ("quantumtabletools in Python",18/10+19/10)
 	# loop through Lstring
 	# model from Mstring, oriented by Ostring (sum these)
 	#  method 1: accumulate all the coefficients and evaluate at end (e.g. second moment of line), also for non-averageable such as dominant freq
