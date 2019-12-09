@@ -1,3 +1,4 @@
+from __future__ import print_function
 # load FITS file from HIFI Starlight camera into Workspace
 # set start and end times from header
 # optional filtering out of noise points (over specified delta from all 4 neighbours)
@@ -36,13 +37,13 @@ class LoadBeamCameraFile(PythonAlgorithm):
 			line=lines[80*(36-nbuf):80*(36-nbuf)+80]
 			nbuf=nbuf-1
 			if(line[0:3]=="END"):
-				print "found the end of the header"
+				print("found the end of the header")
 				break
 			if(line[0:6]=="NAXIS1"):
-				print "found axis1 line: ",line
+				print("found axis1 line: ",line)
 				width=int(line[9:30])
 			if(line[0:6]=="NAXIS2"):
-				print "found axis2 line: ",line
+				print("found axis2 line: ",line)
 				height=int(line[9:30])
 			if("DATE-OBS" in line):
 				datestr=line.split("'")[1]
@@ -51,9 +52,9 @@ class LoadBeamCameraFile(PythonAlgorithm):
 			if("EXPTIME" in line):
 				exposurelen=float(line[9:])
 			if('END' in line):
-				print "nearly got the end in [",line,"]"
+				print("nearly got the end in [",line,"]")
 
-		print "read ",nlr," potential header lines"
+		print("read ",nlr," potential header lines")
 		fh.seek(0,1) # back "here", flush read ahead buffers
 		if(height==0 or width==0):
 			raise Exception("Failed to identify image size")
