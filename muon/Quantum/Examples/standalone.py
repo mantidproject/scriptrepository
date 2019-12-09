@@ -1,3 +1,4 @@
+from __future__ import print_function
 # try Quantum without Mantid
 from quantumtabletools import RunModelledSystem
 pars={
@@ -13,4 +14,4 @@ x=q[0][0]
 y=q[1]
 e=q[2]
 for i in range(len(x)):
-	print x[i],y[0,i]
+	print(x[i],y[0,i])
