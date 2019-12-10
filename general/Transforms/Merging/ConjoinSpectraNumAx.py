@@ -61,10 +61,10 @@ class ConjoinSpectraNumAx(PythonAlgorithm):
         #ta = TextAxis.create(len(wsNames))
         na = NumericAxis.create(len(wsNames))
         #if (labelUsing != ""):
-	#    na.title(labelUsing)
-	#else:
-	#    na.title("Workspaces")
-	na.setUnit("TOF")
+        #    na.title(labelUsing)
+        #else:
+        #    na.title("Workspaces")
+        na.setUnit("TOF")
         if mtd.doesExist(wsOutput):
             DeleteWorkspace(Workspace=wsOutput)
         for wsName in wsNames:
