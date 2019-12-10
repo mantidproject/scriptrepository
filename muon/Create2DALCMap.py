@@ -1,6 +1,7 @@
 from __future__ import print_function
 from mantid.kernel import *
-from mantid.simpleapi import *
+from mantid.simpleapi import *
+from mantid.api import *
 #import math
  
 class Create2DALCMap(PythonAlgorithm):
