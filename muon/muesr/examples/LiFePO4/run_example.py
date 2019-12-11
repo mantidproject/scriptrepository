@@ -4,6 +4,7 @@ the results of Ref. PhysRevB.84.054430. The description of the magnetic order
 will be done first using the helper function which facilitate the user input
 and then programmatically.
 """
+from __future__ import print_function
 
 # This needs an interactive python sessionn, which is not currently supported in Mantid
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid import config
 from iliad_merlin import *
 import time
@@ -52,7 +53,7 @@ bg_range=[18000,19000]
 #but it is easier to see what is going on here)
 
 #Run number is range start, end+1 (due to annoying python syntax)
-runno=range(24742,25515)
+runno=list(range(24742,25515))
 ei=[120,43,22]
 
 for i in range(len(runno)):
@@ -72,7 +73,7 @@ for i in range(len(runno)):
 				iliad_merlin_crystal(runno[i],ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,bg_range)
 				latest_run=latest_run+1
 			except:
-				print 'Skipped run numr '+str(latest_run)
+				print('Skipped run numr '+str(latest_run))
 				latest_run=latest_run+1
 		else:
 			Pause(600)

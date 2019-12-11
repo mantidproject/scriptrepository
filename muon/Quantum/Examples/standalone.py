@@ -1,5 +1,6 @@
 from __future__ import print_function
 # try Quantum without Mantid
+from __future__ import print_function
 from quantumtabletools import RunModelledSystem
 pars={
 	"spins":("Mu","e"),

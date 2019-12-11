@@ -453,7 +453,7 @@ class IndirectQuickRun(DataProcessorAlgorithm):
         for run in runs:
             if '-' in run:
                 a, b = run.split('-')
-                run_list.extend(range(int(a), int(b)+1))
+                run_list.extend(list(range(int(a), int(b)+1)))
             else:
                 run_list.append(int(run))
         for idx in run_list:

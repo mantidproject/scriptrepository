@@ -7,6 +7,7 @@
 Script to sequential fit of QENS data to a the Fourier trasnform of a stretched exponential
 This script should be run in the "Script Window" of MantidPlot
 """
+from __future__ import print_function
 import re
 from copy import copy
 import numpy as np
@@ -65,7 +66,7 @@ def doFit(resolution, data, background, fitstring_template, initguess, erange, q
     fitstring_template = fitstring_template.replace("_BACKGROUND_", background.name())
     minE, maxE = erange  # Units are in meV
     nq = len(qvalues)
-    names = initguess.keys()  # Store the names of the parameters in a list
+    names = list(initguess.keys())  # Store the names of the parameters in a list
     chi2 = []     # store the Chi-square values of the fits for every Q
     results = []  # we will store in this list the fitted parameters for every Q
     errors = []  # we will store in this list the errors of fitted parameters for every Q
@@ -88,11 +89,11 @@ def doFit(resolution, data, background, fitstring_template, initguess, erange, q
         funcString = fitstring_template.replace( '_IQ_', str(iq) )
 
         # Update the model template string with the initial guess
-        for key, value in initguess.items():
+        for key, value in list(initguess.items()):
             fitstring = fitstring.replace( key, str( value ) )
 
         # Call the Fit algorithm using the updated "fitstring".
-        print fitstring+'\n'
+        print(fitstring+'\n')
         msapi.Fit( fitstring, InputWorkspace=dataName, WorkspaceIndex=iq,
                    CreateOutput=1, startX=minE, endX=maxE,
                    Minimizer=minimizer, MaxIterations=maxIterations )
@@ -115,7 +116,7 @@ def doFit(resolution, data, background, fitstring_template, initguess, erange, q
             if name == 'Cost function value':  # store Chi-square separately
                 chi2.append(row['Value'])
         # Save the string representation with optimal values
-        for key, value in initguess.items():
+        for key, value in list(initguess.items()):
             funcString = funcString.replace(key, str(value))
         funcStrings.append(funcString)
             
@@ -155,7 +156,7 @@ def doFit(resolution, data, background, fitstring_template, initguess, erange, q
     # Save some selected parameters to a string.
     # Remember that only the selected spectra contain data.
     buffer = '#Sequential fit summary\n#  Q    Chi2 Tau(ps)+-error  Beta+-error\n'
-    print buffer,
+    print(buffer, end=' ')
     for iq in range( nq ):
         if iq not in selectedwi:
             continue # skip to next workspace index
@@ -166,7 +167,7 @@ def doFit(resolution, data, background, fitstring_template, initguess, erange, q
             chi2[ iq ],
             result['f0.f1.f1.Tau'], error['f0.f1.f1.Tau'],
             result['f0.f1.f1.Beta'], error['f0.f1.f1.Beta'])
-        print line,
+        print(line, end=' ')
         buffer += line
 
     # Save Q-dependence of parameters to a Workspace
@@ -178,14 +179,14 @@ def doFit(resolution, data, background, fitstring_template, initguess, erange, q
         # python dictionary holding  results for the fit of this workspace index
         result = results[ iq ]
         error = errors[iq]
-        for key,value in result.items():
-            if key not in other.keys():
+        for key,value in list(result.items()):
+            if key not in list(other.keys()):
                 other[key] = np.array([value,])
                 other_error[key] = np.array([error[key],])
             else:
                 other[key] = np.append(other[key], value)
                 other_error[key] = np.append(other_error[key], error[key])
-        if "Chi2" not in other.keys():
+        if "Chi2" not in list(other.keys()):
             other["Chi2"] = np.array([chi2[iq],])
             other_error["Chi2"] = np.array([0.0,])  # no error in the optimal Chi2
         else:
@@ -227,7 +228,7 @@ if __name__ == "__main__":
     vertical_axis = data.getAxis(1)
     qvalues = vertical_axis.extractValues()
     if not selected_wi:
-        selected_wi=range(len(qvalues))
+        selected_wi=list(range(len(qvalues)))
 
     """ Fitting model. In this case:
         Convolution( Resolution, A*Delta + B*StretchedExFT ) + LinearBackground + BackgroundFile

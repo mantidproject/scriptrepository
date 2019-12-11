@@ -1,21 +1,22 @@
+from __future__ import print_function
 import numpy as np
 import re, csv
 import matplotlib.pyplot as plt
 
 def pretty_print(name, parameter):
-  print "==================="
-  print "The value of "+name+" is:\n"
-  print parameter
-  print"\n===================\n"
+  print("===================")
+  print("The value of "+name+" is:\n")
+  print(parameter)
+  print("\n===================\n")
 
 def open_file(filename):
     try:
         thefile = open(filename, 'r')
     except IOError as error:
-        print("Problem opening file {file}: {fileerror}".format(file=filename, fileerror=error))
+        print(("Problem opening file {file}: {fileerror}".format(file=filename, fileerror=error)))
         if thefile != None:
             thefile.close()
-            print("Could not open file " + filename + "\n")
+            print(("Could not open file " + filename + "\n"))
     return thefile
 
 def save_dat(filename, data, coldelimiter = "\t"):
@@ -28,7 +29,7 @@ def save_dat(filename, data, coldelimiter = "\t"):
 
 def save_dict(filename, dictionary, coldelimiter = "\t"):
     outputfile = open(filename, 'wb')
-    for key in dictionary.keys():
+    for key in list(dictionary.keys()):
         line = str(key) + coldelimiter + str(dictionary[key]) + '\n'
         outputfile.write(line)
     del line
@@ -70,7 +71,7 @@ def generate_genx_filenames(inputfilename, howmany = 1):
 	fullname = inputfilename.split('.',1)
 	filenames = []
 	counter = int(fullname[0][-1])
-	print fullname[0][:-1]
+	print(fullname[0][:-1])
 	for each in range(howmany):
 		counter += 1
 		newname = fullname[0][:-1]+str(int(counter))+'.dat'
@@ -102,15 +103,15 @@ def find_spinfiles(filename, filename2 = None):
             spinstate['.d'] = read_dat_file(filename2)
         else:
             raise Exception('Not enough spin states supplied, could not find two valid files.')
-    if '.u' in spinstate.keys():
+    if '.u' in list(spinstate.keys()):
       spinup = spinstate['.u']
-    elif '.uu' in spinstate.keys():
+    elif '.uu' in list(spinstate.keys()):
       spinup = spinstate['.uu']
     else: raise Exception('Spinup not found!')
   
-    if '.d' in spinstate.keys():
+    if '.d' in list(spinstate.keys()):
       spindown = spinstate['.d']
-    elif '.dd' in spinstate.keys():
+    elif '.dd' in list(spinstate.keys()):
       spindown = spinstate['.dd']
     else: raise Exception('Spindown not found!')
     pretty_print("spinup shape", spinup.shape)
@@ -197,7 +198,7 @@ def genx2sa(filename, filename2 = None):
   
 def plotgenxsa(filename, xlim = (0.008, 0.2), ylim = (-1, 1)):
 	filename2 = generate_genx_filenames(filename)
-	print filename2
+	print(filename2)
 	sa = genx2sa(filename, filename2[0])
 	plt.figure(1,figsize=(25,15))
 	plt.ylim(*ylim)
@@ -211,8 +212,8 @@ def plotgenxsa(filename, xlim = (0.008, 0.2), ylim = (-1, 1)):
 def pairwise(iterable):
     "s -> (s0,s1), (s1,s2), (s2, s3), ..."
     a, b = tee(iterable)
-    list = izip(a,b)
-    print type(list)
+    list = zip(a,b)
+    print(type(list))
     next(b, None)
     return list
 	
@@ -231,10 +232,10 @@ def theta2Q(theta, lambdas=None):
 		test = lambdas[0] #is it iterable?
 	except:
 		lambdas = [lambdas] # make it iterable
-	print "For theta = "+str(theta)	
+	print("For theta = "+str(theta))	
 	for l in lambdas:
 		q = 4*np.pi*np.sin(theta/180*np.pi)/l
-		print "lambda: "+str(l)+' -> Q: {:.4f}'.format(q)
+		print("lambda: "+str(l)+' -> Q: {:.4f}'.format(q))
 			
 def Q2theta(Q, lambdas=None):
 	'''
@@ -251,10 +252,10 @@ def Q2theta(Q, lambdas=None):
 		test = lambdas[0] # is it iterable?
 	except:
 		lambdas = [lambdas] # now it is
-	print "For Q = "+str(Q)
+	print("For Q = "+str(Q))
 	for l in lambdas:
 		theta = np.arcsin(l*Q/(4*np.pi))/np.pi*180
-		print "lambda: "+str(l)+' -> theta: {:.3f}'.format(theta)
+		print("lambda: "+str(l)+' -> theta: {:.3f}'.format(theta))
 
 def remove_unwanted_sld_characters(textline):
     # these are very genx sld file specific, the number format is (0.000e+01+0.0000e-01)

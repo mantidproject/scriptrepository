@@ -2,6 +2,7 @@
                   Script to fit QENS data to a the Fourier trasnform of a stretched exponential
                   This script should be run in the "Script Window" of MantidPlot
 '''
+from __future__ import print_function
 from copy import copy
 
 # Data directory
@@ -46,7 +47,7 @@ fitstring_template = """
 );name=LinearBackground,A0=0,A1=0"""
 '''
 fitstring_template = fitstring_template.strip(' \t\n\r')  # remove whitespaces and such
-print fitstring_template
+print(fitstring_template)
 
 # Load the data. We assume the format is DAVE group file.
 #  Use the "LoadDaveGrp" algorithm
@@ -83,7 +84,7 @@ initguess = { 'f0.f0.Scaling'   :   1.0,   # Overall intensity
               'f0.f1.f1.Beta'   :   1.0,   # exponent
 }
 
-names = initguess.keys()  # Store the names of the parameters in a list
+names = list(initguess.keys())  # Store the names of the parameters in a list
 
 chi2 = []     # store the Chi-square values of the fits for every Q
 results = []  # we will store in this list the fitted parameters for every Q
@@ -103,11 +104,11 @@ for iq in range(nq):
         fitstring = fitstring_template.replace( 'iQ', str(iq) )
 
         # Update the model template string with the initial guess
-        for key, value in initguess.items():
+        for key, value in list(initguess.items()):
                 fitstring = fitstring.replace( key, str( value ) )
 
         # Call the Fit algorithm using the updated "fitstring".
-        print fitstring+'\n'
+        print(fitstring+'\n')
         Fit( fitstring, InputWorkspace = 'data', WorkspaceIndex = iq,
         CreateOutput = 1, startX = minE, endX = maxE,
         MaxIterations=200 )
@@ -159,7 +160,7 @@ for iq in range(nq):
 # Save some selected parameters to a string.
 # Remember that only the selected spectra contain data.
 buffer = '#  Q    Chi2   x   Tau(ps) Beta\n'
-print buffer,
+print(buffer, end=' ')
 for iq in range( nq ):
         if iq not in selected_wi:
                 continue # skip to next workspace index
@@ -170,7 +171,7 @@ for iq in range( nq ):
             result['f0.f1.f0.Height'],
             result['f0.f1.f1.Tau'],
             result['f0.f1.f1.Beta'])
-        print line,
+        print(line, end=' ')
         buffer += line
 
 # Save the string to file "results_StretchedExpFT.dat" whithin the data dir

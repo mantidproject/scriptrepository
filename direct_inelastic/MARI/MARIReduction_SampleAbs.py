@@ -1,5 +1,6 @@
 #pylint: disable=invalid-name
 """ Sample MARI reduction script """
+from __future__ import print_function
 import os
 import sys
 try:
@@ -372,7 +373,7 @@ class MARIReduction(ReductionWrapper):
                             ws_list = []
                             for id, ws_out in enumerate(red_ws):
                                 print('--------------------')
-                                print(ws_out.name())
+                                print((ws_out.name()))
                                 print('--------------------')
                                 ws_list.append('{0}_{1}_SQW'.format(out_ws_name, id))
                                 RenameWorkspace(InputWorkspace=ws_out.name()+'_SQW', OutputWorkspace=ws_list[-1])
@@ -546,14 +547,14 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
         prop_man.monovan_run=None
 
     outws = None
-    for key,val in kwargs.items():
+    for key,val in list(kwargs.items()):
         if key == 'save_file_name':
             if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
-                print "**************************************************************************************"
-                print "*** WARNING: you can not set up single file name for list of files or list of energies"
-                print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
-                print "*** to calculate file name as function of each incident energy and run number."
-                print "**************************************************************************************"
+                print("**************************************************************************************")
+                print("*** WARNING: you can not set up single file name for list of files or list of energies")
+                print("*** change ''set_custom_output_filename'' function, which returns lamda function used ")
+                print("*** to calculate file name as function of each incident energy and run number.")
+                print("**************************************************************************************")
                 continue
         if key == 'wait_for_file':
              rd.wait_for_file = kwargs['wait_for_file']
@@ -771,10 +772,10 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
         else:
             runs_dict = {'MAR{}'.format(run): {temperature: {'data':run}} for run in runno}
             if monovan and sam_mass:
-                for ky in runs_dict.keys():
+                for ky in list(runs_dict.keys()):
                     runs_dict[ky]['sam_mass'] = sam_mass
             if monovan and sam_rmm:
-                for ky in runs_dict.keys():
+                for ky in list(runs_dict.keys()):
                     runs_dict[ky]['sam_rmm'] = sam_rmm
             if 'background' in kwargs:
                 background = kwargs.pop('background')
@@ -813,7 +814,7 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
                     SmoothData(ws_dos, nsmooth, OutputWorkspace=ws_dos.name()+'_smooth')
                     if save_text:
                         SaveAscii(ws_dos.name()+'_smooth', ws_dos.name()+'_smooth.txt', Separator='Space')
-            if 'background' in ws_dict[sam][tt].keys():
+            if 'background' in list(ws_dict[sam][tt].keys()):
                 bkg_ei = [ws.getEFixed(1) for ws in ws_dict[sam][tt]['background']]
                 id_bkg_ei = [np.argsort([np.abs(ei1-ei0) for ei1 in bkg_ei])[0] for ei0 in def_ei]
                 bkg_ws = [ws_dict[sam][tt]['background'][id_bkg_ei[ii]] for ii in range(len(bkg_ei))]

@@ -1,4 +1,5 @@
 #from utils import *
+from __future__ import print_function
 from mantid.simpleapi import *
 from mantid.kernel import funcreturns
 from mantidplot import *
@@ -77,7 +78,7 @@ def sqw(wksp_in,qbin):
 		Transpose(InputWorkspace=wksp_out,OutputWorkspace=wksp_out)
 		return mtd[wksp_out]
 	except:
-		print 'no output workpsace defined'
+		print('no output workpsace defined')
 
 	
 def cut(wksp,min,max,**kwargs):
@@ -90,7 +91,7 @@ def cut(wksp,min,max,**kwargs):
 	'''
 	global active_layer, graph
 	
-	if kwargs.has_key('along') and kwargs.get('along')=='e' or kwargs.has_key('along') and kwargs.get('along')=='E':
+	if 'along' in kwargs and kwargs.get('along')=='e' or 'along' in kwargs and kwargs.get('along')=='E':
 	
 		# get the x vector which in principle is Q
 		xvec=wksp.readX(0)
@@ -104,7 +105,7 @@ def cut(wksp,min,max,**kwargs):
 		numpix=maxel-minel
 		out=numpy.zeros(wksp.getNumberHistograms())
 		outerr=numpy.zeros(wksp.getNumberHistograms())
-		print numpix
+		print(numpix)
 		for i in range(wksp.getNumberHistograms()):
 			out[i]=numpy.sum(wksp.readY(i)[minel:maxel])/numpix
 			
@@ -121,13 +122,13 @@ def cut(wksp,min,max,**kwargs):
 		labely="Intensity arb. units"
 		labelx="Energy Transfer meV"
 		title='Cut from '+str(wksp)+' between '+str(min)+' and '+str(max)+' invA'
-		if kwargs.has_key('over') and kwargs.get('over')==True:
+		if 'over' in kwargs and kwargs.get('over')==True:
 			
 			plotOverFromQtiTable(table,labelx,labely,title)
 		else:
 			plotFromQtiTable(table,labelx,labely,title)
 	
-	if kwargs.has_key('along') and kwargs.get('along')=='q' or kwargs.has_key('along') and kwargs.get('along')=='Q':
+	if 'along' in kwargs and kwargs.get('along')=='q' or 'along' in kwargs and kwargs.get('along')=='Q':
 		wksp=transpose(wksp)
 		# get the x vector which in principle is Q
 		xvec=wksp.readX(0)
@@ -141,7 +142,7 @@ def cut(wksp,min,max,**kwargs):
 		numpix=maxel-minel
 		out=numpy.zeros(wksp.getNumberHistograms())
 		outerr=numpy.zeros(wksp.getNumberHistograms())
-		print numpix
+		print(numpix)
 		for i in range(wksp.getNumberHistograms()):
 			out[i]=numpy.sum(wksp.readY(i)[minel:maxel])/numpix
 			
@@ -159,7 +160,7 @@ def cut(wksp,min,max,**kwargs):
 		labely="Intensity arb. units"
 		labelx="Momentum Transfer |Q|"
 		title='Cut from '+str(wksp)+' between '+str(min)+' and '+str(max)+' meV'
-		if kwargs.has_key('over') and kwargs.get('over')==True:
+		if 'over' in kwargs and kwargs.get('over')==True:
 			
 			plotOverFromQtiTable(table,labelx,labely,title)
 		else:

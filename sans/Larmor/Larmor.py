@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.simpleapi import *
 from shutil import copyfile
 from math import *
@@ -32,13 +33,13 @@ def parseRunList(istring):
 						tstr[j].strip()
 						tstr2=tstr[j].split('-')
 						tstr3=tstr2[1].split(':')
-						r1=range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1]))
+						r1=list(range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1])))
 						for k in r1:
 							rlist2.append(str(k))
 					elif tstr[j].find('-') >=0:
 						tstr[j].strip()
 						tstr2=tstr[j].split('-')
-						r1=range(int(tstr2[0]),int(tstr2[1])+1)
+						r1=list(range(int(tstr2[0]),int(tstr2[1])+1))
 						for k in r1:
 							rlist2.append(str(k))
 					else:
@@ -48,13 +49,13 @@ def parseRunList(istring):
 					rlist1[i].strip()
 					tstr2=rlist1[i].split('-')
 					tstr3=tstr2[1].split(':')
-					r1=range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1]))
+					r1=list(range(int(tstr2[0]),int(tstr3[0])+1,int(tstr3[1])))
 					for k in r1:
 						rlist2.append(str(k))
 				elif rlist1[i].find('-')>=0:
 					rlist1[i].strip()
 					tstr2=rlist1[i].split('-')
-					r1=range(int(tstr2[0]),int(tstr2[1])+1)
+					r1=list(range(int(tstr2[0]),int(tstr2[1])+1))
 					for k in r1:
 						rlist2.append(str(k))
 				else:
@@ -71,7 +72,7 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1,eventbinn
 		return
 	pfix=instrument
 	runlist=parseRunList(runlist)
-	print "runlist=",runlist
+	print("runlist=",runlist)
 	runlist=runlist[0]
 	Load(runlist[0],LoadMonitors='1',OutputWorkspace='added')
 	#print "          uampHr = ", added.getRun().getProtonCharge()
@@ -127,7 +128,7 @@ def add_runs(runlist,pathout,instrument='LARMOR',keepwksp=0,savewksp=1,eventbinn
 		fpad=""
 		for ii in range(nzeros):
 			fpad+="0"
-		print "writing file:   "+pathout+pfix+fpad+runlist[0]+"-add.nxs"
+		print("writing file:   "+pathout+pfix+fpad+runlist[0]+"-add.nxs")
 		SaveNexusProcessed("added",pathout+pfix+fpad+runlist[0]+"-add.nxs")
 		added=mtd['added']
 		#print "    total uampHr = ", added.getRun().getProtonCharge()
@@ -359,7 +360,7 @@ def virtualslitxml(ypos):
 def createMapFile(rnum,fname):
 	'''
 	Generate the mapfile required for create1DPSD
-	e.g. createMapFile(1203,'w:\Users\Masks\Integrate_tubes_map_file.xml')
+	e.g. createMapFile(1203,'w:\\Users\Masks\Integrate_tubes_map_file.xml')
 	'''
 	w1=Load(str(rnum))
 	calibrateTubes(w1,"")
@@ -380,13 +381,13 @@ def createMapFile(rnum,fname):
 		for j in range(len(detlist)-1):
 			s+=str(detlist[j])+','
 		s+=str(detlist[len(detlist)-1])+'"/> </group>\n'
-		print s
+		print(s)
 		f.write(s)
 	s='</detector-grouping>\n'
 	f.write(s)
 	f.close()
 
-def create1DPSD(rnum,lmin=0.8,lmax=13.0,Mapfile='w:\Users\Masks\Integrate_tubes_map_file.xml'):
+def create1DPSD(rnum,lmin=0.8,lmax=13.0,Mapfile='w:\\Users\Masks\Integrate_tubes_map_file.xml'):
 	'''
 	Sum the detector in horizontal stripes according to the setup within a mapfile
 	'''
@@ -462,7 +463,7 @@ def calculateDBFile(rsam,rcan,tsam,tdb,tcan,niterations,filepath,maskfilebase,DB
 		shl.copy(filepath+maskfilebase+'.txt',filepath+maskfilebase+str(i+1)+'.txt')
 		shl.copy(filepath+DBfilebase+'.dat',filepath+DBfilebase+'_v'+str(i+1)+'.dat')
 		for line in finp.input(filepath+maskfilebase+str(i+1)+'.txt',inplace=True):
-			print line.replace('MON/DIRECT='+DBfilebase+'.dat','MON/DIRECT='+DBfilebase+'_v'+str(i+1)+'.dat')
+			print(line.replace('MON/DIRECT='+DBfilebase+'.dat','MON/DIRECT='+DBfilebase+'_v'+str(i+1)+'.dat'))
 
 	#rsam="1761-add"
 	#rcan="1757-add"
@@ -561,7 +562,7 @@ def calculateDBFile(rsam,rcan,tsam,tdb,tcan,niterations,filepath,maskfilebase,DB
 			QA=Q2A+(1./wav2-1./W2)*(Q1A-Q2A)/(1./W1-1./W2)
 			QB=Q2B+(1./wav1-1./W2)*(Q1B-Q2B)/(1./W1-1./W2)
 			# ratio full wavelength data over chosen Q range
-			print wav1,wav2,QA,QB
+			print(wav1,wav2,QA,QB)
 			ratio='ratio_'+str(wav1)+'_'+str(wav2)
 			# NEW x3 lines, if the division falls over here it is usually beacuse you have empty workspace due to Bragg time masks
 			CropWorkspace(reducedAll,OutputWorkspace=ratio,Xmin=QA,Xmax=QB)
@@ -575,7 +576,7 @@ def calculateDBFile(rsam,rcan,tsam,tdb,tcan,niterations,filepath,maskfilebase,DB
 			QAA= mtd["integral"].readX(0)[0]
 			norm = mtd["integral"].readY(0)[0]/(QBB-QAA)
 			normE = mtd["integral"].readE(0)[0]/(QBB-QAA)
-			print QAA,QBB,norm,normE
+			print(QAA,QBB,norm,normE)
 			scaleX.append(wav1)
 			int=mtd["integral"].readY(0)[0]
 			scaleY.append(norm*(wav2-wav1))

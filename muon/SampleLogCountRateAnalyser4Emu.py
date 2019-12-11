@@ -7,6 +7,7 @@ Updated on 17 Jan. 2019, 22 Jan 2019
 Hint: just give run numbers first and try running the code.
 Sometimes date_time format needs a tweak.
 *WIKI*"""
+from __future__ import print_function
 
 import time
 import numpy as np
@@ -54,11 +55,11 @@ class GetPropertyFromRnum(object):
 		self.val13 = ws.run().getLogData("field_t20").value
 		# Get integrated count for each detector, and put them in a dictionary
 		self.dicsum = {}
-		for diclabel, data in ring_dic.items():
+		for diclabel, data in list(ring_dic.items()):
 			integrated_counts = []
 			for idx, ielem in enumerate(data):
 				integrated_counts.append(sum(ws.readY(ielem-1)))
-			self.dicsum[diclabel] = map(lambda x: int(x*nperiod), integrated_counts)
+			self.dicsum[diclabel] = [int(x*nperiod) for x in integrated_counts]
 
 # Table for detector array. This is for EMU
 ring_dic = {
@@ -84,7 +85,7 @@ log_table.addColumn("float", "T20")
 det_table = CreateEmptyTableWorkspace()
 det_table.setTitle("DetectorCountRates")
 det_table.addColumn("int", "RunNumber")
-for diclabel, data in ring_dic.items():
+for diclabel, data in list(ring_dic.items()):
     for idx, ielem in enumerate(data):
 		det_table.addColumn("float", "Det_"+str(ielem))
 # ***Ignore from here***
@@ -104,25 +105,25 @@ for n in range(rnum_start,rnum_end + 1):
 		time0 = time.mktime(time.strptime(logdat.val1,"%Y-%m-%dT%H:%M:%S")) # Calculates absolute time in s for time when run started
 		
 		# Number of frames
-		date_time_array = map(str,np.array(logdat.val2))
+		date_time_array = list(map(str,np.array(logdat.val2)))
 		relative_times = [] # Makes a list of times (in absolute time) for the logged value.
 		for date_time in date_time_array:
 			relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - time0 - adjust)
-		frames_array = map(float,np.array(logdat.val3))
+		frames_array = list(map(float,np.array(logdat.val3)))
 		number_of_frames = frames_array[np.argmax(relative_times)] # Take the largest time for the final value
 		# Total counts from Beamlog_Total_Counts
-		date_time_array = map(str,np.array(logdat.val4))
+		date_time_array = list(map(str,np.array(logdat.val4)))
 		relative_times = []
 		for date_time in date_time_array:
 			relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - time0 - adjust)
-		total_counts_array = map(float,np.array(logdat.val5))
+		total_counts_array = list(map(float,np.array(logdat.val5)))
 		total_counts = total_counts_array[np.argmax(relative_times)]
 		# Slits
-		date_time_array = map(str,np.array(logdat.val6))
+		date_time_array = list(map(str,np.array(logdat.val6)))
 		relative_times = []
 		for date_time in date_time_array:
 			relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - time0 - adjust)
-		slits_array = map(float,np.array(logdat.val7))
+		slits_array = list(map(float,np.array(logdat.val7)))
 		relative_times_reduced = [] # Interested only in times (absolute time) after the start of run. Trims tables for time and log value
 		slits_array_reduced = []
 		for idx, ielem in enumerate(relative_times):
@@ -132,11 +133,11 @@ for n in range(rnum_start,rnum_end + 1):
 		w = np.diff(relative_times_reduced, n=1)	# Parameters are recorded only when there is a change
 		slits_avg = np.average(slits_array_reduced[:-1], weights = w) # Takes weighted average
 		# TS1 current
-		date_time_array = map(str,np.array(logdat.val8))
+		date_time_array = list(map(str,np.array(logdat.val8)))
 		relative_times = []
 		for date_time in date_time_array:
 			relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - time0 - adjust)
-		ts1_current_array = map(float,np.array(logdat.val9))
+		ts1_current_array = list(map(float,np.array(logdat.val9)))
 		relative_times_reduced = []
 		ts1_current_array_reduced = []
 		for idx, ielem in enumerate(relative_times):
@@ -146,11 +147,11 @@ for n in range(rnum_start,rnum_end + 1):
 		w = np.diff(relative_times_reduced, n=1)	
 		ts1_current = np.average(ts1_current_array_reduced[:-1], weights = w)
 		# LF field
-		date_time_array = map(str,np.array(logdat.val10))
+		date_time_array = list(map(str,np.array(logdat.val10)))
 		relative_times = []
 		for date_time in date_time_array:
 			relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - time0 - adjust)
-		field_array = map(float,np.array(logdat.val11))
+		field_array = list(map(float,np.array(logdat.val11)))
 		relative_times_reduced = []
 		field_array_reduced = []
 		for idx, ielem in enumerate(relative_times):
@@ -160,11 +161,11 @@ for n in range(rnum_start,rnum_end + 1):
 		w = np.diff(relative_times_reduced, n=1)	
 		field = np.average(field_array_reduced[:-1], weights = w)
 		# TF field
-		date_time_array = map(str,np.array(logdat.val12))
+		date_time_array = list(map(str,np.array(logdat.val12)))
 		relative_times = []
 		for date_time in date_time_array:
 			relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - time0 - adjust)
-		t20_array = map(float,np.array(logdat.val13))
+		t20_array = list(map(float,np.array(logdat.val13)))
 		relative_times_reduced = []
 		t20_array_reduced = []
 		for idx, ielem in enumerate(relative_times):
@@ -179,15 +180,15 @@ for n in range(rnum_start,rnum_end + 1):
 		# Integrated count for each detector. Normalised to frame. Add it in the table for count rate
 		rnum_detcounts = [n]
 		for diclabel in ring_dic:
-			rnum_detcounts = rnum_detcounts + map(lambda x: x/number_of_frames, logdat.dicsum[diclabel])
+			rnum_detcounts = rnum_detcounts + [x/number_of_frames for x in logdat.dicsum[diclabel]]
 		det_table.addRow(rnum_detcounts)
 
 		print("Run ",n," processed")
 	except Exception as e:
 		print("Run ",n," was not processed")
-		print '===Error==='
-		print 'type:' + str(type(e))
-		print 'args:' + str(e.args)
-		print 'message:' + e.message
-		print 'e itself:' + str(e)
+		print('===Error===')
+		print('type:' + str(type(e)))
+		print('args:' + str(e.args))
+		print('message:' + e.message)
+		print('e itself:' + str(e))
 		

@@ -1,5 +1,6 @@
 # takes wkspin as string of run number 
 # returns ei, as value and rebin parameners as string
+from __future__ import print_function
 import numpy as np
 from peakdet import *
 from mantid.simpleapi import *
@@ -52,7 +53,7 @@ def autoEi(WkspIn,BkgdGen=None,monspecin=None,BkgdLevel=None):
 	max1=maximal[:,1].argmax()
 	#get the correspoiding energy
 	ei=maximal[max1,0]
-	print ei
+	print(ei)
 	#generate some rebin parameters
 	#deltaE is set at 10 points per resolution function of 2%Ei this is to make sofqw3 work. 
 	#There is an issue with the overlapping polygon rebin that results in bad output if the energy transfer vector is 

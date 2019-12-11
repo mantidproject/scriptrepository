@@ -60,7 +60,6 @@ def ParseOrientationString(string):
 
 
 # def ParseStringToDict(st,di0={}): now in quantumtabletools
-
 def ParseTableWorkspaceToDict(tw,di0={}):
 	# column 0 is param names (text, inc index)
 	# column 1 is values (ideally text, free)

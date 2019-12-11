@@ -5,6 +5,7 @@
 # NOTE: All of the parameters that the user must specify are listed with 
 # instructive comments in the sample configuration file: ReduceSCD.config.
 #
+from __future__ import print_function
 import os
 import sys
 import pylab
@@ -66,11 +67,11 @@ else:
   full_name = temp_buffer.readline()
   full_name=full_name.strip()
   if not full_name.endswith('nxs'):
-    print "Exiting since the data_directory was not specified and"
-    print "findnexus failed for event NeXus file: " + instrument_name + " " + str(run)
+    print("Exiting since the data_directory was not specified and")
+    print("findnexus failed for event NeXus file: " + instrument_name + " " + str(run))
     exit(0)
 
-print "\nProcessing File: " + full_name + " ......\n"
+print("\nProcessing File: " + full_name + " ......\n")
 
 # Name the files for this run
 run_niggli_matrix_file = output_directory + "/" + run + "_Niggli.mat"
@@ -87,8 +88,8 @@ total_time = event_ws.run()['duration'].value
 
 number_of_steps = ( math.log(total_time) - math.log(60.0) ) / math.log(MultiplierBase)
 number_of_steps = int(number_of_steps) + 1
-print '\nnumber_of_steps = ', number_of_steps
-print ''
+print('\nnumber_of_steps = ', number_of_steps)
+print('')
 # ln_MultiplierBase = ( math.log(total_time) - math.log(60.0) ) / 10.0
 # MultiplierBase = math.exp(ln_MultiplierBase)
 # print 'For 10 steps, MultiplierBase =', MultiplierBase
@@ -96,7 +97,7 @@ print ''
 # Get complete list of peaks to be integrated and load the UB matrix into
 # the predicted peaks workspace, so that information can be used by the
 # PeakIntegration algorithm.
-print "PREDICTING peaks to integrate...."
+print("PREDICTING peaks to integrate....")
 peaks_ws = PredictPeaks( InputWorkspace = peaks_ws,
         WavelengthMin = min_pred_wl, WavelengthMax = max_pred_wl,
         MinDSpacing = min_pred_dspacing, MaxDSpacing = max_pred_dspacing, 
@@ -186,8 +187,8 @@ while True:
     # Print the results.
     #
     outString = '%10.1f%10d%10d%10d%10d%10d\n' % (time_stop, sum, sig2, sig3, sig5, sig10)
-    print ''
-    print outString
+    print('')
+    print(outString)
     output.write(outString)
     x.append( time_stop )
     ytotal.append( sum )
@@ -204,7 +205,7 @@ while True:
 os.remove( temp_integrate_file )                 
 output.close()
 end_time = time.time()
-print '\nAnalyzed run ' + str(run) + ' in ' + str(end_time - start_time) + ' sec'
+print('\nAnalyzed run ' + str(run) + ' in ' + str(end_time - start_time) + ' sec')
 
 #
 # Plot the results
@@ -227,5 +228,5 @@ pylab.savefig( plotTitle )   # plot saved
 # pylab.ion()                  # turn on interactive mode
 pylab.show()
 
-raw_input('Type RETURN to continue.')
+input('Type RETURN to continue.')
 sys.exit(0)

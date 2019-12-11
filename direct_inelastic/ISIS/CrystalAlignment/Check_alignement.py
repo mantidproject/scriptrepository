@@ -1,4 +1,5 @@
 # Load single crystl white beam data from MERLIN - Sr3 Fe2 O7 sample
+from __future__ import print_function
 
 LoadRaw(Filename='MER16000.raw', OutputWorkspace='MER16000')
 
@@ -12,10 +13,10 @@ u=UnitCell(a,b,c,90,90,90)
 
 # Print d spacing or angle between reflections - examples:
 
-print u.d(1,1,0)
-print u.d(1,0,0)
+print(u.d(1,1,0))
+print(u.d(1,0,0))
 
-print u.recAngle(1,1,0,1,0,0)
+print(u.recAngle(1,1,0,1,0,0))
 
 # If you want to convert to d spacing : 
 #ConvertUnits(InputWorkspace='MER16000', OutputWorkspace='MER16000d', Target='dSpacing')
@@ -63,7 +64,7 @@ rotmat = np.matrix([ [np.cos(ang), -np.sin(ang), 0], [np.sin(ang), np.cos(ang), 
 UBinv = np.linalg.inv(rotmat * mantid2horace * UB)
 uVector = UBinv[:,0] / np.linalg.norm(UBinv[:,0])
 vVector = UBinv[:,1] / np.linalg.norm(UBinv[:,1])
-print uVector,vVector
+print(uVector,vVector)
 # To get rotation angles from this w.r.t. some defined u,v vectors, use the crystal_pars_correct() function in Horace, e.g.:
 #[~, ~, dpsi, gl, gs] = crystal_pars_correct(uFromMantid, vFromMantid, alatt, angdeg, 0, 0, 0, 0, eye(3), uDesired, vDesired)
 

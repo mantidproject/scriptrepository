@@ -5,6 +5,7 @@ This is old script left here for historical reasons.
 qtiGenie is not used for reduction any more. 
 
 """
+from __future__ import print_function
 from qtiGenie import *
 from mantid.simpleapi import *
 from mantid import config
@@ -22,7 +23,7 @@ if len(save_dir) ==0 :
     config['defaultsave.directory']=os.getcwd()
     save_dir = config.getString('defaultsave.directory')
     
-print "Data will be saved into: ",save_dir
+print("Data will be saved into: ",save_dir)
 # map mask and cal file, again the values from Mantid, data search directories can be modified here
 config.appendDataSearchDir('/usr/local/mprogs/InstrumentFiles/mari') 
 # data (raw or nxs) run files -- values from data search directories can be modified here

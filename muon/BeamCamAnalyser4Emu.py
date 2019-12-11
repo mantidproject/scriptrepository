@@ -9,6 +9,7 @@ Uses classes from FlattenAndFitCamera.py and LoadBeamCameraFile.py
 Written by Koji Yokoyama on 28 Jan. 2019
 Hint: you will need to set: a scaling factor, initial values for fitting
 *WIKI*"""
+from __future__ import print_function
 
 import time
 import datetime
@@ -19,8 +20,8 @@ muonfile = "//emu/data/emu%08d.nxs"
 camfile = "//olympic/Babylon5/Scratch/Koji_/Tune_Feb2019/IMG%d.FIT"
 export_image = "yes" # converts graphs into JPG files 
 export_img_file_directory = "C:/your_path/"
-piclist = range(282,332 +1)
-runlist = range(88283,88292 +1) # run numbers from the measurement
+piclist = list(range(282,332 +1))
+runlist = list(range(88283,88292 +1)) # run numbers from the measurement
 beamline_par1 = "UQ13C_CURR" # Refer to the sample logs to find the parameter name
 resultname = beamline_par1
 
@@ -78,7 +79,7 @@ else:
 # reads runs and makes a dictionary of runs and their sample logs
 results={}
 for run in runlist:
-	print "loading ", run
+	print("loading ", run)
 	wstuple=LoadMuonNexus(Filename=muonfile % run)
 	try:
 		ws = wstuple[0][0] # first period if there are some
@@ -111,11 +112,11 @@ for run in runlist:
 	thisres["rateB"]=events/ws.getRun().getProperty("goodfrm").value
 	
 	# calculates (for weighted average) the beamline parameter that you are changing
-	date_time_array = map(str,np.array(ws.run().getLogData(beamline_par1).times))
+	date_time_array = list(map(str,np.array(ws.run().getLogData(beamline_par1).times)))
 	relative_times = []
 	for date_time in date_time_array:
 		relative_times.append(time.mktime(time.strptime(date_time,format_paramlog)) - run_start - adjust)
-	value_array = map(float,np.array(ws.run().getLogData(beamline_par1).value))
+	value_array = list(map(float,np.array(ws.run().getLogData(beamline_par1).value)))
 	relative_times_reduced = []
 	value_array_reduced = []
 	for idx, ielem in enumerate(relative_times):
@@ -124,15 +125,15 @@ for run in runlist:
 			value_array_reduced.append(value_array[idx])
 	w = np.diff(relative_times_reduced, n=1)	
 	beamline_par1_ave = np.average(value_array_reduced[:-1], weights = w) # takes a weighted average
-	print beamline_par1, " relative_times_reduced =", relative_times_reduced
-	print beamline_par1, " value_array_reduced =", value_array_reduced
+	print(beamline_par1, " relative_times_reduced =", relative_times_reduced)
+	print(beamline_par1, " value_array_reduced =", value_array_reduced)
 	
 	thisres["Run"] = run
 	thisres[beamline_par1] = beamline_par1_ave
 	thisres["Slits"] = ws.getRun().getProperty("Slits").value[-1]
 	results[run] = thisres
 	
-print results
+print(results)
 
 # Creates the result table
 tt=WorkspaceFactory.createTable()
@@ -147,16 +148,16 @@ for co in columns:
 
 # Based on the runs analysed above, now analyses image files
 for i in piclist:
-	print "processing", (camfile % i)
+	print("processing", (camfile % i))
 	img=LoadBeamCameraFile(SourceFile=(camfile % i), FilterNoiseLevel='50', BinSize='1', OutputWorkspace='IMG', Scale=str(image_scale))
 	# Find times when the image was taken, relative to time0
 	starttime = time.mktime(time.strptime(str(img.getRun().startTime()).strip(),"%Y-%m-%dT%H:%M:%S")) - time0
 	endtime = time.mktime(time.strptime(str(img.getRun().endTime()).strip(),"%Y-%m-%dT%H:%M:%S")) - time0
-	print "capture duration:", endtime-starttime, "sec \n "
+	print("capture duration:", endtime-starttime, "sec \n ")
 	
-	for rn,r in results.items():
+	for rn,r in list(results.items()):
 		if(starttime>r["begin"] and endtime<r["end"]): # find out which beamline parameter this image corresponding to
-			print "image",i,"taken during run",rn
+			print("image",i,"taken during run",rn)
 		
 			squash=MaskAndFlattenCameraImage(img,*mask)
 			
@@ -186,8 +187,8 @@ for i in piclist:
 				YOverall=YSig/SFac
 				Amplitude = Intens/XSig/YSig/math.sqrt(1+Skew**2/4) # peak
 				
-				print "X centre = ", X0
-				print "Y centre = ", Y0
+				print("X centre = ", X0)
+				print("Y centre = ", Y0)
 				# print "Skew = ", Skew
 				# print "Background = ", Background
 				# print "Intensity = ", Intens
@@ -250,11 +251,11 @@ for i in piclist:
 					g3.close()
 	
 			except:
-				print "fit failed for image :( ",i # don't add to r, another image might be ok	
+				print("fit failed for image :( ",i) # don't add to r, another image might be ok	
 
 # put the calculated values in the result table
-for r in results.values():
-	row=map(lambda x:r[x],columns)
+for r in list(results.values()):
+	row=[r[x] for x in columns]
 	tt.addRow(row)
 
 AnalysisDataService.addOrReplace(resultname,tt)

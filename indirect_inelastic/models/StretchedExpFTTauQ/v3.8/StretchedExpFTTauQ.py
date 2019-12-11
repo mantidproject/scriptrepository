@@ -44,8 +44,8 @@ class StretchedExpFTTauQ(IFunction1D):
         qmin = self.getAttributeValue("Qmin")
         q = self.getAttributeValue("Q")
 
-        for _, value in {'Height': height, 'TauMax': taumax, 'Alpha': alpha,
-                         'Beta': beta, 'Qmin': qmin, 'Q': q}.items():
+        for _, value in list({'Height': height, 'TauMax': taumax, 'Alpha': alpha,
+                         'Beta': beta, 'Qmin': qmin, 'Q': q}.items()):
             if value <= 0:
                 return None
         return {'Height': height, 'TauMax': taumax, 'Alpha': alpha, 'Beta': beta,

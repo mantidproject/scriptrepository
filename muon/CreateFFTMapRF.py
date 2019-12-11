@@ -16,4 +16,3 @@ for run in (runlist):
 	wksplist=wksplist+('freq'+str(run))
 # FFT puts Modulus in spectrum 2
 ConjoinSpectraNumAx(InputWorkspaces=wksplist,OutputWorkspace='fftmap0',WorkspaceIndex=2,LabelUsing='sample_magn_field',LabelValue='Mean')
-

@@ -30,7 +30,7 @@ class LETReduction(ReductionWrapper):
        # unless you going to sum these files. 
        # The range of numbers or run number is used when you run reduction from PC.
       # prop['sample_run'] = range(50359,52000) # 'LET18547.n001'
-       prop['sample_run']=range(50776,50793) #SET DATA RUN NUMBERS GIRI
+       prop['sample_run']=list(range(50776,50793)) #SET DATA RUN NUMBERS GIRI
        prop['wb_run'] = 45879   # monovan run number 
        #
        prop['sum_runs'] = True # set to true to sum everything provided to sample_run

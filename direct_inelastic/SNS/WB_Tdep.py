@@ -1,12 +1,13 @@
 """
 Temperature dependence of scattering intensity between Qmin,Qmax. Detectors are groupped 16x4, the groups belonging to data/background are selected below
 """
+from __future__ import print_function
 
 from numpy import *
 from string import *
 
 IPTSpath='/SNS/SEQ/IPTS-6225'
-runsup=range(32298,32357)
+runsup=list(range(32298,32357))
 runsdown=arange(32357,32411)
 runsdown=append(runsdown,arange(32412,32513))
 
@@ -41,16 +42,16 @@ for r in runsup:
 	err=sqrt(signal)/len(dataGroups)
 	signal=signal/len(dataGroups)
 	temp=(wg.getRun()['SampleTemp']).getStatistics().mean
-	print temp,signal,err,bkg,errbkg
+	print(temp,signal,err,bkg,errbkg)
 	alltemps.append(temp)
 	allsignal.append(signal)
 	allerror.append(err)
 	allbkg.append(bkg)
 	allbkgerr.append(errbkg)
 	
-z=zip(alltemps,allsignal,allerror,allbkg,allbkgerr)
+z=list(zip(alltemps,allsignal,allerror,allbkg,allbkgerr))
 z.sort()
-alltemps,allsignal,allerror,allbkg,allbkgerr=zip(*z)
+alltemps,allsignal,allerror,allbkg,allbkgerr=list(zip(*z))
 
 Intup=CreateWorkspace(alltemps,allsignal,allerror,1,YUnitLabel='Counts/muAh')
 BGup=CreateWorkspace(alltemps,allbkg,allbkgerr,1,YUnitLabel='Counts/muAh')
@@ -81,16 +82,16 @@ for r in runsdown:
 	err=sqrt(signal)/len(dataGroups)
 	signal=signal/len(dataGroups)
 	temp=(wg.getRun()['SampleTemp']).getStatistics().mean
-	print temp,signal,err,bkg,errbkg
+	print(temp,signal,err,bkg,errbkg)
 	alltemps.append(temp)
 	allsignal.append(signal)
 	allerror.append(err)
 	allbkg.append(bkg)
 	allbkgerr.append(errbkg)
 	
-z=zip(alltemps,allsignal,allerror,allbkg,allbkgerr)
+z=list(zip(alltemps,allsignal,allerror,allbkg,allbkgerr))
 z.sort()
-alltemps,allsignal,allerror,allbkg,allbkgerr=zip(*z)
+alltemps,allsignal,allerror,allbkg,allbkgerr=list(zip(*z))
 
 Intdown=CreateWorkspace(alltemps,allsignal,allerror,1,YUnitLabel='Counts/muAh')
 BGdown=CreateWorkspace(alltemps,allbkg,allbkgerr,1,YUnitLabel='Counts/muAh')

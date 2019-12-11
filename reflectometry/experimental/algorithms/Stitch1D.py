@@ -6,6 +6,7 @@ are not provided, then these are taken to be the region of x-axis intersection.
 
 The workspaces must be histogrammed. Use [[ConvertToHistogram]] on workspaces prior to passing them to this algorithm.
 *WIKI*"""
+from __future__ import print_function
 from mantid.simpleapi import *
 
 from mantid.api import *
@@ -61,7 +62,7 @@ class Stitch1D(PythonAlgorithm):
             alg.setPropertyValue("OutputWorkspace","UNUSED_NAME_FOR_CHILD")
         
         alg.setRethrows(True)
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             alg.setProperty(key, value)
         
         alg.execute()
@@ -134,7 +135,7 @@ class Stitch1D(PythonAlgorithm):
         outScaleFactor = self.getProperty('OutScaleFactor').value
         
         params = self.__create_rebin_parameters()
-        print params
+        print(params)
         lhs_rebinned = self.__run_as_child("Rebin", InputWorkspace=self.getProperty("LHSWorkspace").value, Params=params)
         rhs_rebinned = self.__run_as_child("Rebin", InputWorkspace=self.getProperty("RHSWorkspace").value, Params=params)
         

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import scipy
 from scipy.optimize import fmin
@@ -61,9 +62,9 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         tubestart = tube
         tubeend = tube
         cal_info = 'door-{0}_pack-{1}_tube-{2}'.format(bank,pack,tube)
-        print doorstart
-        print packstart
-        print tubestart
+        print(doorstart)
+        print(packstart)
+        print(tubestart)
 
     run_dir =  config['defaultsave.directory']
     targ_file_name =  'calibratioon_res_{0}.csv'.format(cal_info)
@@ -76,7 +77,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         for pack in range(packstart[np.array(bank)-1],packend[np.array(bank)-1]+1):
             for tube in range(tubestart,tubeend+1):
                 tube_id = int(str(bank)+str(pack)+str(tube))
-                print tube_id
+                print(tube_id)
                 myindex = np.nonzero(det_tubes==tube_id)
                 spec_tube = np.array(spec_num)[[myindex[0]]]
                 spec_min = int(min(spec_tube))
@@ -93,15 +94,15 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
                 if max(yval)!=0:
                     myout = myfit_data(bank,pack,tube,yval,mylen)
                 if myout is not None:
-                    print tube_id,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6]
+                    print(tube_id,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6])
                     fid.write('{0:3.0f}, {1:0.2f}, {2:0.2f}, {3:0.2f}, {4:0.2f}, {5:0.2f}, {6:0.2f}, {7:0.2f}\n'.format(tube_id,myout[0],myout[1],myout[2],myout[3],myout[4],myout[5],myout[6]))
                 else:
                     plt.show(1)
                     raise RuntimeError('Could not fit')
     fid.close()
     print('***********************************************')
-    print('*** Calibration info is written in file: {0}'.format(targ_file_name));
-    print('*** Located in folder: {0}'.format(run_dir));    
+    print(('*** Calibration info is written in file: {0}'.format(targ_file_name)));
+    print(('*** Located in folder: {0}'.format(run_dir)));    
     print('***********************************************')    
     
     
@@ -110,7 +111,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
  
 def myfit_data(bank,pack,tube,Intensity,mylen):
     error = np.sqrt(Intensity)
-    position = range(1,513)
+    position = list(range(1,513))
     left_end = 0
     middle = 0
     right_end = 0
@@ -182,7 +183,7 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
         return
     
     left_end = p[1]
-    print left_end
+    print(left_end)
     if mylen==3:    
         myx = np.arange(min(pos),max(pos),0.5)
         myy = endf(p,myx)
@@ -247,7 +248,7 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
         return
 
     right_end = p[1]
-    print right_end
+    print(right_end)
     if mylen==3:
         myx = np.arange(min(pos),max(pos),0.5)
         myy = endf(p,myx)
@@ -312,7 +313,7 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
             plt.show()
             plt.draw()
         stripe1 = p[1]
-        print stripe1
+        print(stripe1)
         stripes.append(stripe1)
 
     if np.logical_and(bank==3,pack==1): 

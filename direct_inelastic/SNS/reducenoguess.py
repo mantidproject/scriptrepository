@@ -2,6 +2,7 @@
 Simplified version of reduction using DGSReduction algorithm
 """
 #!/usr/bin/env python
+from __future__ import print_function
 
 import os
 import sys
@@ -44,7 +45,7 @@ for irun in runs:
 	Ei=alg[0]
 	erange=str(-0.2*Ei)+','+str(0.005*Ei)+','+str(0.95*Ei)
 	#change log times
-	for x in w.getRun().keys():
+	for x in list(w.getRun().keys()):
 		if x not in ['duration','proton_charge','start_time','run_title','run_start','run_number','gd_prtn_chrg','end_time']:
 			try:
 				ShiftTime('w',x)
@@ -68,7 +69,7 @@ for irun in runs:
 	r=mtd['reduced']
 	psi=r.getRun()['CCR16Rot'].getStatistics().mean
 	outfilename=IPTS_directory+'shared/Rotreduced/SEQ_'+str(irun)+'.nxspe'
-	print irun,psi
+	print(irun,psi)
 	irun=irun+1
 	SaveNXSPE(r,outfilename,r.getRun()['Ei'].value,psi,'1')
 

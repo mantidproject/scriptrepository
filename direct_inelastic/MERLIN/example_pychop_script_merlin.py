@@ -1,4 +1,5 @@
 #Example script for using PyChop
+from __future__ import print_function
 
 #All examples are for MAPS, but the same routines can be used for MARI on MERLIN
 

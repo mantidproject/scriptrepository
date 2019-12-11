@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 # File: ReduceSCD_Parallel.py
 #
@@ -44,8 +45,8 @@ sys.path.append("/opt/mantidnightly/bin")
 
 from mantid.simpleapi import *
 
-print "API Version"
-print apiVersion()
+print("API Version")
+print(apiVersion())
 
 start_time = time.time()
 
@@ -60,7 +61,7 @@ class ProcessThread ( threading.Thread ):
       self.command = command
 
    def run ( self ):
-      print 'STARTING PROCESS: ' + self.command
+      print('STARTING PROCESS: ' + self.command)
       os.system( self.command )
 
 # -------------------------------------------------------------------------
@@ -69,7 +70,7 @@ class ProcessThread ( threading.Thread ):
 # Get the config file name from the command line
 #
 if (len(sys.argv) < 2):
-  print "You MUST give the config file name on the command line"
+  print("You MUST give the config file name on the command line")
   exit(0)
 
 config_files = sys.argv[1:]
@@ -143,9 +144,9 @@ while not all_done:
   if len(list) == 0 and len(active_list) == 0 :
     all_done = True
 
-print "\n**************************************************************************************"
-print   "************** Completed Individual Runs, Starting to Combine Results ****************"
-print   "**************************************************************************************\n"
+print("\n**************************************************************************************")
+print("************** Completed Individual Runs, Starting to Combine Results ****************")
+print("**************************************************************************************\n")
 
 #
 # First combine all of the integrated files, by reading the separate files and
@@ -225,7 +226,7 @@ if not use_cylindrical_integration:
 
 if use_cylindrical_integration:
   if (not cell_type is None) or (not centering is None):
-    print "WARNING: Cylindrical profiles are NOT transformed!!!"
+    print("WARNING: Cylindrical profiles are NOT transformed!!!")
   # Combine *.profiles files
   filename = output_directory + '/' + exp_name + '.profiles'
   output = open( filename, 'w' )
@@ -258,11 +259,11 @@ if use_cylindrical_integration:
 
 end_time = time.time()
 
-print "\n**************************************************************************************"
-print   "****************************** DONE PROCESSING ALL RUNS ******************************"
-print   "**************************************************************************************\n"
+print("\n**************************************************************************************")
+print("****************************** DONE PROCESSING ALL RUNS ******************************")
+print("**************************************************************************************\n")
 
-print 'Total time:   ' + str(end_time - start_time) + ' sec'
-print 'Config file: ' + ", ".join(config_files)
-print 'Script file:  ' + reduce_one_run_script + '\n'
-print
+print('Total time:   ' + str(end_time - start_time) + ' sec')
+print('Config file: ' + ", ".join(config_files))
+print('Script file:  ' + reduce_one_run_script + '\n')
+print()

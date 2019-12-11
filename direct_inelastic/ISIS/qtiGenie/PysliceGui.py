@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import sys
 from PySliceUI2 import Ui_MainWindow
@@ -114,7 +115,7 @@ class MainWindow(QtGui.QMainWindow):
 	def setInst(self):
 	
 		self.inst=str(self.ui.InstName.currentText())
-		print self.inst 
+		print(self.inst) 
 		
 		if self.inst=='Mari':
 			self.shortname='MAR'
@@ -124,7 +125,7 @@ class MainWindow(QtGui.QMainWindow):
 	def setNormMethod(self):
 	
 		self.Normalisation=str(self.ui.NormMethod.currentText())
-		print self.Normalisation
+		print(self.Normalisation)
 		
 		
 	def BkgSwitchOn(self):
@@ -132,30 +133,30 @@ class MainWindow(QtGui.QMainWindow):
 		if self.BkgSwitch==False:
 			self.BkgSwitch =True
 			self.BkgdRange=[]
-			print 'Background subtraction on'
+			print('Background subtraction on')
 		else:
 			self.BkgSwitch =False
 			self.BkgdRange=[]
-			print 'Background subtraction off'
+			print('Background subtraction off')
 	
 	def sumRunsOn(self):
 	
 		if self.sumRunsCheck==False:
 			self.sumRunsCheck =True
-			print 'Reduction will sum runs'
+			print('Reduction will sum runs')
 		else:
 			self.sumRunsCheck =False
-			print 'Reduction will not sum runs'
+			print('Reduction will not sum runs')
 			
 	def AutoEiOn(self):
 	
 		if self.AutoEi==False:
 			self.AutoEi =True
-			print 'AutoEi on'
+			print('AutoEi on')
 		else:
 			self.AutoEi =False
 			self.EiVal=double(self.ui.EiGuess.text())
-			print 'AutoEi off: Ei guess is', str(self.EiVal),' meV'
+			print('AutoEi off: Ei guess is', str(self.EiVal),' meV')
 			
 	
 	def FixEiOn(self):
@@ -163,10 +164,10 @@ class MainWindow(QtGui.QMainWindow):
 		if self.FixEi==False:
 			self.FixEi =True
 			self.EiVal=double(self.ui.EiGuess.text())
-			print 'FixEi on set to :', str(self.EiVal),' meV'
+			print('FixEi on set to :', str(self.EiVal),' meV')
 		else:
 			self.FixEi =False
-			print 'FixEi off'
+			print('FixEi off')
 	
 	
 	def MonitorSpec(self):
@@ -174,19 +175,19 @@ class MainWindow(QtGui.QMainWindow):
 		if self.MonitorSpec==False:
 			self.MonitorSpec =True
 			self.MonitorSpectrumNumber=int(self.ui.MonSpecNumber.text())
-			print 'Monitor spectrum set to :', str(self.MonitorSpectrumNumber)
+			print('Monitor spectrum set to :', str(self.MonitorSpectrumNumber))
 		else:
 			self.MonitorSpec =False
-			print 'Monitor spectrum set to default'
+			print('Monitor spectrum set to default')
 	
 	def AbsNormOn(self):
 	
 		if self.AbsNormStatus==False:
 			self.AbsNormStatus =True
-			print 'Absolute Normalisation on'
+			print('Absolute Normalisation on')
 		else:
 			self.AbsNormStatus =False
-			print 'Absolute Normalisation off'
+			print('Absolute Normalisation off')
 	def getRuns(self):
 		WB=str(self.ui.DetVanNum.text())
  		Run=str(self.ui.RunNum.text())
@@ -200,7 +201,7 @@ class MainWindow(QtGui.QMainWindow):
  			#case for a colon separated list
  			#generate a list of strings from range
  			tmp=Run.split(':')
- 			Runs=range(int(tmp[0]),int(tmp[1])+1)
+ 			Runs=list(range(int(tmp[0]),int(tmp[1])+1))
  		
  		if len(Run.split(','))==1 & len(Run.split(':'))==1:
 			if Run=='current':
@@ -212,7 +213,7 @@ class MainWindow(QtGui.QMainWindow):
  				Runs=[1]
  				Runs[0]=tmp
 
- 		print Runs, type(Run)
+ 		print(Runs, type(Run))
  		return WB,Runs
  	
  	def Reduce(self):
@@ -227,7 +228,7 @@ class MainWindow(QtGui.QMainWindow):
  		#absolute normalisation will be preformed
  		#try:
 		WB,Runs=self.getRuns()
-		print Runs, type(Runs)
+		print(Runs, type(Runs))
 		
 		iliad_setup(self.shortname)
 		mapfile=str(self.ui.mapfile.text())
@@ -303,7 +304,7 @@ class MainWindow(QtGui.QMainWindow):
  	
  		#try:
 		WB,Runs=self.getRuns()
-		print Runs, type(Runs)
+		print(Runs, type(Runs))
 		
 		if Runs=='current':
 			#get live data
@@ -366,7 +367,7 @@ class MainWindow(QtGui.QMainWindow):
 		#	self.ui.ReduceOutput.addItem(String)
 			
  	def setwksp(self):
- 		print 'high'
+ 		print('high')
  	
  	def removeWksp(self):
  		tmp=self.ui.wkspList.selectedItems()[0].text()
@@ -390,7 +391,7 @@ class MainWindow(QtGui.QMainWindow):
  		temp=float(self.ui.Temperature.text())
  		
  		if temp >=0.0:
- 			print 'Correct for Bose factor'
+ 			print('Correct for Bose factor')
  			tmp=self.ui.wkspList.selectedItems()[0].text()
  			row= self.ui.wkspList.currentRow()
  			self.ui.wkspList.takeItem(row)
@@ -401,7 +402,7 @@ class MainWindow(QtGui.QMainWindow):
 			data=self.data_dict.get(str(self.selectedWksp))
 			data.boseFac(temp)
  		else:
- 			print 'Enter temperature in kelvin for run'
+ 			print('Enter temperature in kelvin for run')
  			
  		
  	def pdos(self):
@@ -409,7 +410,7 @@ class MainWindow(QtGui.QMainWindow):
  		dbwfac=float(self.ui.DBWFac.text())
  		
  		if temp >=0.0:
- 			print 'Calculate Density of States'
+ 			print('Calculate Density of States')
  			tmp=self.ui.wkspList.selectedItems()[0].text()
  			row= self.ui.wkspList.currentRow()
  			self.ui.wkspList.takeItem(row)
@@ -419,7 +420,7 @@ class MainWindow(QtGui.QMainWindow):
 			data=self.data_dict.get(str(self.selectedWksp))
 			data.gofe(temp,dbwfac)	
 		else:
- 			print 'Enter temperature in kelvin for run'
+ 			print('Enter temperature in kelvin for run')
  			
  	def refreshlist(self): 
 		self.ui.WkspIn.clear() 
@@ -439,12 +440,12 @@ class MainWindow(QtGui.QMainWindow):
 			tmp=mtd[allNames[i]]
 			try:
 				if tmp.getAxis(0).getUnit().caption() == 'Energy transfer' and tmp.getName().find('SQW')==-1:
-					print allNames[i] +' has units of energy transfer'
+					print(allNames[i] +' has units of energy transfer')
 					if tmp.getNumberHistograms() > 1:
 						self.ui.WkspIn.insertItem(iter,allNames[i])
 					iter=iter+1
 			except:
-				print allNames[i]  +' is not a matrix workspace'
+				print(allNames[i]  +' is not a matrix workspace')
 
 		
 		
@@ -488,9 +489,9 @@ class MainWindow(QtGui.QMainWindow):
 			self.selectedWksp = tmp.split(':')[0]
 			data=self.data_dict.get(str(self.selectedWksp))
 		except:
-			print 'select workspace to plot from'
+			print('select workspace to plot from')
 		if dir=='E':
-			print 'Cut along E'
+			print('Cut along E')
 			self.fignum=self.fignum+1
 			data.ECut(self.intMin,self.intMax,self.cutMin,self.delta,self.cutMax,shoelace=True)
 			entry=data.figure_dict.get(data.fignum)
@@ -505,7 +506,7 @@ class MainWindow(QtGui.QMainWindow):
 			self.ui.FigureList.addItem(string)
 			
 		if dir =='|Q|':
-			print 'Cut along |Q|'
+			print('Cut along |Q|')
 			self.fignum=self.fignum+1
 			data.QCut(self.intMin,self.intMax,self.cutMin,self.delta,self.cutMax,shoelace=True)
 			entry=data.figure_dict.get(data.fignum)
@@ -550,9 +551,9 @@ class MainWindow(QtGui.QMainWindow):
 			#print self.masterFigureDict
 			#print figHandle
 		except:
-			print 'Select both workspace to plot from and figure to plot onto'
+			print('Select both workspace to plot from and figure to plot onto')
 		if dir=='E':
-			print 'Plot over along E'
+			print('Plot over along E')
 			
 			data.ECut(self.intMin,self.intMax,self.cutMin,self.delta,self.cutMax,over=True,Handle=figHandle,shoelace=True)
 			
@@ -565,7 +566,7 @@ class MainWindow(QtGui.QMainWindow):
 			self.masterFigureDict.setdefault(int(self.selectedFig),entry)
 			
 		if dir =='|Q|':
-			print 'Plot Over along |Q|'
+			print('Plot Over along |Q|')
 			data.QCut(self.intMin,self.intMax,self.cutMin,self.delta,self.cutMax,over=True,Handle=figHandle,shoelace=True)
 			
 			entry=data.figure_dict.get(data.fignum)
@@ -610,14 +611,14 @@ class MainWindow(QtGui.QMainWindow):
 				data.display()
 				
 		except:
-			print 'Select data to display'
+			print('Select data to display')
 				
 	def calcProj(self):
 	
 		wkspName=str(self.ui.WkspIn.currentText())
 		
 		if self.data_dict.get(str(wkspName)) != None:
-			print 'S(qw) data from ',wkspName,'exists, deleting existing instance'
+			print('S(qw) data from ',wkspName,'exists, deleting existing instance')
 			tmpdata=self.data_dict.get(str(wkspName))
  			DeleteWorkspace(tmpdata.data)
  			DeleteWorkspace(tmpdata.data_disp)

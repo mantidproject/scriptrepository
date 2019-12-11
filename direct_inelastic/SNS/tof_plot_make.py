@@ -4,7 +4,7 @@ Make some plots using matplotlib
 from mantid.simpleapi import*
 outdir='/SNS/SEQ/IPTS-7672/shared/19g/tof_figs/'
 indir='/SNS/SEQ/IPTS-7672/data/'
-runs=range(33012,33193)
+runs=list(range(33012,33193))
 
 def plot_sum(x,y,err,titlestr='',xstr='',ystr=''):
 	h_f=figure()
