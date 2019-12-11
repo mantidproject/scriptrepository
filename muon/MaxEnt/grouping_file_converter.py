@@ -51,14 +51,14 @@ def convert_grouping_file(path, inst, description=None):
             groupings[group].add(detector)
 
         groupings_str = ""
-        for group, detectors in groupings.items():
+        for group, detectors in list(groupings.items()):
 
             groupings_str += "\n"
             groupings_str += GROUP_LINE % (str(group), 
                                            str(",".join(map(str,sorted(list(detectors))))))
 
         if description == None:
-            n_groups = sum([len(dets) for dets in groupings.values()])
+            n_groups = sum([len(dets) for dets in list(groupings.values())])
             description = "%s Grouping File for MaxEnt (%d Detectors)" % (inst, n_groups)
 
         return FILE_FORMAT % (__file__, inst, description, groupings_str)

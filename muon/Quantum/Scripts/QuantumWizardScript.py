@@ -447,4 +447,3 @@ elif(nh <= 5):
 	plotSpectrum("Results",list(range(nh)))
 else:
 	plot2D("results")
-	

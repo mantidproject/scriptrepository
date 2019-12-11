@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mantid.api import PythonAlgorithm, AlgorithmFactory
 from mantid.kernel import StringListValidator, StringMandatoryValidator
 from qtiGenie import *
@@ -19,9 +20,9 @@ class c2et(PythonAlgorithm):
 		dVan = self.getProperty("dVan")
 		Ei = float(self.getProperty("Ei"))
 		rebin = str(self.getProperty("Rebin"))
-		print rebin
+		print(rebin)
 		mapfile=self.getProperty("mapfile")
-		print mapfile
+		print(mapfile)
 		inst=self.getProperty("instrument")
 		kw=self.getProperty("keywords")
 		

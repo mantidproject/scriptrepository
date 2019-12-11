@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import numpy as np
 import scipy
@@ -81,25 +82,25 @@ def adjust_detector_MER(fit_res,det_source_file):
             fit_pos = ((np.array(fit_par)-256)/512)*tube_len_long
             true_pos = [-0.48, -0.21, -0.15, 0, 0.15, 0.28, 0.48]       #fractional positions of stripes taken from calibration bin
             true_pos = np.array(true_pos)*tube_len_long
-            ideal_det_pos = -0.5*tube_len_long + 0.5*xbin_long + np.array(range(0,nDet))*xbin_long
+            ideal_det_pos = -0.5*tube_len_long + 0.5*xbin_long + np.array(list(range(0,nDet)))*xbin_long
         elif tube_type==1:
             fit_par = [tub_fit['peak4'][tub_num],tub_fit['peak5'][tub_num],tub_fit['tube_end'][tub_num]]
             true_pos = [0.15, 0.28, 0.48]       #fractional positions of stripes taken from calibration bin
             true_pos = np.array(true_pos)*tube_len_long 
             fit_pos = high_short_tube_pos + ((np.array(fit_par))/512)*tube_len_short
-            ideal_det_pos = high_short_tube_pos + 0.5*xbin_short + np.array(range(0,nDet))*xbin_short
+            ideal_det_pos = high_short_tube_pos + 0.5*xbin_short + np.array(list(range(0,nDet)))*xbin_short
         elif tube_type==2:
             fit_par = [tub_fit['tube_start'][tub_num],tub_fit['peak1'][tub_num],tub_fit['peak2'][tub_num]]
             true_pos = [-0.48, -0.21, -0.15]       #fractional positions of stripes taken from calibration bin
             true_pos = np.array(true_pos)*tube_len_long
             fit_pos = low_short_tube_pos + ((np.array(fit_par))/512)*tube_len_short
-            ideal_det_pos = low_short_tube_pos + 0.5*xbin_short + np.array(range(0,nDet))*xbin_short
+            ideal_det_pos = low_short_tube_pos + 0.5*xbin_short + np.array(list(range(0,nDet)))*xbin_short
         else:
             error('Adjust Detectors - Invalid argument')
         
-        print 'Tube N',tub_num,'With ID: ',tube_id,' has peaks fitted at: ',fit_par
-        print 'True peaks positions: ',fit_pos
-        print 'Stripes positions: '  ,true_pos
+        print('Tube N',tub_num,'With ID: ',tube_id,' has peaks fitted at: ',fit_par)
+        print('True peaks positions: ',fit_pos)
+        print('Stripes positions: '  ,true_pos)
         
         z_new = tube_correction(true_pos,fit_pos,ideal_det_pos)
                 

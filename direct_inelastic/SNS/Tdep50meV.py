@@ -1,11 +1,12 @@
 """
 Plot temperature dependence for data in a set of runs
 """
+from __future__ import print_function
 from numpy import *
 from string import *
 
 IPTSpath='/SNS/SEQ/IPTS-6225'
-runsTup=range(32752,32846)
+runsTup=list(range(32752,32846))
 
 #filename=IPTSpath+'/data/SEQ_32846_event.nxs'
 #wm=LoadNexusMonitors(filename)
@@ -48,16 +49,16 @@ for r in runsTup:
 	signal2=s2.readY(0)[0]
 
 	temp=(w1.getRun()['SampleTemp']).getStatistics().mean
-	print temp,signal1,Imax1,signal2,Imax2
+	print(temp,signal1,Imax1,signal2,Imax2)
 	allTemps.append(temp)
 	allIntegratedSignal1.append(signal1)
 	allPeakSignal1.append(Imax1)
 	allIntegratedSignal2.append(signal2)
 	allPeakSignal2.append(Imax2)
 	
-z=zip(allTemps,allPeakSignal1,allIntegratedSignal1,allPeakSignal2,allIntegratedSignal2)
+z=list(zip(allTemps,allPeakSignal1,allIntegratedSignal1,allPeakSignal2,allIntegratedSignal2))
 z.sort()
-allTemps,allPeakSignal1,allIntegratedSignal1,allPeakSignal2,allIntegratedSignal2=zip(*z)
+allTemps,allPeakSignal1,allIntegratedSignal1,allPeakSignal2,allIntegratedSignal2=list(zip(*z))
 
 Int_1p5_0p0=CreateWorkspace(allTemps,allIntegratedSignal1,sqrt(allIntegratedSignal1),1,YUnitLabel='Counts/muAh')
 Peak_1p5_0p0=CreateWorkspace(allTemps,allPeakSignal1,sqrt(allPeakSignal1),1,YUnitLabel='Counts/muAh')

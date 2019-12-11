@@ -283,7 +283,7 @@ class MERLINReduction(ReductionWrapper):
             n_spectra = len(check_spectra)
             if n_spectra == 0:
                 n_specra = corrections.getNumberHistograms()
-            mpl.plotSpectrum(corrections,range(0,n_spectra))
+            mpl.plotSpectrum(corrections,list(range(0,n_spectra)))
         #
         return corrections
 

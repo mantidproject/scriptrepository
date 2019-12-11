@@ -1,3 +1,4 @@
+from __future__ import print_function
 from qtiGenie import *
 import datetime
 iliad_setup('merlin')
@@ -72,19 +73,19 @@ for run in run_no:     #loop around runs
         complete_file=FileFinder.getFullPath(short_final)
         interm_file = FileFinder.getFullPath(short_interm)
         if (len(complete_file) > 0 or len(interm_file ) > 0) or ignore_wait:
-            print "------------------------------------------------------------------------"
+            print("------------------------------------------------------------------------")
             if len(complete_file)>0:
                   aok=1
-                  print "*** processing final file {0}".format(complete_file)
+                  print("*** processing final file {0}".format(complete_file))
                   Load(Filename=complete_file,OutputWorkspace='w1',SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0',Precount=True)
             else:
-                  print "*** processing intermediate file {0}".format(interm_file)
+                  print("*** processing intermediate file {0}".format(interm_file))
                   # This should be uncommented instead generic load to work with histogram-mode nexus file
                   #w1=LoadNexus(interm_file)
                   #w1_monitors=LoadNexusMonitors(interm_file)
                   w1,w1_monitors=Load(Filename=interm_file,SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0',Precount=True)
                   run_count+=1
-                  print "------------------------------------------------------------------------"
+                  print("------------------------------------------------------------------------")
  
             AddSampleLog(Workspace='w1',LogName='run_number',LogText=str(run),LogType='Number') #only have to do this as run_number is passed to workspace for event files
 
@@ -98,7 +99,7 @@ for run in run_no:     #loop around runs
             # this section finds all the transmitted incident energies if you have not provided them
             if len(ei) == 0:  #-- not tested here -- should be unit test for that. 
                 ei = find_chopper_peaks('w1_monitors');       
-                print 'Energies transmitted are:',
+                print('Energies transmitted are:', end=' ')
             print (ei)
 
             RenameWorkspace(InputWorkspace = 'w1',OutputWorkspace='w1_storage');
@@ -107,9 +108,9 @@ for run in run_no:     #loop around runs
             #now loop around all energies for the run
             result =[];
             for ind,energy in enumerate(ei):
-                print float(energy)
+                print(float(energy))
                 (energybin,tbin,t_elastic) = find_binning_range(energy,ebin);
-                print " Rebinning will be performed in the range: ",energybin
+                print(" Rebinning will be performed in the range: ",energybin)
                 # if we calculate more then one energy, initial workspace will be used more then once
                 if ind <len(ei)-1:
                     CloneWorkspace(InputWorkspace = 'w1_storage',OutputWorkspace='w1')
@@ -144,15 +145,15 @@ for run in run_no:     #loop around runs
                 ws_name = 'MER{0}_ei{1:3.1f}mev'.format(run,energy);
                 #RenameWorkspace(InputWorkspace=out,OutputWorkspace=ws_name);
                 fileName=ws_name+'.nxspe';
-                print 'Saving results into file {0}'.format(fileName)
+                print('Saving results into file {0}'.format(fileName))
                 SaveNXSPE(InputWorkspace=out,Filename=fileName)
 
 
                 elapsed = (time.clock() - start)
-                print "Time to process run {0} with energy {1} is: {2} sec".format(run,energy,elapsed)
+                print("Time to process run {0} with energy {1} is: {2} sec".format(run,energy,elapsed))
         else:
           aok=0
-          print " waiting for files {0} or {1} to appear on the data search path".format(short_interm,short_final)
+          print(" waiting for files {0} or {1} to appear on the data search path".format(short_interm,short_final))
           Pause(900)
 
 

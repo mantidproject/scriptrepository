@@ -89,7 +89,7 @@ OWSBN='E_500_ev_'
 FilterEvents(InputWorkspace='E_500',OutputWorkspaceBaseName=OWSBN,SplittersInformationWorkspace='Sp_Info',InputSplittersWorkspace='split_ws')
 h_Sp_Info=mtd['Sp_Info']
 Sp_index=np.array(h_Sp_Info.column(0))-1
-ky_lst=mantid.keys()
+ky_lst=list(mantid.keys())
 for idx in Sp_index[1:]:
    WS_name=OWSBN+'_'+str(idx)
    skip_flag=False

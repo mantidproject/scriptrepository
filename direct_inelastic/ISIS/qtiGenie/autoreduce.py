@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import re
 sys.path.append("/opt/Mantid/bin")
@@ -27,7 +28,7 @@ InstrName = dataFilePath.lower().split('/ndx')[1].split('/')[0]
 #############################################
 
 
-print 'data file path: ' + dataFilePath
+print('data file path: ' + dataFilePath)
 sys.path.append(dataFilePath)
 
 iliad_setup(InstrName)
@@ -78,7 +79,7 @@ if loadFreshWB:
 ######################################################################
 
 
-print ' processing file ', dataFile
+print(' processing file ', dataFile)
 #w1 = dgreduce.getReducer().load_data(run,'w1')
 Load(Filename=dataFile,OutputWorkspace='w1',LoadMonitors='1');
 
@@ -91,9 +92,9 @@ if remove_background:
 # this section finds all the transmitted incident energies
 if len(ei) == 0:
    ei = find_chopper_peaks('w1_monitors');
-   print ei
+   print(ei)
     
-print 'energies to process are:'
+print('energies to process are:')
 print (ei)
 
 RenameWorkspace(InputWorkspace = 'w1',OutputWorkspace='w1_storage');
@@ -117,7 +118,7 @@ argi['monovan_mapfile']=monovan_mapfile;
 
 
 for ind,energy in enumerate(ei):
-    print "Reducing around energy: {0}".format(float(energy))
+    print("Reducing around energy: {0}".format(float(energy)))
     # Instrument Specific parameters used
     (energybin,tbin,t_elastic) = find_binning_range(energy,ebin);
                        

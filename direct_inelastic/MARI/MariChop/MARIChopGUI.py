@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 from MARIChopUI import Ui_MainWindow
 from PyQt4 import QtCore, uic,QtGui
@@ -41,20 +42,20 @@ class MainWindow(QtGui.QMainWindow):
 		self.inst='merlin'
 	def mari(self):
 		self.inst='mari'
-		print 'MARI selected'
+		print('MARI selected')
 	
 	def gd(self):
 		self.chop='g'
-		print 'Gd chopper selected'
+		print('Gd chopper selected')
 	def sloppy(self):
 		self.chop='s'
-		print 'Sloppy chopper selected'
+		print('Sloppy chopper selected')
 	def a(self):
 		self.chop='a'
-		print 'A chopper selected'
+		print('A chopper selected')
 	def r(self):
 		self.chop='r'
-		print 'Relaxed chopper selected'
+		print('Relaxed chopper selected')
 		
 	def ei(self):
 		self.ei=float(self.ui.ei.text())
@@ -78,7 +79,7 @@ class MainWindow(QtGui.QMainWindow):
 			en_lo=1
 			eps_min=en_lo
 			eps_max=fac*self.ei +(1-fac)*en_lo
-			eeps=range(int(eps_min),int(eps_max),1)
+			eeps=list(range(int(eps_min),int(eps_max),1))
 			dat=list(van)
 			dat.reverse()
 			CreateWorkspace(OutputWorkspace='Energy transfer resolution at'+str(freq)+'Hz',DataX=eeps,DataY=dat,DataE=list(van*0),WorkspaceTitle='Resolution at'+str(self.ei)+'meV',UnitX='Energy Transfer [meV]',YUnitLabel='resolution [meV]')

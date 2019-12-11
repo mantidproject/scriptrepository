@@ -289,7 +289,7 @@ class MaxEnt(PythonAlgorithm):
         input_data = np.concatenate([input_data_ws.readY(i) for i in range(n_detectors)])
 
         groupings = [groupings_ws.readY(row)[0] for row in range(groupings_ws.getNumberHistograms())]
-        groupings = map(int, groupings)
+        groupings = list(map(int, groupings))
         n_groups = len(set(groupings))
 
         # Cleanup.
@@ -403,7 +403,7 @@ class MaxEnt(PythonAlgorithm):
                      "\nInput variables:\n"
 
         for type_map in self.int_vars, self.float_vars, self.bool_vars:
-            for name, value in type_map.items():
+            for name, value in list(type_map.items()):
                 log_output += str(name) + " = " + str(value) + "\n"
 
         Logger.get("MaxEnt").notice(log_output)
@@ -424,9 +424,9 @@ class MaxEnt(PythonAlgorithm):
         input_table = CreateEmptyTableWorkspace(OutputWorkspace = input_table_name)
         input_table.addColumn("str", "Name")
         input_table.addColumn("str", "Value")
-        inputs = itertools.chain(self.int_vars.items(), 
-                                 self.float_vars.items(),
-                                 self.bool_vars.items())
+        inputs = itertools.chain(list(self.int_vars.items()), 
+                                 list(self.float_vars.items()),
+                                 list(self.bool_vars.items()))
         for name, value in inputs:
             input_table.addRow([str(name), str(value)])
 
@@ -489,8 +489,8 @@ class MaxEnt(PythonAlgorithm):
             bool : self.bool_vars
         }
 
-        for var_type, var_map in type_map.items():
-            for name, value in var_map.items():
+        for var_type, var_map in list(type_map.items()):
+            for name, value in list(var_map.items()):
                 assert isinstance(value, var_type), (
                     "The variable '%s' is supposed to be of type %s but is of type %s."
                     % (name, str(var_type), str(type(value))))

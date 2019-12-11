@@ -1,4 +1,3 @@
-from __future__ import print_function
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
 ## Version 1.04, August 2018
@@ -6,6 +5,7 @@ from __future__ import print_function
 #  Point by point fitting
 #  Crystal Fields
 #  Crystal space group symmetry and coordinates in fractions of unit cell
+from __future__ import print_function
 import numpy
 import math
 
@@ -43,18 +43,18 @@ def ParseStringToDict(st,di0={}):
 				for ss in sl.split(";"):
 					#print "processing ",ss
 					kvl=ss.split("=")
-					kvl=map(str.strip,kvl)
+					kvl=list(map(str.strip,kvl))
 					if(len(kvl)<2):
 						raise Exception("Bad line in model string")
 					val=kvl[-1].split(",")
 					kvl0s=kvl[0].split("(")[0]
 					if(kvl0s not in textlists):
 						#print "would like to float ",val," from ",sl
-						val=map(float,val)
+						val=list(map(float,val))
 					#print "value is ",val
 					for key in kvl[0:-1]:
 						if(key.find(".*")>=0):
-							for ek in di.keys():
+							for ek in list(di.keys()):
 								if( re.match(key,ek)):
 									di[ek]=val
 						else:
@@ -102,9 +102,9 @@ def EnumerateSites(p,d,keystr):
 	else:
 		d2=d
 		if(len(ds)==0):
-			ds=range(d)
+			ds=list(range(d))
 	if(len(ps)==0):
-		ps=range(p)
+		ps=list(range(p))
 	#print "ds=",ds,"ps=",ps
 	dps=[(pp*d2+dd) for pp in ps for dd in ds ]
 	return dps,kss
@@ -285,7 +285,7 @@ def ParseAndIterateModel(pars):
 	slices=1 # until requested
 
 	try:
-		slicetimes=map(float,pars["pulsed"])
+		slicetimes=list(map(float,pars["pulsed"]))
 		slices=len(slicetimes)+1
 		#print "sliced mode engaged, time boundaries are ",slicetimes
 	except:
@@ -336,7 +336,7 @@ def ParseAndIterateModel(pars):
 				labels[str(i)]=i
 			except:
 				element=baseatom.lstrip("0123456789")
-				ek={x.lstrip("0123456789") for x in PeriodicTable.keys()}
+				ek={x.lstrip("0123456789") for x in list(PeriodicTable.keys())}
 				if(baseatom in ek):
 					raise Exception("Atom "+atom+" has several isotopes, choose one")
 				elif(element in ek):
@@ -361,7 +361,7 @@ def ParseAndIterateModel(pars):
 	for i in range(dssize):
 		cfield[i]=[None]*len(labels)
 	# second loop to generate H(hyperfine)
-	for (key,val) in pars.items():
+	for (key,val) in list(pars.items()):
 		#print "2nd loop looking at ",key
 		# All have 1st arg @n for specific site or omitted if all or ignored if not dynamic
 		if(key[0:2]=="a("):
@@ -510,7 +510,7 @@ def ParseAndIterateModel(pars):
 	rfphaserand=[False]*slices
 	rrf=0 # numpy.zeros([slices],dtype=numpy.int)
 	iterator=iter(([0.0,0.0,1.0],)) # default zero field, one detector orientation along z
-	for (key,val) in pars.items():
+	for (key,val) in list(pars.items()):
 		if(key=="lfuniform"):
 			iterator=uniformLF(int(val[0]))
 		elif(key=="lfrandom"):
@@ -547,7 +547,7 @@ def ParseAndIterateModel(pars):
 						if(p[2]<0 or (p[2]==0 and (p[1]<0 or (p[1]==0 and p[0]<0)))):
 							p=(-p[0],-p[1],-p[2])
 						axset[p]=1
-			iterator=iter(axset.keys())
+			iterator=iter(list(axset.keys()))
 		elif(key=="tf"):
 			if(len(val)==6):
 				iterator=iter(((val[0:3],val[3:6],val[3:6],val[3:6]),)) # 2 * 3-vec: B, spin0
@@ -582,7 +582,7 @@ def ParseAndIterateModel(pars):
 				if(len(val)==1):
 					Bmag[i,:]=[float(val[0])/10000.0,0.0,0.0]
 				elif(len(val)==3):
-					Bmag[i,:]=map(lambda x: float(x)/10000.0,val)
+					Bmag[i,:]=[float(x)/10000.0 for x in val]
 				else:
 					raise Exception("bmagGauss should be a single number or a 3-vector")
 		elif(key[0:4]=="bmag"):
@@ -592,7 +592,7 @@ def ParseAndIterateModel(pars):
 				if(len(val)==1):
 					Bmag[i,:]=[float(val[0]),0.0,0.0]
 				elif(len(val)==3):
-					Bmag[i,:]=map(float,val)
+					Bmag[i,:]=list(map(float,val))
 				else:
 					raise Exception("bmag should be a single number or a 3-vector")
 		# RF mode
@@ -670,7 +670,7 @@ def ParseAndIterateModel(pars):
 		if(len(val)==3):
 			gonlist=(("y",val[0]),("z",val[1]),("y",val[2]))
 		else:
-			gonlist=zip(*[iter(val)]*2) # by twos
+			gonlist=list(zip(*[iter(val)]*2)) # by twos
 		gon=numpy.eye(3)
 		for r in gonlist:
 			c=math.cos(float(r[1])*math.pi/180.0)
@@ -738,7 +738,7 @@ def ParseAndIterateModel(pars):
 	# pre-check
 	if(dynstates>0):
 		if(not numpy.all(numpy.isfinite(pops))):
-			print ("pops=",pops)
+			print("pops=",pops)
 			raise Exception("Inf or NaN found in population array")
 		for i in range(dssize):
 			if(not numpy.all(numpy.isfinite(Hams[i]))):
@@ -803,7 +803,7 @@ def ParseAndIterateModel(pars):
 				else:
 					morespin=labels[morespinlist[0]]
 					try:
-						moreaxis=numpy.array(map(float,morespinlist[1:4]))*inverted
+						moreaxis=numpy.array(list(map(float,morespinlist[1:4])))*inverted
 						morespinlist=morespinlist[4:]
 					except:
 						if(morespinlist[1]=="beam"):
@@ -985,7 +985,7 @@ def processor_FittedCurve(pars,ybins,ebins,dest,asym):
 				if(matc2):
 					pff=pff[:matc2.start(2)]+str(fitstuff[3].column("Value")[i])+pff[matc2.end(2):]
 				else:
-					print ("warning, couldn't find anywhere to recycle ",parname," into ",pff," using finder=",finder)
+					print("warning, couldn't find anywhere to recycle ",parname," into ",pff," using finder=",finder)
 		nextpars={"fitfunction":pff}
 	else:
 		nextpars=None
@@ -1000,7 +1000,7 @@ def tidyup_FittedCurve(pars,x0,x1):
 	try:
 		DeleteWorkspace(pars["tmpws"])
 	except:
-		print ("workspace '",pars["tmpws"],"' won't die!!!")
+		print("workspace '",pars["tmpws"],"' won't die!!!")
 
 def processor_moments(pars,ybins,ebins,dest,bigomega,bigccos,bigcsin,numave):
 	# first or second moment, or amplitude, within freq range
@@ -1181,7 +1181,7 @@ def ParseMeasureType(pars,prog=None):
 				spGrp=SpaceGroupFactory.createSpaceGroup(sgtrans[sgname])
 			else:
 				raise ValueError("Space group "+vars[0]+" unknown")
-		unCell=UnitCell(*map(float,vars[1:]))
+		unCell=UnitCell(*list(map(float,vars[1:])))
 		if not (spGrp.isAllowedUnitCell(unCell)):
 			raise ValueError("Unit Cell and space group are incompatible")
 	else: # 1:1 scale, no symmetry. Dummy functions independent of Mantid
@@ -1276,7 +1276,7 @@ def ParseMeasureType(pars,prog=None):
 			pars["ntbins"]=(1,)
 		method=1
 		gen=ParseAndIterateModel(pars)
-		(spmat,ham,rho0,scint,rffrq,rrf,j1,j2,j3)=gen.next()
+		(spmat,ham,rho0,scint,rffrq,rrf,j1,j2,j3)=next(gen)
 		gen.close()
 		# (spmat,Hams1[0],rho0,scint,0.0,0,None,None,None)
 		nlevels=ham.shape[0]
@@ -1327,11 +1327,11 @@ def ParseMeasureType(pars,prog=None):
 		else: # uniformly distributed events over whole range
 			tmpws.dataE(0)[:]=4.0/numpy.sqrt(eevents*(timebins[1:]-timebins[:-1])/(timebins[-1]-timebins[0]))
 		if (numpy.any(numpy.isnan(tmpws.dataE(0)))):
-			print ("E has at least one NaN")
-			print (tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1])
+			print("E has at least one NaN")
+			print(tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1])
 		if (numpy.any(numpy.isinf(tmpws.dataE(0)))):
-			print ("E has at least one Inf")
-			print (tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1])
+			print("E has at least one Inf")
+			print(tmpws.dataE(0)[0],"...",tmpws.dataE(0)[-1])
 			
 	PreParseLoop(pars,hadaxis0,prog) # get axis lengths
 	
@@ -1342,7 +1342,7 @@ def ParseMeasureType(pars,prog=None):
 
 	if("selectorient" in pars["axis1name"]):
 		x1axis=[m[2] for m in pars["_crystalEqvs"]]
-		print ("added names to axis1")
+		print("added names to axis1")
 
 	return (ybins,ebins,timebins,x0axis,x1axis,method,processor,tidyup)
 		
@@ -1438,7 +1438,7 @@ def RunModelledSystem(pars0,prog=None):
 		#print "pars to set for this iteration: ",loopvar
 		#print "pars0 insode loop: ",pars0
 		pars=pars0.copy()
-		for (k,v) in loopvar.items():
+		for (k,v) in list(loopvar.items()):
 			pars[k]=v
 		if(method==1):
 			bigomega=None # numpy.array([],dtype=numpy.float)
@@ -1534,7 +1534,7 @@ def RunModelledSystem(pars0,prog=None):
 			yvals=yvals/numave
 			recycle=processor(pars,ybins,ebins,dest,yvals)
 		if(recycle is not None):
-			for (k,v) in recycle.items():
+			for (k,v) in list(recycle.items()):
 				pars0[k]=v
 		if (prog is not None):
 			prog.report()

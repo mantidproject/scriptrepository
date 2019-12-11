@@ -1,6 +1,7 @@
 """
 Generate a list of runs where some log values obey certain criteria. Input can be from log.py 
 """
+from __future__ import print_function
 from string import *
 from numpy import *
 f=open('/SNS/SEQ/IPTS-6179/shared/2K_50meV_complete/complete_log_2K_50meV.txt','r')
@@ -18,4 +19,4 @@ for i in arange(listsize):
 runlist=[]
 for i in arange(-90,39,1):
 	runlist.append(list(runs[where((angs==i))]))#(temps>70) &
-print runlist
+print(runlist)

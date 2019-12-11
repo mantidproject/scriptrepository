@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import math
 # translation of chosol.for
@@ -107,26 +108,26 @@ if(__name__ == "__main__"):
 	b=np.array([2.5,1.2,4.8])
 
 	x1=CHOSOL0(a,b,3)
-	print np.linalg.cholesky(a)
+	print(np.linalg.cholesky(a))
 	x2=np.linalg.solve(a,b)
 	x3=CHOSOL(a,b)
-	print x1
-	print x2
-	print x3
-	print
+	print(x1)
+	print(x2)
+	print(x3)
+	print()
 
 	a1=np.array(a)
 	a2=np.array(a)
 	a1[0,2]=1.9
-	print "alter 0,2"
-	print a1
+	print("alter 0,2")
+	print(a1)
 	x11=CHOSOL0(a1,b,3)
-	print np.linalg.cholesky(a1)
-	print x11
-	print np.linalg.solve(a1,b)
+	print(np.linalg.cholesky(a1))
+	print(x11)
+	print(np.linalg.solve(a1,b))
 	a2[2,0]=1.9
-	print "alter 2,0"
+	print("alter 2,0")
 	x22=CHOSOL0(a2,b,3)
-	print np.linalg.cholesky(a2)
-	print x22
-	print np.linalg.solve(a2,b)
+	print(np.linalg.cholesky(a2))
+	print(x22)
+	print(np.linalg.solve(a2,b))

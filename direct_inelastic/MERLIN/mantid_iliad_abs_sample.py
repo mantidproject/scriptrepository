@@ -3,6 +3,7 @@ The sample script for MERLIN absolute units reduction.
 Should be used for non_abs units too by setting MonoVanRun number to None
 File copied from current (31/07.2014) Mantid System tests for LET and modified with MERLIN settings
 """
+from __future__ import print_function
 from qtiGenie import *
 import datetime
 iliad_setup('merlin')
@@ -66,10 +67,10 @@ if present_run !=wb:  #only load whitebeam if not already there
 ######################################################################
 start = time.clock()
 present_run=-1
-for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
+for irun in range(0,len(run_no),num_files2sum):    #loop around runs
        run = run_no[irun];
        fname='MER0000'+str(run)+'.nxs'
-       print ' processing file ', fname
+       print(' processing file ', fname)
        #if 'w1' in mtd:  # Uncomment this to save time and not to load existing workspace twice
        #     m=mtd['w1']
        #     present_run= m.getRunNumber()
@@ -78,13 +79,13 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
        if  present_run != run:
             w1, w1_monitors=Load(Filename=fname,LoadMonitors='1',MonitorsAsEvents='0')  
             w1_mon=RenameWorkspace(w1_monitors)
-            for ns in xrange(num_files2sum-1):
-                print " Adding run N {0} to run N {1}".format(run_no[irun+ns+1],run_no[irun]),
+            for ns in range(num_files2sum-1):
+                print(" Adding run N {0} to run N {1}".format(run_no[irun+ns+1],run_no[irun]), end=' ')
                 run = run_no[irun+ns+1]
                 ws,ws_monitors= Load(Filename='MER0000'+str(run)+'.nxs',SingleBankPixelsOnly='0',LoadMonitors='1',MonitorsAsEvents='0')
                 w1 += ws
                 w1_mon += ws_monitors
-                print "got {0} events".format(w1.getNumberEvents())
+                print("got {0} events".format(w1.getNumberEvents()))
                 AddSampleLog(Workspace='w1',LogName='run_number_'+str(run),LogText=str(run),LogType='Number') #only have to do this as run_number is passed to workspace for event files       
        
        
@@ -95,7 +96,7 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
         # this section finds all the transmitted incident energies if you have not provided them
        if len(ei) == 0:  #-- not tested here -- should be unit test for that. 
             ei = find_chopper_peaks('w1_monitors');       
-       print 'Energies transmitted are:',
+       print('Energies transmitted are:', end=' ')
        print (ei)
 
        RenameWorkspace(InputWorkspace = 'w1',OutputWorkspace='w1_storage');
@@ -104,9 +105,9 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
        #now loop around all energies for the run
        result =[];
        for ind,energy in enumerate(ei):
-                print float(energy)
+                print(float(energy))
                 (energybin,tbin,t_elastic) = find_binning_range(energy,ebin);
-                print " Rebinning will be performed in the range: ",energybin
+                print(" Rebinning will be performed in the range: ",energybin)
                 # if we calculate more then one energy, initial workspace will be used more then once
                 if ind <len(ei)-1:
                     CloneWorkspace(InputWorkspace = 'w1_storage',OutputWorkspace='w1')
@@ -141,8 +142,8 @@ for irun in xrange(0,len(run_no),num_files2sum):    #loop around runs
                 ws_name = 'MER{0}_ei{1:3.1f}mev'.format(run,energy);
                 #RenameWorkspace(InputWorkspace=out,OutputWorkspace=ws_name);
                 fileName=ws_name+'.nxspe';
-                print 'Saving results into file {0}'.format(fileName)
+                print('Saving results into file {0}'.format(fileName))
                 SaveNXSPE(InputWorkspace=out,Filename=fileName)
 ##############################
 elapsed = (time.clock() - start)
-print "Time to run the whole reduction",(elapsed)
+print("Time to run the whole reduction",(elapsed))

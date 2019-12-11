@@ -40,7 +40,7 @@ resolution=mtd[resolution_name]
 Qs=GetQsInQENSData(data)
 nQ=len(Qs)
 if not selected_wi:
-    selected_wi = range(0,len(Qs))
+    selected_wi = list(range(0,len(Qs)))
 
 """ Below is the model cast as a template string suitable for the
     Fit algoritm of Mantid. You can obtain similar string by setting up a model
@@ -69,8 +69,8 @@ for wi in selected_wi:
     global_model += "(composite=CompositeFunction,NumDeriv=true,$domains=i;{0});\n".format(single_model)
 
 # Tie DiffCoeff and Tau since they are global parameters
-ties=['='.join(["f{0}.f0.f1.f1.DiffCoeff".format(di) for di in reversed(range(nWi))]),
-    '='.join(["f{0}.f0.f1.f1.Tau".format(wi) for wi in reversed(range(nWi))]) ]
+ties=['='.join(["f{0}.f0.f1.f1.DiffCoeff".format(di) for di in reversed(list(range(nWi)))]),
+    '='.join(["f{0}.f0.f1.f1.Tau".format(wi) for wi in reversed(list(range(nWi)))]) ]
 global_model += "ties=("+','.join(ties)+')'  # tie Radius
 
 # Now relate each domain(i.e. spectrum) to each single-spectrum model
@@ -94,9 +94,9 @@ Fit(Function=global_model, Output=output_workspace, CreateOutput=True, MaxIterat
 parameters_workspace = mtd[output_workspace+"_Parameters"]
 aliases = {"f0.f1.f0.Height": "Ha", "f0.f1.f1.Height": "Hb", "f0.f1.f1.Tau": "tau", "f0.f1.f1.DiffCoeff": "diffCoeff"}
 optimals = dict()
-for alias in aliases.values():
+for alias in list(aliases.values()):
     optimals[alias] = list()
-names = aliases.keys()
+names = list(aliases.keys())
 for row in parameters_workspace:
     # name of the fitting parameter for this particular row
     matches = re.search("^f(\d+)\.(.*)", row['Name']) # for instance, f0.f0.f1.f0.Height

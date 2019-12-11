@@ -2,6 +2,7 @@
 Reduction including generation of an experiment log 
 """
 #!/usr/bin/env python
+from __future__ import print_function
 
 import sys,os
 sys.path.append("/opt/Mantid/bin")
@@ -134,7 +135,7 @@ def autoloader(filename,outdir):
         LoadEventNexus(Filename=filename,OutputWorkspace="__IWS") #Load an event Nexus file
         #Fix that all time series log values start at the same time as the proton_charge
         r=mtd['__IWS'].getRun()
-        for x in r.keys():
+        for x in list(r.keys()):
         	if x not in ['duration','proton_charge','start_time','run_title','run_start','run_number','gd_prtn_chrg','end_time']:
         		try:
         			ShiftTime('__IWS',x)
@@ -225,10 +226,10 @@ def ShiftTime(WName,lg_name):
 if __name__ == "__main__":
     #check number of arguments
     if (len(sys.argv) != 3): 
-        print "autoreduction code requires a filename and an output directory"
+        print("autoreduction code requires a filename and an output directory")
         sys.exit()
     if not(os.path.isfile(sys.argv[1])):
-        print "data file ", sys.argv[1], " not found"
+        print("data file ", sys.argv[1], " not found")
         sys.exit()
     else:
         filename = sys.argv[1]

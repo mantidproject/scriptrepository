@@ -3,6 +3,7 @@ Test if time independent background range is OK
 Note - runs in MantidPlot
 Note - uses pdftk to concatenate pdf files
 """
+from __future__ import print_function
 from numpy import *
 from string import *
 import os
@@ -35,47 +36,47 @@ def SpurionPromptPulse2(Ei, msd = 1800.0, tail_length_us = 3000.0, talk = False)
     #print t_focEle_us,pre_lead_us,frame_start_us,MinTIB_us,slop_frac
     if (t_focEle_us < pre_lead_us) and (t_focEle_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
-            print 'choosing TIB just before focus element-1'
+            print('choosing TIB just before focus element-1')
         TIB_high_us = t_focEle_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     elif (frame_start_us>pre_tail_us) and (t_focEle_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
-            print 'choosing TIB just before focus element-2'
+            print('choosing TIB just before focus element-2')
         TIB_high_us = t_focEle_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     elif t_focEle_us-pre_tail_us > MinTIB_us * (slop_frac + 1.0) and (t_focEle_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
-            print 'choosing TIB just before focus element-3'
+            print('choosing TIB just before focus element-3')
         TIB_high_us = t_focEle_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     elif t_samp_us-pre_tail_us > MinTIB_us * (slop_frac + 1.0) and (t_samp_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
-            print 'choosing TIB just before sample-1'
+            print('choosing TIB just before sample-1')
         TIB_high_us = t_samp_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     elif t_samp_us-pre_tail_us > MinTIB_us / 1.5 * (slop_frac + 1.0) and (t_samp_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
-            print 'choosing TIB just before sample-2'
+            print('choosing TIB just before sample-2')
         TIB_high_us = t_samp_us - MinTIB_us / 1.5 * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us / 1.5
     elif t_samp_us-pre_tail_us > MinTIB_us / 2.0 * (slop_frac + 1.0) and (t_samp_us-frame_start_us > MinTIB_us * (slop_frac + 1.0)):
         if talk:
-            print 'choosing TIB just before sample-3'
+            print('choosing TIB just before sample-3')
         TIB_high_us = t_samp_us - MinTIB_us / 2.0 * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us / 2.0
     elif (pre_lead_us - frame_start_us > MinTIB_us * (slop_frac + 1.0)) and (t_focEle_us > pre_lead_us):
         if talk:
-            print 'choosing TIB just before leading edge before elastic-1'
+            print('choosing TIB just before leading edge before elastic-1')
         TIB_high_us = pre_lead_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     elif (pre_lead_us - frame_start_us > MinTIB_us / 1.5 * (slop_frac + 1.0)) and (t_focEle_us > pre_lead_us):
         if talk:
-            print 'choosing TIB just before leading edge before elastic-2'
+            print('choosing TIB just before leading edge before elastic-2')
         TIB_high_us = pre_lead_us - MinTIB_us / 1.5 * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us / 1.5
     elif (pre_lead_us - frame_start_us > MinTIB_us / 2.0 * (slop_frac + 1.0)) and (t_focEle_us > pre_lead_us):
         if talk:
-            print 'choosing TIB just before leading edge before elastic-3'
+            print('choosing TIB just before leading edge before elastic-3')
         TIB_high_us = pre_lead_us - MinTIB_us / 2.0 * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us / 2.0
 #    elif (pre_tail_us > frame_start_us) and (t_focEle_us - pre_tail_us > MinTIB_us * (slop_frac + 1.0)):
@@ -86,23 +87,23 @@ def SpurionPromptPulse2(Ei, msd = 1800.0, tail_length_us = 3000.0, talk = False)
 #        TIB_high_us = TIB_low_us + MinTIB_us
     elif post_lead_us > frame_end_us:
         if talk:
-            print 'choosing TIB at end of frame'
+            print('choosing TIB at end of frame')
         TIB_high_us = frame_end_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     elif post_lead_us - t_det_us > MinTIB_us * (slop_frac + 1.0):
         if talk:
-            print 'choosing TIB between elastic peak and later prompt pulse leading edge'
+            print('choosing TIB between elastic peak and later prompt pulse leading edge')
         TIB_high_us = post_lead_us - MinTIB_us * slop_frac / 2.0
         TIB_low_us = TIB_high_us - MinTIB_us
     else:
         if talk:
-            print 'I cannot find a good TIB range'
+            print('I cannot find a good TIB range')
         TIB_low_us = 0.0
         TIB_high_us = 0.0
     return [TIB_low_us, TIB_high_us]
 
-runs=range(12312,12348)
-runs.extend(range(12408,12434))
+runs=list(range(12312,12348))
+runs.extend(list(range(12408,12434)))
 
 od='/SNS/users/3y9/Desktop/test/'
 com='pdftk '

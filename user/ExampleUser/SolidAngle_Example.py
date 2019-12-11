@@ -4,6 +4,7 @@
 ##          sample position
 ##
 ##-------------------------------------------------------------------------
+from __future__ import print_function
 import math
 # Prompt for a raw file to load
 rawWSTitle = "RawFile"
@@ -26,12 +27,12 @@ r = detector.getDistance(sample)
 twoTheta = detector.getTwoTheta(samplePos, beamPos)*180./math.pi
 phi = detector.getPhi()
 
-print 'R = ' + str(r) + ', TwoTheta = ' + str(twoTheta)+ ', Phi = ' + str(phi)
+print('R = ' + str(r) + ', TwoTheta = ' + str(twoTheta)+ ', Phi = ' + str(phi))
 
 # Check if the detector is masked out and calculate the result if not
 solidAngle = 0.0
 if not detector.isMasked():
     sAngle = detector.solidAngle(samplePos)
 
-print "The solid angle of the spectrum located at index " + str(wsIndex) + " is: " + str(sAngle) + " steradians"
+print("The solid angle of the spectrum located at index " + str(wsIndex) + " is: " + str(sAngle) + " steradians")
 

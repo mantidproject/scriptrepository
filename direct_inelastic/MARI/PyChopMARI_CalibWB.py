@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time as time
 import math
 import numpy
@@ -158,7 +159,7 @@ def calc_chop(ei,frequency,type):
                 flux_fudge=3
             else:
                 err_mess=error_message+instname
-                print err_mess
+                print(err_mess)
                 return (err_mess,1)
 
     # Convert instrument parameters for the program (set as globals)
@@ -264,7 +265,7 @@ def van_var(*args):
 #!  chopper:
     tsqchp,ifail=tchop(omega, ei)
     ifail
-    if (ifail <> 0):
+    if (ifail != 0):
         tsqchp = 0.0
 
 
@@ -730,7 +731,7 @@ def chbmts(a,b,c,m,x):
 	y=(2.0*x-a-b)/(b-a)
 	y2=2.0*y
 
-	myrange=range(m-1,0,-1)
+	myrange=list(range(m-1,0,-1))
 	
 	#print('myrange')
 	#print(myrange)
@@ -980,7 +981,7 @@ def achop(ei,omega):
     groot=0
     if (gamm >= 4.00):
         f1=0.0
-        print 'no transmission at ', ei, 'meV at ',omega/(2*math.pi), 'Hz'
+        print('no transmission at ', ei, 'meV at ',omega/(2*math.pi), 'Hz')
     else:
         ierr=0
         if gamm <= 1.00:

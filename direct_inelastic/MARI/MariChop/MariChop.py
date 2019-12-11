@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time as time
 import math
 import numpy
@@ -38,39 +39,39 @@ def setchoptype(inst_name,type):
 	chop_type=type
 	if inst_name=='mari' or inst_name=='mar' or inst_name=='MAR'or inst_name=='MARI':
 		instname='mar'
-		print 'setup for MARI'
+		print('setup for MARI')
 		if type == 'c':
 			chop_par=[1.520, 0.550, 49.00,  580.00, 0.00, 0.00]
-			print 'MARI C (100meV) chopper chosen'
+			print('MARI C (100meV) chopper chosen')
 			titledata='MARI C (100meV)'
 		elif type == 'g':
 			chop_par=[0.38, 0.02, 10.00,  800.00, 0.00, 0.00]
-			print 'MARI G (Gd pack) chopper chosen'
+			print('MARI G (Gd pack) chopper chosen')
 			titledata='MARI G (Gd pack)'
 		elif type == 's':
 			chop_par=[2.280, 0.550, 49.00, 1300.00, 0.00, 0.00]
-			print 'MARI S (sloppy) chopper chosen'
+			print('MARI S (sloppy) chopper chosen')
 			titledata='MARI S (sloppy)'
 		elif type == 'b':
 			chop_par= [1.140, 0.550, 49.00,  820.00, 0.00, 0.00]
-			print 'MARI B (200meV) chopper chosen'
+			print('MARI B (200meV) chopper chosen')
 			titledata='MARI B (200meV)'
 		elif type == 'a':
 			chop_par= [0.760, 0.550, 49.00, 1300.00, 0.00, 0.00]
-			print 'MARI A (500meV) chopper chosen'
+			print('MARI A (500meV) chopper chosen')
 			titledata='MARI A (500meV)'
 		elif chop_type == 'r':
 			chop_par= [1.143, 0.550, 49.00, 1300, 0.00, 0.00]
-			print 'MARI R (500meV) chopper chosen'
+			print('MARI R (500meV) chopper chosen')
 			titledata='MARI R (500meV)'
 		else:
-			print 'Chopper type not recognised'
+			print('Chopper type not recognised')
 
 	if instname=='maps' or instname=='map' or instname=='MAP'or instname=='MAPS':
 		instname='map'
-		print 'setup for MAPS'
+		print('setup for MAPS')
 		if type == 'c':
-			print 'MAPS C (100meV) not available'
+			print('MAPS C (100meV) not available')
 			return
 			titledata='MAPS C (100meV)'
 		elif type == 's':
@@ -79,36 +80,36 @@ def setchoptype(inst_name,type):
 			titledata='MAPS S (sloppy)'
 		elif type == 'b':
 			chop_par= [ 1.8120,0.5340,49.00,  920.00, 0.00, 0.0]
-			print 'MAPS B (200meV) chopper chosen'
+			print('MAPS B (200meV) chopper chosen')
 			titledata='MAPS B (200meV)'
 		elif type == 'a':
 			chop_par= [1.0870,0.5340,49.00, 1300.00, 0.00, 0.00]
-			print 'MAPS A (500meV) chopper chosen'
+			print('MAPS A (500meV) chopper chosen')
 			titledata='MAPS A (500meV)'
 		else:
 			disp('Chopper type not recognised')
 	if instname=='MER' or instname=='mer' or instname=='MERLIN'or instname=='merlin':
 		instname='mer'
-		print 'setup for MERLIN'
+		print('setup for MERLIN')
 		if type == 'c':
 			chop_par=[ 1.710, 0.550, 49.00,  580.00, 0.00, 0.00 ]
-			print 'HET C (100meV) chopper chosen'
+			print('HET C (100meV) chopper chosen')
 			titledata='HET C (100meV)'
 		elif type == 'd':
 			chop_par=[ 1.520, 0.550, 49.00,  410.00, 0.00, 0.00 ]
-			print 'HET D (50meV) chopper chosen'
+			print('HET D (50meV) chopper chosen')
 			titledata='HET D (50meV)'
 		elif type == 's':
 			chop_par=[2.280, 0.550, 49.00, 1300.00, 0.00, 0.00 ]
-			print 'HET S (sloppy) chopper chosen'
+			print('HET S (sloppy) chopper chosen')
 			titledata='HET S (sloppy)'
 		elif type == 'b':
 			chop_par= [1.290, 0.550, 49.00,  920.00, 0.00, 0.00 ]
-			print 'HET B (200meV) chopper chosen'
+			print('HET B (200meV) chopper chosen')
 			titledata='HET B (200meV)'
 		elif type == 'a':
 			chop_par= [0.760, 0.550, 49.00, 1300.00, 0.00, 0.0 ]
-			print 'HET A (500meV) chopper chosen'
+			print('HET A (500meV) chopper chosen')
 			titledata='HET A (500meV)'
 		else:
 			disp('Chopper type not recognised') 
@@ -273,8 +274,8 @@ def calculate(ei,frequency,**kwargs):
 	en_hi=ei*1.1
 	
 	
-	if kwargs.has_key('freq_dep'):
-		freq=range(50,650,50)
+	if 'freq_dep' in kwargs:
+		freq=list(range(50,650,50))
 		van_el = numpy.zeros(len(freq))
 		flux = numpy.zeros(len(freq))
 		err = numpy.zeros(len(freq)) #for mantid output
@@ -286,27 +287,27 @@ def calculate(ei,frequency,**kwargs):
 		van_el,van,flux=calc_chop(ei,omega,en_lo,en_hi)
 
 
-	if kwargs.has_key('all') and kwargs.get('all')==True:
+	if 'all' in kwargs and kwargs.get('all')==True:
 		return van_el,van,flux
-	if kwargs.has_key('resolution') and kwargs.get('resolution')==True:
-		if kwargs.has_key('plot') and kwargs.get('plot')==True:
+	if 'resolution' in kwargs and kwargs.get('resolution')==True:
+		if 'plot' in kwargs and kwargs.get('plot')==True:
 		#plot data
 			#recreate x range
 			fac=.99
 			en_lo=1
 			eps_min=en_lo
 			eps_max=fac*ei +(1-fac)*en_lo
-			eeps=range(int(eps_min),int(eps_max),1)
+			eeps=list(range(int(eps_min),int(eps_max),1))
 			dat=list(van)
 			dat.reverse()
 			CreateWorkspace(OutputWorkspace="Resolution",DataX=eeps,DataY=dat,DataE=list(van*0),VerticalAxisValues="data",WorkspaceTitle='Resolution at'+str(ei)+'meV')
 			plotSpectrum('Resolution',0)
 			return
 		return van
-	if kwargs.has_key('flux') and kwargs.get('flux')==True:
+	if 'flux' in kwargs and kwargs.get('flux')==True:
 		return van_el,flux
-	if kwargs.has_key('freq_dep') and kwargs.get('freq_dep')==True:
-		if kwargs.has_key('plot') and kwargs.get('plot')==True:
+	if 'freq_dep' in kwargs and kwargs.get('freq_dep')==True:
+		if 'plot' in kwargs and kwargs.get('plot')==True:
 			CreateWorkspace(OutputWorkspace='Flux',DataX=freq,DataY=list(flux),DataE=list(err),VerticalAxisValues="data",WorkspaceTitle='Flux at'+str(ei)+'meV')
 			plotSpectrum('Flux',0)
 			CreateWorkspace(OutputWorkspace="Resolution",DataX=freq,DataY=list(van_el),DataE=list(err),VerticalAxisValues="data",WorkspaceTitle='Resolution at'+str(ei)+'meV')
@@ -323,7 +324,7 @@ def calc_chop(ei,omega,en_lo,en_hi):
 	convert = 2.3548200
 	# calcs flux and resoltion over a range
 	# en_lo some lower range for energy for the calculation
-	print 'energy lower', en_lo
+	print('energy lower', en_lo)
 	v_lo = max( 437.391580*math.sqrt((en_lo)), 2.00*omega/(1.00/rho + (2.00*pslit/radius**2)) )
 	g_lo = max( -4.00, (2.00*radius**2/pslit)*(1.00/rho - 2.00*omega/v_lo) )
 	v_hi = 437.391580*math.sqrt((en_hi))
@@ -345,14 +346,14 @@ def calc_chop(ei,omega,en_lo,en_hi):
 		#subplot(2,1,2), xlabel('Ei [mev]'), ylabel('Vanadium width [meV]')
 		#else
 		#For a single ei always display the resolution
-		print 'Flux at sample position at ',ei,'meV',int(omega/(2*math.pi)), 'Hz =',int(flux),'ns^-1'
+		print('Flux at sample position at ',ei,'meV',int(omega/(2*math.pi)), 'Hz =',int(flux),'ns^-1')
 		# calc resolution as a function of energy trans
-		print 'Resolution of elastic line at ',int(omega/(2*math.pi)), 'Hz = ',van_el, 'meV = ',(van_el/ei)*100, '%'
+		print('Resolution of elastic line at ',int(omega/(2*math.pi)), 'Hz = ',van_el, 'meV = ',(van_el/ei)*100, '%')
 		fac=.99
 		en_lo=1
 		eps_min=en_lo
 		eps_max=fac*ei +(1-fac)*en_lo
-		eeps=range(int(eps_min),int(eps_max),1)
+		eeps=list(range(int(eps_min),int(eps_max),1))
 		van=numpy.zeros(numpy.size(eeps))
 		for i in range(numpy.size(eeps)):
 			etrans=ei-eeps[i]
@@ -412,7 +413,7 @@ def van_var(*args):
 #!  chopper:
 	tsqchp,ifail=tchop(omega, ei)
 	ifail
-	if (ifail <> 0): 
+	if (ifail != 0): 
 		tsqchp = 0.0
 
 
@@ -605,9 +606,9 @@ def sam_flux(ei,omega):
 	global imod, sx, sy, sz, isam, gam, ia, ix, idet, dd, tbin, titledata
 	flux=[] 
 	flux1=flux_calc(ei) 
-	print 'flux ', flux1
+	print('flux ', flux1)
 	area=achop(ei,omega)
-	print 'area', area 
+	print('area', area) 
 	#for j in range(len(ei)):
 	flux = 84403.060*ei*(flux1/math.cos(thetam))*(area/dslat)*(wa*ha)/(x0*(x1+xa)**2) 
 	
@@ -750,7 +751,7 @@ def achop(ei,omega):
 	vela=437.3920*math.sqrt(ei) 
 	gamm=( 2.00*(R1**2)/p1 ) * abs(1.00/rho1 - 2.00*w1/vela) 
 	
-	print 'gamm',gamm
+	print('gamm',gamm)
 # !  Find regime and calculate variance:
 # ! -------------------------------------
 	
@@ -759,9 +760,9 @@ def achop(ei,omega):
 	
 	if gamm >= 4.00:
 		f1=0.0
-		print 'no transmission at ', ei, 'meV at ',omega/(2*math.pi), 'Hz' 
+		print('no transmission at ', ei, 'meV at ',omega/(2*math.pi), 'Hz') 
 		area=( (p1**2)/(2.00*R1*w1) ) * f1 
-		print 'area', area		
+		print('area', area)		
 	elif gamm <= 1.00:
 		f1=1.00-(gamm**2)/6.00 
 		area=( (p1**2)/(2.00*R1*w1) ) * f1 
@@ -769,11 +770,11 @@ def achop(ei,omega):
 		groot=math.sqrt(gamm) 
 		f1=groot*((groot-2.00)**2)*(groot+4.00)/6.00 
 		area=( (p1**2)/(2.00*R1*w1) ) * f1 
-		print 'here'
+		print('here')
 
 	
 	
-	print 'area', area
+	print('area', area)
 	return area
 
 def frange(limit1, limit2 = None, increment = 1.):

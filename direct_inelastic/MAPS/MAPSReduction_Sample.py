@@ -1,6 +1,7 @@
 """ Sample MAPS reduction script """ 
 # Two rows necessary to run script outside of the mantid. You need also set up 
 # appropriate python path-es
+from __future__ import print_function
 import os
 #
 from mantid import *
@@ -172,15 +173,15 @@ def iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_ru
     #-----------------------------------------
     #
     filename_present = False;
-    for key,val in kwargs.items():
+    for key,val in list(kwargs.items()):
         if key == 'save_file_name':
             filename_present = True;
             if isinstance(runno, (list, tuple)) or isinstance(ei,(list, tuple)) :
-                  print "**************************************************************************************"
-                  print "*** WARNING: you can not set up single file name for list of files or list of energies"
-                  print "*** change ''set_custom_output_filename'' function, which returns lamda function used "
-                  print "*** to calculate file name as function of each incident energy and run number."
-                  print "**************************************************************************************"                  
+                  print("**************************************************************************************")
+                  print("*** WARNING: you can not set up single file name for list of files or list of energies")
+                  print("*** change ''set_custom_output_filename'' function, which returns lamda function used ")
+                  print("*** to calculate file name as function of each incident energy and run number.")
+                  print("**************************************************************************************")                  
                   continue
         if key == 'wait_for_file':
             rd.wait_for_file = kwargs['wait_for_file']

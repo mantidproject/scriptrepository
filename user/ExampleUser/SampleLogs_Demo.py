@@ -1,6 +1,7 @@
 #
 # Example: Retrieving log information from a data set
 #
+from __future__ import print_function
 
 datadir = "../../../repo/Test/Data/"
 rawDataTitle="outputSpace"
@@ -16,8 +17,8 @@ logs = rawWS.getRun().getLogData()
 
 # Print all of the log information
 for i in range(0, len(logs)):
-	print "----- " + logs[i].name + " -------\n" +  str(logs[i].value)
+	print("----- " + logs[i].name + " -------\n" +  str(logs[i].value))
 
 # Just get a single log by name
 status = rawWS.getRun().getLogData("status")
-print status.value
+print(status.value)

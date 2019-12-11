@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time
 import datetime
 import math
@@ -41,7 +42,7 @@ class CopyLogsToHist(PythonAlgorithm):
 		ExtraLogs=self.getProperty("ExtraLogs").value
 		RunningOnly=self.getProperty("RunningOnly").value
 		LogNames.extend(ExtraLogs)
-		print "logs to be got: ",LogNames
+		print("logs to be got: ",LogNames)
 		#ws=self.getProperty("InputWS").value
 		file1=self.getProperty("FirstFile").value
 		file9=self.getProperty("LastFile").value
@@ -99,7 +100,7 @@ class CopyLogsToHist(PythonAlgorithm):
 				ws=wstuple[0] # plain run
 			prog_reporter.report("Loading")
 			if(gotToCurrentRun and int(ws.getRun().getProperty("run_number").value) != ff):
-				print "temporary file is for the previous run, probably no new one started"
+				print("temporary file is for the previous run, probably no new one started")
 				break
 			if(ff==firstnum):
 				#begin=datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value,"%Y-%m-%dT%H:%M:%S")[0:6]))
@@ -120,13 +121,13 @@ class CopyLogsToHist(PythonAlgorithm):
 					times[ss]=numpy.append(times[ss],tconv[ri:])
 					temps[ss]=numpy.append(temps[ss],log.value[ri:])
 				except Exception as ee:
-					print ee
-					print "no log in this run for ",LogNames[ss]," inserting gap"
+					print(ee)
+					print("no log in this run for ",LogNames[ss]," inserting gap")
 					# one NaN point at the start of this run
 					tconv=numpy.array([(datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value.strip(),"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds()])
 					times[ss]=numpy.append(times[ss],tconv)
 					temps[ss]=numpy.append(temps[ss],numpy.nan)
-			print "finished file ",thispath
+			print("finished file ",thispath)
 			if(gotToCurrentRun):
 				break
 		autoKC=self.getProperty("AutoConvKtoC").value
@@ -141,7 +142,7 @@ class CopyLogsToHist(PythonAlgorithm):
 			skip=1
 		else:
 			skip=2
-		print "time zero for result is ", begin
+		print("time zero for result is ", begin)
 		n=1
 		t0m= 100000000.0
 		t1m=-100000000.0
@@ -149,18 +150,18 @@ class CopyLogsToHist(PythonAlgorithm):
 			n=max(n,len(times[d]))
 			t0m=min(t0m,times[d][0])
 			t1m=max(t1m,times[d][-1])
-			print "detector ",2*d+1," has ",len(times[d])," time stamps and ",len(temps[d])," readings"
+			print("detector ",2*d+1," has ",len(times[d])," time stamps and ",len(temps[d])," readings")
 			if(len(times[d]) != len(temps[d]) ):
 				raise Exception("Something went wrong reading logs!")
-		print "longest log has ",n," points"
-		print "logs span ",(t1m-t0m)/3600.0," hours run time"
+		print("longest log has ",n," points")
+		print("logs span ",(t1m-t0m)/3600.0," hours run time")
 		interpflag = False
 		ipts=self.getProperty("InterpolatePts").value
 		if(ipts>1):
 			interpflag=True
 			interpdt=numpy.linspace(t0m/3600.0,t1m/3600.0,num=ipts)
 			n=len(interpdt)
-			print "interpolating into bins of width ",(interpdt[1]-interpdt[0])*3600.0," seconds"
+			print("interpolating into bins of width ",(interpdt[1]-interpdt[0])*3600.0," seconds")
 		else:
 			idelta=self.getProperty("InterpolateDelta").value
 			if(idelta>0):
@@ -168,7 +169,7 @@ class CopyLogsToHist(PythonAlgorithm):
 				t0m=math.ceil(t0m/idelta)*idelta # points are on round minute/hour boundaries where appropriate
 				interpdt=numpy.arange(t0m/3600.0,t1m/3600.0,idelta/3600.0)		
 				n=len(interpdt)
-				print "interpolating into ",n," bins"
+				print("interpolating into ",n," bins")
 		ows=WorkspaceFactory.create(ws,len(LogNames)*skip,n,n)
 		ows.setYUnitLabel("Temperature / K")
 		# ows.getAxis(0).setUnit("hours") would be nice...

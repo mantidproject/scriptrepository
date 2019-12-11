@@ -3,6 +3,7 @@
 Plot data in SCDcalib.log file from ISAW SCD Calibration.
 A. J. Schultz, September 2015
 """
+from __future__ import print_function
 
 import pylab
 import os
@@ -37,7 +38,7 @@ while True:
     
     title = line
     ID = lineList[-1]
-    print 'ID ', ID
+    print('ID ', ID)
 
     x = []   # Theoretical
     y = []   # Measured
@@ -122,7 +123,7 @@ while True:
     output.write(' %2d  %8d  %8.2f  %8.2f  %8.2f\n' % 
         (IDnum, numPeaks,rmsd_col_mm, rmsd_row_mm, rmsd_combined_mm) )
     
-print '\nAll done!' 
+print('\nAll done!') 
 
 
 

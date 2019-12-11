@@ -2,6 +2,7 @@
                   Script to fit QENS data to a particular model
                   This script should be run in the "Script Window" of MantidPlot
 '''
+from __future__ import print_function
 from copy import copy
 
 # Data directory
@@ -61,7 +62,7 @@ initguess = { 'f0.Scaling'   :   0.03,  # intensity of the elastic line
               'f1.f1.beta'   :   1.0,   # exponent
 }
 
-names = initguess.keys()  # Store the names of the parameters in a list
+names = list(initguess.keys())  # Store the names of the parameters in a list
 
 chi2 = []     # store the Chi-square values of the fits for every Q
 results = []  # we will store in this list the fitted parameters for every Q
@@ -81,11 +82,11 @@ for iq in range(nq):
         fitstring = fitstring_template.replace( 'iQ', str(iq) )
 
         # Update the model template string with the initial guess
-        for key, value in initguess.items():
+        for key, value in list(initguess.items()):
                 fitstring = fitstring.replace( key, str( value ) )
 
         # Call the Fit algorithm using the updated "fitstring".
-        print fitstring+'\n'
+        print(fitstring+'\n')
         Fit( fitstring, InputWorkspace = 'data', WorkspaceIndex = iq,
         CreateOutput = 1, startX = minE, endX = maxE,
         MaxIterations=100 )
@@ -137,7 +138,7 @@ for iq in range(nq):
 # Save some selected parameters to a string.
 # Remember that only the selected spectra contain data.
 buffer = '#  Q    Chi2   tau(ps) beta\n'
-print buffer
+print(buffer)
 for iq in range( nq ):
         if iq not in selected_wi:
                 continue # skip to next workspace index
@@ -147,7 +148,7 @@ for iq in range( nq ):
                                                            chi2[ iq ],
                                                            result['f1.f1.tau'],
                                                            result['f1.f1.beta'])
-        print line
+        print(line)
         buffer += line
 
 # Save the string to file "results_StretchedExpFT.dat" whithin the data dir

@@ -120,12 +120,12 @@ class DetectorRateTimeSeries(PythonAlgorithm):
 				temps[ss]=numpy.append(temps[ss],ws2.readY(ss)[0]/ws.getRun().getProperty("goodfrm").value/bc)
 			times[-1]=((datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_start").value,"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds())/3600
 			times=numpy.append(times,((datetime.datetime(*(time.strptime(ws.getRun().getProperty("run_end").value,"%Y-%m-%dT%H:%M:%S")[0:6]))-begin).total_seconds())/3600)
-			print ("finished file ",thispath)
+			print("finished file ",thispath)
 			DeleteWorkspace(ws2)
 			if(gotToCurrentRun):
 				break
-		print ("time zero for result is ", begin)
-		print ("size might be X=",len(times)," and Y=",len(temps[0]))
+		print("time zero for result is ", begin)
+		print("size might be X=",len(times)," and Y=",len(temps[0]))
 		ows=WorkspaceFactory.create(ws,NVectors=ws.getNumberHistograms(),XLength=len(times),YLength=len(temps[0]))
 		ows.setYUnitLabel("Counts per Frame")
 		# ows.getAxis(0).setUnit("hours") would be nice...

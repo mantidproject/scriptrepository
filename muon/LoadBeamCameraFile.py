@@ -4,6 +4,7 @@ from __future__ import print_function
 # optional filtering out of noise points (over specified delta from all 4 neighbours)
 # optional binning
 # set scale of image
+from __future__ import print_function
 from mantid.api import *
 from mantid.kernel import *
 from mantid.simpleapi import *

@@ -33,7 +33,7 @@ class SplitLaserPowerLog(PythonAlgorithm):
 		with open(pl,"r") as file:
 			for line in file:
 				if (doneHeader):
-					(t,p)=map(float,line.split())
+					(t,p)=list(map(float,line.split()))
 					timestamps.append(t)
 					powers.append(p)
 				else:

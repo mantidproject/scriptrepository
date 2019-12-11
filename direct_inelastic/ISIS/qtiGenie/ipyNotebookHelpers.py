@@ -1,3 +1,4 @@
+from __future__ import print_function
 try:
   from mantidplot import *
 except ImportError:
@@ -68,7 +69,7 @@ class mplFig:
 		
 		else:
 			#input data is already a list of xyz or xye
-			print 'data is a list '
+			print('data is a list ')
 			self.data=data#x,y,e or ,x,y,zsignal
 		
 		self.init_params()

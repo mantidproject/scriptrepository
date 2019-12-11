@@ -1,6 +1,7 @@
 #
 # Example: Basic Mantid commands
 #
+from __future__ import print_function
 
 # Print the available algorithms
 mtdHelp()
@@ -20,5 +21,5 @@ DeleteWorkspace("converted")
 # extract the one we want
 wksp = mtd['rebinned']
 
-print "Rebinned workspace has " + str(wksp.getNumberHistograms()) + " histograms"
-print "Spectrum 450's X data size = " + str(len(wksp.readX(450))) + " bin boundaries"
+print("Rebinned workspace has " + str(wksp.getNumberHistograms()) + " histograms")
+print("Spectrum 450's X data size = " + str(len(wksp.readX(450))) + " bin boundaries")

@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import sys
 import string
 import re
@@ -161,7 +162,7 @@ class FitWorker(object):
         names = list()
         Y = list()
         E = list()
-        for prop, key in self._alg._propvalue2key.iteritems():
+        for prop, key in self._alg._propvalue2key.items():
             names.append(prop)
             values, errors = self.extractOptimalParameter(key.replace('_','.'))
             Y += values
