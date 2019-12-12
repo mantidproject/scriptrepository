@@ -1,8 +1,7 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
 ## Version 1.04, August 2018
-from __future__ import print_function
 import numpy
 import math
 #import time
@@ -229,7 +228,7 @@ def calcCFHam(J,terms,cache={}):
 	else:
 		from CrystalField import CrystalField
 		meV_to_MHz=0.001*1.602E-19/6.654E-34/1.E6
-		cfobj=CrystalField('S'+str((J-1)/2.0), 'C1',**terms)
+		cfobj=CrystalField(str('S')+str((J-1)/2.0), str('C1'),**terms)
 		y=cfobj.getHamiltonian()*meV_to_MHz
 		if(len(cache)>100):
 			cache.clear()
@@ -1081,10 +1080,10 @@ def getCrystalEquivalents(spGrp, unCell, refpt, allowInversion=True):
 		mats[i]=numpy.array((newX,newY,newZ))
 		if(numpy.allclose(mats[i],numpy.eye(3))):
 			transOps.append(op,) # translation
-			print("translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]))
+			print("translation op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]) )
 		if(numpy.allclose(mats[i],numpy.eye(3)*-1)):
 			transOps.append(op) # inversion (+ translation)
-			print("translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]))
+			print("translation and inversion op",op.getIdentifier(),"with det=",numpy.linalg.det(mats[i]) )
 
 	for i,op in enumerate(ops):
 		if(op.getIdentifier() != 'x,y,z'):
