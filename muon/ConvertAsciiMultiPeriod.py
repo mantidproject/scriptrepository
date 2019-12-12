@@ -17,6 +17,7 @@ class ConvertAsciiMultiPeriod(PythonAlgorithm):
 		self.declareProperty(FileProperty(name="FirstFile",defaultValue="",action=FileAction.Load,extensions = ["nxs"]))
 		self.declareProperty(FileProperty(name="LastFile",defaultValue="",action=FileAction.OptionalLoad,extensions = ["nxs"]))
 		self.declareProperty("CorrectDeadTime",True,doc="Apply dead time corrections")
+		self.declareProperty("Grouped",True,doc="Group data")
 		self.declareProperty(FileProperty(name="OutputDirectory",defaultValue="",action=FileAction.Directory),doc="Files put here, named to match source files with extension .dat")
 
 	def category(self):
@@ -27,6 +28,7 @@ class ConvertAsciiMultiPeriod(PythonAlgorithm):
 		file1=self.getProperty("FirstFile").value
 		file9=self.getProperty("LastFile").value
 		doDeadTimes=self.getProperty("CorrectDeadTime").value
+		group=self.getProperty("Grouped").value
 		if(file1 != file9):
 			i1=file1.rindex('.')
 			j1=i1-1
@@ -75,20 +77,29 @@ class ConvertAsciiMultiPeriod(PythonAlgorithm):
 				Groups=(wstuple[5],)
 			prog_reporter.report("Processing")
 			nper=len(ws)
-			outArray=numpy.zeros([len(ws[0].dataY(0)),nper*4+1])
+			if (group):
+				fb=MuonGroupDetectors(InputWorkspace=ws[0],DetectorGroupingTable=Groups[i])
+				nh=fb.getNumberHistograms()
+			else:
+				nh=ws[0].getNumberHistograms()
+			outArray=numpy.zeros([len(ws[0].dataY(0)),nper*nh*2+1])
 			outArray[:,0]=(ws[0].dataX(0)[:-1]+ws[0].dataX(0)[1:])/2
 			for i in range(nper):
 				if(doDeadTimes):
 					dtcdat=ApplyDeadTimeCorr(ws[i],Deads[i])
 				else:
 					dtcdat=ws[i]
-				fb=MuonGroupDetectors(InputWorkspace=dtcdat,DetectorGroupingTable=Groups[i])
-				outArray[:,i*4+1]=fb.dataY(0)
-				outArray[:,i*4+2]=fb.dataE(0)
-				outArray[:,i*4+3]=fb.dataY(1)
-				outArray[:,i*4+4]=fb.dataE(1)
+				if group:
+					fb=MuonGroupDetectors(InputWorkspace=dtcdat,DetectorGroupingTable=Groups[i])
+				else:
+					fb=dtcdat
+				for j in range(nh):
+					outArray[:,i*nh*2+j*2+1]=fb.dataY(j)
+					outArray[:,i*nh*2+j*2+2]=fb.dataE(j)
+				#outArray[:,i*nh*2+3]=fb.dataY(1)
+				#outArray[:,i*nh*2+4]=fb.dataE(1)
 			outpath=os.path.join(fileout1,os.path.splitext(os.path.split(thispath)[1])[0]+".dat")
-			fmtlist=['%9.1f']*(nper*4)
+			fmtlist=['%9.1f']*(nper*2*nh)
 			fmtlist.insert(0,'%6.3f')
 			numpy.savetxt(outpath,outArray,fmt=fmtlist)
 			for w in ws:
