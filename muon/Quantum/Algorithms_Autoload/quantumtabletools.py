@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
 ## Version 1.04, August 2018
@@ -5,7 +6,6 @@
 #  Point by point fitting
 #  Crystal Fields
 #  Crystal space group symmetry and coordinates in fractions of unit cell
-from __future__ import print_function
 import numpy
 import math
 
@@ -43,7 +43,7 @@ def ParseStringToDict(st,di0={}):
 				for ss in sl.split(";"):
 					#print "processing ",ss
 					kvl=ss.split("=")
-					kvl=list(map(str.strip,kvl))
+					kvl=[zzz.strip() for zzz in kvl] # map(str.strip,kvl)
 					if(len(kvl)<2):
 						raise Exception("Bad line in model string")
 					val=kvl[-1].split(",")
@@ -336,7 +336,7 @@ def ParseAndIterateModel(pars):
 				labels[str(i)]=i
 			except:
 				element=baseatom.lstrip("0123456789")
-				ek={x.lstrip("0123456789") for x in list(PeriodicTable.keys())}
+				ek={x.lstrip("0123456789") for x in PeriodicTable.keys()}
 				if(baseatom in ek):
 					raise Exception("Atom "+atom+" has several isotopes, choose one")
 				elif(element in ek):
@@ -361,7 +361,7 @@ def ParseAndIterateModel(pars):
 	for i in range(dssize):
 		cfield[i]=[None]*len(labels)
 	# second loop to generate H(hyperfine)
-	for (key,val) in list(pars.items()):
+	for (key,val) in pars.items():
 		#print "2nd loop looking at ",key
 		# All have 1st arg @n for specific site or omitted if all or ignored if not dynamic
 		if(key[0:2]=="a("):
@@ -476,7 +476,7 @@ def ParseAndIterateModel(pars):
 			for i in ii:
 				if(cfield[i][spin1] is None):
 					cfield[i][spin1]={} # dict to store terms
-				cfield[i][spin1]["B"+cfterm]=float(val[0])
+				cfield[i][spin1][str("B"+cfterm)]=float(val[0])
 		elif(key[0:2]=="ib" and key[2] in "246" and key[3] in "123456" and key[4]=="("): # Imaginary part of Crystal field, ib<NN>(atom,@site,|slice)=coeff. Note no ibN0 coefficients.
 			cfterm=key[2:4]
 			spint=key[5:].split(")")
@@ -485,7 +485,7 @@ def ParseAndIterateModel(pars):
 			for i in ii:
 				if(cfield[i][spin1] is None):
 					cfield[i][spin1]={} # dict to store terms
-				cfield[i][spin1]["IB"+cfterm]=float(val[0])
+				cfield[i][spin1][str("IB"+cfterm)]=float(val[0])
 	# now all coords known, process to give dipolar. Sites?
 	for d in range(dssize):
 		for g in gammas[d]:
@@ -510,7 +510,7 @@ def ParseAndIterateModel(pars):
 	rfphaserand=[False]*slices
 	rrf=0 # numpy.zeros([slices],dtype=numpy.int)
 	iterator=iter(([0.0,0.0,1.0],)) # default zero field, one detector orientation along z
-	for (key,val) in list(pars.items()):
+	for (key,val) in pars.items():
 		if(key=="lfuniform"):
 			iterator=uniformLF(int(val[0]))
 		elif(key=="lfrandom"):
@@ -547,7 +547,7 @@ def ParseAndIterateModel(pars):
 						if(p[2]<0 or (p[2]==0 and (p[1]<0 or (p[1]==0 and p[0]<0)))):
 							p=(-p[0],-p[1],-p[2])
 						axset[p]=1
-			iterator=iter(list(axset.keys()))
+			iterator=iter(axset.keys())
 		elif(key=="tf"):
 			if(len(val)==6):
 				iterator=iter(((val[0:3],val[3:6],val[3:6],val[3:6]),)) # 2 * 3-vec: B, spin0
@@ -582,7 +582,7 @@ def ParseAndIterateModel(pars):
 				if(len(val)==1):
 					Bmag[i,:]=[float(val[0])/10000.0,0.0,0.0]
 				elif(len(val)==3):
-					Bmag[i,:]=[float(x)/10000.0 for x in val]
+					Bmag[i,:]=[float(zzz)/10000.0 for zzz in val]
 				else:
 					raise Exception("bmagGauss should be a single number or a 3-vector")
 		elif(key[0:4]=="bmag"):
@@ -592,7 +592,7 @@ def ParseAndIterateModel(pars):
 				if(len(val)==1):
 					Bmag[i,:]=[float(val[0]),0.0,0.0]
 				elif(len(val)==3):
-					Bmag[i,:]=list(map(float,val))
+					Bmag[i,:]=[float(zzz) for zzz in val]
 				else:
 					raise Exception("bmag should be a single number or a 3-vector")
 		# RF mode
@@ -803,7 +803,7 @@ def ParseAndIterateModel(pars):
 				else:
 					morespin=labels[morespinlist[0]]
 					try:
-						moreaxis=numpy.array(list(map(float,morespinlist[1:4])))*inverted
+						moreaxis=numpy.array(map(float,morespinlist[1:4]))*inverted
 						morespinlist=morespinlist[4:]
 					except:
 						if(morespinlist[1]=="beam"):
@@ -966,12 +966,12 @@ def processor_FittedCurve(pars,ybins,ebins,dest,asym):
 	fitstuff=Fit(Function=fitfn,InputWorkspace=tmpws,CreateOutput=True)
 	# store in bin. "dest" is an integer,
 	#print "fit pars ",fitstuff[3].column("Value")," to fit in ",(ybins[:,dest]).shape
-	ybins[:,dest]=fitstuff[3].column("Value")
-	ebins[:,dest]=fitstuff[3].column("Error")
+	ybins[:,dest]=fitstuff[3].column(str("Value"))
+	ebins[:,dest]=fitstuff[3].column(str("Error"))
 	if("recycle" in pars):
 		pff=pars["fitfunction"]
 		# recycle named fit pars as initial value next time
-		for (i,parname) in enumerate(fitstuff[3].column("Name")):
+		for (i,parname) in enumerate(fitstuff[3].column(str("Name"))):
 			if (parname in pars["recycle"]):
 				matc=re.match("f([0-9]+)\.(.+)",parname)
 				if(matc):
@@ -983,7 +983,7 @@ def processor_FittedCurve(pars,ybins,ebins,dest,asym):
 				finder="(.*?name=){"+str(funcindex+1)+"}.*?"+baseparname+"=([0-9eE.+-]+)([;,]|$)"
 				matc2=re.match(finder,pff)
 				if(matc2):
-					pff=pff[:matc2.start(2)]+str(fitstuff[3].column("Value")[i])+pff[matc2.end(2):]
+					pff=pff[:matc2.start(2)]+str(fitstuff[3].column(str("Value"))[i])+pff[matc2.end(2):]
 				else:
 					print("warning, couldn't find anywhere to recycle ",parname," into ",pff," using finder=",finder)
 		nextpars={"fitfunction":pff}
@@ -1138,7 +1138,7 @@ def PreParseLoop(pars,hadaxis0,prog=None):
 					raise Exception("Too many nested loops")
 			lr=pars["loop"+str(loopctr)+"range"]
 			lpn=pars["loop"+str(loopctr)+"par"].split(";")
-			lpn=tuple(map(str.strip,lpn))
+			lpn=tuple(zzz.strip() for zzz in lpn) # tuple(map(str.strip,lpn))
 			nv=len(lpn)
 			if(len(lr) != 2*nv+1):
 				raise Exception("mismatch between loop parameters and ranges")
@@ -1175,13 +1175,14 @@ def ParseMeasureType(pars,prog=None):
 		if sgname in sglist:
 			spGrp=SpaceGroupFactory.createSpaceGroup(vars[0])
 		else:
-			sgname=sgname.translate(None," ")
-			sgtrans={s.translate(None," "):s for s in sglist}
+			sgname="".join(sgname.split()) #sgname=sgname.translate(None," ")
+			#sgtrans={s.translate(None," "):s for s in sglist}
+			sgtrans={"".join(s.split()):s for s in sglist}
 			if sgname in sgtrans:
 				spGrp=SpaceGroupFactory.createSpaceGroup(sgtrans[sgname])
 			else:
 				raise ValueError("Space group "+vars[0]+" unknown")
-		unCell=UnitCell(*list(map(float,vars[1:])))
+		unCell=UnitCell(*map(float,vars[1:]))
 		if not (spGrp.isAllowedUnitCell(unCell)):
 			raise ValueError("Unit Cell and space group are incompatible")
 	else: # 1:1 scale, no symmetry. Dummy functions independent of Mantid
@@ -1263,7 +1264,7 @@ def ParseMeasureType(pars,prog=None):
 		pars["tmpws"]=tmpws
 		fitfn=pars["fitfunction"]
 		fitstuff=Fit(Function=fitfn,InputWorkspace=tmpws,CreateOutput=True)
-		pars["axis1"]=fitstuff[3].column("Name")
+		pars["axis1"]=fitstuff[3].column(str("Name"))
 		method=2 # accumulate average P(t)
 		processor=processor_FittedCurve
 		tidyup=tidyup_FittedCurve
@@ -1438,7 +1439,7 @@ def RunModelledSystem(pars0,prog=None):
 		#print "pars to set for this iteration: ",loopvar
 		#print "pars0 insode loop: ",pars0
 		pars=pars0.copy()
-		for (k,v) in list(loopvar.items()):
+		for (k,v) in loopvar.items():
 			pars[k]=v
 		if(method==1):
 			bigomega=None # numpy.array([],dtype=numpy.float)
@@ -1534,7 +1535,7 @@ def RunModelledSystem(pars0,prog=None):
 			yvals=yvals/numave
 			recycle=processor(pars,ybins,ebins,dest,yvals)
 		if(recycle is not None):
-			for (k,v) in list(recycle.items()):
+			for (k,v) in recycle.items():
 				pars0[k]=v
 		if (prog is not None):
 			prog.report()
@@ -1566,12 +1567,12 @@ def GetUserAxisName(axname):
 		(r"^q\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)$","\\1 quadrupole splitting","MHz"),
 		(r"^q\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[0\]$","\\1 axial quadrupole","MHz"),
 		(r"^q\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[1\]$","\\1 quadrupole eta",""),
-		(r"^r\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[0\]$","\\1 x-position","\xC5"),
-		(r"^r\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[1\]$","\\1 y-position","\xC5"),
-		(r"^r\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[2\]$","\\1 z-position","\xC5"),
-		(r"^relax\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)$","Relaxation of \\1","\xB5s-1"),
-		(r"^convert\(([0-9]+),([0-9]+)\)$","Conversion rate from state \\1 to \\2","\xB5s-1"),
-		(r"^pulsed\[([0-9]+)\]$","Pulse time","\xB5s"),
+		(r"^r\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[0\]$","\\1 x-position","A"),
+		(r"^r\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[1\]$","\\1 y-position","A"),
+		(r"^r\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)\[2\]$","\\1 z-position","A"),
+		(r"^relax\((?:(?:\@[0-9]+,)|(?:\|[0-9]+,))*(\w+)\)$","Relaxation of \\1","us-1"),
+		(r"^convert\(([0-9]+),([0-9]+)\)$","Conversion rate from state \\1 to \\2","us-1"),
+		(r"^pulsed\[([0-9]+)\]$","Pulse time","us"),
 		(r"^lf\[[0-9]+,[0-9]+\]$","Field angle","degrees"),
 		(r"^tf\[[0-9]+,[0-9]+\]$","Field angle","degrees"),
 		(r"^brf(?:\(.+\))*\[0\]$","RF magnetic field","T"),
