@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
 ## Version 1.04, August 2018
@@ -60,6 +61,7 @@ def ParseOrientationString(string):
 
 
 # def ParseStringToDict(st,di0={}): now in quantumtabletools
+
 def ParseTableWorkspaceToDict(tw,di0={}):
 	# column 0 is param names (text, inc index)
 	# column 1 is values (ideally text, free)
