@@ -76,28 +76,27 @@ class MARIReduction(ReductionWrapper):
         prop['map_file'] = "mari_res2013.map"
         prop['monovan_mapfile'] = "mari_res2013.map"
 
-        # Next lines are for removing detector artifacts which should not be needed
+        # Next line is for removing an DAE artifact which should not be needed
         #prop['remove_streaks'] = True
         
-        #prop['hardmaskOnly']=maskfile # disable diag, use only hard mask
-        #prop['hard_mask_file'] = "mari_mask2019.msk"
+        #prop['hard_mask_file'] = "mari_mask2019_3.xml"
         prop['det_cal_file'] = ''
-        # Comment out the next line if you want to use the data run for background masking
-        #prop['mask_run'] = 25035
-        #prop['use_hard_mask_only'] = True
+        #prop['mask_run'] = 25035 # Run diag on this run instead of data run for background masking
+        #prop['use_hard_mask_only'] = True # disable diag, use only hard mask
         prop['save_format'] = 'nxspe'
         
-        #prop['wb_integr_range'] = [2,10]
+        #prop['wb_integr_range'] = [20, 100]  # in meV (normally "white beam vanadium" is run at 30meV
         prop['data_file_ext'] = '.nxs' # if two input files with the same name and
                                        # different extension found, what to prefer.
-        prop['load_monitors_with_workspace'] = False
+        #prop['load_monitors_with_workspace'] = False
         # change this to correct value and verify that motor_log_names refers correct and existing
         # log name for crystal rotation to write correct psi value into nxspe files
         prop['motor_offset']=None
-        prop['check_background']=False
+        prop['check_background']=False # subtracts constant ToF background or not
         prop['bkgd-range-min']=18000
         prop['bkgd-range-max']=19000
-        # Uncomment two following properties to correct for absorption
+
+        # Uncomment the two following properties to correct for absorption
         # on sample or sample container during the experiment.
         # 1) Define the sample material and sample shape:
         #
@@ -301,7 +300,7 @@ class MARIReduction(ReductionWrapper):
             PropertyManager.sample_run._old_chop_ws_part = PropertyManager.sample_run.chop_ws_part
         old_chop_ws_part = PropertyManager.sample_run._old_chop_ws_part
         eis = self.reducer.prop_man.incident_energy
-        if hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis):
+        if (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or 'AUTO' in eis or (float(eis) < 4.5):
             def new_chop_ws_part(fn_self, origin, tof_range, rebin, chunk_num, n_chunks):
                 ws = self.shift_next_frame(self.reducer, origin if origin else fn_self.get_workspace())
                 return old_chop_ws_part(ws, tof_range, rebin, chunk_num, n_chunks)
@@ -309,6 +308,44 @@ class MARIReduction(ReductionWrapper):
             def new_chop_ws_part(self, origin, tof_range, rebin, chunk_num, n_chunks):
                 return old_chop_ws_part(origin, tof_range, rebin, chunk_num, n_chunks)
         PropertyManager.sample_run.chop_ws_part = types.MethodType(new_chop_ws_part, PropertyManager.sample_run)
+
+        if not hasattr(PropertyManager.incident_energy, '_old_set_auto_Ei'):
+            PropertyManager.incident_energy._old_set_auto_Ei = PropertyManager.incident_energy.set_auto_Ei
+        old_set_auto_Ei = PropertyManager.incident_energy._old_set_auto_Ei
+        def new_set_auto_Ei(self, monitor_ws, instance, ei_mon_spec=None):
+            try:
+                old_set_auto_Ei(monitor_ws, instance, ei_mon_spec)
+            except RuntimeError:
+                d1 = monitor_ws.run().getLogData('Phase_Thick_1').value[-1]
+                d2 = monitor_ws.run().getLogData('Phase_Thick_2').value[-1]                    
+                guessEi = get_reps_from_phase(d1, d2)
+                if ei_mon_spec is None:
+                    ei_mon_spec = instance.ei_mon_spectra                    
+                fin_ei = []
+                for ei in guessEi:
+                    if ei < 4.01:
+                        mws = CloneWorkspace(monitor_ws)
+                        mws = ScaleX(mws, 20000, 'Add', IndexMin=2, IndexMax=3)
+                    else:
+                        mws = monitor_ws
+                    try:
+                        ei_ref, _, _, _ = GetEi(InputWorkspace=mws,
+                                                Monitor1Spec=ei_mon_spec[0], Monitor2Spec=ei_mon_spec[1],
+                                                EnergyEstimate=ei)
+                        fin_ei.append(ei_ref)
+                    except:
+                        instance.log("Can not refine guess energy {0:f}. Ignoring it.".format(ei), 'warning')
+                    if ei < 4.01:
+                        DeleteWorkspace(mws)
+                if len(fin_ei) == 0:
+                    raise RuntimeError("Was not able to identify auto-energies for workspace: {0}".format(monitor_ws.name()))                                
+                # Success! Set up estimated energies
+                self._autoEiCalculated = True
+                self._autoEiRunNumber = monitor_ws.getRunNumber()
+                self._incident_energy = fin_ei
+                self._num_energies = len(fin_ei)
+                self._cur_iter_en = 0
+        PropertyManager.incident_energy.set_auto_Ei = types.MethodType(new_set_auto_Ei, PropertyManager.incident_energy)
 
         # if this is not None, we want to run validation not reduction
         if self.validate_run_number:
@@ -873,6 +910,45 @@ def mari_load_file(self,inst_name,ws_name,run_number=None,load_mon_with_workspac
         RenameWorkspace('__tmpmon', OutputWorkspace=ws_name)
         loaded_ws = mtd[ws_name]
     return loaded_ws
+    
+def get_reps_from_phase(disk1, disk2):
+    opto_offset = 60.            # ToF offset due to position of opto
+    disk1_offset = 5879.         # ToF offset of disk1 to get slot 0 in position
+    disk2_offset = 6041.         # ToF offset of disk2 to get slot 0 in position
+    disk_tol = 100.              # ToF tolerance on disk delay time
+
+    disk_diff = disk2_offset - disk1_offset
+    disk_sep = disk2 - disk1 + disk_diff
+    if np.abs(disk_sep) < disk_tol:
+        mode = 4   # All reps allowed
+        slots = [6, 5, 4, 2]
+        slot = 6
+    elif np.abs(disk_sep + 8084.4) < disk_tol:
+        mode = 1   # Single-Ei mode
+        slots = [6]
+        slot = 6
+    elif np.abs(disk_sep + 6063.3) < disk_tol:
+        mode = 1   # Single-Ei mode
+        slots = [5]
+        slot = 5
+    elif np.abs(disk_sep + 4042.4) < disk_tol:
+        mode = 2   # Dual mode
+        slots = [6, 4]
+        slot = 6
+    elif np.abs(disk_sep - 2021.1) < disk_tol:
+        mode = 3   # Dual_close mode
+        slots = [5, 4]
+        slot = 5
+
+    # Energy of rep through slot 0 of disk 1
+    eis = []
+    for slot in slots:
+        slot_offset = slot * 2021.1
+        disk_tof = disk1 + disk1_offset + opto_offset - slot_offset
+        e0 = ((2286.26 * 7.861) / (disk_tof % 20000))**2
+        print(mode, e0, disk_sep)
+        eis.append(e0)
+    return eis
 
 
 if __name__ == "__main__" or __name__ == "__builtin__":
