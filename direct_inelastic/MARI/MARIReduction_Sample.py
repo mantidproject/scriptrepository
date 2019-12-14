@@ -5,6 +5,8 @@ import os,sys
 from numpy import *
 from mantid import *
 from Direct.ReductionWrapper import *
+from Direct.DirectEnergyConversion import DirectEnergyConversion
+from Direct.RunDescriptor import RunDescriptor
 from mantid.simpleapi import *
 from mantid.kernel import funcinspect
 from mantid.dataobjects import EventWorkspace
@@ -118,6 +120,50 @@ class MARIReduction(ReductionWrapper):
             Transpose(InputWorkspace=wsn+'_SQW', OutputWorkspace=wsn+'_SQW')
         return output
 
+    def shift_next_frame(self, reducer, ws):
+        """ For low energy reps (<4meV) on MARI the final monitor (or detector) is in the 2nd frame so we
+            need to shift the ToF by 20ms or the reduction will not be correct
+        """
+        cur_ei = PropertyManager.incident_energy.get_current()
+
+        wsn = ws.name()
+
+        already_shifted = False
+        if ws.run().hasProperty('is_frame_shifted') and 'No' not in ws.run().getProperty('is_frame_shifted').value:
+            already_shifted = True
+            both_shifted = 'Both' in ws.run().getProperty('is_frame_shifted').value
+
+        def do_shift(shift_type, shift_val, ws, reducer):
+            try:
+                mon_ws = ws.getMonitorWorkspace()
+                spec0 = 0
+            except RuntimeError:
+                mon_ws = ws
+                spec0 = 3
+            if shift_type == 'M3' or shift_type == 'Both':
+                ScaleX(mon_ws, shift_val, Operation='Add', IndexMin=2, IndexMax=3, OutputWorkspace=mon_ws.name())
+            if shift_type == 'Det' or shift_type == 'Both':
+                ScaleX(ws, shift_val, Operation='Add', IndexMin=spec0, IndexMax=ws.getNumberHistograms()-1, OutputWorkspace=ws.name())
+
+        if cur_ei < 3.1:    # Data and Mon3 will be in 2nd frame, shift all ToF by 20ms
+            if already_shifted and not both_shifted:
+                do_shift('Det', 20000, ws, reducer)
+            elif not already_shifted:
+                do_shift('Both', 20000, ws, reducer)
+            AddSampleLog(ws, 'is_frame_shifted', 'Both')
+        elif cur_ei < 4.01: # Mon3 is in 2nd frame so need to shift it by 20ms
+            if already_shifted and both_shifted:
+                do_shift('Det', -20000, ws, reducer)
+            elif not already_shifted:
+                do_shift('M3', 20000, ws, reducer)        
+            AddSampleLog(ws, 'is_frame_shifted', 'M3')
+        else:
+            if already_shifted:
+                do_shift('Both' if both_shifted else 'M3', -20000, ws, reducer)
+            AddSampleLog(ws, 'is_frame_shifted', 'No')
+
+        return ws
+
     def run_reduction(self, out_ws_name=None):
         """" Reduces runs one by one or sum all them together and reduce after this
 
@@ -218,6 +264,57 @@ class MARIReduction(ReductionWrapper):
                 return ws
 
         PropertyManager.sample_run.get_workspace = types.MethodType(new_get_workspace, PropertyManager.sample_run)
+
+        if not hasattr(PropertyManager.sample_run, '_old_chop_ws_part'):
+            PropertyManager.sample_run._old_chop_ws_part = PropertyManager.sample_run.chop_ws_part
+        old_chop_ws_part = PropertyManager.sample_run._old_chop_ws_part
+        eis = self.reducer.prop_man.incident_energy
+        if (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or 'AUTO' in eis or (float(eis) < 4.5):
+            def new_chop_ws_part(fn_self, origin, tof_range, rebin, chunk_num, n_chunks):
+                ws = self.shift_next_frame(self.reducer, origin if origin else fn_self.get_workspace())
+                return old_chop_ws_part(ws, tof_range, rebin, chunk_num, n_chunks)
+        else:
+            def new_chop_ws_part(self, origin, tof_range, rebin, chunk_num, n_chunks):
+                return old_chop_ws_part(origin, tof_range, rebin, chunk_num, n_chunks)
+        PropertyManager.sample_run.chop_ws_part = types.MethodType(new_chop_ws_part, PropertyManager.sample_run)
+
+        if not hasattr(PropertyManager.incident_energy, '_old_set_auto_Ei'):
+            PropertyManager.incident_energy._old_set_auto_Ei = PropertyManager.incident_energy.set_auto_Ei
+        old_set_auto_Ei = PropertyManager.incident_energy._old_set_auto_Ei
+        def new_set_auto_Ei(self, monitor_ws, instance, ei_mon_spec=None):
+            try:
+                old_set_auto_Ei(monitor_ws, instance, ei_mon_spec)
+            except RuntimeError:
+                d1 = monitor_ws.run().getLogData('Phase_Thick_1').value[-1]
+                d2 = monitor_ws.run().getLogData('Phase_Thick_2').value[-1]                    
+                guessEi = get_reps_from_phase(d1, d2)
+                if ei_mon_spec is None:
+                    ei_mon_spec = instance.ei_mon_spectra                    
+                fin_ei = []
+                for ei in guessEi:
+                    if ei < 4.01:
+                        mws = CloneWorkspace(monitor_ws)
+                        mws = ScaleX(mws, 20000, 'Add', IndexMin=2, IndexMax=3)
+                    else:
+                        mws = monitor_ws
+                    try:
+                        ei_ref, _, _, _ = GetEi(InputWorkspace=mws,
+                                                Monitor1Spec=ei_mon_spec[0], Monitor2Spec=ei_mon_spec[1],
+                                                EnergyEstimate=ei)
+                        fin_ei.append(ei_ref)
+                    except:
+                        instance.log("Can not refine guess energy {0:f}. Ignoring it.".format(ei), 'warning')
+                    if ei < 4.01:
+                        DeleteWorkspace(mws)
+                if len(fin_ei) == 0:
+                    raise RuntimeError("Was not able to identify auto-energies for workspace: {0}".format(monitor_ws.name()))                                
+                # Success! Set up estimated energies
+                self._autoEiCalculated = True
+                self._autoEiRunNumber = monitor_ws.getRunNumber()
+                self._incident_energy = fin_ei
+                self._num_energies = len(fin_ei)
+                self._cur_iter_en = 0
+        PropertyManager.incident_energy.set_auto_Ei = types.MethodType(new_set_auto_Ei, PropertyManager.incident_energy)
 
         # if this is not None, we want to run validation not reduction
         if self.validate_run_number:
@@ -350,6 +447,8 @@ class MARIReduction(ReductionWrapper):
         object.__setattr__(self.reducer.prop_man, 'remove_streaks', False)
         object.__setattr__(self.reducer.prop_man, 'fakewb', False)
         object.__setattr__(self.reducer.prop_man, 'filename_prefix', '')
+        PropertyManager.sample_run.load_file = types.MethodType(mari_load_file, PropertyManager.sample_run)
+        PropertyManager.wb_run.load_file = types.MethodType(mari_load_file, PropertyManager.wb_run)
 
 #------------------------------------------------------------------------------
 
@@ -684,13 +783,83 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
 def mari_normalise_background(background_int, white_int, second_white_int=None):
     """Normalize the background integrals"""
     if second_white_int is None:
-        if background_int.getNumberHistograms() == 919 and white_int.getNumberHistograms() == 918:
-            background_int = CropWorkspace(background_int, StartWorkspaceIndex=1)
-        background_int =  Divide(LHSWorkspace=background_int,RHSWorkspace=white_int,WarnOnZeroDivide='0')
+        nbspec = background_int.getNumberHistograms()
+        nwspec = white_int.getNumberHistograms()
+        if nbspec > nwspec:
+            background_int = CropWorkspace(background_int, StartWorkspaceIndex=(nbspec - nwspec))
+        else:
+            white_int = CropWorkspace(white_int, StartWorkspaceIndex=(nwspec - nbspec))
+        background_int =  Divide(LHSWorkspace=background_int, RHSWorkspace=white_int, WarnOnZeroDivide='0')
     else:
         hmean = 2.0*white_int*second_white_int/(white_int+second_white_int)
-        background_int =  Divide(LHSWorkspace=background_int,RHSWorkspace=hmean,WarnOnZeroDivide='0')
+        background_int =  Divide(LHSWorkspace=background_int, RHSWorkspace=hmean, WarnOnZeroDivide='0')
         DeleteWorkspace(hmean)
+
+def mari_load_file(self,inst_name,ws_name,run_number=None,load_mon_with_workspace=False,filePath=None,fileExt=None,**kwargs):
+    """Load run for the instrument name provided. If run_numner is None, look for the current run"""
+
+    ok,data_file = self.find_file(RunDescriptor._holder,inst_name,run_number,filePath,fileExt,**kwargs)
+    if not ok:
+        self._ws_name = None
+        raise IOError(data_file)
+
+    try:#LoadEventNexus does not understand Separate and throws.
+        # And event loader always loads monitors separately, so this issue used to
+        # call appropritate load command
+        Load(Filename=data_file, OutputWorkspace=ws_name,LoadMonitors = 'Separate')
+    except ValueError: # if loader thrown, its probably event file rejected "separate" options
+        Load(Filename=data_file, OutputWorkspace=ws_name,LoadMonitors = True, MonitorsLoadOnly='Histogram')
+    RunDescriptor._logger("Loaded {0}".format(data_file),'information')
+
+    loaded_ws = mtd[ws_name]
+    if loaded_ws.getNumberHistograms() == 918:
+        mons = ExtractSingleSpectrum(ws_name, 0, OutputWorkspace='__tmpmon')
+        mons.getSpectrum(0).clearDetectorIDs()
+        mons.getSpectrum(0).setSpectrumNo(-1)
+        ConjoinWorkspaces('__tmpmon', ws_name)
+        RenameWorkspace('__tmpmon', OutputWorkspace=ws_name)
+        loaded_ws = mtd[ws_name]
+    return loaded_ws
+    
+def get_reps_from_phase(disk1, disk2):
+    opto_offset = 60.            # ToF offset due to position of opto
+    disk1_offset = 5879.         # ToF offset of disk1 to get slot 0 in position
+    disk2_offset = 6041.         # ToF offset of disk2 to get slot 0 in position
+    disk_tol = 100.              # ToF tolerance on disk delay time
+
+    disk_diff = disk2_offset - disk1_offset
+    disk_sep = disk2 - disk1 + disk_diff
+    if np.abs(disk_sep) < disk_tol:
+        mode = 4   # All reps allowed
+        slots = [6, 5, 4, 2]
+        slot = 6
+    elif np.abs(disk_sep + 8084.4) < disk_tol:
+        mode = 1   # Single-Ei mode
+        slots = [6]
+        slot = 6
+    elif np.abs(disk_sep + 6063.3) < disk_tol:
+        mode = 1   # Single-Ei mode
+        slots = [5]
+        slot = 5
+    elif np.abs(disk_sep + 4042.4) < disk_tol:
+        mode = 2   # Dual mode
+        slots = [6, 4]
+        slot = 6
+    elif np.abs(disk_sep - 2021.1) < disk_tol:
+        mode = 3   # Dual_close mode
+        slots = [5, 4]
+        slot = 5
+
+    # Energy of rep through slot 0 of disk 1
+    eis = []
+    for slot in slots:
+        slot_offset = slot * 2021.1
+        disk_tof = disk1 + disk1_offset + opto_offset - slot_offset
+        e0 = ((2286.26 * 7.861) / (disk_tof % 20000))**2
+        print(mode, e0, disk_sep)
+        eis.append(e0)
+    return eis
+
 
 if __name__ == "__main__" or __name__ == "__builtin__":
 #------------------------------------------------------------------------------------#
