@@ -140,26 +140,31 @@ class MARIReduction(ReductionWrapper):
         """
 
         """
-            Define custom preprocessing procedure, to be applied to the whole
-            run, obtained from the instrument before diagnostics is applied
-        1) Get access to the pointer to the input workspace
-            (the workspace will be loaded  and calibrated at this point if it has not been done yet)
-            using sample_run property class:
-            run_ws = PropertyManager.sample_run.get_worksapce()
-
-        2) Get access to any property defined in Instrument_Properties.xml file
-           or redefined in the reduction script:
-           properties = self.reducer.prop_man
-
-        e.g:
+        Define custom preprocessing procedure, to be applied to the whole
+        run, obtained from the instrument before diagnostics is applied
+        1) Early update the cycle variable, as the procedure is most likely invoked from
+           the cycle over different file names:
+        if (not input_file is None):
+           self.reducer.sample_run = str(input_file)
+        
+        2) Get access to the pointer to the input workspace
+           (the workspace will be loaded  and calibrated at this point if it has not been done yet)
+           using sample_run property class:
+        run_ws = PropertyManager.sample_run.get_workspace()
+        
+        3) Get access to any property defined in Instrument_Properties.xml file
+            or redefined in the reduction script:
+        properties = self.reducer.prop_man
+            e.g:
         RunNumber = properties.sample_run
         ei = properties.incident_energy
-
-            Perform custom preprocessing procedure (with the values you specified)
+        
+        Perform custom preprocessing procedure (with the values you specified)
         preprocessed_ws = custom_preprocessing_procedure(run_ws,RunNumber,ei,...)
-        3) Store preprocessed workspace in the sample_run property for further analysis from preprocessing
-            for the case where the workspace name have changed in the Analysis Data Service
-            (this situation is difficult to predict so better always do this operation)
+        
+        4) Store preprocessed workspace in the sample_run property for further analysis from preprocessing
+           for the case where the workspace name have changed in the Analysis Data Service during preprocessing
+           (this situation is difficult to predict so better always do this operation)
         PropertyManager.sample_run.synchronize_ws(preprocessed_ws)
         """
         output = ReductionWrapper.reduce(self,input_file,output_directory)
