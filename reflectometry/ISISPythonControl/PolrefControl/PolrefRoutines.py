@@ -2,8 +2,10 @@ from __future__ import print_function
 from genie_python.genie import *
 import numpy as np
 import matplotlib.pyplot as plt
-from six import moves
 import sys,os
+
+if hasattr(__builtins__, 'raw_input'):
+    input = raw_input
 
 def groupname(name=''):  # Currently Broken. Unsure Why.
     '''groupname() looks for a group name in the user directory 
@@ -14,11 +16,11 @@ def groupname(name=''):  # Currently Broken. Unsure Why.
     '''
     if name=='':
         # Ask for a name
-        name=moves.input('What is your group name? ')
+        name=input('What is your group name? ')
     if os.path.isdir('u:/%s'%name):
         os.chdir('u:/%s'%name)
     else:
-        answer=moves.input(r'Group directory %s not found in u:\. Make a new one? '%name)
+        answer=input(r'Group directory %s not found in u:\. Make a new one? '%name)
         if answer == 'y' or answer == 'Y':
             print('u:/%s'%name)
             #os.mkdir('u:/%s'%name)            
