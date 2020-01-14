@@ -98,6 +98,7 @@
 # !
 # !	4/13/09	Number of possible spectra increased from 2 to 100.
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+from __future__ import print_function
 
 import os
 import sys
@@ -115,8 +116,12 @@ from readSpecCoef import *
 from spectrumCalc import *
 from absor_sphere import *
 
-from Tkinter import *
-import tkSimpleDialog
+if sys.version_info > (3,):
+    from tkinter import *
+    import tkinter.simpledialog as tkSimpleDialog
+else:
+    from Tkinter import *
+    import tkSimpleDialog
  
 class MyDialog(tkSimpleDialog.Dialog):
 
@@ -358,12 +363,12 @@ TOPAZ_or_MaNDi = d.result[16]
 
 # Check that one of the two absorption correction types has been selected
 if abs_correc_type != 'spherical' and abs_correc_type != 'polyhedral':
-    print ''
-    print '**********************************************************'
-    print "Absorption correction type is not 'spherical' or 'polyhedral'."
-    print 'Check your spelling.'
-    print '**********************************************************'
-    print ''
+    print('')
+    print('**********************************************************')
+    print("Absorption correction type is not 'spherical' or 'polyhedral'.")
+    print('Check your spelling.')
+    print('**********************************************************')
+    print('')
     exit()
 
 # Write or over-write anvred3.inp file
@@ -379,20 +384,20 @@ if True:
 
     # Initialize UB_IPNS matrix
     UB_IPNS = numpy.zeros((3,3))
-    print '\n Input from matrix file ' + ub_matrix_file + ':\n'
+    print('\n Input from matrix file ' + ub_matrix_file + ':\n')
 
     # Read matrix file into UB_IPNS matrix
     for i in range(3):
         linestring = UB_input.readline()
-        print linestring.strip('\n')
+        print(linestring.strip('\n'))
         linelist = linestring.split()
         for j in range(3):
             UB_IPNS[i,j] = float(linelist[j])           
     # Read next 2 lines containing lattice constants and esd's
     for i in range(2):
         linestring = UB_input.readline()
-        print linestring.strip('\n')
-    print '\n'
+        print(linestring.strip('\n'))
+    print('\n')
     # End of reading and printing matrix file
                 
 # TOPAZ detector scale factors for vanadium/niobium spectrum
@@ -471,7 +476,7 @@ calibParam = readrefl_header( integFile )
 L1 = float(calibParam[0])       # initial flight path length in cm
 t0_shift = float(calibParam[1]) # t-zero offest in microseconds
 nod = int(calibParam[2])    # number of detectors
-print '********** nod = ', nod
+print('********** nod = ', nod)
 
 logFile.write('\nInitial flight path length: %10.4f cm' % L1 )
 logFile.write('\nT-zero offset: %8.3f microseconds' % t0_shift )
@@ -510,7 +515,7 @@ if iSpec == 0:
         time = []
         counts = []
         
-        print 'Reading spectrum for ' + lineString[0:-1]
+        print('Reading spectrum for ' + lineString[0:-1])
         while True:
             lineString = specInput.readline()
             lineList = lineString.split()
@@ -553,7 +558,7 @@ for id in range(nod):
         spect = spectx[0]            # the spectral normalization parameter
         relSigSpect = spectx[1]      # the relative sigma of spect
         if spect == 0.0:
-            print '*** Wavelength for normalizing to spectrum is out of range.'
+            print('*** Wavelength for normalizing to spectrum is out of range.')
         spect1.append(spect)
                           
 # C-----------------------------------------------------------------------
@@ -609,7 +614,7 @@ while True:
     sigi = abs(peak[20])
     reflag = peak[21]
     
-    if seqnum % 1000 == 0: print 'seqnum =', seqnum
+    if seqnum % 1000 == 0: print('seqnum =', seqnum)
     
 
     # set-up for new run or detector
@@ -847,17 +852,17 @@ while True:
     if fsq > fsqmax: fsqmax = fsq        
             
 if abs_correc_type == 'spherical':
-    print '\nMinimum and maximum transmission = %6.4f, %6.4f' % (transmin, transmax)
+    print('\nMinimum and maximum transmission = %6.4f, %6.4f' % (transmin, transmax))
 
 logFile.write('\n\n***** Minimum and maximum transmission = %6.4f, %6.4f' \
     % (transmin, transmax))
     
 if fsqmax > (10000.00 -1):
-    print
-    print '################################################################'
-    print '     Maximum FOSQ is', fsqmax
-    print '     Re-run anvred with a scale factor of', 0.1*scaleFactor
-    print '################################################################'
+    print()
+    print('################################################################')
+    print('     Maximum FOSQ is', fsqmax)
+    print('     Re-run anvred with a scale factor of', 0.1*scaleFactor)
+    print('################################################################')
 
 # last record all zeros for shelx
 iz = 0
@@ -916,7 +921,7 @@ if iIQ == 1 or iIQ == 3:
 
 hkl_output.close()
 
-print 'All done!'
+print('All done!')
 
         
 

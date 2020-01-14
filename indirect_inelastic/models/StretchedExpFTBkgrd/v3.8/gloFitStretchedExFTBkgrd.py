@@ -15,11 +15,17 @@
   Parameter Beta of fit function StretchedExFT is the same for all spectra. All other fitting
   parameters are different for each spectrum
 '''
+from __future__ import print_function
 import re
 from copy import copy
 import numpy as np
 import sys
 import os
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import seqFitStretchedExFTBkgrd
 reload(seqFitStretchedExFTBkgrd)
@@ -71,7 +77,7 @@ background=mtd[background_name]
 vertical_axis = data.getAxis(1)
 qvalues = vertical_axis.extractValues()
 if not selected_wi:
-    selected_wi=range(len(qvalues))
+    selected_wi=list(range(len(qvalues)))
 
 """ Below is the model cast as a template string suitable for the
     Fit algoritm of Mantid. You can obtain similar string by setting up a model
@@ -94,7 +100,7 @@ fitstring_template ="""
     name=TabulatedFunction,Workspace=_BACKGROUND_,WorkspaceIndex=_IQ_,Scaling=1,Shift=0,XScaling=1,ties=(XScaling=1)"""
 fitstring_template = re.sub('[\s+]', '', fitstring_template)  # remove whitespaces and such
 
-print "\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################"
+print("\n#######################\nRunning a sequential fit to obtain a good initial guess\n#######################")
 seqOutput = seqFitStretchedExFTBkgrd.sequentialFit(resolution, data, background, fitstring_template, initguess, [minE, maxE], qvalues, selected_wi)
 
 # Since we are going to tie parameter Beta, find the average and use this number as initial guess
@@ -108,8 +114,8 @@ if initial_beta:
 for i in range(len(seqOutput["funcStrings"])):
     seqOutput["funcStrings"][i] = re.sub("Beta=\d+\.\d+",average_beta, seqOutput["funcStrings"][i])
 
-print "\n##################\n Representation of the models after sequential optimization\n##################"
-print seqOutput["funcStrings"]
+print("\n##################\n Representation of the models after sequential optimization\n##################")
+print(seqOutput["funcStrings"])
 
 # Merge models for each spectra
 global_model= 'composite=MultiDomainFunction,NumDeriv=true;'
@@ -131,11 +137,11 @@ for iq in selected_wi:
     domain_index += 1   
 global_model += "ties=({0}=f0.f0.f1.f1.Beta)".format('='.join(ties))
 
-print "\n##################\n Initial Global Model \n##################"
-print global_model
+print("\n##################\n Initial Global Model \n##################")
+print(global_model)
 
 # Carry out the fit
-print "\n#######################\nRunning the global fit\n#######################"
+print("\n#######################\nRunning the global fit\n#######################")
 output_workspace = "glofit_"+data.name()
 Fit(Function=global_model, Output=output_workspace, CreateOutput=True,
     Minimizer=minimizer, MaxIterations=maxIterations,
@@ -152,7 +158,7 @@ for row in parameters_workspace:
     matches = re.search("^f(\d+)\.(.*)", row['Name']) # for instance, f3.f0.f1.f0.Height
     if matches:
         iq, name = matches.groups()  # for instance, 3 and f0.f1.f0.Height
-        if name in other.keys():
+        if name in list(other.keys()):
             other[name].append(row["Value"])
             other_error[name].append(row["Error"])
         else:
@@ -178,6 +184,6 @@ dataX = np.array(dataX) ** 2
 glofit_Q2dependencies = CreateWorkspace(DataX=dataX, UnitX="QSquared", DataY=dataY, NSpec=3,
                                         WorkspaceTitle="Q squared-dependence of parameters",
                                         VerticalAxisUnit="Text", VerticalAxisValues=["EISF", "tau", "beta"])
-print "Chi-square of global fit=",chi2
+print("Chi-square of global fit=",chi2)
 
 

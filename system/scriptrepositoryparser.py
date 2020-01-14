@@ -48,7 +48,10 @@ from os.path import join
 import time
 import compiler
 import sys
-import commands
+if sys.version_info < (2,7):
+	import commands as subprocess
+else:
+	import subprocess
 import re
 
 re_default_author = re.compile('Author: (?P<author>.+) <(?P<email>.+)>')
@@ -192,7 +195,7 @@ def get_description(path):
 
 def get_author(path):
     try:
-        output = commands.getstatusoutput("git log -1 "+path)[1]
+        output = subprocess.getstatusoutput("git log -1 "+path)[1]
         spec_m = re.search(re_signed_author,output)
         if spec_m:
             return spec_m.group('author')

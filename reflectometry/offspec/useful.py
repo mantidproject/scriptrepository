@@ -13,10 +13,10 @@ def open_file(filename):
     try:
         thefile = open(filename, 'r')
     except IOError as error:
-        print(("Problem opening file {file}: {fileerror}".format(file=filename, fileerror=error)))
+        print("Problem opening file {file}: {fileerror}".format(file=filename, fileerror=error))
         if thefile != None:
             thefile.close()
-            print(("Could not open file " + filename + "\n"))
+            print("Could not open file " + filename + "\n")
     return thefile
 
 def save_dat(filename, data, coldelimiter = "\t"):

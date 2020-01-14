@@ -1,8 +1,11 @@
+from __future__ import print_function
 from genie_python.genie import *
 import numpy as np
 import matplotlib.pyplot as plt
-
 import sys,os
+
+if hasattr(__builtins__, 'raw_input'):
+    input = raw_input
 
 def groupname(name=''):  # Currently Broken. Unsure Why.
     '''groupname() looks for a group name in the user directory 
@@ -19,7 +22,7 @@ def groupname(name=''):  # Currently Broken. Unsure Why.
     else:
         answer=input(r'Group directory %s not found in u:\. Make a new one? '%name)
         if answer == 'y' or answer == 'Y':
-            print 'u:/%s'%name
+            print('u:/%s'%name)
             #os.mkdir('u:/%s'%name)            
 
 def waitformove():
@@ -59,13 +62,13 @@ def pol_run(u=5000, d=5000, total=0, Title='', SampleName=''):
             if i == 0 :
                 change(period=1)
                 flipper('up')
-                print 'counting on spin up for %d frames'%polstate[i], 'Framecount / Total ', framecount,'/ ', total
+                print('counting on spin up for %d frames'%polstate[i], 'Framecount / Total ', framecount,'/ ', total)
             if i == 1 :
                 change(period=2)
                 flipper('dn')
-                print 'counting on spin dn for %d frames'%polstate[i], 'Framecount / Total ', framecount,'/ ', total
+                print('counting on spin dn for %d frames'%polstate[i], 'Framecount / Total ', framecount,'/ ', total)
         
-            print "A small pause to stop cross contamination of polarisation states:"
+            print("A small pause to stop cross contamination of polarisation states:")
             waitfor(seconds=3)  # CJK 11/10/2013 wait to stop cross contamination of pol states
             resume()
             waitfor(frames=(polstate[i] + framecount))
@@ -106,11 +109,11 @@ def ascan(*args, **kwargs):
     elif nargs==8:
         BlockName, Start, Stop, Npts, Frames, Io, I, Save = args
     elif nargs >8:
-        print 'Too many arguments'
+        print('Too many arguments')
         return
                
     # Unpack any keyword arguments
-    for k,v in kwargs.iteritems():
+    for k,v in kwargs.items():
         if k == 'Block':
             BlockName=v
         elif k == 'Start':
@@ -128,7 +131,7 @@ def ascan(*args, **kwargs):
         elif k == 'Save':
             Save=v
                 
-    print '#', BlockName, Start, Stop, Npts, Frames, Io, I, Save
+    print('#', BlockName, Start, Stop, Npts, Frames, Io, I, Save)
     
     # build array of axis values
     x_values = np.linspace(Start, Stop, Npts)
@@ -143,8 +146,8 @@ def ascan(*args, **kwargs):
 
     CurrentState=get_runstate()
     if CurrentState[0] !=1 : # Here 1 = Setup
-        print 'Cant start a scan if instrument is "Running".'
-        print ' Will abort current run in 30 sec. Use ctrl-c to stop action.'
+        print('Cant start a scan if instrument is "Running".')
+        print(' Will abort current run in 30 sec. Use ctrl-c to stop action.')
         waitfor(seconds=30)
         abort()
     change(nperiods=Npts)
@@ -229,15 +232,15 @@ def pump(A=25, B=25, C=25, D=25,Flow=5, Wait=180):
     '''pump(A=25, B=25, C=25, D=25,Flow=5, Wait=180):
     '''
     if A+B+C+D != 100:
-        print "Pump: Please make your channel values add up to 100"
+        print("Pump: Please make your channel values add up to 100")
         return
     if Wait == 180:
-        print "Pump: Using default wait of 180 s"
+        print("Pump: Using default wait of 180 s")
 
     cset(concA=A, concB=B, concC=C, concD=D, hplcflow=Flow)
     waitfor(seconds=2)
     cset(hplcset=1)
     cset(pump_on_off=1)# turn the pump on
-    print "Waiting for "+str(wait)+"s"
+    print("Waiting for "+str(wait)+"s")
     waitfor(seconds=Wait)
     cset(pump_on_off=0)     # turn the pump off

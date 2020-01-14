@@ -1,4 +1,5 @@
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals
+
 ## Quantum - a program for solving spin evolution of the muon
 ## Author: James Lord
 ## Version 1.04, August 2018
