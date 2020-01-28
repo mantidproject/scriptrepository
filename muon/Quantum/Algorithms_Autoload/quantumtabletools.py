@@ -6,7 +6,6 @@ from __future__ import print_function, unicode_literals
 #  Point by point fitting
 #  Crystal Fields
 #  Crystal space group symmetry and coordinates in fractions of unit cell
-from __future__ import print_function
 import numpy
 import math
 
@@ -337,7 +336,7 @@ def ParseAndIterateModel(pars):
 				labels[str(i)]=i
 			except:
 				element=baseatom.lstrip("0123456789")
-				ek={x.lstrip("0123456789") for x in list(PeriodicTable.keys())}
+				ek={x.lstrip("0123456789") for x in PeriodicTable.keys()}
 				if(baseatom in ek):
 					raise Exception("Atom "+atom+" has several isotopes, choose one")
 				elif(element in ek):
@@ -362,7 +361,7 @@ def ParseAndIterateModel(pars):
 	for i in range(dssize):
 		cfield[i]=[None]*len(labels)
 	# second loop to generate H(hyperfine)
-	for (key,val) in list(pars.items()):
+	for (key,val) in pars.items():
 		#print "2nd loop looking at ",key
 		# All have 1st arg @n for specific site or omitted if all or ignored if not dynamic
 		if(key[0:2]=="a("):
@@ -511,7 +510,7 @@ def ParseAndIterateModel(pars):
 	rfphaserand=[False]*slices
 	rrf=0 # numpy.zeros([slices],dtype=numpy.int)
 	iterator=iter(([0.0,0.0,1.0],)) # default zero field, one detector orientation along z
-	for (key,val) in list(pars.items()):
+	for (key,val) in pars.items():
 		if(key=="lfuniform"):
 			iterator=uniformLF(int(val[0]))
 		elif(key=="lfrandom"):
@@ -575,7 +574,7 @@ def ParseAndIterateModel(pars):
 				rfax1=val[4:7]
 			else:
 				rfax1=(0.0,1.0,0.0)
-			iterator=iter(((axes1[int(val[0]) % 3],spinax1,axes1[int(val[0]) /3], rfax1),))
+			iterator=iter(((axes1[int(val[0]) % 3],spinax1,axes1[int(val[0]) //3], rfax1),))
 		elif(key[0:9]=="bmagGauss"): # must check for this before bmag, which is a substring!
 			ii,sp=EnumerateSites(slices,0,key[9:])
 			#print "key=",key," to ",ii," and ",sp," into Hams of len ",len(Hams)
@@ -804,7 +803,7 @@ def ParseAndIterateModel(pars):
 				else:
 					morespin=labels[morespinlist[0]]
 					try:
-						moreaxis=numpy.array(list(map(float,morespinlist[1:4])))*inverted
+						moreaxis=numpy.array(map(float,morespinlist[1:4]))*inverted
 						morespinlist=morespinlist[4:]
 					except:
 						if(morespinlist[1]=="beam"):
@@ -1178,12 +1177,13 @@ def ParseMeasureType(pars,prog=None):
 		else:
 			sgname="".join(sgname.split()) #sgname=sgname.translate(None," ")
 			#sgtrans={s.translate(None," "):s for s in sglist}
-			sgtrans={"".join(s.split()):s for s in sglist}
+			sgtrans={"".join(s.split()):s for s in sglist}
+
 			if sgname in sgtrans:
 				spGrp=SpaceGroupFactory.createSpaceGroup(sgtrans[sgname])
 			else:
 				raise ValueError("Space group "+vars[0]+" unknown")
-		unCell=UnitCell(*list(map(float,vars[1:])))
+		unCell=UnitCell(*map(float,vars[1:]))
 		if not (spGrp.isAllowedUnitCell(unCell)):
 			raise ValueError("Unit Cell and space group are incompatible")
 	else: # 1:1 scale, no symmetry. Dummy functions independent of Mantid
@@ -1440,7 +1440,7 @@ def RunModelledSystem(pars0,prog=None):
 		#print "pars to set for this iteration: ",loopvar
 		#print "pars0 insode loop: ",pars0
 		pars=pars0.copy()
-		for (k,v) in list(loopvar.items()):
+		for (k,v) in loopvar.items():
 			pars[k]=v
 		if(method==1):
 			bigomega=None # numpy.array([],dtype=numpy.float)
@@ -1536,7 +1536,7 @@ def RunModelledSystem(pars0,prog=None):
 			yvals=yvals/numave
 			recycle=processor(pars,ybins,ebins,dest,yvals)
 		if(recycle is not None):
-			for (k,v) in list(recycle.items()):
+			for (k,v) in recycle.items():
 				pars0[k]=v
 		if (prog is not None):
 			prog.report()
