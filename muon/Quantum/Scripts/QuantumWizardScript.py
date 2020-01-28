@@ -194,7 +194,7 @@ pars=OrderedDict({"spins":','.join(spins)})
 wiz2=QuantumWizard2Dialog()
 do_RF=False
 do_dynamic=False
-ct=wiz2.getProperty('Calculation type').value
+ct=wiz2.getProperty('CalculationType').value
 sfc=wiz2.getProperty('States_for_conversion').value
 if(ct=='Relaxation and Conversion'):
 	pars['dynamic']=str(sfc)
@@ -447,3 +447,4 @@ elif(nh <= 5):
 	plotSpectrum("Results",list(range(nh)))
 else:
 	plot2D("results")
+	
