@@ -17,31 +17,31 @@ class AnalyseThresholdScans(PythonAlgorithm):
 
 	def doChildAlg(self,AlgName,**InputProps):
 		if isinstance(AlgName,str):
-			t1=time.clock()
+			#t1=time.clock()
 			myalg=AlgorithmManager.create(AlgName) # brand new disposable one
-			t2=time.clock()
+			#t2=time.clock()
 			if(AlgName=="Fit"):
-				self.timeSetup += (t2-t1)
+			#	self.timeSetup += (t2-t1)
 				self.callsSetup+=1
 		else:
 			myalg=AlgName # given recyclable algorithm
 		myalg.setChild(True)
 		priorities=myalg.orderedProperties()
-		t1=time.clock()
+		#t1=time.clock()
 		for pri in priorities:
 			if(pri in InputProps):
 				myalg.setProperty(pri,InputProps[pri])
 				del InputProps[pri]
 		myalg.setProperties(InputProps) # rest in any order
-		t2=time.clock()
+		#t2=time.clock()
 		if(AlgName=="Fit"):
-			self.timeSetPar += (t2-t1)
+			#self.timeSetPar += (t2-t1)
 			self.callsSetPar+=1
-		t1=time.clock()
+		#t1=time.clock()
 		myalg.execute()
-		t2=time.clock()
+		#t2=time.clock()
 		if(AlgName=="Fit"):
-			self.timeExec += (t2-t1)
+			#self.timeExec += (t2-t1)
 			self.callsExec+=1
 		myres={}
 		for op in myalg.outputProperties():
