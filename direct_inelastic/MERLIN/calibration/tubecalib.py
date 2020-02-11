@@ -104,11 +104,10 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
     print(('*** Calibration info is written in file: {0}'.format(targ_file_name)));
     print(('*** Located in folder: {0}'.format(run_dir)));    
     print('***********************************************')    
-    
-    
-    
 
- 
+
+
+
 def myfit_data(bank,pack,tube,Intensity,mylen):
     error = np.sqrt(Intensity)
     position = list(range(1,513))
