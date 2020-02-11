@@ -1,6 +1,7 @@
 # latcon.py
 # Program to refine just the unit cell lattice constants but not the 
 # orientation matrix.
+from __future__ import print_function
 
 # A. Schultz
 # January 2015
@@ -14,8 +15,12 @@
 # 6 = Hexagonal
 # 7 = Cubic
 
-from Tkinter import *
-import tkSimpleDialog
+if sys.version_info > (3,):
+    from tkinter import *
+    import tkinter.simpledialog as tkSimpleDialog
+else:
+    from Tkinter import *
+    import tkSimpleDialog
 
 import sys
 import numpy
@@ -205,7 +210,7 @@ while True:
     k_array.append(k)
     dsp_obs.append(dsp)
 
-print '\nNumber of peaks =', len(h_array)
+print('\nNumber of peaks =', len(h_array))
 output.write( '\nNumber of peaks = %d\n' % len(h_array) )
     
 h_array = numpy.array(h_array)
@@ -292,8 +297,8 @@ if crystal_system == '1':           # triclinic
     gamma = popt[5]
     V = volume_triclinic(a, b, c, alpha, beta, gamma)
     
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
 
     alpha1 = alpha - 0.5*error[3]
     Va1 = volume_triclinic(a, b, c, alpha1, beta, gamma)
@@ -318,12 +323,12 @@ if crystal_system == '1':           # triclinic
             + (delta_V_beta/V)**2
             + (delta_V_gamma/V)**2            
             )**0.5
-    print 7*'  %10.6f' % (error[0], error[1], error[2], error[3], 
-        error[4], error[5], sigV)
+    print(7*'  %10.6f' % (error[0], error[1], error[2], error[3], 
+        error[4], error[5], sigV))
         
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], error[1], error[2], error[3], error[4], error[5], sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], error[1], error[2], error[3], error[4], error[5], sigV))
     output.write( '\nLattice constants:\n' )
     output.write( 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V) )
     output.write( '\n' )
@@ -380,9 +385,9 @@ if crystal_system == '2':           # monoclinic
     delta_V = a*b*c*( numpy.sin(sin2) - numpy.sin(sin1))
     sigV = V * ( (error[0]/a)**2 + (error[1]/b)**2 + (error[2]/c)**2 
         + (delta_V / V)**2 )**0.5
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], error[1], error[2], zero, error[3], zero, sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], error[1], error[2], zero, error[3], zero, sigV))
     output.write( '\nLattice constants:\n' )
     output.write( 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V) )
     output.write( '\n' )
@@ -420,9 +425,9 @@ if crystal_system == '3':           # orthorhombic
     V = a*b*c
     sigV = V * ( (error[0]/a)**2 + (error[1]/b)**2 + (error[2]/c)**2 )**0.5
     zero = 0.0
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], error[1], error[2], zero, zero, zero, sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], error[1], error[2], zero, zero, zero, sigV))
     output.write( '\nLattice constants:\n' )
     output.write( 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V) )
     output.write( '\n' )
@@ -461,9 +466,9 @@ if crystal_system == '4':           # tetragonal
     V = a*b*c
     sigV = V * ( 2.0*(error[0]/a)**2 + (error[1]/c)**2 )**0.5
     zero = 0.0
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], zero, error[1], zero, zero, zero, sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], zero, error[1], zero, zero, zero, sigV))
     output.write( '\nLattice constants:\n' )
     output.write( 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V) )
     output.write( '\n' )
@@ -507,9 +512,9 @@ if crystal_system == '5':           # rhombohedral
     # This is not correct. Needs work.
     sigV = V * ( 3.0*(error[0]/a)**2 + 5.0*(error[1]/alpha)**2 )**0.5
     zero = 0.0
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], zero, error[1], zero, zero, zero, sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], zero, error[1], zero, zero, zero, sigV))
     
 #-----------------------------------------------        
 if crystal_system == '6':           # hexagonal
@@ -544,9 +549,9 @@ if crystal_system == '6':           # hexagonal
     V = numpy.sqrt(3.0) * a**2 * c / 2.0
     sigV = V * ( 2.0*(error[0]/a)**2 + (error[1]/c)**2 )**0.5
     zero = 0.0
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], zero, error[1], zero, zero, zero, sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], zero, error[1], zero, zero, zero, sigV))
     output.write( '\nLattice constants:\n' )
     output.write( 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V) )
     output.write( '\n' )
@@ -581,9 +586,9 @@ if crystal_system == '7':           # cubic
     V = a*b*c
     sigV = V * ( 3.0*(error[0]/a)**2 )**0.5
     zero = 0.0
-    print '\nLattice constants:'
-    print 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V)
-    print 7*'  %10.6f' % (error[0], zero, zero, zero, zero, zero, sigV)
+    print('\nLattice constants:')
+    print(7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V))
+    print(7*'  %10.6f' % (error[0], zero, zero, zero, zero, zero, sigV))
     output.write( '\nLattice constants:\n' )
     output.write( 7*'  %10.6f' % (a,b,c,alpha,beta,gamma,V) )
     output.write( '\n' )
@@ -593,8 +598,8 @@ if crystal_system == '7':           # cubic
 
 output.write( '\n' )
 
-print '\nResults saved to latcon.out file.'
-print '\nAll done!'    
+print('\nResults saved to latcon.out file.')
+print('\nAll done!')    
 
     
     

@@ -1,4 +1,9 @@
 import PolCorr
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload(PolCorr)
 from mantid import *
 
@@ -12,7 +17,7 @@ from mantid import *
 # The calculated Polarizer/Flipper efficency PF should be used for 
 # the data reduction in PLET_reduction_sample.py
 
-sample_runs=range(57810,57820)
+sample_runs=list(range(57810,57820))
 eis = [6.13,3.20,1.96] 
 pressure = 0.9
 

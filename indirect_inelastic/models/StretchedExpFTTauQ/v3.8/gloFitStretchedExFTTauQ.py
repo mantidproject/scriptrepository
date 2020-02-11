@@ -15,6 +15,7 @@
   Parameters Beta, TauMax, and Alpha of fit function StretchedExFTTauQ are the same for all spectra.
   All other fitting parameters are different for each spectrum.
 '''
+from __future__ import print_function
 
 import re
 from copy import copy
@@ -105,19 +106,19 @@ seqOutput = sequentialFit(resolution, data, fitstring_template, initguess, [minE
 individuals = {"Beta": list(), "TauMax": list(), "Alpha": list()}
 # collect the individual values at each spectrum
 for i in range(len(seqOutput["funcStrings"])):
-    for name in individuals.keys():
+    for name in list(individuals.keys()):
         match = re.search("{0}=(\d+\.\d+)".format(name), seqOutput["funcStrings"][i])
         individuals[name].append(float(match.groups()[0]))
 # calculate the averages
 averages = dict()
-for name in individuals.keys():
+for name in list(individuals.keys()):
     averages[name] = "{0}={1}".format(name, str(sum(individuals[name])/len(individuals[name])))
 # substitute the individual values with the averages
 for i in range(len(seqOutput["funcStrings"])):
-    for name in individuals.keys():
+    for name in list(individuals.keys()):
         seqOutput["funcStrings"][i] = re.sub("{0}=\d+\.\d+".format(name),averages[name],
                                              seqOutput["funcStrings"][i])
-print seqOutput["funcStrings"]
+print(seqOutput["funcStrings"])
 
 # Merge models for each spectra
 global_model= 'composite=MultiDomainFunction,NumDeriv=true;'
@@ -126,12 +127,12 @@ for funcString in seqOutput["funcStrings"]:
 
 # Insert the ties for Beta, TauMax, and Alpha parameters
 ties = {"Beta": "", "TauMax": "", "Alpha": ""}
-for name in ties.keys():
-    for i in reversed(range(len(selected_wi))):  
+for name in list(ties.keys()):
+    for i in reversed(list(range(len(selected_wi)))):  
         ties[name] += "f{0}.f0.f1.f1.{1}=".format(i, name)
-all_ties = "ties=(" + ','.join([ties[name].strip("=") for name in ties.keys()]) + ')'
+all_ties = "ties=(" + ','.join([ties[name].strip("=") for name in list(ties.keys())]) + ')'
 global_model += all_ties
-print global_model
+print(global_model)
 #Relate spectra to domains
 spectra_domain_relation = dict()
 domain_index = 0
@@ -154,10 +155,10 @@ parameters_workspace = mtd[output_workspace+"_Parameters"]
 shorties = {"f0.f1.f0.Height": "EISF", "f0.f1.f1.TauMax": "taumax",
             "f0.f1.f1.Alpha": "alpha", "f0.f1.f1.Beta": "beta", }
 other = dict()
-for shorty in shorties.values():
+for shorty in list(shorties.values()):
     other[shorty] = list()
 other["qvalues"] = [qvalues[iq] for iq in selected_wi]
-names = shorties.keys()
+names = list(shorties.keys())
 for row in parameters_workspace:
     # name of the fitting parameter for this particular row
     matches = re.search("^f(\d+)\.(.*)", row['Name']) # for instance, f0.f0.f1.f0.Height
@@ -167,7 +168,7 @@ for row in parameters_workspace:
             other[shorties[name]].append(row["Value"])
 # calculate tau
 other["tau"] = (other['taumax'][0]*(qmin/np.array(other["qvalues"]))**other["alpha"][0]).tolist()
-print other
+print(other)
 # Save Q-dependencies of the optimized parameters, and also tau
 nspectra = 5
 dataY = other["EISF"] + other['taumax'] + other['alpha'] + other['tau'] + other['beta']

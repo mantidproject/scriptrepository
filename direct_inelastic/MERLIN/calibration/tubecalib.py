@@ -101,8 +101,8 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
                     raise RuntimeError('Could not fit')
     fid.close()
     print('***********************************************')
-    print(('*** Calibration info is written in file: {0}'.format(targ_file_name)));
-    print(('*** Located in folder: {0}'.format(run_dir)));    
+    print('*** Calibration info is written in file: {0}'.format(targ_file_name));
+    print('*** Located in folder: {0}'.format(run_dir));    
     print('***********************************************')    
 
 

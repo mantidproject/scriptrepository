@@ -1,16 +1,22 @@
+from __future__ import print_function
 from mantid import config
 from MARIReduction_Sample import *
 import time
 import os
 import datetime
 import sys
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 try:
     #Note: due to the mantid-python implementation, one needs to run this 
     #script in Mantid  script window  TWICE!!!  to deploy the the changes made to MARIReduction_Sample.py file.
     sys.path.insert(0,'/instrument/MARI/RBNumber/USER_RB_FOLDER/')
     reload(sys.modules['MARIReduction_Sample'])
 except:
-    print "*** WARNING can not reload MARIReduction_Sample file"
+    print("*** WARNING can not reload MARIReduction_Sample file")
     pass
 
 # Run number and Ei

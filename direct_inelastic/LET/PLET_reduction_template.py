@@ -1,4 +1,9 @@
 import PolCorr
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 reload(PolCorr)
 from mantid import *
 
@@ -17,7 +22,7 @@ PF = [0.95 - x*0.047 for x in eis]  # Polarizer/Flipper efficency for each ei.
 #   polmon_delay    - defualt 100 microsec
 #   mask            - default 'PLET_184_msk.xml'
 
-sample_runs=range(58310,58350); lbl='PEO-D_375K'  # LET12
+sample_runs=list(range(58310,58350)); lbl='PEO-D_375K'  # LET12
 
 data = PolCorr.Reduce(sample_runs,eis,PF,he_pressure=pressure,NSF_first=NSF_first,label=lbl)
 

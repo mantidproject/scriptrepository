@@ -40,7 +40,7 @@ class QuantumWizard2(PythonAlgorithm):
 		return 'Muon\Quantum\Wizard'
 		
 	def PyInit(self):
-		self.declareProperty('Calculation type','Plain',StringListValidator(['Plain','RF resonance','Relaxation and Conversion']))
+		self.declareProperty('CalculationType','Plain',StringListValidator(['Plain','RF resonance','Relaxation and Conversion']))
 		self.declareProperty('States_for_conversion',1,IntBoundedValidator(1,6))
 
 	def PyExec(self):

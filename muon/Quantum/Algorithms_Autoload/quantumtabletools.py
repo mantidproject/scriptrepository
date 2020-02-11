@@ -547,7 +547,7 @@ def ParseAndIterateModel(pars):
 						if(p[2]<0 or (p[2]==0 and (p[1]<0 or (p[1]==0 and p[0]<0)))):
 							p=(-p[0],-p[1],-p[2])
 						axset[p]=1
-			iterator=iter(axset.keys())
+			iterator=iter(list(axset.keys()))
 		elif(key=="tf"):
 			if(len(val)==6):
 				iterator=iter(((val[0:3],val[3:6],val[3:6],val[3:6]),)) # 2 * 3-vec: B, spin0
@@ -574,7 +574,7 @@ def ParseAndIterateModel(pars):
 				rfax1=val[4:7]
 			else:
 				rfax1=(0.0,1.0,0.0)
-			iterator=iter(((axes1[int(val[0]) % 3],spinax1,axes1[int(val[0]) /3], rfax1),))
+			iterator=iter(((axes1[int(val[0]) % 3],spinax1,axes1[int(val[0]) //3], rfax1),))
 		elif(key[0:9]=="bmagGauss"): # must check for this before bmag, which is a substring!
 			ii,sp=EnumerateSites(slices,0,key[9:])
 			#print "key=",key," to ",ii," and ",sp," into Hams of len ",len(Hams)
@@ -1177,7 +1177,8 @@ def ParseMeasureType(pars,prog=None):
 		else:
 			sgname="".join(sgname.split()) #sgname=sgname.translate(None," ")
 			#sgtrans={s.translate(None," "):s for s in sglist}
-			sgtrans={"".join(s.split()):s for s in sglist}
+			sgtrans={"".join(s.split()):s for s in sglist}
+
 			if sgname in sgtrans:
 				spGrp=SpaceGroupFactory.createSpaceGroup(sgtrans[sgname])
 			else:

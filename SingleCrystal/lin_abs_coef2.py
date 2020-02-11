@@ -1,6 +1,7 @@
 #-----------------------------------
 #           lin_abs_coef v2.py
 #-----------------------------------
+from __future__ import print_function
 
 # Program to calculate linear absorption coefficients and density.
 # Version 1 requires ISAW. Version 2 is a stand alone script.
@@ -8,8 +9,12 @@
 # Version 2:
 # A.J. Schultz, August 2015
 
-from Tkinter import *
-import tkSimpleDialog
+if sys.version_info > (3,):
+    from tkinter import *
+    import tkinter.simpledialog as tkSimpleDialog
+else:
+    from Tkinter import *
+    import tkSimpleDialog
 
 import math
 
@@ -94,8 +99,8 @@ logFile.write('\nCross sections in units of barns ( 1 barn = 1E-24 cm^2)\n')
 logFile.write('Absorption cross section for 2200 m/s neutrons (wavelength = 1.8 A)\n')
 logFile.write('For further information and references, see ...\ISAW\Databases\NIST_cross-sections.dat\n')
 
-print '\nAtom      ScatXs      AbsXs'	# print headings
-print   '----      ------      -----'
+print('\nAtom      ScatXs      AbsXs')	# print headings
+print('----      ------      -----')
 logFile.write('\nAtom      ScatXs      AbsXs\n')
 logFile.write(  '----      ------      -----\n')
 
@@ -138,7 +143,7 @@ for i in range(numberOfIsotopes):
     atomicWeight = float(lineList[4])   # atomic weight
     number = float(formulaList[i][lenSymbol:])   # the number of this nuclei in the formula
     
-    print '%-5s %10.5f %10.5f' % (lineList[0], scatteringXs, absorptionXs)
+    print('%-5s %10.5f %10.5f' % (lineList[0], scatteringXs, absorptionXs))
     logFile.write('%-5s %10.5f %10.5f\n' % (lineList[0], scatteringXs, absorptionXs))
     
     sumScatXs = sumScatXs + ( number * scatteringXs )
@@ -156,10 +161,10 @@ muAbs = sumAbsXs * zParameter / unitCellVolume
 density = (sumAtWt / 0.6022) * zParameter / unitCellVolume
 
 # Print the results.
-print '\n'
-print 'The linear absorption coefficent for total scattering is %6.3f cm^-1' % muScat
-print 'The linear absorption coefficent for true absorption at 1.8 A is %6.3f cm^-1' % muAbs
-print 'The calculated density is %6.3f grams/cm^3' % density
+print('\n')
+print('The linear absorption coefficent for total scattering is %6.3f cm^-1' % muScat)
+print('The linear absorption coefficent for true absorption at 1.8 A is %6.3f cm^-1' % muAbs)
+print('The calculated density is %6.3f grams/cm^3' % density)
 logFile.write('\n')
 logFile.write('The linear absorption coefficent for total scattering is %6.3f cm^-1\n' % muScat)
 logFile.write('The linear absorption coefficent for true absorption at 1.8 A is %6.3f cm^-1\n' % muAbs)
@@ -168,14 +173,14 @@ logFile.write('\nThe calculated density is %6.3f grams/cm^3\n' % density)
 # if calcRadius:
 if weight != 0.0:
     crystalVolume = weight / (density)   # sample volume in mm^3
-    print 'For a weight of %6.3f mg, the crystal volume is %6.3f mm^3' % (weight, crystalVolume)
+    print('For a weight of %6.3f mg, the crystal volume is %6.3f mm^3' % (weight, crystalVolume))
     logFile.write('\nFor a weight of %6.3f mg, the crystal volume is %6.3f mm^3\n' % (weight, crystalVolume))
     crystalRadius = ( crystalVolume / ((4.0/3.0)*math.pi) )**(1.0/3.0)   # radius in mm
-    print 'The crystal radius is %6.3f mm, or %6.4f cm' % (crystalRadius, crystalRadius/10.)
+    print('The crystal radius is %6.3f mm, or %6.4f cm' % (crystalRadius, crystalRadius/10.))
     logFile.write('The crystal radius is %6.3f mm, or %6.4f cm\n' % (crystalRadius, crystalRadius/10.))
     # volCalc = (4.0/3.0) * math.pi * crystalRadius**3
     # print 'volCalc = %6.3f' % volCalc
 
 logFile.close()
-print 'All done!'
+print('All done!')
 

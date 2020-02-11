@@ -78,7 +78,7 @@ class ConvertAsciiMultiPeriod(PythonAlgorithm):
 			prog_reporter.report("Processing")
 			nper=len(ws)
 			if (group):
-				fb=MuonGroupDetectors(InputWorkspace=ws[0],DetectorGroupingTable=Groups[i])
+				fb=MuonGroupDetectors(InputWorkspace=ws[0],DetectorGroupingTable=Groups[0])
 				nh=fb.getNumberHistograms()
 			else:
 				nh=ws[0].getNumberHistograms()
@@ -102,12 +102,10 @@ class ConvertAsciiMultiPeriod(PythonAlgorithm):
 			fmtlist=['%9.1f']*(nper*2*nh)
 			fmtlist.insert(0,'%6.3f')
 			numpy.savetxt(outpath,outArray,fmt=fmtlist)
-			for w in ws:
-				DeleteWorkspace(w)
-			for g in Groups:
-				DeleteWorkspace(g)
-			for d in Deads:
-				DeleteWorkspace(d)
+			print ("workspaces planned for deletion are",list(map(repr,ws)))
+			DeleteWorkspaces(ws)
+			DeleteWorkspaces(Groups)
+			DeleteWorkspaces(Deads)
 			# print "finished file ",thispath
 
 AlgorithmFactory.subscribe(ConvertAsciiMultiPeriod)

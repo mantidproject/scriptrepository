@@ -59,4 +59,4 @@ def map_mask_specnum(spec_list, white_run, quiet_run=None):
             raise RuntimeError('Wrong spectra')
     return out_list
 
-print((map_mask_specnum([535, 647, 709], 25779, 26190)))
+print(map_mask_specnum([535, 647, 709], 25779, 26190))

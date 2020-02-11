@@ -1,6 +1,11 @@
 import  MERReductionSrRuO3 as mpr
 from mantid.simpleapi import *
 from mantid import config
+if sys.version_info > (3,):
+    if sys.version_info < (3,4):
+        from imp import reload
+    else:
+        from importlib import reload
 
 reload(mpr)
 rd=mpr.MERLINReduction()
