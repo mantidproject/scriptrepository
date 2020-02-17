@@ -25,7 +25,7 @@ sum_runs=False
 ei=[30, 11.8]
 
 # White vanadium run number
-wbvan=26586
+wbvan=26913
 # Default save directory
 config['defaultsave.directory'] = '/instrument/MARI/RBNumber/USER_RB_FOLDER' #data_dir 
 
@@ -43,7 +43,8 @@ remove_bkg = True
 # If necessary, add any sequence of reduction paramerters defined in MARIParameters.xml file 
 # to the end ot the illiad string using the form: property=value 
 # (e.g.:  iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs,check_background=False)
-iliad_mari(runno, ei, wbvan, monovan, sam_mass, sam_rmm, sum_runs, check_background=remove_bkg)
+iliad_mari(runno, ei, wbvan, monovan, sam_mass, sam_rmm, sum_runs, check_background=remove_bkg,
+    hard_mask_file='MASK_FILE_XML')
 
 # To run reduction _and_ compute density of states together uncomment this and comment iliad_mari above
 # bkgruns and runno can be lists, which means those runs will be summed, and the sum is reduced

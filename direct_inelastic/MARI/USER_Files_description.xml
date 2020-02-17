@@ -15,6 +15,7 @@
   -->
  <!--Simple file copying -->  
   <file_to_copy file_name="MARIReduction_SampleAbs.py" copy_as="MARIReduction_$cycleID$.py"/>
+  <file_to_copy file_name="mari_mask.xml" copy_as="mari_mask$cycleID$.xml"/>
 
  <!--Advanced file copying 
     Variables have to be either strings or strings with variables, described above
@@ -22,10 +23,12 @@
   <file_to_copy file_name="template_mari.py" copy_as="reduce_mari.py">
     <replace var  ="MARIReduction_Sample" by_var="MARIReduction_$cycleID$"/>  
     <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>
+    <replace var  ="MASK_FILE_XML" by_var="mari_mask$cycleID$.xml"/>
   </file_to_copy>
   <file_to_copy file_name="template_mari_dos.py" copy_as="reduce_mari_dos.py">
     <replace var  ="MARIReduction_Sample" by_var="MARIReduction_$cycleID$"/>  
     <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>
+    <replace var  ="MASK_FILE_XML" by_var="mari_mask$cycleID$.xml"/>
   </file_to_copy>
   
 

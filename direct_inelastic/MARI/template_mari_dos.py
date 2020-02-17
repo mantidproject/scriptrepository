@@ -79,7 +79,8 @@ remove_bkg = False
 #print(help(iliad_dos))
 
 iliad_dos(runs, wbvan, ei, monovan, check_background=remove_bkg, load_reduce=load_reduce,
-         save_text=save_text, use_sub_directories=use_subdirs, nsmooth=nsmooth, save_folder=datadir)
+         save_text=save_text, use_sub_directories=use_subdirs, nsmooth=nsmooth, save_folder=datadir,
+         hard_mask_file='MASK_FILE_XML')
 
 # Alternative syntax without using the dictionaries, for a single sample at a single temperature
 #iliad_dos([25478, 25479], ei=[120, 10], wbvan=25035, background=[25492, 25493], temperature=5)
