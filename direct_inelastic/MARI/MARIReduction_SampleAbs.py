@@ -305,7 +305,11 @@ class MARIReduction(ReductionWrapper):
             PropertyManager.sample_run._old_chop_ws_part = PropertyManager.sample_run.chop_ws_part
         old_chop_ws_part = PropertyManager.sample_run._old_chop_ws_part
         eis = self.reducer.prop_man.incident_energy
-        if (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or 'AUTO' in eis or (float(eis) < 4.5):
+        try:
+            is_scalar = float(eis) < 4.5
+        except (ValueError, TypeError):
+            is_scalar = False
+        if (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or (isinstance(eis, six.string_types) and 'AUTO' in eis.upper()) or is_scalar:
             def new_chop_ws_part(fn_self, origin, tof_range, rebin, chunk_num, n_chunks):
                 ws = self.shift_next_frame(self.reducer, origin if origin else fn_self.get_workspace())
                 return old_chop_ws_part(ws, tof_range, rebin, chunk_num, n_chunks)
@@ -837,7 +841,10 @@ def iliad_dos(runno, wbvan, ei=None, monovan=None, sam_mass=0, sam_rmm=0, sum_ru
             if not hasattr(def_ei, '__len__'):
                 def_ei = [def_ei]
             ws_ei = [ws.getEFixed(1) for ws in ws_dict[sam][tt]['data']]
-            id_ei = [np.argsort([np.abs(ei1-ei0) for ei1 in ws_ei])[0] for ei0 in def_ei]
+            if isinstance(def_ei, six.string_types) and 'AUTO' in def_ei.upper():
+                id_ei = range(len(ws_ei))
+            else:
+                id_ei = [np.argsort([np.abs(ei1-ei0) for ei1 in ws_ei])[0] for ei0 in def_ei]
             data_ws = [ws_dict[sam][tt]['data'][id_ei[ii]] for ii in range(len(ws_ei))]
             msd = runs_dict[sam][tt]['msd'] if 'msd' in runs_dict[sam][tt] else global_msd
             # Calculates the sample DOS (without background subtraction)
