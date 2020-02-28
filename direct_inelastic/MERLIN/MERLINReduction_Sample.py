@@ -67,7 +67,7 @@ class MERLINReduction(ReductionWrapper):
 
       prop['check_background']=False
       #prop['ei-mon2-spec']=69641
-      #prop[fix_ei]=True
+      #prop['fix_ei']=True
       
 
       prop['save_format'] = 'nxspe' #nxs,nxspe'
