@@ -341,5 +341,6 @@ def midf(c,x):          #gaussian function to fit stripes
 if __name__ == "__main__":
     #####################################################################
     #This is the line to actually run the script
-    tube_calibrate_MER(42387,1000,9000)   #In this example an optional argument is given to just look at door 3.
+    tube_calibrate_MER(42387,1000,9000) 
+    #tube_calibrate_MER(49007,1500,9000,9)   #In this example an optional argument is given to just look at door 3.
 #####################################################################
