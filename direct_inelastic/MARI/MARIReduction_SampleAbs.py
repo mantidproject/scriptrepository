@@ -168,6 +168,15 @@ class MARIReduction(ReductionWrapper):
         PropertyManager.sample_run.synchronize_ws(preprocessed_ws)
         """
         output = ReductionWrapper.reduce(self,input_file,output_directory)
+        if output is None:
+            # Something went wrong - check to find out why
+            ws_run = self.reducer.prop_man.sample_run
+            fermi_speed = ws_run.run().getProperty('Fermi_Speed').value[-1]
+            total_counts = ws_run.run().getProperty('total_counts').value[-1]
+            if fermi_speed < 49:
+                raise RuntimeError('Fermi is stopped, run is likely white beam and should not be reduced')
+            elif total_counts < 1e4:
+                raise RuntimeError('Not enough data in run for reduction')
         # Auto-reduction returns workspace list, so for compatibility with auto-reduction
         # we better process any output as reduction list
         """ Defined custom post-processing procedure, in the way, similar to
