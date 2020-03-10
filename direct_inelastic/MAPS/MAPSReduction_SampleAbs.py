@@ -141,8 +141,8 @@ class MAPSReduction(ReductionWrapper):
             e.g:
         RunNumber = properties.sample_run
         ei = properties.incident_energy
-        
         Perform custom preprocessing procedure (with the values you specified)
+
         preprocessed_ws = custom_preprocessing_procedure(run_ws,RunNumber,ei,...)
         
         4) Store preprocessed workspace in the sample_run property for further analysis from preprocessing
@@ -154,7 +154,7 @@ class MAPSReduction(ReductionWrapper):
       results = ReductionWrapper.reduce(self,input_file,output_directory)
 
 
-      """ Defined custrom post-processing procedure, in the way, similar to
+      """ Defined custom post-processing procedure, in the way, similar to
       the preprocessing procedure, using the WS pointer, returned by the reduction procedure
       above. If the run is reduced in multirep mode, the WS is the list of the reduced
       workspace pointers, so the procedure should be applied to each workspace.

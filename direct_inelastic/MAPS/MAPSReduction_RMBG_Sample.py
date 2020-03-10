@@ -51,7 +51,7 @@ class MAPSReduction(ReductionWrapper):
       prop['map_file'] = "MAPS_rings.map"
       prop['monovan_mapfile'] = "4to1_mid_lowang.map"
       #prop['hardmaskOnly']="4to1_164.msk" # disable diag, use only hard mask
-      prop['hard_mask_file'] = "4to1_193_msk.xml"
+      prop['hard_mask_file'] = "4to1_184_msk.xml"
       prop['run_diagnostics'] = True
       prop['bkgd_range'] = [15000,19000]
       prop['normalise_method']='current'
@@ -68,7 +68,19 @@ class MAPSReduction(ReductionWrapper):
       prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
       return prop
-      #            
+      #
+    def remove_guide_background(r_wrapp):
+        """ """
+        empty_run_num = 37522 # 37523
+        if 'wb_ws_without_bg' in mtd:
+            CloneWorkspace('wb_ws_without_bg','cleared_up_ws') 
+        else:
+            wb_ws = PropertyManager.wb_run.get_workspace()
+            empty_ws = Load(empty_run_num)
+            cleared_up_ws = wb_ws - empty_ws
+            CloneWorkspace(cleared_up_ws,'wb_ws_without_bg')
+        PropertyManager.wb_run.synchronize_ws(cleared_up_ws ) 
+            
 #------------------------------------------------------------------------------------#
    @iliad
    def reduce(self,input_file=None,output_directory=None):
@@ -77,7 +89,7 @@ class MAPSReduction(ReductionWrapper):
           Overload only if custom reduction is needed or 
           special features are requested
       """
-      remove_guide_background(self.reducer)
+      remove_guide_background(self)
       results = ReductionWrapper.reduce(self,input_file,output_directory)
       #SaveNexus(ws,Filename = 'MARNewReduction.nxs')
       return results
@@ -221,22 +233,6 @@ def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_run
     #rd.reducer.prop_man.map_file='parker_rings.map'
     rd.reducer.prop_man.map_file='MAPS_rings.map'
     iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs)
-def remove_guide_background(reducer):
-     """ """
-     empty_run_num = 37522 # 37523
-
-     if 'wb_ws_without_bg' in mtd:
-            CloneWorkspace('wb_ws_without_bg',OutputWorkspace='cleared_up_ws') 
-            cleared_up_ws = mtd['cleared_up_ws']
-     else:
-            wb_ws = PropertyManager.wb_run.get_workspace()
-            current1 = wb_ws.getRun().getLogData('gd_prtn_chrg').value
-            empty_ws = Load('MAP'+str(empty_run_num),LoadMonitors='Exclude')
-            current2  = empty_ws.getRun().getLogData('gd_prtn_chrg').value
-            cleared_up_ws = wb_ws - empty_ws*(current1/current2)
-            CloneWorkspace('cleared_up_ws',OutputWorkspace='wb_ws_without_bg')
-     reducer.prop_man.wb_run = cleared_up_ws
-     PropertyManager.wb_run.synchronize_ws(cleared_up_ws) 
        
 
 if __name__ == "__main__" or __name__ == "__builtin__":
