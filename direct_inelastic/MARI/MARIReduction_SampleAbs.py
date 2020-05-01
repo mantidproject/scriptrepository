@@ -972,7 +972,7 @@ def get_reps_from_phase(disk1, disk2):
     return eis
 
 
-if __name__ == "__main__" or __name__ == "__builtin__":
+if __name__ == "__main__" or __name__ == "__builtin__" or __name__ == "mantidqt.widgets.codeeditor.execution":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
 #------------------------------------------------------------------------------------#

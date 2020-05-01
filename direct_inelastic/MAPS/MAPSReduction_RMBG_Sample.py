@@ -235,7 +235,7 @@ def iliad_maps_powder(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_run
     iliad_maps_crystal(runno,ei,wbvan,rebin_pars,monovan,sam_mass,sam_rmm,sum_runs,**kwargs)
        
 
-if __name__ == "__main__" or __name__ == "__builtin__":
+if __name__ == "__main__" or __name__ == "__builtin__" or __name__ == "mantidqt.widgets.codeeditor.execution":
 #------------------------------------------------------------------------------------#
 # SECTION USED TO RUN REDUCTION FROM MANTID SCRIPT WINDOW #
 #------------------------------------------------------------------------------------#
