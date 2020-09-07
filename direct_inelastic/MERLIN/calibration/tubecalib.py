@@ -86,7 +86,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
                 spec_min = int(min(spec_tube))
                 spec_max = int(max(spec_tube))
                 
-                Rebin(InputWorkspace='w1', OutputWorkspace='w2', Params='1500,7500,9000')
+                Rebin(InputWorkspace=ws_name, OutputWorkspace='w2', Params='1500,7500,9000')
                 ExtractSpectra(InputWorkspace='w2',OutputWorkspace='w3',StartWorkspaceIndex=spec_min-1,EndWorkspaceIndex=spec_max-1)
                 
                 w3=mtd['w3']
@@ -342,6 +342,6 @@ def midf(c,x):          #gaussian function to fit stripes
 if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt.widgets.codeeditor.execution":
     #####################################################################
     #This is the line to actually run the script
-    tube_calibrate_MER(42387,1000,9000) 
+    tube_calibrate_MER(50237,1000,9000) 
     #tube_calibrate_MER(49007,1500,9000,9)   #In this example an optional argument is given to just look at door 3.
 #####################################################################
