@@ -36,7 +36,8 @@ def adjust_detector_MER(fit_res,det_source_file):
                                     names="detno, offset, l2, code, 2theta, phi, w_x, w_y, w_z, f_x, f_y, f_z, a_x, a_y, a_z, det1, det2, det3, det4",
                                     skip_header=12,
                                     dtype =(int, float, float, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float))
-
+    print(' Fit tube shape: {0}'.format(tub_fit.shape))
+    print(' Det shape: {0}'.format(det.shape))
     #take first 12 lines from original det_corr file and copy across into the new version
     with open(full_det_source_file) as myfile:
         head = list(iter.islice(myfile,12))
@@ -45,7 +46,7 @@ def adjust_detector_MER(fit_res,det_source_file):
     for item in head:
         fid.write(item)
     
-    tube = det['detno']/10000
+    tube = np.floor(det['detno']/10000)
     num_tubes = tub_fit.size
     degrad_conv = 180/np.pi
     
@@ -103,7 +104,8 @@ def adjust_detector_MER(fit_res,det_source_file):
         print('Stripes positions: '  ,true_pos)
         
         z_new = tube_correction(true_pos,fit_pos,ideal_det_pos)
-                
+        #
+        # is this right that z is on place of Y coordinate?
         phi_new, theta_new, dist_new = mycart2sph(x_old,z_new,y_old)
         phi_new = phi_new*degrad_conv
         theta_new = theta_new*degrad_conv + 90
@@ -143,10 +145,10 @@ def tube_correction(true_pos,meas_pos,ideal_det_pos):
     z_new = np.poly1d(p)(ideal_det_pos)
     return z_new
 
-if __name__ == "__main__":    
-    # Inputs:
+if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt.widgets.codeeditor.execution":
+   # Inputs:
    # 1 the file produced by tubecalib.py file (in csv format)
    # 2 the file containing calibration information from the previous cycle.
-	adjust_detector_MER('calibratioon_res_doors-1_9.csv','det_corr_182_process_5.dat')
-    #Outputs:
-    # The procedure writes calibrated file with the name {2}_corrected.dat
+   adjust_detector_MER('calibratioon_res_doors-1_9.csv','det_corr_194_process_5.dat')
+   #Outputs:
+   # The procedure writes calibrated file with the name {2}_corrected.dat
