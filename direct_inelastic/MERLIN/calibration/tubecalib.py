@@ -13,20 +13,23 @@ start = time.time()
 
 def tube_calibrate_MER(run,tmin,tmax,*args):    
     #*args takes the form of 'bank' 'pack' 'tube'. If no arguments are given the whole detector array is fitted.
-    Load(Filename='MER'+str(run)+'.s02', OutputWorkspace='w1')
-    Rebin(InputWorkspace='w1', OutputWorkspace='w1', Params='1500,100,9000')
+    ws_name = 'ws_calib_{0}'.format(run)
+    if not ws_name in mtd:
+        Load(Filename='MER'+str(run)+'.nxs', OutputWorkspace=ws_name)
+    Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_name, Params='1500,100,9000')
     mylen = len(args)
 
     
     all_ids = []
-    w1 = mtd['w1']
+    w1 = mtd[ws_name]
     spec_num=np.zeros(w1.getNumberHistograms())
     for i in range(w1.getNumberHistograms()):
         myspectrum = w1.getSpectrum(i)
         spec_num[i]=myspectrum.getSpectrumNo()
         all_ids.extend(list(myspectrum.getDetectorIDs()))
     
-    det_tubes = np.array(all_ids)/10000
+    det_tubes = np.floor(np.array(all_ids)/10000)
+    det_tubes = det_tubes.astype(int)
     packstart = [1,1,1,1,1,1,1,1,1]
     packend = [4,4,5,4,4,4,4,3,3]
     tubestart = 1
@@ -65,7 +68,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         print(doorstart)
         print(packstart)
         print(tubestart)
-
+    print(' Calibrating {0}'.format(cal_info))
     run_dir =  config['defaultsave.directory']
     targ_file_name =  'calibratioon_res_{0}.csv'.format(cal_info)
     
@@ -77,7 +80,7 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
         for pack in range(packstart[np.array(bank)-1],packend[np.array(bank)-1]+1):
             for tube in range(tubestart,tubeend+1):
                 tube_id = int(str(bank)+str(pack)+str(tube))
-                print(tube_id)
+                print('Tube ID: {0}'.format(tube_id))
                 myindex = np.nonzero(det_tubes==tube_id)
                 spec_tube = np.array(spec_num)[[myindex[0]]]
                 spec_min = int(min(spec_tube))
@@ -122,21 +125,19 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
         middle = 0
         right_end = 0
         return
-    maxim = []
+
     maxim = np.where(np.array(Intensity)==maxint)[0]
     maxim = maxim+5
     if len(maxim)>1:
         maxim = maxim[np.where(np.logical_and(maxim>1,maxim<49))]
-        maxim = maxim[0]
-    else:
-        maxim = maxim[0]
+    maxim = maxim[0]
+ 
         
     minint = min(np.array(Intensity[2:maxim]))
-    minim = []
     minim = np.where(np.array(Intensity)==minint)[0]
     if len(minim)>1:
         minim = minim[np.where(np.logical_and(minim>1,minim<maxim+1))]
-        minim = minim[0]
+    minim = minim[0]
         
     if minim>=maxim:    #spike at end of tube
         left_end = 0
@@ -196,22 +197,22 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
         middle = 0
         right_end = 0
         return
-    maxim = []
+
     maxim = np.where(np.array(Intensity)==maxint)[0]
-    maxim = maxim+5
+    maxim = maxim + 5
     if len(maxim)>1:
-        maxim = maxim[np.where(np.logical_and(maxim>468,maxim<511))]
-        maxim = maxim[0]
+        maxim = maxin[np.where(np.logical_and(maxim >468,maxim <511))]
+    maxim = maxim[0]
+
     if maxim > 510:
         maxim = 510
-        
 
     minint = min(np.array(Intensity[maxim:510]))
-    minim = []
+
     minim = np.where(np.array(Intensity)==minint)[0]
     if len(minim)>1:
         minim = minim[np.where(np.logical_and(minim>maxim,minim<511))]
-        minim = minim[0]
+    minim = minim[0]
 
     if maxim>=minim:    #spike at end of tube
         left_end = 0
@@ -266,18 +267,18 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
     else: #dealing with standard tubes
         vals=np.array([135,165,170,200,229,269,320,350,390,420])
         addval=3
-    for i in range(0,len(vals)/2):
+    for i in range(0,int(len(vals)/2)):
         maxint = max(np.array(Intensity[vals[2*i]:vals[2*i+1]]))
         if maxint==0:   #if there are no counts in the tube
             left_end = 0
             middle = 0
             right_end = 0
             return
-        maxim = []
+
         maxim = np.where(np.array(Intensity)==maxint)[0]
         if len(maxim)>1:
             maxim = maxim[np.where(np.logical_and(maxim>vals[2*i]-1,maxim<vals[2*i+1]+1))]
-            maxim = maxim[0]
+        maxim = maxim[0]
         
         lowx = maxim-11
         highx = maxim+11
@@ -338,7 +339,7 @@ def midf(c,x):          #gaussian function to fit stripes
     
     return c[3] + c[0]*np.exp(-(x-c[1])**2/(2*c[2]*c[2]))
 
-if __name__ == "__main__":
+if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt.widgets.codeeditor.execution":
     #####################################################################
     #This is the line to actually run the script
     tube_calibrate_MER(42387,1000,9000) 
