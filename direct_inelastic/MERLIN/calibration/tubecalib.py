@@ -1,4 +1,7 @@
 from __future__ import print_function
+# import mantid algorithms
+from mantid.simpleapi import *
+
 import numpy as np
 import scipy
 from scipy.optimize import fmin
@@ -76,6 +79,8 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
     fid = open(file,'w')
     fid.write(' Tube_id, start, peak1, peak2, peak3, peak4, peak5, end\n')
 
+    ws_cal_name = ws_name+'_cal'
+    Rebin(InputWorkspace=ws_name, OutputWorkspace=ws_cal_name, Params='1500,7500,9000')
     for bank in range(doorstart,doorend+1):
         for pack in range(packstart[np.array(bank)-1],packend[np.array(bank)-1]+1):
             for tube in range(tubestart,tubeend+1):
@@ -86,10 +91,9 @@ def tube_calibrate_MER(run,tmin,tmax,*args):
                 spec_min = int(min(spec_tube))
                 spec_max = int(max(spec_tube))
                 
-                Rebin(InputWorkspace=ws_name, OutputWorkspace='w2', Params='1500,7500,9000')
-                ExtractSpectra(InputWorkspace='w2',OutputWorkspace='w3',StartWorkspaceIndex=spec_min-1,EndWorkspaceIndex=spec_max-1)
+                ExtractSpectra(InputWorkspace=ws_cal_name,OutputWorkspace='Single_tube_spectra',StartWorkspaceIndex=spec_min-1,EndWorkspaceIndex=spec_max-1)
                 
-                w3=mtd['w3']
+                w3=mtd['Single_tube_spectra']
                 yval = w3.extractY()
                 left_end = 0
                 middle = 0
@@ -326,7 +330,7 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
         return (left_end,stripes[0],stripes[1],stripes[2],stripes[3],stripes[4],right_end)
     
     
-def endf(c,x):          #error function to fit end of tubes
+def endf(c,x):         #error function to fit end of tubes
     if c[3]<0:
         c[3]=0
     
@@ -342,6 +346,7 @@ def midf(c,x):          #gaussian function to fit stripes
 if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt.widgets.codeeditor.execution":
     #####################################################################
     #This is the line to actually run the script
-    tube_calibrate_MER(50237,1000,9000) 
+    #tube_calibrate_MER(50237,1000,9000) 
+    tube_calibrate_MER(50237,1000,9000,8,2,8)     
     #tube_calibrate_MER(49007,1500,9000,9)   #In this example an optional argument is given to just look at door 3.
 #####################################################################

@@ -1,4 +1,7 @@
 from __future__ import print_function
+# import mantid algorithms
+from mantid.simpleapi import *
+
 import os
 import numpy as np
 import scipy
@@ -66,9 +69,9 @@ def adjust_detector_MER(fit_res,det_source_file):
         fit_par = [tub_fit['tube_start'][tub_num],tub_fit['peak1'][tub_num],tub_fit['peak2'][tub_num],tub_fit['peak3'][tub_num],tub_fit['peak4'][tub_num],
         tub_fit['peak5'][tub_num],tub_fit['tube_end'][tub_num]]
 
-        if tube_id/10==31:
+        if int(tube_id/10)==31:
             tube_type=1             #short upper tube
-        elif tube_id/10==32:
+        elif int(tube_id/10)==32:
             tube_type=2             #short lower tube
         else:
             tube_type=0             #long tube
