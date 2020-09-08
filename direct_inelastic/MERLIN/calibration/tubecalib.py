@@ -205,7 +205,7 @@ def myfit_data(bank,pack,tube,Intensity,mylen):
     maxim = np.where(np.array(Intensity)==maxint)[0]
     maxim = maxim + 5
     if len(maxim)>1:
-        maxim = maxin[np.where(np.logical_and(maxim >468,maxim <511))]
+        maxim = maxim[np.where(np.logical_and(maxim >468,maxim <511))]
     maxim = maxim[0]
 
     if maxim > 510:
@@ -347,6 +347,6 @@ if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt
     #####################################################################
     #This is the line to actually run the script
     #tube_calibrate_MER(50237,1000,9000) 
-    tube_calibrate_MER(50237,1000,9000,8,2,8)     
+    tube_calibrate_MER(50239,1000,9000)    
     #tube_calibrate_MER(49007,1500,9000,9)   #In this example an optional argument is given to just look at door 3.
 #####################################################################
