@@ -655,10 +655,18 @@ class Runs(object):
             self.monovan = None
         if self.outputworkspace:
             if self.recalc or self.outputworkspace not in mtd.getObjectNames():
-                return iliad_mari(self.runs, self.ei, self.wbvan, self.monovan, self.sam_mass, self.sam_rmm, self.sum_runs,
+                wsred = iliad_mari(self.runs, self.ei, self.wbvan, self.monovan, self.sam_mass, self.sam_rmm, self.sum_runs,
                                   OutputWorkspace=self.outputworkspace, **self.kwargs)
+                if hasattr(wsred, 'name'):
+                    return CloneWorkspace(wsred, OutputWorkspace='__'+wsred.name())
+                else:
+                    return [CloneWorkspace(wsx, OutputWorkspace='__'+wsx.name()) for wsx in wsred]
         else:
-            return iliad_mari(self.runs, self.ei, self.wbvan, self.monovan, self.sam_mass, self.sam_rmm, self.sum_runs, **self.kwargs)
+            wsred = iliad_mari(self.runs, self.ei, self.wbvan, self.monovan, self.sam_mass, self.sam_rmm, self.sum_runs, **self.kwargs)
+            if hasattr(wsred, 'name'):
+                return CloneWorkspace(wsred, OutputWorkspace='__'+wsred.name())
+            else:
+                return [CloneWorkspace(wsx, OutputWorkspace='__'+wsx.name()) for wsx in wsred]
 
     def load_reduce(self, wd):
         ws = []
