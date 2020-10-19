@@ -1,13 +1,12 @@
 #pylint: disable=invalid-name
 """ Sample MARI reduction script """
 from __future__ import print_function
-import os,sys
-from numpy import *
-from mantid import *
-from Direct.ReductionWrapper import *
+import os
+import sys
+from Direct.ReductionWrapper import ReductionWrapper, MainProperties, AdvancedProperties, iliad
+from mantid.simpleapi import *
 from Direct.DirectEnergyConversion import DirectEnergyConversion
 from Direct.RunDescriptor import RunDescriptor
-from mantid.simpleapi import *
 from mantid.kernel import funcinspect
 from mantid.dataobjects import EventWorkspace
 import six
@@ -15,6 +14,7 @@ import types
 from Direct.PropertyManager import PropertyManager
 import Direct
 import numpy as np
+from numpy import sqrt
 
 class MARIReduction(ReductionWrapper):
     @MainProperties
@@ -23,12 +23,12 @@ class MARIReduction(ReductionWrapper):
            a user usually wants to change
 
         MARI Instrument scientist beware!!!!
-        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or 
+        -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or
             in section __name__=='__main__' below if you do not use iliad_mari
         """
         prop = {}
         # if energy is specified as a list (even with single value e.g. ei=[81])
-        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is 
+        # The numbers are treated as a fraction of ei [from ,step, to ]. If energy is
         # a number, energy binning assumed to be absolute (e_min, e_step,e_max)
         #
         #prop['incident_energy'] = 50
@@ -37,7 +37,7 @@ class MARIReduction(ReductionWrapper):
         prop['energy_bins'] = [-1, 0.005, 0.97]
         #
         # the range of files to reduce. This range ignored when deployed from autoreduction,
-        # unless you going to sum these files. 
+        # unless you going to sum these files.
         # The range of numbers or run number is used when you run reduction from PC.
 
         # If you "save" a run without ending it, you have to give the file name
@@ -58,12 +58,10 @@ class MARIReduction(ReductionWrapper):
     @AdvancedProperties
     def def_advanced_properties(self):
         """Set up advanced properties, describing reduction.
-           These are the properties, usually provided by an instrument
-           scientist
+           These are the properties, usually provided by an instrument scientist
 
-           separation between simple and advanced properties depends
-           on scientist, experiment and user.   All are necessary for reduction 
-           to work properly
+           separation between simple and advanced properties depends on scientist, experiment and user.
+           All are necessary for reduction to work properly
 
         MARI Instrument scientist beware!!!!
         -- the properties set up here may be overridden in iliad_mari (below ) if you use it, or 
@@ -115,7 +113,7 @@ class MARIReduction(ReductionWrapper):
                 raise RuntimeError('Fermi is stopped, run is likely white beam and should not be reduced')
             elif total_counts < 1e4:
                 raise RuntimeError('Not enough data in run for reduction')
-        # Autoreduction returns workspace list, so for compartibility with autoreduction 
+        # Auto-reduction returns workspace list, so for compartibility with auto-reduction 
         # we better process any output as reduction list
         if not isinstance(output,list):
             output = [output]
@@ -282,7 +280,7 @@ class MARIReduction(ReductionWrapper):
             is_scalar = float(eis) < 4.5
         except (ValueError, TypeError):
             is_scalar = False
-        if (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or (isinstance(eis, six.string_types) and 'AUTO' in eis.upper()) or is_scalar:
+        if (isinstance(eis, six.string_types) and 'AUTO' in eis.upper()) or (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or is_scalar:
             def new_chop_ws_part(fn_self, origin, tof_range, rebin, chunk_num, n_chunks):
                 ws = self.shift_next_frame(self.reducer, origin if origin else fn_self.get_workspace())
                 return old_chop_ws_part(ws, tof_range, rebin, chunk_num, n_chunks)
@@ -475,7 +473,7 @@ def reduced_filename(runs, ei, is_sum, prefix=None):
 
 def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
     """Helper function, which allow to run MARIReduction in old iliad way
-     inputs: 
+     inputs:
         runno       -- one or list of run numbers to process
         ei            -- incident energy or list of incident energies
         wbvan      --  white beam vanadium run number or file name of the vanadium
@@ -486,7 +484,7 @@ def iliad_mari(runno,ei,wbvan,monovan,sam_mass,sam_rmm,sum_runs=False,**kwargs):
         **kwargs -- list of any reduction properties, found in MARI_Parameters.xml file
                          written in the form property=value
         NOTE: to avoid duplication, all default parameters are set up within def_advanced properites
-                  and def_main properties functions. They of course may be overwritten here. 
+                  and def_main properties functions. They of course may be overwritten here.
     """
     rd = MARIReduction()
     # set up advanced and main properties, specified in code above

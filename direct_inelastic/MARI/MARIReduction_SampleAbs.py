@@ -318,7 +318,7 @@ class MARIReduction(ReductionWrapper):
             is_scalar = float(eis) < 4.5
         except (ValueError, TypeError):
             is_scalar = False
-        if (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or (isinstance(eis, six.string_types) and 'AUTO' in eis.upper()) or is_scalar:
+        if (isinstance(eis, six.string_types) and 'AUTO' in eis.upper()) or (hasattr(eis, '__iter__') and any(ei < 4.5 for ei in eis)) or is_scalar:
             def new_chop_ws_part(fn_self, origin, tof_range, rebin, chunk_num, n_chunks):
                 ws = self.shift_next_frame(self.reducer, origin if origin else fn_self.get_workspace())
                 return old_chop_ws_part(ws, tof_range, rebin, chunk_num, n_chunks)
@@ -520,6 +520,13 @@ class MARIReduction(ReductionWrapper):
         return lambda : custom_name(self.reducer.prop_man)
         # Uncomment this to use standard file name generating function
         #return None
+
+    def validation_file_place(self):
+        """Redefine this to the place, where validation file, used in conjunction with
+         'validate_run' property, located. Here it defines the place to this script folder.
+          but if this function is disabled, by default it looks for/places it 
+         in a default save directory"""
+        return os.path.split(os.path.realpath(__file__))[0]
 
     def __init__(self,web_var=None):
         """ sets properties defaults for the instrument with Name"""
