@@ -250,9 +250,12 @@ if __name__ == "__main__":
     # into appropriate svn repository.
     
     # list of the known cycles with approximate  end dates:
-    cycle_end_list = {date(2019,3,29):'184',date(2019,7,19):'191',date(2019,10,25):'192',\
-    date(2019,12,20):'193',date(2020,03,27):'194',date(2020,06,05):'201',\
-    date(2020,10,23):'202',date(2020,12,17):'203',date(2999,1,1):'future'}
+    cycle_end_list = {date(2019,3,29):'184',date(2019,7,19):'191',date(2019,10,25):'192', \
+    date(2019,12,20):'193',\
+    date(2020,3,27):'194',\
+    date(2020,6,05):"201", \
+    date(2020,10,23):'202',\
+    date(2020,12,17):'203',date(2999,1,1):'future'}
     
     # old one2one map file used as source for one2one map file used in current cycle
     one2one_source_map = 'one2one_182.map' 
@@ -263,7 +266,7 @@ if __name__ == "__main__":
     repository_path,commit_changes,cycle_index = check_calibration_options(cycle_end_list)
     
       
-    create_MERInst_Files(42385,commit_changes,repository_path,cycle_index,one2one_source_map,files2commit)
+    create_MERInst_Files(50244,commit_changes,repository_path,cycle_index,one2one_source_map,files2commit)
     #create_one2onemap('one2one_174.map','mynew_one2one.map')
     #create_one2onepar(37394,'mynew_one2one.par')
     #create_ringmap('mynew_one2one.par','mynew_ring.map')
