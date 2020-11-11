@@ -152,6 +152,6 @@ if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt
    # Inputs:
    # 1 the file produced by tubecalib.py file (in csv format)
    # 2 the file containing calibration information from the previous cycle.
-   adjust_detector_MER('calibratioon_res_doors-1_9.csv','det_corr_194_process_5.dat')
+   adjust_detector_MER('calibratioon_res_203_doors-1_9.csv','det_corr_194_process_5.dat')
    #Outputs:
    # The procedure writes calibrated file with the name {2}_corrected.dat
