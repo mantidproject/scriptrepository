@@ -347,6 +347,6 @@ if __name__ == "__main__"  or __name__ == "__builtin__" or __name__ == "mantidqt
     #####################################################################
     #This is the line to actually run the script
     #tube_calibrate_MER(50237,1000,9000) 
-    tube_calibrate_MER(50239,1000,9000)    
+    tube_calibrate_MER(54473,1000,9000)    
     #tube_calibrate_MER(49007,1500,9000,9)   #In this example an optional argument is given to just look at door 3.
 #####################################################################
