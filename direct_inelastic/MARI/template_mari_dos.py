@@ -68,7 +68,7 @@ save_text = True
 
 
 #White vanadium run number
-wbvan=26584
+wbvan=28041
 #Default save directory
 datadir = '/instrument/MARI/RBNumber/USER_RB_FOLDER/' #data_dir 
 
