@@ -83,6 +83,9 @@ class MERLINReduction(ReductionWrapper):
         #
         prop['monovan_lo_frac']=-0.4
         prop['monovan_hi_frac']= 0.4
+        # the run, containing empty instrument background to remove from all runs
+        #prop['empty_bg_run'] = 28053
+        #
         # Uncomment two following properties to correct for absorption
         # on sample or sample container during the experiment.
         # 1) Define the sample material and sample shape:

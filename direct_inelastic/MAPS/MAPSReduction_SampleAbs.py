@@ -73,7 +73,9 @@ class MAPSReduction(ReductionWrapper):
       prop['save_format'] = 'nxspe' # nxs or spe
       prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
-
+      # the run, containing empty instrument background to remove from all runs
+      #prop['empty_bg_run'] = 28053
+      #
       # Uncomment two following properties to correct for absorption
       # on sample or sample container during the experiment.
       # 1) Define the sample material and sample shape:

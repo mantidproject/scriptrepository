@@ -95,6 +95,8 @@ class MARIReduction(ReductionWrapper):
         prop['check_background']=False # subtracts constant ToF background or not
         prop['bkgd-range-min']=18000
         prop['bkgd-range-max']=19000
+        # the run, containing empty instrument background to remove from all runs
+        #prop['empty_bg_run'] = 28053
 
         # Uncomment the two following properties to correct for absorption
         # on sample or sample container during the experiment.
