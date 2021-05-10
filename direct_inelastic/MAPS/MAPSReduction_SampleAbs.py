@@ -73,8 +73,19 @@ class MAPSReduction(ReductionWrapper):
       prop['save_format'] = 'nxspe' # nxs or spe
       prop['data_file_ext']='.nxs' # if two input files with the same name and
                                     #different extension found, what to prefer.
-      # the run, containing empty instrument background to remove from all runs
-      #prop['empty_bg_run'] = 28053
+      # Uncomment properties below and set them up to proper background run numbers
+      # to remove empty instrument background
+      # the run, containing empty instrument background to remove from sample run
+      #prop['empty_bg_run'] = None
+      # the run, containing empty instrument background to remove from detector vanadium run
+      #prop['empty_bg_run_for_wb'] = None
+      # the run, containing empty instrument background to remove from monovan run
+      # if not defined, the empty_bg_run will be used instead
+      #prop['empty_bg_run_for_monovan'] = None
+      # the run, containing empty instrument background to remove from WB for monovan run
+      # if WB for monovan defined and this one not defined, the "empty_bg_run_for_wb"
+      # will be used instead
+      #prop['empty_bg_run_for_monoWb'] = None
       #
       # Uncomment two following properties to correct for absorption
       # on sample or sample container during the experiment.
