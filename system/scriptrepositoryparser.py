@@ -40,19 +40,14 @@ Created on Wed Mar  6 09:05:08 2013
 
 @author: gesner
 """
-from __future__ import (absolute_import, division, print_function, unicode_literals)
-
+import ast
 import json
 import os
 from os.path import join
-import time
-import compiler
-import sys
-if sys.version_info < (2,7):
-	import commands as subprocess
-else:
-	import subprocess
 import re
+import subprocess
+import sys
+import time
 
 re_default_author = re.compile('Author: (?P<author>.+) <(?P<email>.+)>')
 re_signed_author = re.compile('signed by: (?P<author>.+) <(?P<email>.+)>')
@@ -71,9 +66,8 @@ def extract_readme_doc(path):
     .. note:
         It does not check for exception related to opening and reading files.
     """
-    return (open(path,'r').read())
-
-
+    with open(path, 'r') as fd:
+        return fd.read()
 
 
 def extract_python_doc(path):
@@ -98,12 +92,15 @@ def extract_python_doc(path):
         with exception related to malformed python scripts (returned by compiler module)
 
     """
-
     ## first of all, try to get the docstring from the compiler
     ## parserFile function, if the doc is not an empty string,
     ## return this documentation
-    doc = compiler.parseFile(path).doc
-    if doc : return doc
+    with open(path, 'r') as fd:
+        source = fd.read()
+
+    doc = ast.get_docstring(ast.parse(source))
+    if doc:
+        return doc
 
     ## extracting the comments at the header of the file
     ## it will iterate over the lines of the script
