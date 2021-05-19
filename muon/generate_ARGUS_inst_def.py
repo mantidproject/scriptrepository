@@ -1,4 +1,7 @@
-# import mantid algorithms, numpy and matplotlib
+""" generate_ARGUS_inst_def
+Author: James Lord
+Generates IDF for ARGUS
+"""
 from mantid.simpleapi import *
 import matplotlib.pyplot as plt
 import numpy as np
