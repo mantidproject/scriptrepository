@@ -79,8 +79,9 @@ class MAPSReduction(ReductionWrapper):
       #prop['empty_bg_run'] = None
       # the run, containing empty instrument background to remove from detector vanadium run
       #prop['empty_bg_run_for_wb'] = None
-      # the run, containing empty instrument background to remove from monovan run
-      # if not defined, the empty_bg_run will be used instead
+      # the run, containing empty instrument background to remove from mono-vanadium.
+      # If not defined and mono-vanadium is defined, the empty_bg_run (for sample)
+      # will be used instead
       #prop['empty_bg_run_for_monovan'] = None
       # the run, containing empty instrument background to remove from WB for monovan run
       # if WB for monovan defined and this one not defined, the "empty_bg_run_for_wb"
