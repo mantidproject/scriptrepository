@@ -1,3 +1,4 @@
+import glob
 import importlib
 import scipy
 import site
@@ -25,7 +26,7 @@ with tempfile.TemporaryDirectory() as tmpdirname:
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT)
     print(process.stdout.decode('utf-8'))
-    sys.path.insert(1, glob.glob(tmpdirname + '/lib/*/site-packages')    
+    sys.path.insert(1, glob.glob(tmpdirname + '/lib/*/site-packages')[0])
     importlib.reload(site)
     globals()['packaging'] = importlib.import_module('packaging')
     from packaging import version
