@@ -26,7 +26,9 @@ with tempfile.TemporaryDirectory() as tmpdirname:
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT)
     print(process.stdout.decode('utf-8'))
-    sys.path.insert(1, glob.glob(tmpdirname + '/lib/*/site-packages')[0])
+    tmp_site_packages = glob.glob(tmpdirname + '/lib/*/site-packages')
+    for packages_dir in tmp_site_packages:
+        sys.path.insert(1, packages_dir)
     importlib.reload(site)
     globals()['packaging'] = importlib.import_module('packaging')
     from packaging import version
@@ -48,4 +50,4 @@ with tempfile.TemporaryDirectory() as tmpdirname:
     print(process.stdout.decode('utf-8'))
 
     globals()['euphonic'] = importlib.import_module('euphonic')
-    #print("Please restart Mantid in order to use the installed Euphonic library")
+
