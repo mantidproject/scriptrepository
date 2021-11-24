@@ -118,7 +118,7 @@ if __name__ == "__main__" or "mantidqt.widgets.codeeditor.execution":
 
     if not do_load_hdf5:
         # produce 3d array from raw data
-        ws = load_raw_run(49505)
+        ws = load_raw_run(runno)
         data = make_3d_array(ws)
         if do_save_hdf5 and hdf5_path:
             save_data(data, hdf5_path)
@@ -132,7 +132,7 @@ if __name__ == "__main__" or "mantidqt.widgets.codeeditor.execution":
 
     # 2. Run ML algorithm here (or load results)
     do_load_peaks = True
-    so_save_peaks = False
+    do_save_peaks = False
     peaks_path = r"C:\Users\xhg73778\Documents\bragg-detect-main\bragg-detect-main\example\result\peak_locations.txt"
 
     if do_load_peaks and peaks_path:
