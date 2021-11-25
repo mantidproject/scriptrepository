@@ -79,9 +79,12 @@ def findSpectrumIndex(indices, ntubes=1520, npix_per_tube=128, ntubes_per_bank=1
     :param nmonitors: number of monitor spectra (assumed first spectra in ws)
     :return: list of spectrum indindices of workspace corresponding to indices of found peaks in 3d array
     """
-    ibank = np.floor(indices[:,0]/(ntubes_per_bank-1))
+    # find bank and then reverse order of tubes in bank
+    ibank = np.floor(indices[:,0]/ntubes_per_bank)
     itube = ibank*ntubes_per_bank + ((ntubes_per_bank-1) - indices[:,0] % ntubes_per_bank)
+    # flip tube 
     ipix = (npix_per_tube-1) - indices[:,1]
+    # get spectrum index
     specIndex = np.ravel_multi_index((itube.astype(int), ipix), 
         dims=(ntubes, npix_per_tube), order='C') + nmonitors
     return specIndex.tolist()  # so elements are of type int not numpy.int32
@@ -145,4 +148,4 @@ if __name__ == "__main__" or "mantidqt.widgets.codeeditor.execution":
                            
     # 3. Process output of ML algorithm and create PeaksWorkspace
     peaks = createPeaksWorkspaceFromIndices(ws, 'ML_peaks', indices, data)
-
+    
