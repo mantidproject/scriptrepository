@@ -44,7 +44,7 @@ with tempfile.TemporaryDirectory() as tmpdirname:
 
     process = subprocess.run([sys.executable, "-m", "pip", "install",
                               "--user",
-                              "euphonic"],
+                              "euphonic==0.6.5"],
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT)
     print(process.stdout.decode('utf-8'))
