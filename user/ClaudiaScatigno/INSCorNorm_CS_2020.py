@@ -1,26 +1,20 @@
-##### INSCorNorm (PythonAlgorithm) Author: Claudia Scatigno <claudia.scatigno@cref.it>
+##### INSCorNorm. Author: Claudia Scatigno <claudia.scatigno@cref.it>
 #####  How to cite: Scatigno, Claudia, et al. "A python algorithm to analyze inelastic neutron scattering spectra based on the y-scale formalism." Journal of Chemical Theory and Computation 16.12 (2020): 7671-7680
 import mantid
 import numpy as np
 import scipy.special as sps
-np.set_printoptions(precision=4, linewidth=150)
 
 # The value of the hydrogen bound scattering cross section to be used for the normalization and for the evaluation of the energy-dependent Cross Section for Free Hydrogen Gas or Capelli Romanelli models
 hydrogen_XS = 82.03  # barn
-# instrument specific
+# instrument specific, definite dentro mantid
 # The final energy of the INS spectrometer, TOSCA in this case
 final_energy = 3.51  # meV
-# The Avogadro constant
-avog_const = 6.022E+23 # mol^-1
 # The forward and backward scattering angles of the INS spectrometer in degrees.
-scattering_angles = [42.55, 137.73]
+scattering_angles = [42.55, 137.73] # in degrees
 # Conversion to the cosine values of the angles, used later
-scattering_cost = np.abs(np.cos(np.array(scattering_angles) / 180. * np.pi))
+scattering_cost = np.cos( np.radians( scattering_angles ) )
 # The conversion factor from cm^-1 to meV
 inv_cm_to_meV = 0.12398
-# The two values of the secant for F(orward) and B(ackward) angles
-secF=1./(np.cos(np.radians(scattering_angles[0])))
-secB=1./(np.cos(np.radians(scattering_angles[1])))
 
 
 # Function to import the data and to convert them in meV if they are in cm-1
@@ -43,7 +37,8 @@ def check_and_import_data(data_name):
         print("The units of the workspace are neither in cm^-1 nor in meV!")
         return "Data should be provided as energy transfer either in meV or in cm^-1"
     return data, input_in_inv_cm
- # The algorithm INSCorNorm
+
+# The algorithm INSCorNorm
 class INSCorNorm(PythonAlgorithm):
     
     # Brief explanation of the algorithm
@@ -52,7 +47,7 @@ class INSCorNorm(PythonAlgorithm):
 Total cross section can be provided as experimental Transmission data or it can be modeled with two different methods.
 In addition, once the hydrogen mean kinetic energy is provided, the algorithm normalizes the data using the Y-scaling formalism.
 The description of the corrections and normalization procedures can be found in Colognesi J. Neutron Research 19 (2017).
-Details about this algorithm are in Scatigno, Claudia, et al. "A python algorithm to analyze inelastic neutron scattering spectra based on the y-scale formalism." Journal of Chemical Theory and Computation 16.12 (2020): 7671-7680.""")
+Details about this algorithm are in Scatigno et al. 2020 (submitted).""")
 
     def category(self):
         return 'MyTools'
