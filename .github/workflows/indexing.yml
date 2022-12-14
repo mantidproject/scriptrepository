@@ -1,0 +1,27 @@
+name: Index Repository
+
+on:
+  push:
+    branches: ["main", "master"]
+
+jobs:
+  indexing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          
+      - name: Create repository index file
+        run: |
+          python system/scriptrepositoryparser.py $PWD/ $PWD/
+          
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Updating repository index JSON file
+          commit_options: '--no-verify'
+          file_pattern: './repository.json'
