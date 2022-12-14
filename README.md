@@ -6,7 +6,8 @@ This is a public repository of user scripts for Mantid.
 Directory Structure
 ===================
 
-In order to try to keep the content in the repository navigable over time please follow the suggested directory structure:
+In order to try to keep the content in the repository navigable over time please
+follow the suggested directory structure:
 
 * technique/instrument- scripts specific to an instrument
   e.g.sans/loq
