@@ -1,4 +1,5 @@
-##### HEADER
+##### #### INSCorNorm (PythonAlgorithm) Author: Claudia Scatigno <claudia.scatigno@cref.it>
+#####  How to cite: Scatigno, Claudia, et al. "A python algorithm to analyze inelastic neutron scattering spectra based on the y-scale formalism." Journal of Chemical Theory and Computation 16.12 (2020): 7671-7680
 from mantid.kernel import *
 import mantid
 from mantid.api import *
