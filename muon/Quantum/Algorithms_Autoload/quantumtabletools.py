@@ -1307,7 +1307,7 @@ def ParseMeasureType(pars,prog=None):
 			pars["endtime"]=(20.0,) # anything
 		method=1
 		processor=processor_freqspec
-		pars["axis0"]=numpy.linspace(pars["minfreq"][0],pars["maxfreq"][0],pars["ntbins"][0]+1,endpoint=True) # these will be bin boundaries, maybe ref to Larmor freq
+		pars["axis0"]=numpy.linspace(pars["minfreq"][0],pars["maxfreq"][0],int(pars["ntbins"][0])+1,endpoint=True) # these will be bin boundaries, maybe ref to Larmor freq
 		pars["axis0name"]=("Frequency","MHz")
 		pars["axis0extra"]=(1,) # binned data
 	if((mtype=="timespectra" or mtype=="phasequad") and hadaxis0):
@@ -1315,7 +1315,7 @@ def ParseMeasureType(pars,prog=None):
 	elif(pars["ntbins"][0]==1):
 		timebins=numpy.array([pars["starttime"][0],pars["endtime"][0]],dtype=numpy.float) # exact ends
 	else:
-		timebins=numpy.linspace(pars["starttime"][0],pars["endtime"][0],pars["ntbins"][0]+1,endpoint=True) # these will be bin boundaries
+		timebins=numpy.linspace(pars["starttime"][0],pars["endtime"][0],int(pars["ntbins"][0])+1,endpoint=True) # these will be bin boundaries
 	if((mtype=="timespectra" or mtype=="phasequad")and not(hadaxis0)):
 		pars["axis0"]=timebins
 		pars["axis0extra"]=(1,) # X has one more point than Y and E; WS to be created later.
