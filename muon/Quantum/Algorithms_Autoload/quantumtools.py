@@ -72,7 +72,7 @@ def createSpinMat(spins):
 	if(N>1024):
 		print("fairly big problem, prepare for out of memory errors")
 	# print ([Nsp,3]+spins+spins)
-	spmat=numpy.zeros((Nsp,3,N,N),dtype=complex)
+	spmat=numpy.zeros((Nsp,3,N,N),dtype=numpy.complex_)
 	# fill me (exact copy of Fortran QUANTUM including possible scale errors)
 	for thissp in range(Nsp):
 		for lowerIz in range(numpy.prod(spins[0:thissp],dtype=numpy.int_)):
@@ -239,7 +239,7 @@ def createInitialDensMat(spin,polvec):
 	# fully polarised spin-1/2 in direction polvec, others unpolarised
 	# special case "powder" if polvec=None?
 	N=spin.shape[1]
-	rho=(numpy.tensordot(spin,normalised(polvec),axes=[[0],[0]])+numpy.identity(N,dtype=numpy.complex))/N
+	rho=(numpy.tensordot(spin,normalised(polvec),axes=[[0],[0]])+numpy.identity(N,dtype=numpy.complex_))/N
 	return rho
 
 def createInitialDensMatWithSingletTriplet(spin,polvec,spinE1,spinE2,triplet):
@@ -254,7 +254,7 @@ def createInitialDensMatWithSingletTriplet(spin,polvec,spinE1,spinE2,triplet):
 	else: # singlet
 		Ed2=numpy.identity(N)-Edot
 	# S1.
-	rho=numpy.dot((numpy.tensordot(spin,normalised(polvec),axes=[[0],[0]])+numpy.identity(N,dtype=numpy.complex)),(Ed2/N))
+	rho=numpy.dot((numpy.tensordot(spin,normalised(polvec),axes=[[0],[0]])+numpy.identity(N,dtype=numpy.complex_)),(Ed2/N))
 	return rho
 
 def createDetectorOp(spin,polvec):
@@ -292,7 +292,7 @@ def BoltzmannDensityMatrix(Ham,kT,spin=None):
 		for k in range(N//m2):
 			subset[k*m1:(k+1)*m1]=range(k*m2,k*m2+m1,1)
 		#print "subset=",subset
-		newHam=numpy.zeros([N2,N2],dtype=complex)
+		newHam=numpy.zeros([N2,N2],dtype=numpy.complex_)
 		for k in range(ns):
 			newHam += Ham[numpy.ix_(subset+k*m1,subset+k*m1)]
 		cutHam=newHam/ns
@@ -400,7 +400,7 @@ def solveDensityMatComplex(Ham,start,detect,timeend=float("Inf"),tzeros=None):
 	n=Ham.shape[0]
 	nc=n*(n-1)+1 # both diagonals
 	omega=numpy.empty(nc,dtype=float)
-	ccos=numpy.empty(nc,dtype=complex)
+	ccos=numpy.empty(nc,dtype=numpy.complex_)
 	#csin=numpy.empty(nc,dtype=complex)
 	omega[0]=0.0
 	ccos[0]=(numpy.dot(numpy.diag(rho2),numpy.diag(detect2)))
@@ -1157,7 +1157,7 @@ def buildDynamicHam(Hams):
 	nqs=Hams[0].shape[0] # assume square, and all Hams are same size?
 	SmallHamSize=nqs*nqs # nqs*(nqs+1)/2
 	BigHamSize=nhams*SmallHamSize
-	BigHam=numpy.zeros([BigHamSize,BigHamSize],dtype=complex)
+	BigHam=numpy.zeros([BigHamSize,BigHamSize],dtype=numpy.complex_)
 	# equivalent Fortran with full array size
 	# for i in range(nqs)
 	#  for j in range(nqs)
@@ -1231,7 +1231,7 @@ def buildDynamicHamTri(Hams):
 	# relate (i,j) of Ham to ij in BigHam:
 	# drop all rows/columns
 	BigHamSize=nhams*SmallHamSize
-	BigHam=numpy.zeros([BigHamSize,BigHamSize],dtype=complex)
+	BigHam=numpy.zeros([BigHamSize,BigHamSize],dtype=numpy.complex_)
 	# equivalent Fortran with full array size
 	# for i in range(nqs)
 	#  for j in range(nqs)
@@ -1291,16 +1291,16 @@ def addSpinRelaxation(ns,BigHam,state,spin,nu,pol,polmag):
 	g=pol2.shape
 	if(len(g)==2 and g[0]==modw and g[1]==modw):
 		# pol is the density matrix to scale
-		beta=pol2*polmag+numpy.identity(modw,dtype=numpy.complex)*(1-polmag)/modw
+		beta=pol2*polmag+numpy.identity(modw,dtype=numpy.complex_)*(1-polmag)/modw
 	elif(len(g)==1 and g[0]==3):
 		# pol is an easy axis, find ground state? or linearly scaled populations
 		polmag=polmag/math.sqrt(numpy.sum(pol2**2)) # normalise pol, then scale by polmag
 		subspin=spin[:,0:modv:modu,0:modv:modu]
-		beta=numpy.identity(modw,dtype=numpy.complex)/modw + (subspin[0,:,:]*pol2[0]+subspin[1,:,:]*pol2[1]+subspin[2,:,:]*pol2[2])*polmag/modw
+		beta=numpy.identity(modw,dtype=numpy.complex_)/modw + (subspin[0,:,:]*pol2[0]+subspin[1,:,:]*pol2[1]+subspin[2,:,:]*pol2[2])*polmag/modw
 		#print "calc beta=",beta
 	else:
 		# unpolarised
-		beta=numpy.identity(modw,dtype=numpy.complex)/modw
+		beta=numpy.identity(modw,dtype=numpy.complex_)/modw
 
 	for I in range(nq):
 		for J in range(nq):
@@ -1332,7 +1332,7 @@ def createDynamicDensMat(rho,pops):
 	# rho is a "typical" density matrix to be duplicated
 	ns=npops.shape[0]
 	n=rho.shape[0]
-	bigrho=numpy.zeros(n*n*ns,dtype=complex)
+	bigrho=numpy.zeros(n*n*ns,dtype=numpy.complex_)
 	for s in range(ns):
 		for i in range(n):
 			for j in range(n):
@@ -1343,7 +1343,7 @@ def createDynamicSpinOp(spinop,ns):
 	# assemble operators, assuming no state selection
 	# consider creating opposite triangle to rho and Ham, and conjugate
 	n=spinop.shape[0]
-	bigop=numpy.zeros(n*n*ns,dtype=complex)
+	bigop=numpy.zeros(n*n*ns,dtype=numpy.complex_)
 	for s in range(ns):
 		for i in range(n):
 			for j in range(n):
@@ -1486,8 +1486,8 @@ def solveRFDensityMat(Ham0,Ham1,Ham1i,omegaRF,start,detect,detecti,RRFharmonic,t
 
 	detectacc=numpy.array(detect/2.0)
 	#print "da00:",detectacc[0,0]
-	Uacc=numpy.eye(Ham0.shape[0],dtype=complex) # complete value here
-	Uiacc=numpy.eye(Ham0.shape[0],dtype=complex) # complete value here
+	Uacc=numpy.eye(Ham0.shape[0],dtype=numpy.complex_) # complete value here
+	Uiacc=numpy.eye(Ham0.shape[0],dtype=numpy.complex_) # complete value here
 	Ubit=numpy.zeros_like(Ham0) # starts as U-1, add one at Tslice stage
 	work=numpy.zeros_like(Ham0)
 	work2=numpy.zeros_like(Ham0)
