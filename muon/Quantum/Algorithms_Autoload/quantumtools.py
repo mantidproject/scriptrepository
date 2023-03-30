@@ -75,11 +75,11 @@ def createSpinMat(spins):
 	spmat=numpy.zeros((Nsp,3,N,N),dtype=complex)
 	# fill me (exact copy of Fortran QUANTUM including possible scale errors)
 	for thissp in range(Nsp):
-		for lowerIz in range(numpy.prod(spins[0:thissp],dtype=numpy.int)):
-			for upperIz in range(lowerIz,N,numpy.prod(spins[0:thissp+1],dtype=numpy.int)):
+		for lowerIz in range(numpy.prod(spins[0:thissp],dtype=numpy.int_)):
+			for upperIz in range(lowerIz,N,numpy.prod(spins[0:thissp+1],dtype=numpy.int_)):
 				for thisIz in range(spins[thissp]):
-					thisIndI=upperIz+thisIz*numpy.prod(spins[0:thissp],dtype=numpy.int)
-					thisIndJ=upperIz+(thisIz+1)*numpy.prod(spins[0:thissp],dtype=numpy.int)
+					thisIndI=upperIz+thisIz*numpy.prod(spins[0:thissp],dtype=numpy.int_)
+					thisIndJ=upperIz+(thisIz+1)*numpy.prod(spins[0:thissp],dtype=numpy.int_)
 					# element [thissp,alpha,thisIndI,thisIndJ] flips spin from thisIz to thisJz leaving others alone
 					spmat[thissp,2,thisIndI,thisIndI]=spins[thissp]-1-2*thisIz # Sz diagonal
 					if(thisIz<spins[thissp]-1):
