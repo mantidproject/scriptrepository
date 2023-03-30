@@ -3,3515 +3,3515 @@
     "author": "James Lord",
     "description": "\n\n###########\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconApplyCorrections.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconCalculateDerivatives.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconD4Correct.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconD4LoadSofQ.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconD4Moments.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconD4Result.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/DeconD4SofQ.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/Decon_manual.pdf": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/Muscat": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/Muscat/MuscatElasticReactor.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/Muscat/MuscatReactor.pdf": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "DECON/Muscat/Rb_Q.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "EnergyWindowScan.py": {
     "author": "James Lord",
     "description": "Mantid Repository : https://github.com/mantidproject/mantid\n\n\nCopyright &copy; 2018 ISIS Rutherford Appleton Laboratory UKRI,\n\n    NScD Oak Ridge National Laboratory, European Spallation Source\n\n    & Institut Laue - Langevin\n\nSPDX - License - Identifier: GPL - 3.0 +\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "IndirectQuickRun.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "README.md": {
     "author": "James Lord",
     "description": "Script Repository\n=================\n\nThis is a public repository of user scripts for Mantid.\n\nDirectory Structure\n===================\n\nIn order to try to keep the content in the repository navigable over time please\nfollow the suggested directory structure:\n\n* technique/instrument- scripts specific to an instrument\n  e.g.sans/loq\n* technique/facility - scripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\n* general/usage - scripts applicable to all\n  e.g.general/events\n* user/name - for storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/MantidPlot_scripts": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/MantidPlot_scripts/AnalyzeOneRun.py": {
     "author": "James Lord",
     "description": "Initial analysis to find peaks and to obtain lattice constants and UB matrix.\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/NIST_cross-sections.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/ReduceDictionary.py": {
     "author": "James Lord",
     "description": "\n\n File: ReduceDictionary.py\n\n\n\n This module contains some top level methods for constructing a python\n\n dictionary with the parameter values needed by the ReduceOneSCD_Run.py\n\n and ReduceSCD_Parallel.pay scripts.\n\n\n\n This method will load the dictionary of parameter name, value pairs from\n\n the specified configuration file.  The key words None, True and False are\n\n converted from a string to the corresponding value.  Also, the list of\n\n run numbers is built up from possibly multiple lines with the key \"run_nums\".\n\n The run numbers themselves may be specified as a comma separated list of\n\n individual run numbers, or ranges specified with a colon separator.\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/ReduceSCD.config": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/ReduceSCD_OneRun.py": {
     "author": "James Lord",
     "description": "File: ReduceOneSCD_Run.py\n\n\nVersion 2.0, modified to work with Mantid's new python interface.\n\n\nThis script will reduce one SCD run.  The configuration file name and\n\nthe run to be processed must be specified as the first two command line\n\nparameters.  This script is intended to be run in parallel using the\n\nReduceSCD_Parallel.py script, after this script and configuration file has\n\nbeen tested to work properly for one run. This script will load, find peaks,\n\nindex and integrate either found or predicted peaks for the specified run.\n\nEither sphere integration or the Mantid PeakIntegration algorithms are\n\ncurrently supported, but it may be updated to support other integration\n\nmethods.  Users should make a directory to hold the output of this script,\n\nand must specify that output directory in the configuration file that\n\nprovides the parameters to this script.\n\n\nNOTE: All of the parameters that the user must specify are listed with\n\ninstructive comments in the sample configuration file: ReduceSCD.config.\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/ReduceSCD_Parallel.py": {
     "author": "James Lord",
     "description": "File: ReduceSCD_Parallel.py\n\n\nVersion 2.0, modified to work with Mantid's new python interface.\n\n\nThis script will run multiple instances of the script ReduceSCD_OneRun.py\n\nin parallel, using either local processes or a slurm partition.  After\n\nusing the ReduceSCD_OneRun script to find, index and integrate peaks from\n\nmultiple runs, this script merges the integrated peaks files and re-indexes\n\nthem in a consistent way.  If desired, the indexing can also be changed to a\n\nspecified conventional cell.\n\nMany intermediate files are generated and saved, so all output is written\n\nto a specified output_directory.  This output directory must be created\n\nbefore running this script, and must be specified in the configuration file.\n\nThe user should first make sure that all parameters are set properly in\n\nthe configuration file for the ReduceSCD_OneRun.py script, and that that\n\nscript will properly reduce one scd run.  Once a single run can be properly\n\nreduced, set the additional parameters in the configuration file that specify\n\nhow the the list of runs will be processed in parallel.\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/SCDcalib_plot.py": {
     "author": "James Lord",
     "description": "Plot data in SCDcalib.log file from ISAW SCD Calibration.\nA. J. Schultz, September 2015",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/anvred3.inp": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/anvred3.py": {
     "author": "James Lord",
     "description": "--------------------------------------------------------------------\n\n                             anvred3.py\n\n\n\n\n\n Includes the option to perform a spherical absorption correction\n\n or calculate direction cosines for a polyhedral correction\n\n using the gaussian.f program.\n\n\n\n Includes a Tkinter gui interface.\n\n\n\n     A. J. Schultz, May 2014\n\n\n\n--------------------------------------------------------------------\n\n                             anvred2x.py\n\n\n\n Does not run from Isaw. User input read from anvred2x.inp file.\n\n   A. J. Schultz, February 2012\n\n--------------------------------------------------------------------\n\n\n\n Data reduction program:\n\n   Input is raw integrated intensities.\n\n   Output is relative Fsq's.\n\n\n\n Jython version:\n\n    A. J. Schultz, started December 2009\n\n\n\n anvred_py.py\n\n    Each spectrum is a separate file. The spectra files are created\n\n    by \"TOPAZ_spectrum_multiple_banks.iss\".\n\n\n\n anvred2.py:\n\n    This version reads one spectrum file containing spectra for\n\n    each detector. The spectra are created by \"TOPAZ_spectrum.py\".\n\n\n\n Modfications by Xiaoping Wang, April 2011\n\n Added Selection of neutron wavelengths limits wlMin, wlMax\n\n Omit zero intensity peaks in integrate file XP Wang 03/21/2011\n\n Changed to >=0 and used absolute value for minium I/sing(I) = 0  XP Wang 02/24/2011\n\n Added detector scale factors for vanadium/niobium spectrum XP Wang 09/24/2013\n\n\n\n\n\n \n\n Comments from Fortran source:\n\n C**************************   ANVRED  ******************************\n\n C\n\n C ARGONNE NATIONAL LABORATORY VARIABLE WAVELENGTH DATA REDUCTION PROGRAM\n\n C\n\n C\t\tMajor contributions from:\n\n C\t\t\tP. C. W. Leung\n\n C\t\t\tA. J. Schultz\n\n C\t\t\tR. G. Teller\n\n C\t\t\tL. R. Falvello\n\n C\n\n C     The data output by this program are corrected  for  variations  in\n\n C  spectral distribution, variations in detector efficiency  across  the\n\n C  face  of  the  detector,  and the pertinent geometric factors such as\n\n C  (SIN(THETA))**2 and LAMBDA**4.\n\n C\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n !\tLinux version:\tA. Schultz   January, 2003                    !\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n !\tVersion 4:\t\tA. Schultz\t\tJune, 2003\n\n !\t\t1. Process data from two detectors\n\n !\t\t2. Does not use an x-file.\n\n !\t\t3. Gets MONCNT from integrate file. If zero, sets CMONX = 1.0.\n\n !\t\t4. Corrected ALPHAP for calculation of SPECT1.\n\n\n\n !\tVersion 5:\t\tA. Schultz\t\tJuly, 2003\n\n !\t\tThis version outputs a expnam.hkl file which can be input\n\n !\t\tinto SHELX with HKL 2.\n\n !\tVersion 5a:\n\n !\t\tCleaned-up and removed a lot of unused code.\n\n !\t\tAdded a test for dmin.\n\n !\n\n !\tVersion 6:\t\tL. Falvello\t\tJanuary, 2004\n\n !\t\tPolyhedral absorption correction with two detectors.\n\n !\n\n !\tVersion 7:\t\tA. Schultz\t\t2007\n\n !\t\tUse spectrum obtained from each SCD detector\n\n !\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n !\tANVRED_SNS:\t\tA. Schultz\t\t2008                                     !\n\n !\t\tProcess SNS data.                                                    !\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n !\tANVRED_SNS_v2:\t\tA. Schultz\t\tJune, 2008\n\n !\t\tNew spherical absorption correction. Removed all\n\n !\t\tof the old correction code.\n\n !\tANVRED_SNS-v2.1: read detector parameters from integrate file.\n\n !\tANVRED_SNS-v2.2: get filename for spectrum file.\n\n !       ANVRED_SNS-v2.3: everything included in one file.  8/17/2008\n\n !       anvredSNS_2.4: made compatible with gfortran including removal\n\n !                      of FREIN3 and READ133.         10/8/2008\n\n !\tanvredSNS_2.5: the datacom_SNS.inc file is no longer used. Cleaned\n\n !\t\t\tup the code using ftnchek.    10/13/08\n\n !\tanvredSNS_2.6: assign a common scale factor for each\n\n !\t\t\tcrystal setting, or for each detector. 1/29/09\n\n !\n\n !\t4/13/09\tNumber of possible spectra increased from 2 to 100.\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/concatenate.py": {
     "author": "James Lord",
     "description": "Combine integrate files.\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/latcon.inp": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/latcon.py": {
     "author": "James Lord",
     "description": "latcon.py\n\nProgram to refine just the unit cell lattice constants but not the \n\norientation matrix.\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/lin_abs_coef2.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/stats_vs_radius.config": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/stats_vs_radius.py": {
     "author": "James Lord",
     "description": "File: stats_vs_radius.py\n\n\nThis script will vary the spherical integration radius and output statistics.\n\n\nNOTE: All of the parameters that the user must specify are listed with \n\ninstructive comments in the sample configuration file: ReduceSCD.config.\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/stats_vs_time.config": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "SingleCrystal/stats_vs_time.py": {
     "author": "James Lord",
     "description": "File: stats_vs_time.py\n\n\nThis script will vary the elapsed time and output statistics.\n\n\nNOTE: All of the parameters that the user must specify are listed with \n\ninstructive comments in the sample configuration file: ReduceSCD.config.\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "contextuality": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "contextuality/journal": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "contextuality/journal/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "contextuality/journal/journal.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction/GGG_UB_for_skew.zip": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction/WISH": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction/WISH/bragg-detect": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction/WISH/bragg-detect/process_input_and_output_WISH_ML_peak_finding.py": {
     "author": "James Lord",
     "description": "functions to process data to use as ML input\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "diffraction/WISH_reduction_class_v4.py": {
     "author": "James Lord",
     "description": "\n\n for peak finding\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/HET": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/HET/HETReduction.py": {
     "author": "James Lord",
     "description": "Sample HET reduction scrip  ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/CrystalAlignment": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/CrystalAlignment/Check_alignement.py": {
     "author": "James Lord",
     "description": "Load single crystl white beam data from MERLIN - Sr3 Fe2 O7 sample\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/DgFuncs.py": {
     "author": "James Lord",
     "description": "uses the new api all input workpsaces are expected to have |Q| along X and Energy Transfer along Y\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PySlice.py": {
     "author": "James Lord",
     "description": "from utils import *\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PySlice2.py": {
     "author": "James Lord",
     "description": "from DirectEnergyConversion import *\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PySliceUI2.py": {
     "author": "James Lord",
     "description": "Form implementation generated from reading ui file 'PysliceUi_2.ui'\n\n\nCreated: Thu Nov 21 12:01:18 2013\n\n     by: PyQt4 UI code generator 4.10\n\n\nWARNING! All changes made in this file will be lost!\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PysliceGui.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PysliceUI.py": {
     "author": "James Lord",
     "description": "Form implementation generated from reading ui file '/Users/jon/QtSDK/test2.ui'\n\n\nCreated: Mon May 28 21:37:27 2012\n\n     by: PyQt4 UI code generator 4.9.1\n\n\nWARNING! All changes made in this file will be lost!\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PysliceUI.ui": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/PysliceUI_2.ui": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/ScanJaws.py": {
     "author": "James Lord",
     "description": "\n\n select an area around it and \"Apply and Save\" \n\nace, which is called below.\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/autoEi.py": {
     "author": "James Lord",
     "description": "takes wkspin as string of run number \n\nreturns ei, as value and rebin parameners as string\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/autoreduce.py": {
     "author": "James Lord",
     "description": "Crab information from autoreduction call\n\n###########################################\n\nfirst argument is full path of the data file \n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/c2te_pyAlg.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/ipyNotebookHelpers.py": {
     "author": "James Lord",
     "description": "(NEW!) To communicate with Plotly's server, sign in with credentials file\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/peakdet.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/qtiGenie.py": {
     "author": "James Lord",
     "description": "try:\n\n    import nxs\n\nexcept ImportError:\n\n    pass\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/test.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/utils.py": {
     "author": "James Lord",
     "description": "SVN Info:      The variables below will only get subsituted at svn checkout if\n                the repository is configured for variable subsitution. \n\n        $Id$\n        $HeadURL$\n|=============================================================================|=======| \n1                                                                            80   <tab>",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/ISIS/qtiGenie/yscale.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/LETReduction_2018_2Performance.py": {
     "author": "James Lord",
     "description": "Sample LET reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/LETReduction_2018_sample.py": {
     "author": "James Lord",
     "description": "Sample LET reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/LETReduction_2019_1.py": {
     "author": "James Lord",
     "description": "Sample LET reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/LETReduction_2020abs_sample.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/LETReduction_FilterPulses.py": {
     "author": "James Lord",
     "description": "Sample LET reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/LETReduction_Sample.py": {
     "author": "James Lord",
     "description": "Sample LET reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/PLET_quartz.py": {
     "author": "James Lord",
     "description": "This scripts reads reduced One2One .nxspe files of a sequence of NSF/SF \n\nquartz calibration runs, for a sequence of LET energy reps, and uses the\n\nout-of-plane path length dependece of the polarization efficency of the He3 cell\n\nto calculate the Polarizer/Flipper efficency - and the \"average\" cell polarization\n\nSeems to work best when using quartz runs over a short time (not too much \n\nvariation in cell P and T  \n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/PLET_reduction_template.py": {
     "author": "James Lord",
     "description": "This script reads reduced One2One .nxspe files and corrects / combines the data.\n\nInput files should be a sequence of NSF and SF runs using only one spin-filter\n\ndata output as rings-mapped .nxspe files\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/PolCorr.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/RS_let_reduction.py": {
     "author": "James Lord",
     "description": "=======================================================\n\n\n     SAMPLE REDUCTION SCRIPT\n\n     JRS 19/2/22\n\n\n     Reads sample run, corrects for backgound,\n\n     normalises to a White vanadium run, and  the\n\n     absolute normalisation factor for each Ei (if MV\n\n     file is specified).  Outputs .nxspe file\n\n\n=======================================================\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/RS_monovan.py": {
     "author": "James Lord",
     "description": "=======================================================\n\n\n     MONO VANADIUM REDUCTION SCRIPT\n\n     JRS 19/2/22\n\n\n     Reads mono vanadium run, corrects for backgound,\n\n     normalises to a White vanadium run, and finds the\n\n     absolute normalisation factor for each Ei.  These\n\n     are save to an assci file, 'MV_<runno>.txt'\n\n\n     Optionally takes account of the vanadium DW factor.\n\n\n=======================================================\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/RS_whitevan.py": {
     "author": "James Lord",
     "description": "import mantid algorithms, numpy and matplotlib\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/ReductionWrapper_withPerformance.py": {
     "author": "James Lord",
     "description": "Mantid Repository : https://github.com/mantidproject/mantid\n\n\nCopyright &copy; 2018 ISIS Rutherford Appleton Laboratory UKRI,\n\n    NScD Oak Ridge National Laboratory, European Spallation Source\n\n    & Institut Laue - Langevin\n\nSPDX - License - Identifier: GPL - 3.0 +\n\nylint: disable=invalid-name\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/USER_Files_description.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/absolute_sample_script_rebinning2014.py": {
     "author": "James Lord",
     "description": "LET TRANSIENT REDUCTION SCRIPT MARCH 2014;",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/iliad_example_abs.py": {
     "author": "James Lord",
     "description": "The sample script for LET absolute units reduction",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/LET/mulpy_rep.py": {
     "author": "James Lord",
     "description": "from mantid.simpleapi import *\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/MAPSReduction.py": {
     "author": "James Lord",
     "description": "Sample MAPS reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/MAPSReduction_RMBG_Sample.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/MAPSReduction_Sample.py": {
     "author": "James Lord",
     "description": "Sample MAPS reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/MAPSReduction_SampleAbs.py": {
     "author": "James Lord",
     "description": "Sample MAPS reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/PyChopMAPS_CalibWB.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/PyChopMAPS_CalibWB_OldModerator.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/USER_Files_description.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/example_pychop_script_maps.py": {
     "author": "James Lord",
     "description": "Example script for using PyChop\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MAPS/template_maps.py": {
     "author": "James Lord",
     "description": "=========================================================================================================================================\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MARIReduction_Sample.py": {
     "author": "James Lord",
     "description": "Sample MARI reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MARIReduction_SampleAbs.py": {
     "author": "James Lord",
     "description": "Sample MARI reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MARI_2013.py": {
     "author": "James Lord",
     "description": "det_cal_file must be specified if the reduction sends out put to a workpsace\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles/mari_121_cor.map": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles/mari_mask2015.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles/mari_res.map": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles/mari_res2012.map": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles/mari_res2013.map": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MapFiles/mari_vert_cor.map": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/Mar2015_Short.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MariChop": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MariChop/MARIChopGUI.py": {
     "author": "James Lord",
     "description": "from mantidplotpy import *\n\nimport dgreduce\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MariChop/MARIChopUI.py": {
     "author": "James Lord",
     "description": "Form implementation generated from reading ui file '/Users/jon/QtSDK/pychopui.ui'\n\n\nCreated: Mon May 28 23:37:52 2012\n\n     by: PyQt4 UI code generator 4.9.1\n\n\nWARNING! All changes made in this file will be lost!\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MariChop/MariChop.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/cryomagnet_hard.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/m11001.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mar11001.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mar11015.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mari_mask2013.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mari_mask2014.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mari_mask2015.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mari_mask2015_3.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/MaskFiles/mari_mask2016_1.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/PyChopMARI_CalibWB.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/USER_Files_description.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/example_pychop_script_mari.py": {
     "author": "James Lord",
     "description": "Example script for using PyChop\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/gen_mask_mari.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/iliad_python.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/mari.cal": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/mari_mask.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/template_mari.py": {
     "author": "James Lord",
     "description": "Run number and Ei\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MARI/template_mari_dos.py": {
     "author": "James Lord",
     "description": "START EDITING HERE\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/Iiad_event_autoreduce.py": {
     "author": "James Lord",
     "description": "this is the user input section\n\n###########################################\n\nwhere to save results (overwrites specified in Mantid, data search directories, if you want to use those one, comment two lines below here)\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/MERLINReduction_2016_4.py": {
     "author": "James Lord",
     "description": "Sample MER reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/MERLINReduction_2018_2WithPerformance.py": {
     "author": "James Lord",
     "description": "Sample MER reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/MERLINReduction_Sample.py": {
     "author": "James Lord",
     "description": "Sample MER reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/MERLINReduction_SampleAbs.py": {
     "author": "James Lord",
     "description": "Sample MER reduction script ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/PyChopMERLIN_CalibWB.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/USER_Files_description.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/adr_cycle2013_3.py": {
     "author": "James Lord",
     "description": "sample Direct inelastic reduction for MERLIN performed in absolute units",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/calibration": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/calibration/adjustdet.py": {
     "author": "James Lord",
     "description": "import mantid algorithms\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/calibration/create_MERInst_Files.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/calibration/tubecalib.py": {
     "author": "James Lord",
     "description": "import mantid algorithms\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/example_pychop_script_merlin.py": {
     "author": "James Lord",
     "description": "Example script for using PyChop\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/iliad_merlin.py": {
     "author": "James Lord",
     "description": "set up advanced and main properties\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/iliad_merlin_eventmode.py": {
     "author": "James Lord",
     "description": "MERLIN TRANSIENT REDUCTION SCRIPT MARCH 2014;",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/instrumentfiles": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/instrumentfiles/MER23698.msk": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/instrumentfiles/rings_143.map": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/instrumentfiles/rings_143.phx": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/mantid_iliad_abs_August2014.py": {
     "author": "James Lord",
     "description": "The sample script for MERLIN absolute units reduction. Copied from LET system tests. ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/mantid_iliad_abs_sample.py": {
     "author": "James Lord",
     "description": "The sample script for MERLIN absolute units reduction. \nShould be used for non_abs units too by setting MonoVanRun number to None\nFile copied from current (31/07.2014) Mantid System tests for LET and modified with MERLIN settings",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/MERLIN/template_merlin.py": {
     "author": "James Lord",
     "description": "reload(iliad_merlin)\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS": {
     "author": "James Lord",
     "description": "The scripts in this folder are in use (in some form) at SNS direct geometry inelastic instruments (ARCS, CNCS, HYSPEC, SEQUOIA)\n\nSripts to deal with sample logs and/or experiment logging:\n\nScripts that split data:  \n  new_scan.py - Updated version of rocking curve scan.py, using FilterEvents\n  powderTdep_OP.py - Powder line intensity - temperature dependence\n  reduce_mult_T.py - Reduce temperature scan. Going as far in events as possible, split, then extract useful information\n  scan.py - rocking scan using continuous rotations\n  Temp_plot_w.py - temperature scan on a peak using a mask\n  T_scan.py - Quick temperature scan\n  WB_Tdep.pyTemperature dependence of scattering intensity between Qmin,Qmax\n\nScripts to do some reduction/analysis:\n  AddAndReduce.py - Simple script to add runs together, reduce using DGSReduction, and save to NXSPE format.\n  Gd.py - Compact script to reduce Gd data to MD. Used for generating images for releases. Heavy use of workspace groups\n  reduce_from_autoreduce_script.py - Reduction including generation of an experiment log \n  reducenoguess.py - Simplified version of reduction using DGSReduction algorithm\n  sum_split_plot_slice.py - continuous rotation to a 2D slice in SliceViewer\n  Tdep50meV.py - Plot temperature dependence for data in a set of runs\n  whitebeampeaks.py - gets UB from a white beam run, ignore those from Aluminum\n\nScripts to do some postprocessing:\n  groupNxspe.py - Reduce file size of NXSPE files by grouping pixels togeter. \n  load_n_plot.py - Quicly look at powder data in NXSPE files\n  merge.py - Merge all MD nexus files in a folder\n  writeMDhisto.py - Saves an md histo workspace with wname (2D slice from SliceViewer) into an ascii file\n\nOther: \n  average_Ei_T0.py - Print incident energy and t0. Useful to check statistics of monitors in individual runs.\n  fixDASLogs.py - function to change initial time for logs to coincide with the first proton pulse\n  generate_string_base.py - Generate a list of runs where some log values obey certain criteria. Input can be from log.py \n  log.py - Quicly check logs for multiple runs \n  make_d_spacing.py - Convert to runs (on Bragg peaks) to d spacing. Use instrument view to select peaks, then the peaks workspace can be used to calculate UB matrix (print_u_v_vectors.py)\n  MaskBTP.py - Mask banks, tubes, and pixels on ARCS/SEQUOIA/CNCS/HYSPEC \n  print u_v_vectors.py - print u and v vectors for mslice/horace. Use in conjunction with make_d_spacing.py\n  testtib.py - Test if time independent background range is OK. Uses MantidPlot plotting\n  tof_plot_make.py - Make some plots using matplotlib\n  Vec_move.py - Routines used to move packs\n\n\n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/AddAndReduce.py": {
     "author": "James Lord",
     "description": "Simple script to add runs together, reduce using DGSReduction, and save to NXSPE format.\nIt assumes that the preprocessed vanadium for normalization was saved as van.nx5",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/Gd.py": {
     "author": "James Lord",
     "description": "Compact script to reduce Gd data to MD. Used for generating images for releases",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/MaskBTP.py": {
     "author": "James Lord",
     "description": "Mask banks, tubes, and pixels on ARCS/SEQUOIA/CNCS/HYSPEC ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/README.txt": {
     "author": "James Lord",
     "description": "The scripts in this folder are in use (in some form) at SNS direct geometry inelastic instruments (ARCS, CNCS, HYSPEC, SEQUOIA)\n\nSripts to deal with sample logs and/or experiment logging:\n\nScripts that split data:  \n  new_scan.py - Updated version of rocking curve scan.py, using FilterEvents\n  powderTdep_OP.py - Powder line intensity - temperature dependence\n  reduce_mult_T.py - Reduce temperature scan. Going as far in events as possible, split, then extract useful information\n  scan.py - rocking scan using continuous rotations\n  Temp_plot_w.py - temperature scan on a peak using a mask\n  T_scan.py - Quick temperature scan\n  WB_Tdep.pyTemperature dependence of scattering intensity between Qmin,Qmax\n\nScripts to do some reduction/analysis:\n  AddAndReduce.py - Simple script to add runs together, reduce using DGSReduction, and save to NXSPE format.\n  Gd.py - Compact script to reduce Gd data to MD. Used for generating images for releases. Heavy use of workspace groups\n  reduce_from_autoreduce_script.py - Reduction including generation of an experiment log \n  reducenoguess.py - Simplified version of reduction using DGSReduction algorithm\n  sum_split_plot_slice.py - continuous rotation to a 2D slice in SliceViewer\n  Tdep50meV.py - Plot temperature dependence for data in a set of runs\n  whitebeampeaks.py - gets UB from a white beam run, ignore those from Aluminum\n\nScripts to do some postprocessing:\n  groupNxspe.py - Reduce file size of NXSPE files by grouping pixels togeter. \n  load_n_plot.py - Quicly look at powder data in NXSPE files\n  merge.py - Merge all MD nexus files in a folder\n  writeMDhisto.py - Saves an md histo workspace with wname (2D slice from SliceViewer) into an ascii file\n\nOther: \n  average_Ei_T0.py - Print incident energy and t0. Useful to check statistics of monitors in individual runs.\n  fixDASLogs.py - function to change initial time for logs to coincide with the first proton pulse\n  generate_string_base.py - Generate a list of runs where some log values obey certain criteria. Input can be from log.py \n  log.py - Quicly check logs for multiple runs \n  make_d_spacing.py - Convert to runs (on Bragg peaks) to d spacing. Use instrument view to select peaks, then the peaks workspace can be used to calculate UB matrix (print_u_v_vectors.py)\n  MaskBTP.py - Mask banks, tubes, and pixels on ARCS/SEQUOIA/CNCS/HYSPEC \n  print u_v_vectors.py - print u and v vectors for mslice/horace. Use in conjunction with make_d_spacing.py\n  testtib.py - Test if time independent background range is OK. Uses MantidPlot plotting\n  tof_plot_make.py - Make some plots using matplotlib\n  Vec_move.py - Routines used to move packs\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/T_scan.py": {
     "author": "James Lord",
     "description": "Quick temperature scan",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/Tdep50meV.py": {
     "author": "James Lord",
     "description": "Plot temperature dependence for data in a set of runs",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/Temp_plot_w.py": {
     "author": "James Lord",
     "description": "Temperature scan on a peak, using a mask",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/Vec_move.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/WB_Tdep.py": {
     "author": "James Lord",
     "description": "Temperature dependence of scattering intensity between Qmin,Qmax. Detectors are groupped 16x4, the groups belonging to data/background are selected below",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/average_Ei_T0.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/fixDASLogs.py": {
     "author": "James Lord",
     "description": "function to change initial time for logs to coincide with the first proton pulse",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/generate_string_base.py": {
     "author": "James Lord",
     "description": "Generate a list of runs where some log values obey certain criteria. Input can be from log.py ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/groupNxspe.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/load_n_plot.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/log.py": {
     "author": "James Lord",
     "description": "Quicly check logs for multiple runs",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/make_d_spacing.py": {
     "author": "James Lord",
     "description": "Convert to runs (on Bragg peaks) to d spacing. Use instrument view to select peaks, then the peaks workspace can be used to calculate UB matrix (print_u_v_vectors.py)",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/merge.py": {
     "author": "James Lord",
     "description": "Merge all MD nexus files in a folder",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/new_scan.py": {
     "author": "James Lord",
     "description": "Updated version of rocking curve scan.py, using FilterEvents",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/powderTdep_OP.py": {
     "author": "James Lord",
     "description": "Powder line intensity - temperature dependence",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/print_u_v_vector.py": {
     "author": "James Lord",
     "description": "print u and v vectors for mslice/horace. Use in conjunction with make_d_spacing.py",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/reduce_from_autoreduce_script.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/reduce_mult_T.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/reducenoguess.py": {
     "author": "James Lord",
     "description": "Simplified version of reduction using DGSReduction algorithm",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/scan.py": {
     "author": "James Lord",
     "description": "Rocking scan (+ and - directions)",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/sum_split_plot_slice.py": {
     "author": "James Lord",
     "description": "Simple script for continuous rotations",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/testtib.py": {
     "author": "James Lord",
     "description": "Test if time independent background range is OK\nNote - runs in MantidPlot\nNote - uses pdftk to concatenate pdf files",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/tof_plot_make.py": {
     "author": "James Lord",
     "description": "Make some plots using matplotlib",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/whitebeampeaks.py": {
     "author": "James Lord",
     "description": "Load a white beam data, convert to MD, find peaks, remove those belonging to Al, and index the rest",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "direct_inelastic/SNS/writeMDhisto.py": {
     "author": "James Lord",
     "description": "Saves an md histo workspace with wname (2D slice from SliceViewer) into an ascii file",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "general": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "general/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "general/Transforms": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "general/Transforms/Merging": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "general/Transforms/Merging/ConjoinSpectraNumAx.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nThis algorithm allows a single spectrum to be extracted from a range of workspaces and placed into a single workspace for comparison and plotting.  The LabelUsing property allows you to control what the end labels applied to each spectra will be.  The default is to use the source workspace name, but you can specify the name of a log value to use as the label, e.g. Temp_Sample.  the LabelValue property allows control of how a single value is extracted from time series logs.\nModified from standard ConjoinSpectra to make the Y axis numeric and so allow Colour Fill and Contour plots of the resulting Workspace2D. (JSL)\n\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/Fabada.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/IRIS": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/IRIS/irisDiagnostics.py": {
     "author": "James Lord",
     "description": "Plots heatmap of raw & normalised counts in each detector for a \n\nspecified run range to quickly identify dead detectors ",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/BayesQuasi.py": {
     "author": "James Lord",
     "description": "pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches,no-init,redefined-builtin\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/BayesStretch.py": {
     "author": "James Lord",
     "description": "pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches,no-init\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/Bayes_ubuntu.txt": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/IndirectBayes.py": {
     "author": "James Lord",
     "description": "pylint: disable=invalid-name,too-many-arguments,too-many-locals\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/IndirectImport.py": {
     "author": "James Lord",
     "description": "Temporary solutions to the messy problem of importing F2Py libraries into\nthe Indirect scripts depending on platform and numpy package version.\n\nWe also deal with importing the mantidplot module outside of MantidPlot here.",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/QLdata_lnx64.so": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/QLres_lnx64.so": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/QLse_lnx64.so": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Quasi/Quest_lnx64.so": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Water": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Water/BayesWater.py": {
     "author": "James Lord",
     "description": "pylint: disable=invalid-name,too-many-instance-attributes,too-many-branches,no-init\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/Bayes/Water/IndirectBayes.py": {
     "author": "James Lord",
     "description": "Bayes routines \n\nFortran programs use fixed length arrays whereas Python has variable lenght lists\n\nInput : the Python list is padded to Fortrans length using procedure PadArray\n\nOutput : the Fortran numpy array is sliced to Python length using dataY = yout[:ny]\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/IRIS_Parameters.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/ISIS/OSIRIS_Parameters.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models": {
     "author": "James Lord",
     "description": "Fitting Models\n================\n\nPython scripts for fitting of with different QENS models\n\n* StretchedExpFT  \nFourier transform of the stretched exponential. The model is:  \nS(Q,E) = Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFT ) + LinearBackground  \nwith StretchedExFT = height * exp( - |t/tau|**beta )\n\n* StretchedExpFTBkgrd\nFourier transform of the stretched exponential plust a background file. The model is:\nS(Q,E) = Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFT ) + LinearBackground + BackgroundFile \nwith StretchedExFT = height * exp( - |t/tau|**beta )\n\n* StretchedExpFTTauQ - as StretchedExpFT, but with a power-law dependence for the relaxation time.  \nThe model is:  \nConvolution( A*Resolution, x*Delta + (1-x)*StretchedExFTTauQ ) + LinearBackground  \nwith StretchedExFTTauQ = height * exp( - |t/tau|**beta )  \nand tau = taumax*(Qmin/Q)**alpha\n\n* TeixeiraWaterSQE  \nFitting of water at room temperature with an elastic component and the jump-diffusion\nmodel of Teixeira for translational diffusion. The model is:  \nS(Q,E) = Convolution( Resolution, EISF*Delta + (1-EISF)*TeixeiraWater ) + LinearBackground\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/QENS_lib": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/QENS_lib/QENS_lib_demo.py": {
     "author": "James Lord",
     "description": "make fake data\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/QENS_lib/QENS_lib_install.py": {
     "author": "James Lord",
     "description": "run this in Mantid scripting window\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/README.md": {
     "author": "James Lord",
     "description": "Fitting Models\n================\n\nPython scripts for fitting of with different QENS models\n\n* StretchedExpFT  \nFourier transform of the stretched exponential. The model is:  \nS(Q,E) = Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFT ) + LinearBackground  \nwith StretchedExFT = height * exp( - |t/tau|**beta )\n\n* StretchedExpFTBkgrd\nFourier transform of the stretched exponential plust a background file. The model is:\nS(Q,E) = Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFT ) + LinearBackground + BackgroundFile \nwith StretchedExFT = height * exp( - |t/tau|**beta )\n\n* StretchedExpFTTauQ - as StretchedExpFT, but with a power-law dependence for the relaxation time.  \nThe model is:  \nConvolution( A*Resolution, x*Delta + (1-x)*StretchedExFTTauQ ) + LinearBackground  \nwith StretchedExFTTauQ = height * exp( - |t/tau|**beta )  \nand tau = taumax*(Qmin/Q)**alpha\n\n* TeixeiraWaterSQE  \nFitting of water at room temperature with an elastic component and the jump-diffusion\nmodel of Teixeira for translational diffusion. The model is:  \nS(Q,E) = Convolution( Resolution, EISF*Delta + (1-EISF)*TeixeiraWater ) + LinearBackground\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/data.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/lmfit": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/lmfit/strexpft.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/resolution.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.6": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.6/fitStretchedExFT.py": {
     "author": "James Lord",
     "description": "Script to fit QENS data to a particular model\nThis script should be run in the \"Script Window\" of MantidPlot",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.6/results_StretchedExpFT.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.7": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.7/fitStretchedExFT.py": {
     "author": "James Lord",
     "description": "Script to fit QENS data to a the Fourier trasnform of a stretched exponential\nThis script should be run in the \"Script Window\" of MantidPlot",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.7/results_StretchedExpFT.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/algFitStretchedExpFT.py": {
     "author": "James Lord",
     "description": "For problems with this algorithm, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/gloFitStretchedExFT.py": {
     "author": "James Lord",
     "description": "For problems with this script, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>\n\nScript to global fit of QENS data to the Fourier transform of a stretched exponential\nThis script should be run in the \"Script Window\" of MantidPlot\nGlobal parameter: beta exponent in the stretched exponential\n\nFitting model. In this case:\n      Convolution( A*Resolution, x*Delta + (1-x)*StretchedExFT ) + LinearBackground\n  with 0<x<1 is the fraction of the elastic intensity\n\nParameter Beta of fit function StretchedExFT is the same for all spectra. All other fitting\nparameters are different for each spectrum",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help/apply_model.png": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help/dialog.png": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help/fit_wizard.png": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help/help.html": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help/help.md": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/help/results_log.png": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8.0/seqFitStretchedExFT.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/algorithm_version": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/algorithm_version/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/algorithm_version/algFitStretchedExpFT.py": {
     "author": "James Lord",
     "description": "For problems with this algorithm, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/algorithm_version/resolution.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/algorithm_version/sample.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/algorithm_version/seqFitStretchedExFT.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/scripts_only": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/scripts_only/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFT/v3.8/scripts_only/seqFitStretchedExFT.pyc": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/background.grp": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/data.grp": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/resolution.grp": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/v3.8": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/v3.8/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/v3.8/gloFitStretchedExFTBkgrd.py": {
     "author": "James Lord",
     "description": "For problems with this script, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>\n\nScript to global fit of QENS data to the Fourier transform of a stretched exponential\nThis script should be run in the \"Script Window\" of MantidPlot\nGlobal parameter: beta exponent in the stretched exponential\n\nFitting model. In this case:\n      Convolution( Resolution, A*Delta + B*StretchedExFT ) + LinearBackground + BackgroundFile\n( the EISF is later computed as =A/(A+B) )\n\nParameter Beta of fit function StretchedExFT is the same for all spectra. All other fitting\nparameters are different for each spectrum",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTBkgrd/v3.8/seqFitStretchedExFTBkgrd.py": {
     "author": "James Lord",
     "description": "  For problems with this script, please either write a:\n  - post in the Mantid forum <http://forum.mantidproject.org>\n  - message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n  - email to <mantid-help@mantidproject.org>\n\nScript to sequential fit of QENS data to a the Fourier trasnform of a stretched exponential\nThis script should be run in the \"Script Window\" of MantidPlot",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/data.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/resolution.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/results_StretchedExpFTTauQ.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/v3.8": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/v3.8/StretchedExpFTTauQ.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/v3.8/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/v3.8/gloFitStretchedExFTTauQ.py": {
     "author": "James Lord",
     "description": "For problems with this script, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>\n\n Script to global fit of QENS data to the Fourier transform of a stretched exponential\n This script should be run in the \"Script Window\" of MantidPlot\n\n Fitting model. In this case:\n     Convolution( A*Resolution, EISF*Delta + (1-EISF)*StretchedExFTTauQ ) + LinearBackground\n with 0<EISF<1 is the fraction of the elastic intensity\n and the relaxation time follows a power-law: Tau = Taumax * (Qmin/Q)**Alpha\n\nParameters Beta, TauMax, and Alpha of fit function StretchedExFTTauQ are the same for all spectra.\nAll other fitting parameters are different for each spectrum.",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/StretchedExpFTTauQ/v3.8/seqFitStretchedExFTTauQ.py": {
     "author": "James Lord",
     "description": "For problems with this script, please either write a:\n  - post in the Mantid forum <http://forum.mantidproject.org>\n  - message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n  - email to <mantid-help@mantidproject.org>\n\nSequential fit of QENS data to the Fourier trasnform of a stretched exponential\n    Relaxation time follows a power-law: tau = taumax * (Qmin/Q)**alpha\n    This script should be run in the \"Script Window\" of MantidPlot",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE/irs26173_graphite_res.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE/irs26176_graphite002_red.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE/v3.9": {
     "author": "James Lord",
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE/v3.9/__init__.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE/v3.9/algTeixeiraWaterFit.py": {
     "author": "James Lord",
     "description": "For problems with this algorithm, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>\n\nAlgorithm to global fit of QENS data to the jump-diffusion model by Teixeira\nFitting model. In this case:\n      Convolution( A*Resolution, x*Delta + (1-x)*TeixeiraWaterSQE ) + LinearBackground\n  with 0<x<1 is the fraction of the elastic intensity\nParameters DiffCoeff and Tau (residence time) of fit function TeixeiraWaterSQE are\nthe same for all spectra. All other fitting  parameters are different for each spectrum",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/TeixeiraWaterSQE/v3.9/gloFitTeixeiraWaterSQE.py": {
     "author": "James Lord",
     "description": "For problems with this script, please either write a:\n- post in the Mantid forum <http://forum.mantidproject.org>\n- message in the \"Contact us\" page <http://www.mantidproject.org/Contact>\n- email to <mantid-help@mantidproject.org>\n\nScript to global fit of QENS data to the jump-diffusion model by Teixeira\nThis script should be run in the \"Script Window\" of MantidPlot\n\nFitting model. In this case:\n      Convolution( A*Resolution, x*Delta + (1-x)*TeixeiraWaterSQE ) + LinearBackground\n  with 0<x<1 is the fraction of the elastic intensity\n\nParameters DiffCoeff and Tau (residence time) of fit function TeixeiraWaterSQE are\nthe same for all spectra. All other fitting  parameters are different for each spectrum",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "indirect_inelastic/models/twoLorentziansPlusLinearBackground.py": {
     "author": "James Lord",
     "description": "Model:  Resolution x (Delta + Lorentzian + Lorentzian) + LinearBackground\n- Sequential fitting\n- Plot several quantities",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/AnalyseThresholdScans6.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/AnalyseThresholdScans8.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/AnalyseThresholdScans9.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/BeamCamAnalyser4Emu.py": {
     "author": "James Lord",
     "description": "*WIKI* \nRun this script on the Mantid Script window\nAnalyses a series of images from Trius Monochrome beamline camera\nThe images and nxs run files are taken while changing a beamline parameter e.g. Vert_Steer_Mag\nThe camera and SECI work independently.\nThe image and nxs files are compared using their time stamps.\nSo make sure your camera is connected to network during the measurement.\nUses classes from FlattenAndFitCamera.py and LoadBeamCameraFile.py\nWritten by Koji Yokoyama on 28 Jan. 2019\nHint: you will need to set: a scaling factor, initial values for fitting\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/BeamCamSingleImageAnalyser4Emu.py": {
     "author": "James Lord",
     "description": "*WIKI* \nRun this script on the Mantid Script window\nAnalyses a single image from Trius Monochrome beamline camera\nUses classes from FlattenAndFitCamera.py and LoadBeamCameraFile.py\nWritten by Koji Yokoyama on 23 Jan. 2019\nHint: you will need to set: a scaling factor, initial values for fitting\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CHRONUS_Definition_JSL_2.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CHRONUS_Detector_Grouping_LFTF.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CalMuonDeadTime2.py": {
     "author": "James Lord",
     "description": "Calibrate muon dead times with \"direct\" fit\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CollateBeamCameraSteering.py": {
     "author": "James Lord",
     "description": "RampLogs=CopyLogsToHist(FirstFile='//hifi/data/hifi00100175.nxs', LastFile='//hifi/data/hifi00100206.nxs', OutputWS='RampLogs', OmitUnmonitoredSpectra=True, ExtraLogs='Field_Main,Slits')\n\nFieldLog=ExtractSingleSpectrum(RampLogs,32)\n\nSlitLog=ExtractSingleSpectrum(RampLogs,33)\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CommonBeamTuning.py": {
     "author": "James Lord",
     "description": "Scan a magnet, take data on three machines, analyse it, plot results",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CommonBeamTuningHifi.py": {
     "author": "James Lord",
     "description": "Scan a magnet, take data on three machines, analyse it, plot results",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/ConvertAsciiMultiPeriod.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CopyLogsToHist7.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CopyLogsToHist8.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Create2DALCMap.py": {
     "author": "James Lord",
     "description": "import math\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CreateFFTMapCdS.py": {
     "author": "James Lord",
     "description": "runlist=range(20764,20795)\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CreateFFTMapRF.py": {
     "author": "James Lord",
     "description": "runlist=range(20764,20795)\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/CreatePhaseQuadTable.py": {
     "author": "James Lord",
     "description": "CreatePhaseQuadTable - make a blank Mantid table for Phase Quad algorithm\n\nAuthor: James Lord\n\nVersion 2.0, September 2015\n\nnow sets Efficiency column (to expected asymmetry) and sets dead time=0\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/DetectorRateTimeSeries.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nThis algorithm calculates integrated counts for each spectrum (normalised per frame) from a range of files to be loaded and places into a single workspace. The \"time\" axis is now in clock time (hours from 00:00 on the day the first of the runs began) with the time between runs considered as belonging to the run just ended, apart from the last one.\n\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/DetectorRateTimeSeries2.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nThis algorithm calculates integrated counts for each spectrum (normalised per frame) from a range of files to be loaded and places into a single workspace. The \"time\" axis is now in clock time (hours from 00:00 on the day the first of the runs began) with the time between runs considered as belonging to the run just ended, apart from the last one.\n\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/DoubleCountCorrelation.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/DoubleCountCorrelationSum2.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/EMU96_phase.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/EMU96_taud.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/EMU_Detector_Grouping_MaxEnt.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/EMU_rings2_96.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/FitIndividualPhases.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/FlattenAndFitCamera.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/LoadBeamCameraFile.py": {
     "author": "James Lord",
     "description": "load FITS file from HIFI Starlight camera into Workspace\n\nset start and end times from header\n\noptional filtering out of noise points (over specified delta from all 4 neighbours)\n\noptional binning\n\nset scale of image\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/Bessel.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/CombGaussLorentzKT.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/F-Mu-F.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/FracMissingExp.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/FracTwoExp.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/GausOscSC.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/GaussSigmaSq.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/InternBessel.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/LFradical.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/LorentzKT.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/Meier.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/Mu-D.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/Mu-H.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/RedfieldLambdavsHlf.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/SpinGlass.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/StandardSC.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Mantid functions/StretchedKT.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/EMU96_phase.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/EMU96_taud.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/EMU_Detector_Grouping_MaxEnt.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/MUSR_Detector_Grouping_MaxEnt.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/MaxEnt.py": {
     "author": "James Lord",
     "description": "A thin Mantid algorithm wrapper around an F2Py-compiled version of the Fortran\n\"MaxEnt\" program, which is currently being used from within OpenGENIE.\n\nThe existing functionality of the OpenGENIE version was to specify a run number\nand several options, and have the program do its calculations and plot the result.\nThere were also three files given to the program containing groupings as well as\nphase and deadtime data.  These were updated after the program had run its course.\n\nWe try to do the same here, except that we can work out a few of the options\nourselves without having to ask the user for them.  We also supply the plotted\ndata as an OutputWorkspace for users to play with.\n\nAnother difference is that in most cases we are removing the responsiblity of\nthe Fortran to write to and read from files; doing this via Python is easier\nand a lot more robust (doesn't crash if it can't get access rights).\n\nWe're supplying this via the Script Repository to keep F2Py out of the main one.\nThe main disadvantage to this is that we will have to run the unit tests manually\nafter every change to make sure things haven't regressed.  Another potential\ndownside is that this script requires users to add the containing directory to\ntheir \"Python extensions\" in Mantid preferences.  This will mean that the .pyd\nwill be used (locked) by the Mantid process and so updating it via the script\nrepository will not be possible without first removing the directory again from\nthe preferences.\n\nExample usage (SUBJECT TO CHANGE WITH TESTING AND FEEDBACK FROM USERS):\n\n# Execute with default input files, for the run \"48033\" on \"MUSR\".\nresult = MaxEnt(RunNumber=\"48033\", Instrument=\"MUSR\")",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/TestMaxEnt.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/input_phase.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/input_taud.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_and_fix_checked_chi_squared.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_and_fix_checked_deadtimes_and_phases.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_and_fix_checked_input.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_and_fix_checked_result.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_checked_chi_squared.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_checked_deadtimes_and_phases.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_checked_input.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fit_checked_result.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fix_checked_chi_squared.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fix_checked_deadtimes_and_phases.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fix_checked_input.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_fix_checked_result.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_none_checked_chi_squared.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_none_checked_deadtimes_and_phases.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_none_checked_input.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/Tests/musr_none_checked_result.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/grouping_file_converter.py": {
     "author": "James Lord",
     "description": "Simple script to be used for converting old-style MaxEnt grouping files to a\nformat that Mantid's MaxEnt algorithm can understand.\n\nOld-style files are of the following format:\n\nLines   | Content\n--------+--------\n1 - 5   | Misc. info ignored by this script.\n6 - End | Pairs of integers seperated by whitespace, mapping detector number to\n        | group number.\n\nUsage:\n\nChange INST, INPUT_FILE_PATH and OUTPUT_FILE_PATH to taste, then run.",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/mantid_maxent_win64.pyd": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/phase.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/MaxEnt/taud.dat": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxent.py": {
     "author": "James Lord",
     "description": "translated from read.for\n\nchanged to read from Mantid workspace(s)\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools": {
     "author": "James Lord",
     "description": "dummy!\n\ne too\n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/__init__.py": {
     "author": "James Lord",
     "description": "dummy!\n\ne too\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/back.py": {
     "author": "James Lord",
     "description": "translation of back.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/chinow.py": {
     "author": "James Lord",
     "description": "translation of chinow.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/chosol.py": {
     "author": "James Lord",
     "description": "translation of chosol.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/deadfit.py": {
     "author": "James Lord",
     "description": "translation of deadfit.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/dist.py": {
     "author": "James Lord",
     "description": "translation of dist.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/fft.py": {
     "author": "James Lord",
     "description": "translation of FFT.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/input.py": {
     "author": "James Lord",
     "description": "translation of input.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/maxent.py": {
     "author": "James Lord",
     "description": "translated from MAXENT.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/modab.py": {
     "author": "James Lord",
     "description": "translation of modab.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/modamp.py": {
     "author": "James Lord",
     "description": "translation of modamp.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/modbak.py": {
     "author": "James Lord",
     "description": "translation of modbak.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/move.py": {
     "author": "James Lord",
     "description": "translation of move.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/multimaxalpha.py": {
     "author": "James Lord",
     "description": "from output import OUTPUT\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/opus.py": {
     "author": "James Lord",
     "description": "translation of opus.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/output.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/outspec.py": {
     "author": "James Lord",
     "description": "translated from outspec.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/project.py": {
     "author": "James Lord",
     "description": "translated from project.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/read.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/start.py": {
     "author": "James Lord",
     "description": "translation of START.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/tropus.py": {
     "author": "James Lord",
     "description": "translation of TROPUS.FOR\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/OpengenieMaxentTools/zft.py": {
     "author": "James Lord",
     "description": "translation of zft.for\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload/CreateBlankTableForQuantum.py": {
     "author": "James Lord",
     "description": "CreateBlankTableForQuantum - make a blank Mantid table with 2 text columns and about 30 rows\n\nAuthor: James Lord\n\nVersion 1.02, December 2015\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload/CreateBlankTableForQuantum.py_bck": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload/QuantumWizardDialogs.py": {
     "author": "James Lord",
     "description": "Wizard scripts\n\nversion 1.02 December 2015\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload/quantumtabledriven.py": {
     "author": "James Lord",
     "description": "Quantum - a program for solving spin evolution of the muon\n\nAuthor: James Lord\n\nVersion 1.04, August 2018\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload/quantumtabletools.py": {
     "author": "James Lord",
     "description": "Quantum - a program for solving spin evolution of the muon\n\nAuthor: James Lord\n\nVersion 1.04, August 2018\n\nable tools - can be run independently of Mantid except:\n\nPoint by point fitting\n\nCrystal Fields\n\nCrystal space group symmetry and coordinates in fractions of unit cell\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Algorithms_Autoload/quantumtools.py": {
     "author": "James Lord",
     "description": "Module containing lower level functions for Quantum\n\nAuthor: James Lord\n\nVersion 1.04, August 2018\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/AnisoRepol_data.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/AnisoRepol_fn.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/AnisoRepol_initialpars.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/ChargeCycle_Tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/Delta0ALC_Tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/FmuF_fn.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/FmuF_initialpars.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/PulsedRF_Tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/UnitTester.py": {
     "author": "James Lord",
     "description": "import mantid algorithms\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/UnitTesterApprox.py": {
     "author": "James Lord",
     "description": "import mantid algorithms\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/chargecycle_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/crystalfield_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/crystalfield_tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/delta0alc_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/delta0alc_referenceOLD.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/delta0alc_reference_old2.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/fmuf_data.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/pulsedrf_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/shallowspectrum_Tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/shallowspectrum_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/siliconalc_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/siliconalc_tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/spacegroup_reference.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/spacegroup_tab.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Examples/standalone.py": {
     "author": "James Lord",
     "description": "try Quantum without Mantid\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Quantum for Mantid instructions.pdf": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Quantum for Mantid instructions.pdf_bck": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Scripts": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/Quantum/Scripts/QuantumWizardScript.py": {
     "author": "James Lord",
     "description": "QuantumWizardScript - a user friendly interface to Quantum, a program for solving spin evolution of the muon\n\nAuthor: James Lord\n\nVersion 1.02, December 2015\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/SampleLogCountRateAnalyser4Emu.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/SimulateMuonTFData.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nAlgorithm SetupSimInstrument defines which instrument is to be modelled, and chooses sample offsets to define alpha, etc.\nIt outputs a setup table for use by SimulateMuonTFData.\n\nAlgorithm SimulateMuonTFData generates a simulated muon run workspace, based on a model or a user specified function, field value and counting time (statistics).\nIt includes the frequency response, dead time effects, and random variations of detector position, alpha, etc as defined in the setup table.\nUse the same input table each time to simulate successive runs in the same experiment.\n\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/SplitLaserPowerLog.py": {
     "author": "James Lord",
     "description": "SplitLaserPowerLog\nAuthor: James Lord Aug 2017\nTake a continuous time series log in separate text file and extract the values corresponding to a range of runs\nBuild a table of run number, value, rms variation.",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/generate_ARGUS_inst_def.py": {
     "author": "James Lord",
     "description": "generate_ARGUS_inst_def\nAuthor: James Lord\nGenerates IDF for ARGUS",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/Fe_bcc": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/Fe_bcc/Fe.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/Fe_bcc/run_example.py": {
     "author": "James Lord",
     "description": "This is an example to calculate the muon local field at the tetrahedral site(s) in bcc-Fe.\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs/4107570.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs/bcs_file_22902.mcif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs/bcs_file_22902b.mcif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs/bcs_file_22902c.mcif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs/bcs_file_22902d.mcif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/cifs/bcs_file_22902e.mcif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LaFeAsO/run_example.py": {
     "author": "James Lord",
     "description": "define an empty sample.\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LiFePO4": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LiFePO4/cifs": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LiFePO4/cifs/4001848.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/LiFePO4/run_example.py": {
     "author": "James Lord",
     "description": "This example shows how to estimate the local fields in LiFePO4 reproducing\nthe results of Ref. PhysRevB.84.054430. The description of the magnetic order\nwill be done first using the helper function which facilitate the user input\nand then programmatically.",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/MnSi": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/MnSi/MnSi.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/MnSi/run_example.py": {
     "author": "James Lord",
     "description": "this is a general position along the 111, \n\njust to identify the form of the dipolar tensor for the sites \n\nalong the 111\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/test": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/test/Cifs": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/test/Cifs/1534895.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/examples/test/example.py": {
     "author": "James Lord",
     "description": "\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/install_script.py": {
     "author": "James Lord",
     "description": "=== This works inside the MantiPlot shell on Win 7 ===\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/CoF2": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/CoF2/CoF2.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/CoF2/run_example.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/La2CuO4": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/La2CuO4/La2CuO4_Cmca-structure.png": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/La2CuO4/La2CuO4_Cmca_new.cif": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/school/La2CuO4/run_example.py": {
     "author": "James Lord",
     "description": "muon field site 1 from Budnick et al Phys Lett A 124, 103, https://www.sciencedirect.com/science/article/pii/0375960187903823,\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/script_update.py": {
     "author": "James Lord",
     "description": "install phase\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "muon/muesr/setup_vesta.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "plugins": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "plugins/python": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "plugins/python/algorithms": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "plugins/python/algorithms/WorkflowAlgorithms": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "plugins/python/algorithms/WorkflowAlgorithms/IndirectILLreduction.py": {
     "author": "James Lord",
     "description": "Algorithm to start IN16reduce\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "plugins/python/algorithms/WorkflowAlgorithms/IndirectTransmission.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/ISISPythonControl": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/ISISPythonControl/PolrefControl": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/ISISPythonControl/PolrefControl/LiveView.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/ISISPythonControl/PolrefControl/PolrefRoutines.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/ISISPythonControl/PolrefControl/TestingPythonControl.py": {
     "author": "James Lord",
     "description": "\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/experimental": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/experimental/algorithms": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/experimental/algorithms/Stitch1D.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nStitches single histogram [[MatrixWorkspace|Matrix Workspaces]] together outputting a stitched Matrix Workspace. Either the right-hand-side or left-hand-side workspace can be chosen to be scaled. Users\nmust provide a Param step (single value), but the binning start and end are calculated from the input workspaces if not provided. Likewise, StartOverlap and EndOverlap are optional. If the StartOverlap or EndOverlap\nare not provided, then these are taken to be the region of x-axis intersection.\n\nThe workspaces must be histogrammed. Use [[ConvertToHistogram]] on workspaces prior to passing them to this algorithm.\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/experimental/algorithms/Stitch1DMany.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nStitches single histogram [[MatrixWorkspace|Matrix Workspaces]] together outputting a stitched Matrix Workspace. This algorithm is a wrapper over [[Stitch1D]].\n\nThe algorithm expects  pairs of StartOverlaps and EndOverlaps values. The order in which these are provided determines the pairing. \nThere should be N entries in each of these StartOverlaps and EndOverlaps lists, where N = 1 -(No of workspaces to stitch). \nStartOverlaps and EndOverlaps are in the same units as the X-axis for the workspace and are optional.\n\nThe workspaces must be histogrammed. Use [[ConvertToHistogram]] on workspaces prior to passing them to this algorithm.\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/LD240flood.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/LD240flood_Pre_March_2015.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/LD240flood_preMarch2012.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/Larmor_Detector_Map_File.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/Larmor_Detector_Map_File_2.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/Larmor_Detector_Map_File_3.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/Larmor_Detector_Map_File_4.xml": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/WSF_Flood.nxs": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/_procedures_August_2013.py_old": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/event_scripts.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/kineticraw.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/nrkinetic.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec.py~": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec_nruser.py": {
     "author": "James Lord",
     "description": "This module should be imported into a user reduction script, for instance: import offspec_pnruser as p\nThe following variables should/can then be defined:\n\np.dbnr = 'none' # direct beam workspace for pnr\nsavepath = \"u:/\" # The directory in which to save the reduced data\n\np.nrangles = (0.6, 1.6, 3.0) # The angles at which you measure!\np.nrqlimits = [\"0.008\",\"-0.02\",\"0.15\"] # The q ranges and binning resolution\np.nrscalefactor =1.0                   # If you want to normalise to 1.0\n\np.nrqlimits = [\"0.008\",\"-0.02\",\"0.15\"] # Same for PA\np.nrscalefactor =1.0\np.nrangles = (0.6, 1.6, 3.0)\n\np.detectorlimits = {'low': 390, 'specular': 404, 'high': 410} # Low is lower limit for region of interest on the\n                detector, high upper limit for ROI and specular the position of the reflection\n\np.binningpars = [\"2.0\",\"0.02\",\"12.0\",\"2\"]  # wavelength binning, for historical reasons this includes the choice of monitor\n                                           # default is usually ok\n\nlmin, lmax = 2.2, 12.0 #Determine at what wavelength to crop the workspace, should be an ok default\n\nThe functions provided in here are:\n\nNRreduce(runs, name, angles=pnrangles, qlimits = pnrqlimits, scalefactor=pnrscalefactor, diagnostics = False)\nOFSreduce(runs, name, withpol = False, angle = None, qlimits = None, Nqx = None, Nqz = None)\n\nwhere runs is a list of strings containing the runnumbers for each angle, for example:\nruns = [\"36422\",\"36423+36424\",\"36425-36430\"]\nname is the name of your resulting workspace/file",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec_offset2.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec_offspec.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec_olddetector.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec_pnruser.py": {
     "author": "James Lord",
     "description": "This module should be imported into a user reduction script, for instance: import offspec_pnruser as p\nThe following variables should/can then be defined:\n\np.dbpnr = 'none' # direct beam workspace for pnr\np.dbpa = 'none'  # directbeamworkspace for pa once those have been measured\nsavepath = \"u:/\" # The directory in which to save the reduced data\n\np.pnrangles = (0.5, 1.0, 2.0) # The angles at which you measure!\np.pnrqlimits = [\"0.008\",\"-0.02\",\"0.15\"] # The q ranges and binning resolution\np.pnrscalefactor =1.0                   # If you want to apply a scalefactor\n\npaangles = [0.5, 1.0, 2.0]  # Same for PA\np.paqlimits = [\"0.008\",\"-0.02\",\"0.15\"]\np.pascalefactor =1.0\n\n\nOnly adjust the following if you know what they mean:\n\np.detectorlimits = {'low': 390, 'specular': 404, 'high': 410} # Low is lower limit for region of interest on the\n                detector, high upper limit for ROI and specular the position of the reflection\n\np.binningpars = [\"2.0\",\"0.02\",\"12.0\",\"2\"]  # wavelength binning, for historical reasons this includes the choice of monitor\n                                           # default is usually ok\n\nlmin, lmax = 2.2, 12.0 #Determine at what wavelength to crop the workspace, should be an ok default\n\npnrqgroup = True, pnrbckg = True # and their equivalents in PA. Decide if you sum in Q or lambda, \n                                 # subtract background or not.\n\ncalibration: default is set to current polarisation corrections\n                                 \n-------------------------------------------------                                 \nFor offspecular data:            \nofangle = 0.7\nofqlimits = '-5e-4,5e-4,0.02,0.1'\nofsNqx = 200\nofsNqz = 200\n                      \nThe functions provided in this module are:\n\nPNRreduce(runs, name, angles=pnrangles, qlimits = pnrqlimits, scalefactor=pnrscalefactor, diagnostics = False)\nPAreduce(runs, name, angles=paangles, qlimits = paqlimits, scalefactor=pascalefactor, diagnostics = False)\n\nwhere runs is a list of strings containing the runnumbers for each angle, for example:\nruns = [\"36422\",\"36423+36424\",\"36425-36430\"]\nname is the name of your resulting workspace/file\n\nprint_calibrations() \nprints a list of all the available polarisation corrections\n\nOFSreduce(runs, name, withpol = 'pnr')\nReduces offspcular data",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/offspec_red.py": {
     "author": "James Lord",
     "description": "27/06 njs: add check on latest run files and change data loader frfom Load to LoadISISNexus\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/procedures_December_2012.py_old": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/procedures_July2013.py_old": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/procedures_July_2012.py_old": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/offspec/useful.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/updates": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/updates/algorithms": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/updates/algorithms/Stitch1D.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nStitches single histogram [[MatrixWorkspace|Matrix Workspaces]] together outputting a stitched Matrix Workspace. Either the right-hand-side or left-hand-side workspace can be chosen to be scaled. Users\nmust provide a Param step (single value), but the binning start and end are calculated from the input workspaces if not provided. Likewise, StartOverlap and EndOverlap are optional. If the StartOverlap or EndOverlap\nare not provided, then these are taken to be the region of x-axis intersection.\n\nThe workspaces must be histogrammed. Use [[ConvertToHistogram]] on workspaces prior to passing them to this algorithm.\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "reflectometry/updates/algorithms/Stitch1DMany.py": {
     "author": "James Lord",
     "description": "*WIKI* \n\nStitches single histogram [[MatrixWorkspace|Matrix Workspaces]] together outputting a stitched Matrix Workspace. This algorithm is a wrapper over [[Stitch1D]].\n\nThe algorithm expects  pairs of StartOverlaps and EndOverlaps values. The order in which these are provided determines the pairing. \nThere should be N entries in each of these StartOverlaps and EndOverlaps lists, where N = 1 -(No of workspaces to stitch). \nStartOverlaps and EndOverlaps are in the same units as the X-axis for the workspace and are optional.\n\nThe workspaces must be histogrammed. Use [[ConvertToHistogram]] on workspaces prior to passing them to this algorithm.\n*WIKI*",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/BilbyCustomFunctions_Reduction.py": {
     "author": "James Lord",
     "description": "\n\n###########\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/SANSDataProcessor.py": {
     "author": "James Lord",
     "description": "extra multiplier: measured transmission is lower; dividing by lower number, hence need to lowering the final result, i.e. divide by 1.05\n\nradius apertures - done\n\nattenuators\n\nErrors: if trying to reduce time slice larger than the total time of the measurement: Error message & Stop\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/input_csv_5779.csv": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/reducer_2017_08_26.py": {
     "author": "James Lord",
     "description": "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #\n\nINPUT - mandatory from a USER - START\n\n#########################################################################################\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/settings_csv_5779.csv": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/shift_assembled.csv": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/BILBY/subtraction_final.py": {
     "author": "James Lord",
     "description": "SECOND ONE\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Bilby_old": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Bilby_old/BilbyCustomFunctions_Reduction.py": {
     "author": "James Lord",
     "description": "\n\n###########\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Bilby_old/SANSDataProcessor.py": {
     "author": "James Lord",
     "description": "extra multiplier: measured transmission is lower; dividing by lower number, hence need to lowering the final result, i.e. divide by 1.05\n\nradius apertures - done\n\nattenuators\n\nErrors: if trying to reduce time slice larger than the total time of the measurement: Error message & Stop\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Bilby_old/reducer_generic_final.py": {
     "author": "James Lord",
     "description": "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #\n\nINPUT - mandatory from a USER - START\n\n#########################################################################################\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Larmor.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/SANSroutines.py": {
     "author": "James Lord",
     "description": "from genie import *\n\nfrom genie_epics_api import *\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans": {
     "author": "James Lord",
     "description": "The Semsans analysis code",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/BesselFunction.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/DiluteSpheres.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/GetLog.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/HeliumLog.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/HeliumPol.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/Polarisation.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/Sel.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/SelConst.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/Semsans.py": {
     "author": "James Lord",
     "description": "%matplotlib qt\n\nimport matplotlib.pyplot as plt\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/SumToShim.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/__init__.py": {
     "author": "James Lord",
     "description": "The Semsans analysis code",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/full_analysis.py": {
     "author": "James Lord",
     "description": "This module provides helper functions for automatinc the semsans\nanalysis.  The most important function from the user perspective is\nanalyse.",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/metadata.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Semsans/runtypes.py": {
     "author": "James Lord",
     "description": "This module contains the datatypes used to analysing semsans runs",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/Larmor/Simple_Scan.py": {
     "author": "James Lord",
     "description": "import LSS.SANSroutines as lm\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n \n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/rkh_scripts": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/rkh_scripts/Larmor_Loki_direct_beam_iteration_fit_layers_16Dec2019.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/rkh_scripts/SANS_direct_beam_iteration_fit_02Jan2020.py": {
     "author": "James Lord",
     "description": "extra stuff needed for new monoGaussCoil  function\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/rkh_scripts/SANSuseful26_varifocal_6m_gdw_BKG_singleMask.py": {
     "author": "James Lord",
     "description": "path=\"c:/mantidinstall/data/\"\n\n 20/11/14 RKH - attempt to use only one mask file\n\n 31/07/13 try to make new api version\n\n ===========================the NEW scripting commands =================================\n\n 17/12/12 this for GDW at 4m WITH FLAT BKG SUBTRACTION, fit to trans is OFF,, this one integrates RATIOS of I(Q)\n\n Q ranges for ratios also expanded to suit the large detector X offset on this data set.\n\nMake the reduction module available\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sans/rkh_scripts/gauss_coil_fit1.py": {
     "author": "James Lord",
     "description": "RKH's Gaussian coil models Summer 2019\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sesans": {
     "author": "James Lord",
     "description": "empty file\n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sesans/__init__.py": {
     "author": "James Lord",
     "description": "empty file\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "sesans/refactor.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "system": {
     "author": "James Lord",
     "description": "This folder is for the usage of Mantid Team. Please do not touch this folder or its content.\n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "system/README": {
     "author": "James Lord",
     "description": "This folder is for the usage of Mantid Team. Please do not touch this folder or its content.\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "system/scriptrepositoryparser.py": {
     "author": "James Lord",
     "description": "The ScriptRepository parser is responsible for parsing the whole repository\nin order to update the information that is available at the repository.json\nfile. It belongs to the Script Repository Web Service.\n\nIt goes through the repository tree, looking into each file to produce\nthe entries of the repository.json.\n\nThe repository.json is formed with the following structure:\n\n    path of the directory/file\n        pub_date: the date when the file was last modified\n        directory: flag that indicates if the entry is a directory of a file\n        description: the description of the file or directory.\n        author: the name of the author.\n\nThis structure, can be created by the json module, using a python dictionary\nwhose value is a dictionary.\n\n.. code-block: python\n\n    {'path':{'description':'file description','pub_date':'today', 'author':'myname'}}\n\n\nThe :func:`parse_repository` function is responsible for iterating over all the\nfiles inside the repository. Than, it ask the make_entry to form the\nentry for the python structure.\n\nIn order to get the description of the entries, :func:`make_entry` depends on the\n:func:`get_description` function.\n\nThe ScriptRepository design defined that the documentation of a directory\nis the same as the documentation of its direct child __init__.py or README\nfile. So, these functions passes the information if the description of\nthe current entry could be used to describe its parent directory.\n\nCreated on Wed Mar  6 09:05:08 2013\n\n@author: gesner",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n  e.g.user/gesner\n",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/AdamJackson": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/AdamJackson/install_euphonic.py": {
     "author": "James Lord",
     "description": "Update pip, the version that ships with Ubuntu will insist on updating numpy\n\nto a version that may not be binary-compatible with Mantid\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ClaudiaScatigno": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ClaudiaScatigno/INSCorNorm.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ClaudiaScatigno/INSCorNorm_2020.py.mtdproj": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ClaudiaScatigno/INSCorNorm_CS_2020.py": {
     "author": "James Lord",
     "description": "INSCorNorm. Author: Claudia Scatigno <claudia.scatigno@cref.it>\n\n How to cite: Scatigno, Claudia, et al. \"A python algorithm to analyze inelastic neutron scattering spectra based on the y-scale formalism.\" Journal of Chemical Theory and Computation 16.12 (2020): 7671-7680\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ClaudiaScatigno/INSCorNorm_CS_2020_def.py": {
     "author": "James Lord",
     "description": "INSCorNorm (PythonAlgorithm) Author: Claudia Scatigno <claudia.scatigno@cref.it>\n\n How to cite: Scatigno, Claudia, et al. \"A python algorithm to analyze inelastic neutron scattering spectra based on the y-scale formalism.\" Journal of Chemical Theory and Computation 16.12 (2020): 7671-7680\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ClaudiaScatigno/INSCorrNorm__v17_02122022.py": {
     "author": "James Lord",
     "description": "INSCorNorm (PythonAlgorithm) Author: Claudia Scatigno <claudia.scatigno@cref.it>\n\nto cite: Scatigno, Claudia, et al. \"A python algorithm to analyze inelastic neutron scattering spectra based on the y-scale formalism.\" Journal of Chemical Theory and Computation 16.12 (2020): 7671-7680\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Daniel": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Daniel.py": {
     "author": "James Lord",
     "description": "import mantid algorithms, numpy and matplotlib\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Daniel/test script.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/DannyHindson": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/DannyHindson/SimpleMtdCommands_Example.py": {
     "author": "James Lord",
     "description": "\n\n Example: Basic Mantid commands\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/HRPDDialog_Example.py": {
     "author": "James Lord",
     "description": "First a function definition for the Loading algorithms which loads\n\nthe data and immediately aligns the detectors\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/InstrumentView_Example.py": {
     "author": "James Lord",
     "description": "\n\n Example: Instrument view control\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/PlotAsymmetryByLogValue_Example.py": {
     "author": "James Lord",
     "description": "-----------------------------------------------------\n\n Runs PlotAssymetryByLogValue algorithm\n\n and plots the output in MantidPlot using a Python\n\n dictionary\n\n-----------------------------------------------------\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/SampleLogs_Demo.py": {
     "author": "James Lord",
     "description": "\n\n Example: Retrieving log information from a data set\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/SimpleMtdCommands_Example.py": {
     "author": "James Lord",
     "description": "\n\n Example: Basic Mantid commands\n\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/SolidAngle_Example.py": {
     "author": "James Lord",
     "description": "-------------------------------------------------------------------------\n\n\n\n Example: Calculating the solid angle for a spectrum with respect to the \n\n          sample position\n\n\n\n-------------------------------------------------------------------------\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/StripPeaks.py": {
     "author": "James Lord",
     "description": "MantidPlot example script\n\n\nUsing StripPeaks + dialog boxes\n\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/TableWorkspace_Example.py": {
     "author": "James Lord",
     "description": "Perform some algorithms\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/ExampleUser/test_upload.py": {
     "author": "James Lord",
     "description": "Intended to be used for testing upload mechanism\n\nThis is a full summary of the module",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Gemma": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Gemma/test_script2.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/GesnerPassos": {
     "author": "James Lord",
     "description": "This folder belongs to Gesner Passos.\n\nIt is here to allow developing features for ScriptRepository and testing \nthem. \n\n\nchecking old api: \n\ngrep mtd.initialize *\ngrep MantidFramework *\ngrep mtd.sendLogMessage * \ngrep mtd.deleteWorkspace * \ngrep mtd.settings * \ngrep mtd.getSettings * \ngrep mtd.workspaceExists * \ngrep mtd.getConfigProperty * \ngrep isGroup * \ngrep getSampleDetails * \ngrep createNumericAxis * \ngrep createTextAxis * \ngrep createSpectraAxis * \ngrep '.workspace()' * \ngrep qti * \n\n\n#python to find the algorithms used in scripts\n\nimport numpy\nimport re\n\n#f = type(globals()['Load'])\n#all_algs = [k for (k,v) in globals().items() if isinstance(v,f)]\nlist_of = ['reduce_from_autoreduce_script.py', 'reduce_mult_T.py', 'reducenoguess.py', 'scan.py', 'sum_split_plot_slice.py' ]\nfor name in list_of:\n\tfil = open('/apps/scriptrepository/direct inelastic/SNS/%s'%name,'r')\n\tprint fil\n\tfor line in fil:\n\t\tres = numpy.intersect1d(all_algs, re.split('\\W+', line))\n\t\tif len(res):\n\t\t\tprint line\n\n\n\nMigrating scriptrepository\n/diffraction\n\nNOTHING\n\n-==================-\n\n\n/direct inelastic - verified\n\nISIS/\n\nTicket to assign alex: \n\n\nRemove the 'txt' files that are not used anymore\nlet.txt maps.txt mari.txt merlin.txt\n\nCopy all the files from:\n\nhttps://github.com/mantidproject/scripts/tree/master/inelastic/direct_geometry/qtiGenie\n\nand put them into script repository: \n\nhttps://github.com/mantidproject/scriptrepository/tree/master/direct%20inelastic/ISIS/qtiGenie\n\n\n\n\nticket to assign to me:\n\nUpgrage the scripts inside https://github.com/mantidproject/scripts/tree/master/inelastic/direct_geometry/qtiGenie\nto the new API. \n\n\nSNS/ \nall using new api\n\n-==================-\n\n\ngeneral/Transforms/Merging/ConjoinSpectraNumAx.py\n\nneed to be migrated\n\n\n-==================-\n\n\nindirect inelastic\n\nNOTHING\n\n-==================-\n\n\nreflectometry/offspec\n\nremoved from 7522 (investigate)\n\nTested with:\n#addRuns(['7709','7709'],'out')\n#addRuns(['7709'],'single')\n#plot2D('single, out',[0,10000,0,10000,0,1000], [0,0,0])\n#XYPlot('single, out','2,3',[0,10000,0,10000,0,1000], [2,2,2], True,True)\n#nrtestfn('7709, 7709','out, out2')\n#removeoutlayer('out')\n\n\nbinning=[\"2.0\",\"0.2\",\"12.0\",\"2\"]\nconfig[\"default.instrument\"] = \"OFFSPEC\"\nnrSESANSP0Fn(\"10792\",\"P055\",\"109\",\"119\",\"2\",\"1\",binning)\nnrSESANSFn(\"10791+10793\",\"dPMMA\",\"\",\"P055pol\",\n                           \"100\",\"130\",\"2\",\"1\",\"2\",\"3009.9\",binning,\"2\",\"0\")\n\t\t\t   \n\t\t\t   \nbinning=[\"2.0\",\"0.2\",\"12.0\",\"2\"]\nconfig[\"default.instrument\"] = \"OFFSPEC\"\nnrSESANSP0Fn(\"10792\",\"P055\",\"109\",\"119\",\"2\",\"1\",binning)\n\n\n+++++++++++++++++++++++++Send the user the new file and ask him to test it!++++++++++++++++++++++++++++++++++\n\n\n\n-==================-\nuser/ExampleUser\n\nSimpleMtdCommands_Example.py\nStripPeaks.py\nTableWorkspace_Example.py\nSampleLogs_Demo.py\n\n\n\n\n========================\n#! /usr/bin/env python\nfrom mantidsimple import *\nfrom MantidFramework import *\n\nf = type(globals()['LoadRaw'])\nall_algs = [k for (k,v) in globals().items() if isinstance(v,f)]\n\nimport sys\nimport numpy\nimport re\n\n\nfor file_n in sys.argv[1:]:\n        print \"\\n\\n===================================\"\n\tprint file_n\n        #python to find the algorithms used in scripts\n        \n\tfil = open(file_n ,'r')\n\tfor line in fil:\n\t\tres = numpy.intersect1d(all_algs, re.split('\\W+', line))\n\t\tif len(res):\n\t\t\tprint line\n        fil.close()\n\n\n=============================\negrep \"mantidsimple|mtd\\.initialize|MantidFramework|mtd\\.sendLogMessage|mtd\\.deleteWorkspace|mtd\\.settings|mtd\\.getSettings|mtd\\.workspaceExists|mtd\\.getConfigProperty|isGroup|getSampleDetails|createNumericAxis|createTextAxis|createSpectraAxis|\\.workspace\\(\\)|qti\" $1\nif [[ $? == '0' ]];then\necho \"============== \" $1 \" =================\"\nfi;",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/GesnerPassos/README": {
     "author": "James Lord",
     "description": "This folder belongs to Gesner Passos.\n\nIt is here to allow developing features for ScriptRepository and testing \nthem. \n\n\nchecking old api: \n\ngrep mtd.initialize *\ngrep MantidFramework *\ngrep mtd.sendLogMessage * \ngrep mtd.deleteWorkspace * \ngrep mtd.settings * \ngrep mtd.getSettings * \ngrep mtd.workspaceExists * \ngrep mtd.getConfigProperty * \ngrep isGroup * \ngrep getSampleDetails * \ngrep createNumericAxis * \ngrep createTextAxis * \ngrep createSpectraAxis * \ngrep '.workspace()' * \ngrep qti * \n\n\n#python to find the algorithms used in scripts\n\nimport numpy\nimport re\n\n#f = type(globals()['Load'])\n#all_algs = [k for (k,v) in globals().items() if isinstance(v,f)]\nlist_of = ['reduce_from_autoreduce_script.py', 'reduce_mult_T.py', 'reducenoguess.py', 'scan.py', 'sum_split_plot_slice.py' ]\nfor name in list_of:\n\tfil = open('/apps/scriptrepository/direct inelastic/SNS/%s'%name,'r')\n\tprint fil\n\tfor line in fil:\n\t\tres = numpy.intersect1d(all_algs, re.split('\\W+', line))\n\t\tif len(res):\n\t\t\tprint line\n\n\n\nMigrating scriptrepository\n/diffraction\n\nNOTHING\n\n-==================-\n\n\n/direct inelastic - verified\n\nISIS/\n\nTicket to assign alex: \n\n\nRemove the 'txt' files that are not used anymore\nlet.txt maps.txt mari.txt merlin.txt\n\nCopy all the files from:\n\nhttps://github.com/mantidproject/scripts/tree/master/inelastic/direct_geometry/qtiGenie\n\nand put them into script repository: \n\nhttps://github.com/mantidproject/scriptrepository/tree/master/direct%20inelastic/ISIS/qtiGenie\n\n\n\n\nticket to assign to me:\n\nUpgrage the scripts inside https://github.com/mantidproject/scripts/tree/master/inelastic/direct_geometry/qtiGenie\nto the new API. \n\n\nSNS/ \nall using new api\n\n-==================-\n\n\ngeneral/Transforms/Merging/ConjoinSpectraNumAx.py\n\nneed to be migrated\n\n\n-==================-\n\n\nindirect inelastic\n\nNOTHING\n\n-==================-\n\n\nreflectometry/offspec\n\nremoved from 7522 (investigate)\n\nTested with:\n#addRuns(['7709','7709'],'out')\n#addRuns(['7709'],'single')\n#plot2D('single, out',[0,10000,0,10000,0,1000], [0,0,0])\n#XYPlot('single, out','2,3',[0,10000,0,10000,0,1000], [2,2,2], True,True)\n#nrtestfn('7709, 7709','out, out2')\n#removeoutlayer('out')\n\n\nbinning=[\"2.0\",\"0.2\",\"12.0\",\"2\"]\nconfig[\"default.instrument\"] = \"OFFSPEC\"\nnrSESANSP0Fn(\"10792\",\"P055\",\"109\",\"119\",\"2\",\"1\",binning)\nnrSESANSFn(\"10791+10793\",\"dPMMA\",\"\",\"P055pol\",\n                           \"100\",\"130\",\"2\",\"1\",\"2\",\"3009.9\",binning,\"2\",\"0\")\n\t\t\t   \n\t\t\t   \nbinning=[\"2.0\",\"0.2\",\"12.0\",\"2\"]\nconfig[\"default.instrument\"] = \"OFFSPEC\"\nnrSESANSP0Fn(\"10792\",\"P055\",\"109\",\"119\",\"2\",\"1\",binning)\n\n\n+++++++++++++++++++++++++Send the user the new file and ask him to test it!++++++++++++++++++++++++++++++++++\n\n\n\n-==================-\nuser/ExampleUser\n\nSimpleMtdCommands_Example.py\nStripPeaks.py\nTableWorkspace_Example.py\nSampleLogs_Demo.py\n\n\n\n\n========================\n#! /usr/bin/env python\nfrom mantidsimple import *\nfrom MantidFramework import *\n\nf = type(globals()['LoadRaw'])\nall_algs = [k for (k,v) in globals().items() if isinstance(v,f)]\n\nimport sys\nimport numpy\nimport re\n\n\nfor file_n in sys.argv[1:]:\n        print \"\\n\\n===================================\"\n\tprint file_n\n        #python to find the algorithms used in scripts\n        \n\tfil = open(file_n ,'r')\n\tfor line in fil:\n\t\tres = numpy.intersect1d(all_algs, re.split('\\W+', line))\n\t\tif len(res):\n\t\t\tprint line\n        fil.close()\n\n\n=============================\negrep \"mantidsimple|mtd\\.initialize|MantidFramework|mtd\\.sendLogMessage|mtd\\.deleteWorkspace|mtd\\.settings|mtd\\.getSettings|mtd\\.workspaceExists|mtd\\.getConfigProperty|isGroup|getSampleDetails|createNumericAxis|createTextAxis|createSpectraAxis|\\.workspace\\(\\)|qti\" $1\nif [[ $? == '0' ]];then\necho \"============== \" $1 \" =================\"\nfi;",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/GesnerPassos/larmor_reduction.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/HarrietBrown": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/HarrietBrown/test_plotter_script.py": {
     "author": "James Lord",
     "description": "This is a script that  produces a 2x2 figure containing sinusoidal waveforms, \n\ntwo of which have error bars. this is another bit of doc rext to see if it updates\n\ntesting autoupdate\n\nAnother change so it belongs to me\n\nMake another change",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/MartynGigg": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/MartynGigg/can-see-this.md": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/MialFolder": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/MialFolder/test_upload.py": {
     "author": "James Lord",
     "description": "Intended to be used for testing upload mechanism\n\nThis is a full summary of the module",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/NickDraper": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/NickDraper/test script 2 copy.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/NickDraper/test script 2.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/NickDraper/test script.py": {
     "author": null,
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/OwenArnold": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/OwenArnold/smooth_script.py": {
     "author": "James Lord",
     "description": "Some useful comments\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/GUI": {
     "description": "",
     "directory": true,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/GUI/FunctionalMAGGOT.py": {
     "author": "James Lord",
     "description": "",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/GUI/MAGGOT.py": {
     "author": "James Lord",
     "description": "Script used to start the MAGGOT GUI from MantidPlot",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/Optimum time calculator.py": {
     "author": null,
     "description": "Optimum Time calculator\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/Polariser Polarisation.py": {
     "author": null,
     "description": "8893-8974\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/Simultaneous Polariser Analyser Calculator.py": {
     "author": null,
     "description": "Opacity value needs to be changed in function for different cells\n\nThe mask applies to direct transmission on LET\n\nerror reduced by having a greater difference in polarisation to the calibration file-\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/Polarisation/neutron polarisation due to polariser direct transmission.py": {
     "author": null,
     "description": "8922 DEPOLARISED\n\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   },
   "user/README.md": {
     "author": "James Lord",
     "description": "scriptrepository\n================\n\nThis is a public repository of users scripts for Mantid\n\nDirectory structure\n================\n\nIn order to try to keep the content in the repository navigable over time please follow the suggested directory structure\n\n* technique/instrument\t-\tScripts specific to an instrument\n  e.g.sans/loq\n* technique/facility\t-\tscripts specific to a facility, but common to several instruments at that facility\n  e.g.reflectometry/ornl\t\n* general/usage -\tscripts applicable to all\n  e.g.general/events\n* user/name -\tfor storing personal, but still shared scripts \n  e.g.user/ndraper\n  e.g.user/gesner\n",
     "directory": false,
-    "pub_date": "2023-Mar-30 14:54:56"
+    "pub_date": "2023-Mar-30 15:08:38"
   }
 }
