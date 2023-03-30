@@ -71,7 +71,7 @@ def calc_eqm(rates):
 	for i in range(1,n):
 		rates2[i,i]=-numpy.sum(rates2[:i,i])-numpy.sum(rates2[i+1:,i])
 	rates2[0,:]=1.0
-	vec=numpy.zeros([n],dtype=numpy.float)
+	vec=numpy.zeros([n])
 	vec[0]=1.0
 	#print rates2
 	#print vec
@@ -295,9 +295,9 @@ def ParseAndIterateModel(pars):
 		dynstates=int(pars["dynamic"][0]) # num of states to convert between, 1 for just relaxation
 		if(dynstates<1 or dynstates>1000):
 			raise Exception("Bad number of sites")
-		convtable=numpy.zeros([slices,dynstates,dynstates],dtype=numpy.float)
-		poptable=numpy.zeros([dynstates],dtype=numpy.float)
-		pops=numpy.zeros([dynstates],dtype=numpy.float)
+		convtable=numpy.zeros([slices,dynstates,dynstates])
+		poptable=numpy.zeros([dynstates])
+		pops=numpy.zeros([dynstates])
 		dssize=dynstates*slices
 	except:
 		dynstates=0 # static or RF calc
@@ -347,8 +347,8 @@ def ParseAndIterateModel(pars):
 	spmat=createSpinMat(spins)
 	if(dynstates>0 or dssize>1):
 		Hams=[]
-		reltable=numpy.zeros([dssize,len(spins)],dtype=numpy.float)
-		reldetails=numpy.zeros([dssize,len(spins),4],dtype=numpy.float)
+		reltable=numpy.zeros([dssize,len(spins)])
+		reldetails=numpy.zeros([dssize,len(spins),4])
 		for i in range(dssize):
 			Hams.append(numpy.zeros_like(spmat[0,0,:,:]) )
 	else:
@@ -1313,7 +1313,7 @@ def ParseMeasureType(pars,prog=None):
 	if((mtype=="timespectra" or mtype=="phasequad") and hadaxis0):
 		timebins=pars["axis0"] # passed in from fit function
 	elif(pars["ntbins"][0]==1):
-		timebins=numpy.array([pars["starttime"][0],pars["endtime"][0]],dtype=numpy.float) # exact ends
+		timebins=numpy.array([pars["starttime"][0],pars["endtime"][0]],dtype=numpy.float_) # exact ends
 	else:
 		timebins=numpy.linspace(pars["starttime"][0],pars["endtime"][0],int(pars["ntbins"][0])+1,endpoint=True) # these will be bin boundaries
 	if((mtype=="timespectra" or mtype=="phasequad")and not(hadaxis0)):
