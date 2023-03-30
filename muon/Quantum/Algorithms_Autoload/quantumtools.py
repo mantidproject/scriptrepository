@@ -1,7 +1,7 @@
+from __future__ import print_function, unicode_literals
 ## Module containing lower level functions for Quantum
 ## Author: James Lord
 ## Version 1.04, August 2018
-from __future__ import print_function, unicode_literals
 import numpy
 import math
 #import time
@@ -443,7 +443,7 @@ def evaluateIntoBinsOldLoops(omega,ccos,csin,lam,times):
 	# lam = 1/lifetime to weight by, if bins are large (or only one big one for integral counting - times [0,inf] is OK)
 	# = integral (cos(w*t))exp(-lam*t)]t1:t2 / integral exp(-lam*t)]t1:t2
 	# = (-lam* sin(w*t) exp(-lam*t) + w* cos(w*t) exp*(-lam*t) )/(lam^2+w^2)
-	ybins=numpy.zeros(len(times)-1,dtype=numpy.float)
+	ybins=numpy.zeros(len(times)-1)
 	if(lam>0):
 		for i in range(len(times)-1):
 			et2=math.exp(-lam*(times[i+1]-times[i]))
@@ -483,7 +483,7 @@ def evaluateIntoBins(omega,ccos,csin,lam,times):
 	# = integral (cos(w*t))exp(-lam*t)]t1:t2 / integral exp(-lam*t)]t1:t2
 	# = (-lam* sin(w*t) exp(-lam*t) + w* cos(w*t) exp*(-lam*t) )/(lam^2+w^2)
 	# improved version using time arrays internally (best for time series from fairly simple models)
-	ybins=numpy.zeros(len(times)-1,dtype=numpy.float)
+	ybins=numpy.zeros(len(times)-1)
 	if(lam>0):
 #		for i in range(len(times)-1):
 		et2=numpy.exp(-lam*(times[1:]-times[:-1]))
@@ -522,7 +522,7 @@ def evaluateIntoBinsNewLoops(omega,ccos,csin,lam,times):
 	# = integral (cos(w*t))exp(-lam*t)]t1:t2 / integral exp(-lam*t)]t1:t2
 	# = (-lam* sin(w*t) exp(-lam*t) + w* cos(w*t) exp*(-lam*t) )/(lam^2+w^2)
 	# arrays across components: best for integral counting of complex systems
-	ybins=numpy.zeros(len(times)-1,dtype=numpy.float)
+	ybins=numpy.zeros(len(times)-1)
 	if(lam>0):
 		for i in range(len(times)-1):
 			et2=math.exp(-lam*(times[i+1]-times[i]))
