@@ -136,7 +136,7 @@ class AnalyseThresholdScans(PythonAlgorithm):
 		#progSoFar=
 		
 		# prepare recyclable child algorithms for speed
-		loadAlg=AlgorithmManager.create("LoadMuonNexus")
+		loadAlg="LoadMuonNexus" # AlgorithmManager.create("LoadMuonNexus")
 		loadInstAlg=AlgorithmManager.create("LoadInstrument")
 		groupDetAlg=AlgorithmManager.create("GroupDetectors")
 		asymAlg=AlgorithmManager.create("AsymmetryCalc")
