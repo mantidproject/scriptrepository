@@ -625,12 +625,12 @@ class AnalyseThresholdScans(PythonAlgorithm):
 				self.log().warning("proc.dataX="+str(proc.dataX(i)))
 				self.log().warning("proc.dataY="+str(proc.dataY(i)))
 				self.log().warning("proc.dataE="+str(proc.dataE(i)))
-				raise ValueError("Will crash Fit...")
-
-			ff=self.doChildAlg(fitAlg,Function="name=UserFunction, Formula=rate/(1+exp(x/lam - 2.75)), rate=5.0, lam=20.0",InputWorkspace=proc,StartX=x0,EndX="999.0",CreateOutput=True,OutputParametersOnly=True,WorkspaceIndex=str(i))
-			#ff=Fit(Function="name=UserFunction, Formula=rate/(1+exp(x/lam - 2.75)), rate=5.0, lam=20.0",InputWorkspace=proc,StartX=x0,EndX="999.0",Output="fitModel",WorkspaceIndex=str(i))
-			fr=ff["OutputParameters"] # mtd["fitres_Parameters"]
-			resw.addRow((i,fr.cell("Value",0),fr.cell("Error",0),fr.cell("Value",1),fr.cell("Error",1),fr.cell("Value",2)))
+				print ("Bad data in histogram",i,"Will crash Fit...")
+			else:
+				ff=self.doChildAlg(fitAlg,Function="name=UserFunction, Formula=rate/(1+exp(x/lam - 2.75)), rate=5.0, lam=20.0",InputWorkspace=proc,StartX=x0,EndX="999.0",CreateOutput=True,OutputParametersOnly=True,WorkspaceIndex=str(i))
+				#ff=Fit(Function="name=UserFunction, Formula=rate/(1+exp(x/lam - 2.75)), rate=5.0, lam=20.0",InputWorkspace=proc,StartX=x0,EndX="999.0",Output="fitModel",WorkspaceIndex=str(i))
+				fr=ff["OutputParameters"] # mtd["fitres_Parameters"]
+				resw.addRow((i,fr.cell("Value",0),fr.cell("Error",0),fr.cell("Value",1),fr.cell("Error",1),fr.cell("Value",2)))
 
 		# output workspaces already set...
 		if(self.callsSetup>0):
