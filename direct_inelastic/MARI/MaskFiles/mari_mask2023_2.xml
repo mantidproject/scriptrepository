@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<detector-masking>
+	<group>
+		<detids>4701-4706,4501-4505,4301-4304,4101-4108,2716,1602</detids>
+	</group>
+</detector-masking>
