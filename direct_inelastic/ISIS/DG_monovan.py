@@ -15,7 +15,6 @@
 # import mantid algorithms, numpy and matplotlib
 from mantid.simpleapi import *
 from mantid.api import AnalysisDataService as ADS
-import matplotlib.pyplot as plt
 import numpy as np
 import time
 

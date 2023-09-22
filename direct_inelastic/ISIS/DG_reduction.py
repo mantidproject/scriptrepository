@@ -1,25 +1,24 @@
 # =======================================================
 #
 #      EXCITATIONS INSTRUMENTS REDUCTION SCRIPT
-#      JRS 20/6/23
+#      JRS & MDL 3/7/23
 #
 #      Reads sample run(s), corrects for backgound,
 #      normalises to a white vanadium run, and  the
 #      absolute normalisation factor for each Ei (if MV
-#      file is specified). s
+#      file is specified).
 #      - Masks bad detectors with hard mask only.
 #      - Converts time-of-flight to energy transfer
-#      - performs Q-rebinning for QENS data only
-#      - Outputs .nxspe, .nxs or _red.nxs fiile
+#      - performs Q-rebinning for QENS data ('_red.nxs' format)
+#      - Outputs .nxspe, .nxs or _red.nxs files
 #
 #========================================================
 
 # import mantid algorithms, numpy and matplotlib
 from mantid.simpleapi import *
 from mantid.api import AnalysisDataService as ADS
-import matplotlib.pyplot as plt
 import numpy as np
-import re, os, h5py
+import os, sys
 import time
 from importlib import reload
 
@@ -33,12 +32,18 @@ Ei_list        = [3.71,1.035,1.775]          # incident energies (Ei) - from PyC
 Erange         = [-0.8,0.0025,0.8]           # energy transfer range to output in fractions of Ei
 trans          = [0.95,0.95,0.95]            # elastic line transmission factors for each Ei
 mask           = 'MASK_FILE_XML'             # hard mask
+# what to do if see run with same angle as previous run (and sumruns==False)
+#  - 'replace': sum and replace first nxspe file created
+#  - 'ignore': ignore and create an nxspe for each run
+#  - 'accumulate': sum all runs with this angle when creating new nxspe
+same_angle_action = 'ignore'
 #========================================================
 
 #==================Absolute Units Inputs=================
 mv_file       = None        # pre-processed MV calibration
 sample_mass   = 1           # mass of the sample
 sample_fwt    = 50.9415     # formula weight of sample
+monovan_mass  = None        # Mass of vanadium sample (ask local contact)
 #========================================================
 
 #==================Local Contact Inputs==================
@@ -49,65 +54,13 @@ powdermap = 'RINGS_MAP_XML'     # rings mapping file - must be .xml format
 file_wait = 30                  # wait for data file to appear (seconds)
 keepworkspaces = True           # should be false for Horace scans
 saveformat = '.nxspe'           # format of output, '.nxspe', '.nxs'
-QENS = True                     # output Q-binned data for QENS data analysis '_red.nxs'
+QENS = False                    # output Q-binned data for QENS data analysis '_red.nxs'
 Qbins = 20                      # approximate number of Q-bins for QENS
+theta_range = [5., 65.]         # useful theta range for Q-binning (QENS)
 idebug = False                  # keep workspaces and check absolute units on elastic line
 save_dir = f'/instrument/{inst}/RBNumber/USER_RB_FOLDER'  # Set to None to avoid reseting
-#========================================================
-
-#========================================================
-def tryload(irun):              # loops till data file appears
-    while True:
-        try:
-            ws = Load(str(irun),LoadMonitors=True)
-        except TypeError:
-            ws = Load(str(irun),LoadMonitors='Separate')
-        except ValueError:
-            print(f'...waiting for run #{irun}')
-            time.sleep(file_wait)
-            continue
-        break
-#========================================================
-
-#========================================================
-# Functions to copy instrument info needed by HORACE
-# Resolution convolution if it exists in the raw file
-def get_raw_file_from_ws(ws):
-    for alg in [h for h in ws.getHistory().getAlgorithmHistories() if 'Load' in h.name()]:
-        for prp in [a for a in alg.getProperties() if 'Filename' in a.name()]:
-            if re.search('[0-9]*.nxs', prp.value()) is not None:
-                return prp.value()
-    raise RuntimeError('Could not find raw NeXus file in workspace history')
-
-def copy_inst_info(outfile, in_ws):
-    print(get_raw_file_from_ws(mtd[in_ws]))
-    if not os.path.exists(outfile):
-        outfile = mantid.simpleapi.config['defaultsave.directory'] + '/' + os.path.basename(outfile)
-    print(outfile)
-    with h5py.File(get_raw_file_from_ws(mtd[in_ws]), 'r') as raw:
-        with h5py.File(outfile, 'r+') as spe:
-            exclude = ['dae', 'detector_1', 'name']
-            to_copy = [k for k in raw['/raw_data_1/instrument'] if not any([x in k for x in exclude])]
-            print(spe.keys())
-            spe_root = list(spe.keys())[0]
-            en0 = spe[f'{spe_root}/instrument/fermi/energy'][()]
-            if 'fermi' in to_copy:
-                del spe[f'{spe_root}/instrument/fermi']
-            for grp in to_copy:
-                print(grp)
-                src = raw[f'/raw_data_1/instrument/{grp}']
-                h5py.Group.copy(src, src, spe[f'{spe_root}/instrument/'])
-            if 'fermi' in to_copy:
-                spe[f'{spe_root}/instrument/fermi/energy'][()] = en0
-            detroot = f'{spe_root}/instrument/detector_elements_1'
-            spe.create_group(detroot)
-            for df0, df1 in zip(['SPEC', 'UDET', 'DELT', 'LEN2', 'CODE', 'TTHE', 'UT01'], \
-                ['spectrum_number', 'detector_number', 'delt', 'distance', 'detector_code', 'polar_angle', 'azimuthal_angle']):
-                src = raw[f'/raw_data_1/isis_vms_compat/{df0}']
-                h5py.Group.copy(src, src, spe[detroot], df1)
-            for nn in range(raw['/raw_data_1/isis_vms_compat/NUSE'][0]):
-                src = raw[f'/raw_data_1/isis_vms_compat/UT{nn+1:02d}']
-                h5py.Group.copy(src, src, spe[detroot], f'user_table{nn+1:02d}')
+psi_motor_name = 'rot'          # name of the rotation motor in the logs
+angles_workspace = 'angles_ws'  # name of workspace to store previously seen angles
 #========================================================
 
 # ==============================setup directroties================================
@@ -118,39 +71,85 @@ if inst == 'MARI':
     source = 'Moderator'
     m2spec = 2                  # specID of monitor2 (pre-sample)
     m3spec = 3                  # specID of monitor3 (post-sample)
-    monovan_mass = 32.58        # mass of vanadium cylinder
+    #monovan_mass = 32.58       # mass of vanadium cylinder
+    same_angle_action = 'ignore'
 elif inst == 'MERLIN':
     source = 'undulator'
     m2spec = 69636              # specID of monitor2 (pre-sample)
     m3spec = 69640              # specID of monitor3 (post-sample)
-    monovan_mass = 32.62        # mass of vanadium cylinder
+    #monovan_mass = 32.62       # mass of vanadium cylinder
 elif inst == 'MAPS':
     source = 'undulator'
-    m2spec = 41475              # specID of monitor2 (pre-sample)
-    m3spec = 41476              # specID of monitor3 (post-sample)
-    monovan_mass = 30.1         # mass of vanadium cylinder
+    m2spec = 36867              # specID of monitor2 (pre-sample)
+    m3spec = 36868              # specID of monitor3 (post-sample)
+    #monovan_mass = 30.1        # mass of vanadium cylinder
 elif inst == 'LET':
     source = 'undulator'
     m2spec = 98310              # specID of monitor2 (pre-sample)
     m3spec = None               # specID of monitor3 (post-sample)
-    monovan_mass = 3.56         # mass of vanadium cylinder
+    #monovan_mass = 3.56        # mass of vanadium cylinder
 else:
     raise RuntimeError(f'Unrecognised instrument: {inst}')
 
 cycle_shortform = cycle[2:] if cycle.startswith('20') else cycle
 datadir = f'/archive/NDX{inst}/Instrument/data/cycle_{cycle_shortform}/'
-mapdir  = f'/usr/local/mprogs/InstrumentFiles/{inst.swapcase()}/'
+instfiles  = '/usr/local/mprogs/InstrumentFiles/'
+mapdir  = f'{instfiles}/{inst.swapcase()}/'
 config.appendDataSearchDir(mapdir)
 config.appendDataSearchDir(datadir)
 ws_list = ADS.getObjectNames()
+
+# Try to load subsidiary utilities
+sys.path.append(instfiles)
+try:
+    from reduction_utils import *
+    utils_loaded = True
+except ImportError:
+    utils_loaded = False
+    def rename_existing_ws(*a, **k): raise RuntimeError('Unable to load utils')
+    def remove_extra_spectra_if_mari(*a, **k): raise RuntimeError('Unable to load utils')
+
+#========================================================
+# Helper functions
+def tryload(irun):              # loops till data file appears
+    if isinstance(irun, str) and irun in mtd:
+        # If users give a string which matches an existing workspace, use that instead
+        return rename_existing_ws(irun)
+    while True:
+        try:
+            ws = Load(str(irun),LoadMonitors=True)
+        except TypeError:
+            ws = Load(str(irun),LoadMonitors='Separate')
+        except ValueError:
+            print(f'...waiting for run #{irun}')
+            Pause(file_wait)
+            continue
+        break
+    if inst == 'MARI':
+        remove_extra_spectra_if_mari('ws')
+    return mtd['ws']
+
+def load_sum(run_list):
+    for ii, irun in enumerate(run_list):
+        tryload(irun)
+        if ii == 0:
+            w_buf = CloneWorkspace('ws')
+            w_buf_monitors = CloneWorkspace('ws_monitors')
+            print(f'run #{irun} loaded')
+        else:
+            w_buf = Plus('w_buf', 'ws')
+            w_buf_monitors = Plus('w_buf_monitors', 'ws_monitors')
+            print(f'run #{irun} added')
+#========================================================
+
 
 print(f'\n======= {inst} data reduction =======')
 print(f'Working directory... {ConfigService.Instance().getString("defaultsave.directory")}\n')
 
 # ============================create lists if necessary==========================
-if type(sample) is not list:
+if isinstance(sample, str) or not hasattr(sample, '__iter__'):
     sample = [sample]
-if type(sample_bg) is not list and sample_bg is not None:
+if sample_bg is not None and (isinstance(sample_bg, str) or not hasattr(sample_bg, '__iter__')):
     sample_bg = [sample_bg]
 
 #==================================load hard mask================================
@@ -163,6 +162,8 @@ else:
     print(f'{inst}: Using previously loaded hard mask - {mask}')
 
 # ===============================load whitevan file==============================
+if wv_file is None:
+    raise RuntimeError(f'{inst}: ERROR - white vanadium calibration file missing')
 if wv_file not in ws_list:
     print(f'{inst}: Loading white vanadium - {wv_file}')
     LoadAscii(Filename=wv_file, OutputWorkspace=wv_file)
@@ -172,7 +173,7 @@ else:
 
 # ===============================load monovan file===============================
 mv_fac = []
-if mv_file is not None:
+if mv_file is not None and monovan_mass is not None:
     if mv_file not in ws_list:
         print(f'{inst}: Loading monovan calibration factors - {mv_file}')
         LoadAscii(mv_file,OutputWorkspace=mv_file)
@@ -196,32 +197,23 @@ else:
 
 # =======================load background runs and sum=========================
 if sample_bg is not None:
-    for irun in sample_bg:
-        ws_bg = Load(str(irun),LoadMonitors=False)
-        if (irun == sample_bg[0]):
-            print(f'background run #{irun} loaded')
-            w_buf = CloneWorkspace('ws_bg')
-        else:
-            print(f'background run #{irun} added')
-            w_buf = Plus('w_buf', 'ws_bg')
+    load_sum(sample_bg)
     ws_bg = CloneWorkspace('w_buf')
     ws_bg = NormaliseByCurrent('ws_bg')
 
 # =======================sum sample runs if required=========================
 if sumruns:
-    for irun in sample:
-        tryload(irun)
-        if (irun == sample[0]):
-            print(f'run #{irun} loaded')
-            w_buf = CloneWorkspace('ws')
-            w_buf_monitors = CloneWorkspace('ws_monitors')
-        else:
-            print(f'run #{irun} added')
-            w_buf = Plus('w_buf', 'ws')
-            w_buf_monitors = Plus('w_buf_monitors', 'ws_monitors')
+    load_sum(sample)
     ws = CloneWorkspace('w_buf')
     ws_monitors = CloneWorkspace('w_buf_monitors')
     sample = [sample[0]]
+
+# =====================angles cache stuff====================================
+if utils_loaded:
+    build_angles_ws(sample, angles_workspace, psi_motor_name)
+    runs_with_angles_already_seen = []
+else:
+    same_angle_action = 'ignore'
 
 # =======================sample run loop=====================================
 for irun in sample:
@@ -234,12 +226,23 @@ for irun in sample:
         for ss in nx_list:
             ADS.remove(ss)
 
+    # if this run is at an angle already seen and we are doing 'replace', skip
+    if same_angle_action.lower() != 'ignore' and irun in runs_with_angles_already_seen:
+        continue
+
     print('============')
     if not sumruns:
-        tryload(irun)
-        print(f'Loading run# {irun}')
-    if inst == 'MARI' and mtd['ws'].getNumberHistograms() > 918:
-        ws = RemoveSpectra('ws',[0])
+        # Checks rotation angle
+        if same_angle_action.lower() != 'ignore':
+            runs_with_same_angles = get_angle(irun, angles_workspace, psi_motor_name, tryload)
+            if len(runs_with_same_angles) > 1:
+                load_sum(runs_with_same_angles)
+                if same_angle_action.lower() == 'replace':
+                    irun = runs_with_same_angles[0]
+                    runs_with_angles_already_seen += runs_with_same_angles
+        else:
+            tryload(irun)
+            print(f'Loading run# {irun}')
     ws = NormaliseByCurrent('ws')
 
 # ============================= Ei loop =====================================
@@ -266,6 +269,10 @@ for irun in sample:
         spectra = ws_monitors.getSpectrumNumbers()
         index = spectra.index(m2spec)
         m2pos = ws.detectorInfo().position(index)[2]
+
+        if inst == 'MARI' and utils_loaded and origEi < 4.01:
+            # Shifts data / monitors into second frame for MARI
+            ws_norm, ws_monitors = shift_frame_for_mari_lowE(origEi, wsname='ws_norm', wsmon='ws_monitors')
 
         # this section shifts the time-of-flight such that the monitor2 peak
         # in the current monitor workspace (post monochromator) is at t=0 and L=0
@@ -297,11 +304,11 @@ for irun in sample:
         if powder or inst == 'MARI' or QENS:
             ws_out=GroupDetectors(ws_out, MapFile=powdermap, Behaviour='Average')
             ofile_suffix = '_powder'
-            if inst == 'MARI':
+            if inst == 'MARI' or QENS:
                 ofile_suffix = ''
-            if QENS:
-                ofile_suffix = '_red'
             print(f'... powder grouping using {powdermap}')
+        if sample_bg is not None and inst == 'MARI':
+            ofile_suffix += '_sub'
 
         # output nxspe file
         ofile = f'{inst[:3]}{irun}_{origEi:g}meV{ofile_suffix}'
@@ -318,12 +325,15 @@ for irun in sample:
         print(f'{inst}: Writing {ofile}{saveformat}')
         if saveformat.lower() == '.nxspe':
             SaveNXSPE('ws_out', ofile+saveformat, Efixed=Ei, KiOverKfScaling=True)
-            copy_inst_info(ofile, 'ws_out')
-        elif saveformat.lower() == '.nxs' and not QENS:
+            #if utils_loaded and not powder:
+            #    copy_inst_info(ofile+saveformat, 'ws_out')   # Copies instrument info for Horace
+        elif saveformat.lower() == '.nxs':
+            rmlogs = {'events_log', 'frame_log', 'good_frame_log', 'period_log', 'proton_charge', 'raw_events_log'}
+            RemoveLogs('ws_out', KeepLogs=','.join(set(mtd['ws_out'].run().keys()).difference(rmlogs)))
             SaveNexus('ws_out', ofile+saveformat)
         if QENS:
             print('... outputting QENS "_red" format')
-            theta = np.array([7.5,65.])*np.pi/180.
+            theta = np.array([theta_range[0], theta_range[1]])*np.pi/180.
             Q     = 1.39 * np.sqrt(Ei) * np.sin(theta)
             Q     = np.around(Q*10) / 10.
             Qbin  = int((Q[1] - Q[0])) / Qbins
@@ -343,7 +353,7 @@ for irun in sample:
                         y[iq] = 0.0
                         e[iq] = 0.0
                         smidge += 1e-6
-            SaveNexus('ws_out', ofile+saveformat)
+            SaveNexus('ws_out', ofile+"_red"+saveformat)
 
         CloneWorkspace('ws_out',OutputWorkspace=ofile+saveformat)
 
@@ -354,7 +364,7 @@ for irun in sample:
 # ============================= End of run loop ================================
 
 # cleanup
-if (not idebug):
+if not idebug:
     ws_list = ADS.getObjectNames()
     nx_list = [ss for ss in ws_list if 'w_buf' in ss or 'ws' in ss]
     for ss in nx_list:
