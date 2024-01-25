@@ -19,6 +19,7 @@
  <!--Advanced file copying
     Variables have to be either strings or strings with variables, described above
 -->
+  <file_to_copy file_name="../ISIS/reduction_utils.py" copy_as="reduction_utils.py"/>
   <file_to_copy file_name="MAPSReduction.py" copy_as="MAPSReduction_$cycleID$.py">
         <replace var  ="USER_RB_FOLDER" by_var="$rb_folder$"/>
   </file_to_copy>

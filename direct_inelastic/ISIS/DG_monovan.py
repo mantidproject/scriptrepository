@@ -20,6 +20,7 @@ import time
 
 t = time.time()         #start the clock
 
+#!begin_params
 #============================User Input===========================
 # Assumes that the thickness of the vanadium and the sample are the same
 monovan       = 59138                       #mono van run
@@ -37,22 +38,35 @@ wv_file       = 'WV_57083.txt'              #whitevan integrals file
 # MAPS monitors:    m2spec=41475, m3spec=41476 - fixei = False
 # LET monitors:     m2spec=98310, m3spec= None - fixei = True
 
-config['default.instrument'] = 'INSTRUMENT_NAME'
+inst = 'INSTRUMENT_NAME'
 cycle = 'CYCLE_ID'
-m2spec  = 69636                 #specID of monitor2 (post monochromator)
-m3spec  = 69640                 #specID of monitor2 (post monochromator)
 fixei   = False                 #true for LET since no m3
 powdermap = 'RINGS_MAP_XML'     #rings mapping file
 monovan_range = 0.1             #integration range (+/- fraction of Ei)
 min_theta = 5.                  #minimum theta to avoid low Q detectors (SANS)
 idebug  = False                 #keep workspaces
 #=================================================================
-inst = config['default.instrument']
+#!end_params
 
+config['default.instrument'] = inst
 if inst == 'MARI':
     source = 'Moderator'
-else:
+    m2spec = 2                  # specID of monitor2 (pre-sample)
+    m3spec = 3                  # specID of monitor3 (post-sample)
+elif inst == 'MERLIN':
     source = 'undulator'
+    m2spec = 69636              # specID of monitor2 (pre-sample)
+    m3spec = 69640              # specID of monitor3 (post-sample)
+elif inst == 'MAPS':
+    source = 'undulator'
+    m2spec = 36867              # specID of monitor2 (pre-sample)
+    m3spec = 36868              # specID of monitor3 (post-sample)
+elif inst == 'LET':
+    source = 'undulator'
+    m2spec = 98310              # specID of monitor2 (pre-sample)
+    m3spec = None               # specID of monitor3 (post-sample)
+else:
+    raise RuntimeError(f'Unrecognised instrument: {inst}')
 
 if cycle.startswith('20'):
     cycle = cycle[2:]

@@ -49,6 +49,8 @@ same_angle_action = 'ignore'
 cs_block = None
 cs_block_unit = ''
 cs_bin_size = 0
+# MARI only: used to subtract an analytic approx of instrument background
+sub_ana = False
 #========================================================
 
 #==================Absolute Units Inputs=================
@@ -144,6 +146,20 @@ def tryload(irun):              # loops till data file appears
             Pause(file_wait)
             continue
         break
+    if inst == 'MARI':
+        remove_extra_spectra_if_mari('ws')
+        if sub_ana is True and not sample_cd:
+            if 'bkg_ev' not in mtd:
+                gen_ana_bkg()
+            current = mtd['ws'].run().getProtonCharge()
+            if isinstance(mtd['ws'], mantid.dataobjects.EventWorkspace):
+                ws = mtd['ws'] - mtd['bkg_ev'] * current
+            else:
+                try:
+                    ws = mtd['ws'] - mtd['bkg_his'] * current
+                except ValueError:
+                    gen_ana_bkg(target_ws=mtd['ws'])
+                    ws = mtd['ws'] - mtd['bkg_his'] * current
     return mtd['ws']
 
 def load_sum(run_list, block_name=None):
@@ -354,6 +370,9 @@ for irun in sample:
         mvf = mv_fac[ienergy]
         print(f'\n{inst}: Reducing data for Ei={Ei:.2f} meV')
 
+        # Low energy reps on MARI end up in the second frame
+        t_shift = 20000 if inst == 'MARI' and origEi < 3.1 else 0
+
         tofs = ws.readX(0)
         tof_min = np.sqrt(l1**2 * 5.227e6 / Ei) - t_shift
         tof_max = tof_min + np.sqrt(l2**2 * 5.226e6 / (Ei*(1-Erange[-1])))
@@ -380,6 +399,10 @@ for irun in sample:
         spectra = ws_monitors.getSpectrumNumbers()
         index = spectra.index(m2spec)
         m2pos = ws.detectorInfo().position(index)[2]
+
+        if inst == 'MARI' and utils_loaded and origEi < 4.01:
+            # Shifts data / monitors into second frame for MARI
+            ws_rep, ws_monitors = shift_frame_for_mari_lowE(origEi, wsname='ws_rep', wsmon='ws_monitors')
 
         # this section shifts the time-of-flight such that the monitor2 peak
         # in the current monitor workspace (post monochromator) is at t=0 and L=0
@@ -424,6 +447,13 @@ for irun in sample:
             print(f'... powder grouping using {powdermap}')
         else:
             ofile_suffix += '_1to1'
+        if inst == 'MARI':
+            if sumsuf:
+                ofile_suffix += 'sum'
+            if sample_bg is not None:
+                ofile_suffix += '_sub'
+            if sub_ana:
+                ofile_suffix += '_sa'
 
         # output nxspe file
         ofile = f'{ofile_prefix}_{origEi:g}meV{ofile_suffix}'

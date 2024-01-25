@@ -20,6 +20,7 @@ import time
 
 t = time.time()         #start the clock
 
+#!begin_params
 #=======================User Inputs======================
 whitevan       = 78715                  # white vanadium run
 whitevan_bg    = None                   # background for the white vanadium
@@ -34,6 +35,7 @@ wv_detrange = [30000,60000]             # spectrum index range for average inten
 idebug = False                          # keep itermediate workspaces for debugging
 save_dir = f'/instrument/{inst}/RBNumber/USER_RB_FOLDER' # Set to None to avoid resetting
 #========================================================
+#!end_params
 
 config['default.instrument'] = inst
 if save_dir is not None:
@@ -100,7 +102,7 @@ scale_factor = len(wv_normt.dataY(0)) / wv_scale.dataY(0)[0]
 WV_normalised_integrals = Scale(WV_normalised_integrals, scale_factor, 'Multiply')
 
 # ===========================output integrals file================================
-wv_name = whitevan if (isinstance(whitevan, str) or len(whitevan)==1) else whitevan[0]
+wv_name = whitevan if (isinstance(whitevan, (str, int, float)) or len(whitevan)==1) else whitevan[0]
 ofile = f'WV_{wv_name}.txt'
 print(f'WHITE_VAN {inst}: Saving integrals in {ofile}')
 print(f'... average intensity = {1/scale_factor:.2f}')

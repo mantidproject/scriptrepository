@@ -17,6 +17,7 @@
 <!--
   <file_to_copy file_name="LETReduction_Sample.py" copy_as="LETReduction_$cycleID$.py"/>
 -->
+  <file_to_copy file_name="../ISIS/reduction_utils.py" copy_as="reduction_utils.py"/>
 
  <!--Advanced file copying
     Variables have to be either strings or strings with variables, described above
