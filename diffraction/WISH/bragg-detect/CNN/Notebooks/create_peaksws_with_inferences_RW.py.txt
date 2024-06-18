@@ -1,0 +1,128 @@
+# import mantid algorithms, numpy and matplotlib
+from mantid.simpleapi import *
+import matplotlib.pyplot as plt
+import numpy as np
+
+from Diffraction.wish.wishSX import WishSX
+
+def make_3d_array(ws, ntubes=1520, npix_per_tube=128, ntubes_per_bank=152, nmonitors=5):
+    y = ws.extractY()[nmonitors:,:]  # exclude monitors - alternatively load with monitors separate?
+    nbins = ws.blocksize()  # 4451
+    y = np.reshape(y, (ntubes, npix_per_tube, nbins))[:,::-1,:]  # ntubes x npix x nbins (note flipped pix along tube)
+    # reverse order of tubes in each bank
+    nbanks = ntubes//ntubes_per_bank
+    for ibank in range(0, nbanks):
+        istart = ibank*ntubes_per_bank
+        iend = (ibank+1)*ntubes_per_bank
+        y[istart:iend,:,:] = y[istart:iend,:,:][::-1,:,:]
+    return y
+
+def findSpectrumIndex(indices, ntubes=1520, npix_per_tube=128, ntubes_per_bank=152, nmonitors=5):
+    """
+    :param indices: indices of found peaks in 3d array
+    :param ntubes: number of tubes in instrument (WISH)
+    :param npix_per_tube: number of detector pixels in each tube
+    :param ntubes_per_bank: number of tubes per bank
+    :param nmonitors: number of monitor spectra (assumed first spectra in ws)
+    :return: list of spectrum indindices of workspace corresponding to indices of found peaks in 3d array
+    """
+    # find bank and then reverse order of tubes in bank
+    ibank = np.floor(indices[:,0]/ntubes_per_bank)
+    itube = ibank*ntubes_per_bank + ((ntubes_per_bank-1) - indices[:,0] % ntubes_per_bank)
+    # flip tube 
+    ipix = (npix_per_tube-1) - indices[:,1]
+    # get spectrum index
+    specIndex = np.ravel_multi_index((itube.astype(int), ipix), 
+        dims=(ntubes, npix_per_tube), order='C') + nmonitors
+    return specIndex.tolist()  # so elements are of type int not numpy.int32
+
+def createPeaksWorkspaceFromIndices(ws, peak_wsname, indices, data):
+    """
+    Create a PeaksWorkspace using indices of peaks found in 3d array. WISH has 4 detectors so put peak in central pixel.
+    Could add peak using avg QLab for peaks at that lambda in all detectors but peak placed in nearest detector anyway
+    for more details see https://github.com/mantidproject/mantid/issues/31944
+    :param ws: MatrixWorkspace of WISH data with xunit wavelength
+    :param peak_wsname: Output name of peaks workspace created
+    :param indices: indices of peaks found in 3d array
+    :param data: 3d array of data
+    :return: PeaksWorkspace
+    """
+    ispec = findSpectrumIndex(indices, *data.shape[0:2])
+    peaks = CreatePeaksWorkspace(InstrumentWorkspace=ws, NumberOfPeaks=0, 
+                OutputWorkspace=peak_wsname)
+    for ipk in range(len(ispec)):
+        wavelength = ws.readX(ispec[ipk])[indices[ipk,2]]
+        # four detectors per spectrum so use one of the central ones
+        detIDs = ws.getSpectrum(ispec[ipk]).getDetectorIDs()
+        idet = (len(detIDs)-1)//2  # pick central pixel
+        AddPeak(PeaksWorkspace=peaks, RunWorkspace=ws, TOF=wavelength, DetectorID=detIDs[idet],
+            BinCount=data[indices[ipk,0], indices[ipk,1], indices[ipk,2]])
+    return peaks
+    
+
+# CNN
+#####
+
+ub = np.array([[-0.00529101, 0.04503987999999999, 0.06770155999999998], [0.021046510000000004, -0.06467891, 0.04457136], [0.07854941, 0.02039213, -0.007405049999999999]])
+
+
+ws_name="WISH00042730"
+ws=Load(Filename=ws_name+".raw", OutputWorkspace=ws_name)
+ws=Rebunch(InputWorkspace=ws, NBunch=3, OutputWorkspace=ws_name+"_rebunched")
+data_3d=make_3d_array(ws)
+
+# data_3d is used for making the inferences that are currently saved in the below file.
+# The peaks in below file are already filtered using NMS(Non maximum suppression) with 
+# a threshold of 0.001 which also can be fine tuned 
+
+# indices=np.load("/babylon/Public/RWaite/WISH00042730_inferences.npz")['arr_0']
+# indices=np.load("/babylon/Public/RWaite/WISH00042730_inferences_trained_inc_range_withneighb.npz")['arr_0']
+indices=np.load("/babylon/Public/RWaite/WISH00042730_inferences_TbyT_Ax0Ax1.npz")['arr_0']
+
+confidence_threshold = 0.0 # We can filter peaks based on this confidence
+filtered_indices = indices[indices[:, -1] > confidence_threshold]
+filtered_indices = np.round(filtered_indices).astype(int)
+peaksws=createPeaksWorkspaceFromIndices(ws, "CNN_peaks", filtered_indices, data_3d)
+for ipk, pk in enumerate(peaksws):
+    pk.setIntensity(indices[ipk,-1])
+    
+
+confs = [0.1,0.2,0.3,0.4,0.5,0.5,0.6,0.7] # ,25,30,40]
+hkl_tols = [0.075, 0.1, 0.15]
+
+nfound = np.zeros(len(confs))
+nduplicate = nfound.copy() # use tol=0.15
+nindexed = np.zeros((nfound.size, len(hkl_tols)))
+avg_ers = np.zeros((nfound.size, len(hkl_tols)))
+
+kwargs = {}
+for iconf , conf  in enumerate(confs): 
+    peaks = FilterPeaks(InputWorkspace='CNN_peaks', OutputWorkspace='peaks_tmp', 
+                        FilterVariable='Intensity', FilterValue=conf, Operator='>=')
+    WishSX.remove_peaks_on_detector_edge(peaks, 1)
+    WishSX.remove_duplicate_peaks_by_qlab(peaks, q_tol=0.1)
+    nfound[iconf] = peaks.getNumberPeaks()
+    # index and remove duplicates
+    SetUB(peaks, UB=ub)
+    IndexPeaks(PeaksWorkspace=peaks, Tolerance=hkl_tols[-1], CommonUBForAll=True) 
+    WishSX.remove_duplicate_peaks_by_hkl(peaks)
+    nduplicate[iconf] = nfound[iconf] - peaks.getNumberPeaks()
+    # re-index
+    for itol, tol in enumerate(hkl_tols):
+        nindexed[iconf, itol], avg_ers[iconf, itol], *_ = IndexPeaks(PeaksWorkspace=peaks, Tolerance=tol, CommonUBForAll=True)  # 212/215
+
+fig, ax = plt.subplots(3,1, sharex=True)
+ax[0].plot(confs, nfound, '-ok', label='total')
+ax[0].plot(confs, nindexed[:,-1], '-ob', label=f'indexed(tol={hkl_tols[-1]}) (duplicates removed)')
+ax[0].set_ylabel('Number peaks')
+ax[0].legend()
+cc = ['k', 'r','b']
+for itol, tol in enumerate(hkl_tols):
+    ax[1].plot(confs, nindexed[:,itol]/nfound, marker='o', ls='-', color=cc[itol], label=f"tol={tol}")
+ax[1].set_ylabel('% indexed') # after duplicates removed
+ax[1].legend()
+ax[2].plot(confs, nduplicate, '-ok')
+ax[2].set_ylabel('Number duplicate peaks')
+ax[2].set_xlabel('Confidence probability')
+# ax[0].set_xlim([3.5,10.5])
+fig.show()

@@ -1,0 +1,23 @@
+conda create -n cuda_debug python=3.10; conda activate cuda_debug
+
+#conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+#pip3 install torch torchvision torchaudio
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+pip install tqdm
+
+pip install matplotlib
+
+pip install notebook
+
+pip install albumentations
+
+pip install pycocotools
+
+conda install -c conda-forge ipywidgets
+
+conda install -c anaconda cudnn
+
+pip install opencv-python
+
+cuda_1

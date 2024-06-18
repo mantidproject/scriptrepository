@@ -1,0 +1,23 @@
+# import mantid algorithms, numpy and matplotlib
+from mantid.simpleapi import *
+import matplotlib.pyplot as plt
+import numpy as np
+
+def make_3d_array(ws, ntubes=1520, npix_per_tube=128, ntubes_per_bank=152, nmonitors=5):
+    y = ws.extractY()[nmonitors:,:]  # exclude monitors - alternatively load with monitors separate?
+    nbins = ws.blocksize()  # 4451
+    y = np.reshape(y, (ntubes, npix_per_tube, nbins))[:,::-1,:]  # ntubes x npix x nbins (note flipped pix along tube)
+    # reverse order of tubes in each bank
+    nbanks = ntubes//ntubes_per_bank
+    for ibank in range(0, nbanks):
+        istart = ibank*ntubes_per_bank
+        iend = (ibank+1)*ntubes_per_bank
+        y[istart:iend,:,:] = y[istart:iend,:,:][::-1,:,:]
+    return y
+
+    
+ws_name="WISH00044720"
+ws=Load(Filename=ws_name+".raw", OutputWorkspace=ws_name)
+ws=Rebunch(InputWorkspace=ws, NBunch=3, OutputWorkspace=ws_name+"_rebunched")
+data_3d=make_3d_array(ws)
+np.savez_compressed(f"/mnt/ceph/home/wj1132075/Desktop/CNN_Model_Data/Inferences/RealData/{ws_name}.npz" , data_3d)
