@@ -36,14 +36,14 @@ def createPeaksWorkspaceFromIndices(ws, peak_wsname, indices, data):
     """
     ispec = findSpectrumIndex(indices, *data.shape[0:2])
     peaks = CreatePeaksWorkspace(InstrumentWorkspace=ws, NumberOfPeaks=0, 
-                OutputWorkspace=peak_wsname)
+                OutputWorkspace=peak_wsname, EnableLogging=False)
     for ipk in range(len(ispec)):
         wavelength = ws.readX(ispec[ipk])[indices[ipk,2]]
         # four detectors per spectrum so use one of the central ones
         detIDs = ws.getSpectrum(ispec[ipk]).getDetectorIDs()
         idet = (len(detIDs)-1)//2  # pick central pixel
         AddPeak(PeaksWorkspace=peaks, RunWorkspace=ws, TOF=wavelength, DetectorID=detIDs[idet],
-            BinCount=data[indices[ipk,0], indices[ipk,1], indices[ipk,2]])
+            BinCount=data[indices[ipk,0], indices[ipk,1], indices[ipk,2]], EnableLogging=False)
     return peaks
 
 

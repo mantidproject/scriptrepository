@@ -9,7 +9,19 @@ from tqdm import tqdm
 from Diffraction.single_crystal.base_sx import BaseSX
 import time
 
-class WISHMLBraggPeaksDetector:
+class BraggDetectCNN:
+    """
+    Detects Bragg's peaks from a workspace using a pre trained deep learning model created using Faster R-CNN model with a ResNet-50-FPN backbone.
+    Example usage is as shown below.
+
+    #1) Set the path of the .pt file that contains the weights of the pre trained FasterRCNN model
+    cnn_weights_path = r""
+
+    # 2) Create a peaks workspace containing bragg peaks detected with a confidence greater than conf_threshold
+    cnn_bragg_peaks_detector = BraggDetectCNN(model_weights_path=cnn_weights_path, batch_size=64, workers=0, iou_threshold=0.001)
+    cnn_bragg_peaks_detector.find_bragg_peaks(workspace="WISH00042730", conf_threshold=0.0, q_tol=0.05)
+    """
+
     def __init__(self, model_weights_path, batch_size=64, workers=0, iou_threshold=0.001):
         """
         :param model_weights_path: Path to the .pt file containing the weights of the pre trained CNN model
@@ -25,20 +37,18 @@ class WISHMLBraggPeaksDetector:
         self.iou_threshold = iou_threshold
 
 
-    def find_bragg_peaks(self, run_name, output_ws_name="CNN_Peaks", conf_threshold=0.0, q_tol=0.05):
+    def find_bragg_peaks(self, workspace, output_ws_name="CNN_Peaks", conf_threshold=0.0, q_tol=0.05):
         """
         Find bragg peaks using the pre trained FasterRCNN model and create a peaks workspace
-        :param run_name: Name of the WISH run ex: WISH0042730
+        :param workspace: Workspace name or the object of Workspace from WISH, ex: "WISH0042730"
         :param output_ws_name: Name of the peaks workspace
         :param conf_threshold: Confidence threshold to filter peaks inferred from RCNN
         :param q_tol: qlab tolerance to remove duplicate peaks
         """
         start_time = time.time()
-        data_set, predicted_indices = self._do_cnn_inferencing(run_name)
-        print(f"Predicted indices {predicted_indices}")
+        data_set, predicted_indices = self._do_cnn_inferencing(workspace)
         filtered_indices = predicted_indices[predicted_indices[:, -1] > conf_threshold]
         filtered_indices_rounded = np.round(filtered_indices[:, :-1]).astype(int)
-        print("Creating peaks worspace")
         peaksws = createPeaksWorkspaceFromIndices(data_set.get_workspace(), output_ws_name, filtered_indices_rounded, data_set.get_ws_as_3d_array())
         for ipk, pk in enumerate(peaksws):
             pk.setIntensity(filtered_indices[ipk, -1])
@@ -48,9 +58,8 @@ class WISHMLBraggPeaksDetector:
         print(f"Bragg peaks finding from FasterRCNN model is completed in {time.time()-start_time} seconds!")
 
 
-    def _do_cnn_inferencing(self, ws_name):
-        print(f"Do CNN inferencing for {ws_name}")
-        data_set = WISHWorkspaceDataSet(ws_name)
+    def _do_cnn_inferencing(self, workspace):
+        data_set = WISHWorkspaceDataSet(workspace)
         data_loader = tc.utils.data.DataLoader(data_set, batch_size=self.batch_size, shuffle=False, num_workers=self.workers)
         self.model.eval()
         predicted_indices_with_score = []
@@ -99,10 +108,3 @@ class WISHMLBraggPeaksDetector:
         model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes) 
         return model
     
-if __name__ == "__main__" or __name__ == "mantidqt.widgets.codeeditor.execution":
-    #1) Set the path of the .pt file that contains the weights of the pre trained FasterRCNN model
-    cnn_weights_path = r""
-
-    # 2) Create a peaks workspace containing bragg peaks detected with a confidence greater than conf_threshold
-    cnn_bragg_peaks_detector = WISHMLBraggPeaksDetector(model_weights_path=cnn_weights_path, batch_size=64, workers=0, iou_threshold=0.001)
-    cnn_bragg_peaks_detector.find_bragg_peaks(ws_name="WISH00042730", conf_threshold=0.0, q_tol=0.05)
