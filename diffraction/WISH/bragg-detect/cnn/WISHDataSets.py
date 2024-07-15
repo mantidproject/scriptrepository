@@ -3,7 +3,7 @@ import numpy as np
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 from bragg_utils import make_3d_array
-from mantid.simpleapi import Load, Rebunch, Workspace
+from mantid.simpleapi import Load, Rebunch, Workspace, AnalysisDataService
 
 
 class WISHWorkspaceDataSet(tc.utils.data.Dataset):
@@ -12,11 +12,18 @@ class WISHWorkspaceDataSet(tc.utils.data.Dataset):
             if workspace.getAxis(0).getUnit().unitID() != "TOF":
                 raise RuntimeError("Unit of the X-axis is expected to be TOF")
             ws = workspace
+            ws_name = ws.getName()
         elif isinstance(workspace, str):
             ws = Load(Filename=workspace, OutputWorkspace=workspace, EnableLogging=False)
+            ws_name = ws
         else:
             raise RuntimeError("Invalid workspace type - must be Workspace object or a name of a workspace to Load")
-        self.rebunched_ws = Rebunch(InputWorkspace=ws, NBunch=3, OutputWorkspace="_cnn_rebunched", StoreInADS=False, EnableLogging=False)
+        
+        rebunched_ws_name = f"__{ws_name}_cnn_rebunched"
+        if AnalysisDataService.doesExist(rebunched_ws_name):
+            self.rebunched_ws = AnalysisDataService[rebunched_ws_name]
+        else:
+            self.rebunched_ws = Rebunch(InputWorkspace=ws, NBunch=3, OutputWorkspace=rebunched_ws_name, EnableLogging=False)
         self.ws_3d = make_3d_array(self.rebunched_ws)
         print(f"Data set for {workspace} is created with shape{self.ws_3d.shape}")
         self.trans = A.Compose([A.pytorch.transforms.ToTensorV2(p=1.0)])

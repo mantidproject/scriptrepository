@@ -9,7 +9,7 @@ Inorder to use the pretrained Faster RCNN model inside mantid, below steps are r
 * Download the script repository's `scriptrepository\diffraction\WISH` directory as instructed here https://docs.mantidproject.org/nightly/workbench/scriptrepository.html
 * Check whether `<local path>\diffraction\WISH` path is available at `Python Script Directories` tab from `File->Manage User Directories`.
 * Close the workbench
-* From command line, change the directory to the place where the scripts were downloaded ex: `<local path>\diffraction\WISH`
+* From command line, change the directory to the place where the scripts were downloaded ex: `<local path>\diffraction\WISH\bragg-detect\cnn`
 * Within the same conda enviroment, install pytorch dependancies by running `pip install -r requirements.txt`
 * Install NVIDIA CUDA Deep Neural Network library (cuDNN) by running `conda install -c anaconda cudnn`
 * Re-launch workbench from `workbench` command
