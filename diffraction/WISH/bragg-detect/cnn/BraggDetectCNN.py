@@ -55,6 +55,7 @@ class BraggDetectCNN:
 
         #Filter duplicates by qlab
         BaseSX.remove_duplicate_peaks_by_qlab(peaksws, q_tol)
+        data_set.delete_rebunched_ws()
         print(f"Bragg peaks finding from FasterRCNN model is completed in {time.time()-start_time} seconds!")
 
 
