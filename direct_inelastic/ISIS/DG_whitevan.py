@@ -33,7 +33,7 @@ cycle = 'CYCLE_ID'                      # cycle
 wv_lrange = [1,5]                       # wavelength integration limits for output of vanadium integrals
 wv_detrange = [30000,60000]             # spectrum index range for average intensity calculation
 idebug = False                          # keep itermediate workspaces for debugging
-save_dir = f'/instrument/{inst}/RBNumber/USER_RB_FOLDER' # Set to None to avoid resetting
+save_dir = f'/data/analysis/{inst}/RBNumber/USER_RB_FOLDER' # Set to None to avoid resetting
 #========================================================
 #!end_params
 
@@ -42,6 +42,8 @@ if save_dir is not None:
     config['defaultsave.directory'] = save_dir
 cycle_shortform = cycle[2:] if cycle.startswith('20') else cycle
 data_dir = f'/archive/NDX{inst}/Instrument/data/cycle_{cycle_shortform}/'
+config.appendDataSearchDir(data_dir)
+data_dir = f'/data/instrument/{inst}/CYCLE20{cycle_shortform.replace("_","")}/RB0/'
 config.appendDataSearchDir(data_dir)
 if save_dir is not None:
     config.appendDataSearchDir(save_dir)
@@ -57,6 +59,9 @@ def try_load_no_mon(irun, ws_name=None):
         ws_name = ws_name[0]
     try:
         return Load(str(irun), LoadMonitors='Exclude', OutputWorkspace=ws_name)
+    except RuntimeError:
+        ws_load = Load(str(irun), LoadMonitors='Include', OutputWorkspace=ws_name)
+        ExtractMonitors(ws_load, DetectorWorkspace=ws_name, MonitorWorkspace=ws_name+'_monitors')
     except ValueError:
         return Load(str(irun), LoadMonitors=False, OutputWorkspace=ws_name)
 

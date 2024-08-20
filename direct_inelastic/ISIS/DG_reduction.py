@@ -70,7 +70,7 @@ QENS = False                    # output Q-binned data for QENS data analysis '_
 Qbins = 20                      # approximate number of Q-bins for QENS
 theta_range = [5., 65.]         # useful theta range for Q-binning (QENS)
 idebug = False                  # keep workspaces and check absolute units on elastic line
-save_dir = f'/instrument/{inst}/RBNumber/USER_RB_FOLDER'  # Set to None to avoid reseting
+save_dir = f'/data/analysis/{inst}/RBNumber/USER_RB_FOLDER'  # Set to None to avoid reseting
 psi_motor_name = 'rot'          # name of the rotation motor in the logs
 angles_workspace = 'angles_ws'  # name of workspace to store previously seen angles
 sumruns_savemem = False         # Compresses event in summed ws to save memory
@@ -109,14 +109,16 @@ else:
 
 cycle_shortform = cycle[2:] if cycle.startswith('20') else cycle
 datadir = f'/archive/NDX{inst}/Instrument/data/cycle_{cycle_shortform}/'
+datadir2 = f'/data/instrument/{inst}/CYCLE20{cycle_shortform.replace("_","")}/USER_RB_FOLDER/'
 instfiles  = '/usr/local/mprogs/InstrumentFiles/'
 mapdir  = f'{instfiles}/{inst.swapcase()}/'
 config.appendDataSearchDir(mapdir)
 config.appendDataSearchDir(datadir)
+config.appendDataSearchDir(datadir2)
 ws_list = ADS.getObjectNames()
 
 # Try to load subsidiary utilities
-sys.path.append(os.path.dirname(__file__))
+sys.path.append(instfiles)
 try:
     from reduction_utils import *
     utils_loaded = True
@@ -138,7 +140,11 @@ def tryload(irun):              # loops till data file appears
         try:
             ws = Load(str(irun),LoadMonitors=True)
         except TypeError:
-            ws = Load(str(irun),LoadMonitors='Separate')
+            try:
+                ws = Load(str(irun),LoadMonitors='Separate')
+            except ValueError: # Possibly when file is being copied over from NDX machine
+                Pause(2)
+                ws = Load(str(irun),LoadMonitors=True)
         except ValueError:
             print(f'...waiting for run #{irun}')
             Pause(file_wait)
@@ -206,11 +212,12 @@ else:
 # =======================load background runs and sum=========================
 if sample_cd is not None:
     ws_cd = load_sum(sample_cd)
+    ws_cd = NormaliseByCurrent(ws_cd)
 if sample_bg is not None:
     ws_bg = load_sum(sample_bg)
+    ws_bg = NormaliseByCurrent(ws_bg)
     if sample_cd is not None:
         ws_bg = ws_bg - ws_cd
-    ws_bg = NormaliseByCurrent(ws_bg)
 
 # ==========================continuous scan stuff=============================
 if cs_block and cs_bin_size > 0:
@@ -249,13 +256,17 @@ if is_auto(Ei_list) or hasattr(Ei_list, '__iter__') and is_auto(Ei_list[0]):
     use_auto_ei = True
     try:
         Ei_list = autoei(ws)
-    except NameError:
+    except (NameError, RuntimeError) as e:
         fn = str(sample[0])
         if not fn.startswith(inst[:3]): fn = f'{inst[:3]}{fn}'
         if fn.endswith('.raw'): fn = fn[:-4]
         if fn[-4:-2] == '.s': fn = fn[:-4] + '.n0' + fn[-2:]
         if not fn.endswith('.nxs') and fn[-5:-2] != '.n0': fn += '.nxs'
-        Ei_list = autoei(LoadNexusMonitors(fn, OutputWorkspace='ws_tmp_mons'))
+        ws_tmp_mons = LoadNexusMonitors(fn, OutputWorkspace='ws_tmp_mons')
+        Ei_list = autoei(ws_tmp_mons)
+    if not Ei_list:
+        raise RuntimeError(f'Invalid run(s) {sample}. Chopper(s) not running ' \
+                            'or could not determine neutron energy')
     print(f"Automatically determined Ei's: {Ei_list}")
     if len(trans) < len(Ei_list):
         print(f'{inst}: WARNING - not enough transmision values for auto-Ei. ' \
@@ -338,7 +349,7 @@ for irun in sample:
     # instrument geometry to work out ToF ranges
     sampos = ws.getInstrument().getSample().getPos()
     l1 = (sampos - ws.getInstrument().getSource().getPos()).norm()
-    l2 = (ws.getDetector(0).getPos() - sampos).norm()
+    l2 = (ws.getDetector(ws.getSpectrumNumbers()[0]).getPos() - sampos).norm()
 
     # Updates ei_loop if auto _and_ not using monovan
     if use_auto_ei:
@@ -355,7 +366,7 @@ for irun in sample:
         print(f'\n{inst}: Reducing data for Ei={Ei:.2f} meV')
 
         tofs = ws.readX(0)
-        tof_min = np.sqrt(l1**2 * 5.227e6 / Ei) - t_shift
+        tof_min = np.sqrt(l1**2 * 5.227e6 / Ei)
         tof_max = tof_min + np.sqrt(l2**2 * 5.226e6 / (Ei*(1-Erange[-1])))
         ws_rep = CropWorkspace(ws, max(min(tofs), tof_min), min(max(tofs), tof_max))
 
