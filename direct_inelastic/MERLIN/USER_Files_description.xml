@@ -25,21 +25,21 @@
   <file_to_copy file_name="../ISIS/DG_whitevan.py" copy_as="DG_whitevan.py">
     <replace var = "INSTRUMENT_NAME" by_var="MERLIN"/>
     <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
-    <replace var = "MASK_FILE_XML" by_var="mask_211_fix.xml"/>
+    <replace var = "MASK_FILE_XML" by_var="mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
   </file_to_copy>
   <file_to_copy file_name="../ISIS/DG_reduction.py" copy_as="DG_reduction.py">
     <replace var = "INSTRUMENT_NAME" by_var="MERLIN"/>
     <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
-    <replace var = "MASK_FILE_XML" by_var="mask_211_fix.xml"/>
+    <replace var = "MASK_FILE_XML" by_var="mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
-    <replace var = "RINGS_MAP_XML" by_var="rings_193.map"/>
+    <replace var = "RINGS_MAP_XML" by_var="MERLIN_rings_242.xml"/>
   </file_to_copy>
   <file_to_copy file_name="../ISIS/DG_monovan.py" copy_as="DG_monovan.py">
     <replace var = "INSTRUMENT_NAME" by_var="MERLIN"/>
-    <replace var = "MASK_FILE_XML" by_var="mask_211_fix.xml"/>
+    <replace var = "MASK_FILE_XML" by_var="mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
-    <replace var = "RINGS_MAP_XML" by_var="rings_193.map"/>
+    <replace var = "RINGS_MAP_XML" by_var="MERLIN_rings_242.xml"/>
   </file_to_copy>
 
 

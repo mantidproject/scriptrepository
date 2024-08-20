@@ -129,11 +129,14 @@ for ienergy in range(len(Ei_list)):
 # in the current monitor workspace (post monochromator) is at t=0 and L=0
 # note that the offest is not the predicted value due to energy dependence of the source position
 
+    Ei_orig = Ei
     if m3spec is not None and not fixei:
-        (Ei,mon2_peak,_,_) = GetEi(mv_monitors,Monitor1Spec=m2spec,Monitor2Spec=m3spec,EnergyEstimate=Ei)
+        (Ei,mon2_peak,_,_) = GetEi(mv_monitors,Monitor1Spec=m2spec,Monitor2Spec=m3spec,EnergyEstimate=Ei,FixEi=fixei)
         print("... refined Ei=%.2f meV" % Ei)
     else:
         (Ei,mon2_peak,_,_) = GetEi(mv_monitors,Monitor2Spec=m2spec,EnergyEstimate=Ei,FixEi=fixei)
+    if np.isnan(Ei):
+        Ei = Ei_orig
     print("... m2 tof=%.2f mus, m2 pos=%.2f m" % (mon2_peak,m2pos))
 
     mv_norm = ScaleX(mv_norm, Factor=-mon2_peak, Operation='Add', InstrumentParameter='DelayTime', Combine=True)

@@ -110,46 +110,79 @@ def copy_inst_info(outfile, in_ws):
         return
     if not os.path.exists(outfile):
         outfile = os.path.join(mantid.simpleapi.config['defaultsave.directory'], os.path.basename(outfile))
+    en0 = mtd[in_ws].getEFixed(mtd[in_ws].getDetector(0).getID())
     with h5py.File(raw_file_name, 'r') as raw:
         exclude = ['dae', 'detector_1', 'name']
-        to_copy = [k for k in raw['/raw_data_1/instrument'] if not any([x in k for x in exclude])]
+        to_copy = set([k for k in raw['/raw_data_1/instrument'] if not any([x in k for x in exclude])])
         if 'aperture' not in to_copy and 'mono_chopper' not in to_copy:
             return
+        reps = [k for k in to_copy if k.startswith('rep_')]
+        to_copy = to_copy.difference(reps)
+        has_fermi = 'fermi' in to_copy
+        is_main_rep = False
+        thisrep = None
+        if has_fermi:
+            if np.abs(en0 - float(raw['/raw_data_1/instrument/fermi/energy'][()])) < (en0/20):
+                is_main_rep = True
+            elif len(reps) == 0:
+                return     # No rep information
+            fermi_grp = raw['/raw_data_1/instrument/fermi/']
+            to_copy = to_copy.difference(set(['fermi']))
+        if not is_main_rep and len(reps) > 0:
+            thisrep = reps[np.argsort([np.abs(en0 - float(k[4:])) for k in reps])[0]]
+            if np.abs(en0 - float(thisrep[4:])) > (en0/20):
+                return     # No rep information
+            rep_copy = [k for k in raw[f'/raw_data_1/instrument/{thisrep}']]
+            if 'fermi' in rep_copy:
+                has_fermi = True
+                fermi_grp = raw[f'/raw_data_1/instrument/{thisrep}/fermi']
+                rep_copy = rep_copy.difference(['fermi'])
         n_spec = len(raw['/raw_data_1/instrument/detector_1/spectrum_index'])
         with h5py.File(outfile, 'r+') as spe:
             spe_root = list(spe.keys())[0]
-            en0 = spe[f'{spe_root}/instrument/fermi/energy'][()]
-            if 'fermi' in to_copy:
-                del spe[f'{spe_root}/instrument/fermi']
+            if has_fermi:
+                fields = set([k for k in fermi_grp]).difference(['energy', 'rotation_speed'])
+                for fd in fields:
+                    src = fermi_grp[fd]
+                    h5py.Group.copy(src, src, spe[f'{spe_root}/instrument/fermi'])
+                if 'rotation_speed' in fermi_grp:
+                    spe[f'{spe_root}/instrument/fermi'].create_dataset('rotation_speed', (), dtype='float64')
+                    spe[f'{spe_root}/instrument/fermi/rotation_speed'][()] = fermi_grp['rotation_speed'][()]
+                    for atr in fermi_grp['rotation_speed'].attrs:
+                        spe[f'{spe_root}/instrument/fermi/rotation_speed'].attrs[atr] = fermi_grp['rotation_speed'].attrs[atr]
+            if not is_main_rep and thisrep is not None:
+                for grp in rep_copy:
+                    src = raw[f'/raw_data_1/instrument/{thisrep}/{grp}']
+                    h5py.Group.copy(src, src, spe[f'{spe_root}/instrument/'])
+                    to_copy = to_copy.difference([grp])
             for grp in to_copy:
                 src = raw[f'/raw_data_1/instrument/{grp}']
                 h5py.Group.copy(src, src, spe[f'{spe_root}/instrument/'])
-            if 'fermi' in to_copy:
-                spe[f'{spe_root}/instrument/fermi/energy'][()] = en0
             detroot = f'{spe_root}/instrument/detector_elements_1'
+            udet = np.array(raw['/raw_data_1/isis_vms_compat/UDET'])
             spe.create_group(detroot)
             spe[detroot].attrs['NX_class'] = np.array('NXdetector', dtype='S')
-            for df0, df1 in zip(['SPEC', 'UDET', 'DELT', 'LEN2', 'CODE', 'TTHE', 'UT01'], \
-                ['det2spec', 'detector_number', 'delt', 'distance', 'detector_code', 'polar_angle', 'azimuthal_angle']):
+            for df0, df1 in zip(['UDET', 'DELT', 'LEN2', 'CODE', 'TTHE', 'UT01'], \
+                ['detector_number', 'delt', 'distance', 'detector_code', 'polar_angle', 'azimuthal_angle']):
                 src = raw[f'/raw_data_1/isis_vms_compat/{df0}']
                 h5py.Group.copy(src, src, spe[detroot], df1)
             for nn in range(raw['/raw_data_1/isis_vms_compat/NUSE'][0]):
                 src = raw[f'/raw_data_1/isis_vms_compat/UT{nn+1:02d}']
                 h5py.Group.copy(src, src, spe[detroot], f'user_table{nn+1:02d}')
-            spec2work = f'{spe_root}/instrument/detector_elements_1/spec2work'
             ws = mtd[in_ws]
-            if n_spec == ws.getNumberHistograms():
-                s2w = np.arange(n_spec)
-            else:
-                nmon = np.array(raw['/raw_data_1/isis_vms_compat/NMON'])[0]
-                spec = np.array(raw['/raw_data_1/isis_vms_compat/SPEC'])[nmon:]
-                udet = np.array(raw['/raw_data_1/isis_vms_compat/UDET'])[nmon:]
-                _, iq = np.unique(spec, return_index=True)
-                s2 = np.hstack([np.array(ws.getSpectrum(ii).getDetectorIDs()) for ii in range(ws.getNumberHistograms())])
-                _, c1, _ = np.intersect1d(udet[iq], s2, return_indices=True)
-                s2w = -np.ones(iq.shape, dtype=np.int32)
-                s2w[c1] = np.array(ws.getIndicesFromDetectorIDs(s2[c1].tolist()))
-            spe[detroot].create_dataset('spec2work', s2w.shape, dtype='i4', data=s2w)
+            s2, i2 = [], []
+            for ii in range(ws.getNumberHistograms()):
+                d_id = ws.getSpectrum(ii).getDetectorIDs()
+                s2 += d_id
+                i2 += [ii+1] * len(d_id)
+            _, c1, c2 = np.intersect1d(udet, s2, return_indices=True)
+            d2w = -np.ones(udet.shape, dtype=np.int32)
+            d2w[c1] = np.array(i2)[c2]
+            # Loads masks and process
+            dI = ws.detectorInfo()
+            iM = np.array([dI.isMasked(ii) for ii in range(len(dI))])
+            spe[detroot].create_dataset('det2work', d2w.shape, dtype='i4', data=d2w)
+            spe[detroot].create_dataset('det_mask', iM.shape, dtype=np.bool_, data=iM)
 
 #========================================================
 # MARI specific functions
@@ -180,7 +213,7 @@ def shift_frame_for_mari_lowE(origEi, wsname='ws_norm', wsmon='ws_monitors'):
             ws_norm = ScaleX(wsname, 20000, Operation='Add', IndexMin=0, IndexMax=ws_norm.getNumberHistograms()-1, OutputWorkspace=ws_out)
     return ws_norm, ws_monitors
 
-def gen_ana_bkg(quietws='MAR28952', target_ws=None):
+def gen_ana_bkg(quietws='MAR29313', target_ws=None):
     # Generates an analytic background workspace from the quiet counts data
     # by fitting each spectra with a decaying exponential a*exp(-b*ToF)
     if quietws not in mtd:
@@ -222,6 +255,20 @@ def gen_ana_bkg(quietws='MAR28952', target_ws=None):
                 wx.setE(spn, np.sqrt(y1*bw*current) / (bw*current))
     bkg_ev = ConvertToEventWorkspace(wx)
     return bkg_ev, wx
+
+def mari_remove_ana_bkg(wsname):
+    if sub_ana is True and not sample_cd:
+        if 'bkg_ev' not in mtd:
+            gen_ana_bkg()
+        current = mtd[wsname].run().getProtonCharge()
+        if isinstance(mtd[wsname], mantid.dataobjects.EventWorkspace):
+            ws = mtd[wsname] - mtd['bkg_ev'] * current
+        else:
+            try:
+                ws = mtd[wsname] - mtd['bkg_his'] * current
+            except ValueError:
+                gen_ana_bkg(target_ws=mtd[wsname])
+                ws = mtd[wsname] - mtd['bkg_his'] * current
 
 #========================================================
 # Auto-Ei routine
@@ -473,6 +520,10 @@ def iliad(runno, ei, wbvan, monovan=None, sam_mass=None, sam_rmm=None, sum_runs=
         ReplaceSpecialValues(wv_file, SmallNumberThreshold=1e-20, SmallNumberValue='NaN', OutputWorkspace=wv_file)
     except ValueError:
         run_whitevan(whitevan=wbvan, **wv_args)
+        ws = mtd['WV_normalised_integrals']
+        if ws.getNumberHistograms() == 919:
+            RemoveSpectra(ws, [0], OutputWorkspace=ws.name())
+            SaveAscii(ws, wv_file)
     Ei_list = ei if hasattr(ei, '__iter__') else [ei]
     if 'hard_mask_file' in kwargs:
         kwargs['mask'] = kwargs.pop('hard_mask_file')
@@ -480,12 +531,15 @@ def iliad(runno, ei, wbvan, monovan=None, sam_mass=None, sam_rmm=None, sum_runs=
         kwargs['sumruns'] = True
     if monovan is not None and isinstance(monovan, (int, float)) and monovan > 0:
         mv_file = f'MV_{monovan}.txt'
-        mvkw = {'mask':kwargs['mask']} if 'mask' in kwargs else {}
-        if 'inst' in kwargs: mvkw['inst'] = kwargs['inst']
+        mvkw = {}
+        for pp in [v for v in ['mask', 'inst'] if v in kwargs]:
+            mvkw[pp] = kwargs[pp]
         try:
-            LoadAscii(wv_file, OutputWorkspace=wv_file)
+            LoadAscii(mv_file, OutputWorkspace=mv_file)
+            ReplaceSpecialValues(mv_file, SmallNumberThreshold=1e-20, SmallNumberValue='NaN', OutputWorkspace=mv_file)
         except ValueError:
             run_monovan(monovan=monovan, Ei_list=Ei_list, wv_file=wv_file, **mvkw)
         kwargs['sample_mass'] = sam_mass
         kwargs['sample_fwt'] = sam_rmm
+        kwargs['mv_file'] = mv_file
     run_reduction(sample=runno, Ei_list=ei if hasattr(ei, '__iter__') else [ei], wv_file=wv_file, **kwargs)
