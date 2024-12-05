@@ -232,6 +232,7 @@ if cs_block and cs_bin_size > 0:
     # https://github.com/mantidproject/mantid/issues/36194
     sumruns = False
     ws_full, bval = load_sum(sample, cs_block)
+    ws = ws_full # So that auto-ei works (it assumes the workspace variable is "ws")
     ws_monitors = CloneWorkspace('ws_full_monitors')
     bval_range = max(bval) - min(bval)
     bval_nbins = int(bval_range / cs_bin_size)

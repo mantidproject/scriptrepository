@@ -34,6 +34,7 @@
     <replace var = "MASK_FILE_XML" by_var="mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
     <replace var = "RINGS_MAP_XML" by_var="MERLIN_rings_242.xml"/>
+    <replace var = "FIXEIVAL" by_var="False"/>
   </file_to_copy>
   <file_to_copy file_name="../ISIS/DG_monovan.py" copy_as="DG_monovan.py">
     <replace var = "INSTRUMENT_NAME" by_var="MERLIN"/>
