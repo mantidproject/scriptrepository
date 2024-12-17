@@ -12,6 +12,7 @@ Inorder to use the pre-trained Faster RCNN model inside mantid using an IDAaaS i
 from cnn.BraggDetectCNN import BraggDetectCNN
 model_weights = r'/mnt/ceph/auxiliary/wish/BraggDetect_FasterRCNN_Resnet50_Weights_v1.pt'
 cnn_peaks_detector = BraggDetectCNN(model_weights_path=model_weights, batch_size=64)
-cnn_peaks_detector.find_bragg_peaks(workspace='WISH00042730', output_ws_name="CNN_Peaks", conf_threshold=0.0, clustering="QLab", q_tol=0.05)
+clustering_params = {"name":"QLab", "q_tol": 0.05}
+cnn_peaks_detector.find_bragg_peaks(workspace='WISH00042730', output_ws_name="CNN_Peaks", conf_threshold=0.0, **clustering_params)
 ```
 * If the above import is not working, check whether the `<local path>\diffraction\WISH` path is listed under `Python Script Directories` tab from `File->Manage User Directories`.
