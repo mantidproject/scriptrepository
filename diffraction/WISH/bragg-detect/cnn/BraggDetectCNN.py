@@ -9,14 +9,12 @@ from tqdm import tqdm
 from Diffraction.single_crystal.base_sx import BaseSX
 import time
 from enum import Enum
-from sklearn.cluster import KMeans, HDBSCAN
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.cluster import HDBSCAN
 from sklearn.metrics import silhouette_score
 
 class Clustering(Enum):
     QLab = 1
     HDBSCAN = 2
-    KMeans = 3
 
 
 class BraggDetectCNN:
@@ -47,94 +45,74 @@ class BraggDetectCNN:
         self.iou_threshold = iou_threshold
 
 
-    def find_bragg_peaks(self, workspace, output_ws_name="CNN_Peaks", conf_threshold=0.0, **kwargs):
+    def find_bragg_peaks(self, workspace, output_ws_name="CNN_Peaks", conf_threshold=0.0, clustering=Clustering.QLab.name, **kwargs):
         """
         Find bragg peaks using the pre trained FasterRCNN model and create a peaks workspace
         :param workspace: Workspace name or the object of Workspace from WISH, ex: "WISH0042730"
         :param output_ws_name: Name of the peaks workspace
         :param conf_threshold: Confidence threshold to filter peaks inferred from RCNN
-        :param kwargs: variable keyword params for clustering. default is {"name": "Qlab", "q_tol": 0.05} 
-            Ex: {"name": "HDBSCAN", "keep_ignored_labels": True}
+        :param clustering: name of clustering method. Default is QLab and allowed
+        :param kwargs: variable keyword params for clustering methods
         """
-        clustering_params = {"name": "QLab", "q_tol": 0.05 }
-        clustering_params.update(kwargs)
-
         start_time = time.time()
         data_set, predicted_indices = self._do_cnn_inferencing(workspace)
 
         filtered_indices = predicted_indices[predicted_indices[:, -1] > conf_threshold]
         
         #Do Clustering
-        print(f"Starting peak clustering with { clustering_params['name'] } method..")
-        clustered_peaks = self._do_peak_clustering(filtered_indices, clustering_params)
-        print(f"Number of peaks after clustering is={len(clustered_peaks)}")
-
+        print(f"Starting peak clustering with {clustering} method..")
+        clustered_peaks = self._do_peak_clustering(filtered_indices, clustering, **kwargs)
         cluster_indices_rounded = np.round(clustered_peaks[:, :3]).astype(int)
         peaksws = createPeaksWorkspaceFromIndices(data_set.get_workspace(), output_ws_name, cluster_indices_rounded, data_set.get_ws_as_3d_array())
         for ipk, pk in enumerate(peaksws):
             pk.setIntensity(clustered_peaks[ipk, -1])
 
-        if clustering_params["name"] == Clustering.QLab.name:
+        if clustering == Clustering.QLab.name:
             #Filter peaks by qlab
-            BaseSX.remove_duplicate_peaks_by_qlab(peaksws, clustering_params["q_tol"])
+            clustering_params = {"q_tol": 0.05 }
+            clustering_params.update(kwargs)
+            BaseSX.remove_duplicate_peaks_by_qlab(peaksws, **clustering_params)
+        
+        print(f"Number of peaks after clustering is = {len(peaksws)}")
 
         data_set.delete_rebunched_ws()
-        print(f"Bragg peaks finding from FasterRCNN model is completed in {time.time()-start_time} seconds!")
+        print(f"Bragg peaks finding from FasterRCNN model is completed in {time.time()-start_time:.2f} seconds!")
 
 
-    def _do_peak_clustering(self, detected_peaks, params):
-        print(f"Number of peaks before clustering={len(detected_peaks)}")
-        if params["name"] == Clustering.HDBSCAN.name:
-            return self._do_hdbscan_clustering(detected_peaks, params)
-        elif params["name"] == Clustering.KMeans.name:
-            return self._do_kmeans_clustering(detected_peaks)
+    def _do_peak_clustering(self, detected_peaks, clustering, **kwargs):
+        print(f"Number of peaks before clustering = {len(detected_peaks)}")
+        if clustering == Clustering.HDBSCAN.name:
+            return self._do_hdbscan_clustering(detected_peaks, **kwargs)
         else:
             return detected_peaks
 
 
-    def _do_hdbscan_clustering(self, peakdata, params):
+    def _do_hdbscan_clustering(self, peakdata, keep_ignored_labels=True, **kwargs):
         data = np.delete(peakdata, [3,4], axis=1)
+        if ("keep_ignored_labels" in kwargs):
+            keep_ignored_labels = kwargs.pop("keep_ignored_labels")
 
-        hdbscan = HDBSCAN(min_cluster_size=2, 
-                          min_samples=2, 
-                          store_centers="medoid", 
-                          algorithm="auto", 
-                          cluster_selection_method="eom", 
-                          metric="euclidean")
+        hdbscan_params = {"min_cluster_size": 2, 
+                          "min_samples": 2, 
+                          "store_centers" : "medoid", 
+                          "algorithm": "auto", 
+                          "cluster_selection_method": "eom", 
+                          "metric": "euclidean"
+                          }
+        hdbscan_params.update(kwargs)
+        hdbscan = HDBSCAN(**hdbscan_params)
         hdbscan.fit(data)
         print(f"Silhouette score of the clusters={silhouette_score(data, hdbscan.labels_)}")
 
-        if ("keep_ignored_labels" in params) and params["keep_ignored_labels"]:
-                selected_peaks = np.concatenate((hdbscan.medoids_, data[np.where(hdbscan.labels_==-1)]), axis=0)
+        if keep_ignored_labels:
+            selected_peaks = np.concatenate((hdbscan.medoids_, data[np.where(hdbscan.labels_==-1)]), axis=0)
         else:
             selected_peaks = hdbscan.medoids_
         confidence = []
         for peak in selected_peaks:
             confidence.append(peakdata[np.where((data == peak).all(axis=1))[0].item(), -1])
         return np.column_stack((selected_peaks, confidence))
-
-
-    def _do_kmeans_clustering(self, peakdata):
-        stdScaler = StandardScaler()
-        peakdata[:, 3] = stdScaler.fit_transform(peakdata[:, 3].reshape(-1,1)).flatten()
-        minmaxScaler = MinMaxScaler()
-        peakdata[:, 4] = minmaxScaler.fit_transform(peakdata[:, 4].reshape(-1, 1)).flatten()
-
-        WCSS = []
-        cluster_range = range(1, len(peakdata), 2)
-        for i in cluster_range:
-            model = KMeans(n_clusters = i, init = 'k-means++')
-            model.fit(peakdata)
-            WCSS.append(model.inertia_)
-
-        first_derivative = np.diff(WCSS, n=1)
-        elbow_point = np.argmax(first_derivative) + 1
-        print(f"Selected elbow point={elbow_point} for KMeans clustering")
-        finalmodel = KMeans(n_clusters = elbow_point, init = "k-means++", max_iter = 500, n_init = 10, random_state = 0)
-        finalmodel.fit_predict(peakdata)
-        print(f"Silhouette score of the clusters={silhouette_score(peakdata, finalmodel.labels_)}")
-        return finalmodel.cluster_centers_
-
+    
 
     def _do_cnn_inferencing(self, workspace):
         data_set = WISHWorkspaceDataSet(workspace)
