@@ -51,7 +51,7 @@ class BraggDetectCNN:
         :param workspace: Workspace name or the object of Workspace from WISH, ex: "WISH0042730"
         :param output_ws_name: Name of the peaks workspace
         :param conf_threshold: Confidence threshold to filter peaks inferred from RCNN
-        :param clustering: name of clustering method. Default is QLab and allowed
+        :param clustering: name of clustering method(QLab or HDBSCAN). Default is QLab
         :param kwargs: variable keyword params for clustering methods
         """
         start_time = time.time()
@@ -88,7 +88,15 @@ class BraggDetectCNN:
 
 
     def _do_hdbscan_clustering(self, peakdata, keep_ignored_labels=True, **kwargs):
-        data = np.delete(peakdata, [3,4], axis=1)
+        """
+        Do HDBSCAN clustering over the inferred peak coordinates
+        :param peakata: np array containig the inferred peak coordinates
+        :param keep_ignored_labels: whether to include the unclustered peaks in final result.
+            default is True, can be set to False via passing "keep_ignored_labels": False in kwargs
+        :param kwargs: variable keyword params to be passed to HDBSCAN algorithm 
+            https://scikit-learn.org/1.5/modules/generated/sklearn.cluster.HDBSCAN.html
+        """
+        peak_indices = np.delete(peakdata, [3,4], axis=1)
         if ("keep_ignored_labels" in kwargs):
             keep_ignored_labels = kwargs.pop("keep_ignored_labels")
 
@@ -101,17 +109,17 @@ class BraggDetectCNN:
                           }
         hdbscan_params.update(kwargs)
         hdbscan = HDBSCAN(**hdbscan_params)
-        hdbscan.fit(data)
-        print(f"Silhouette score of the clusters={silhouette_score(data, hdbscan.labels_)}")
+        hdbscan.fit(peak_indices)
+        print(f"Silhouette score of the clusters={silhouette_score(peak_indices, hdbscan.labels_)}")
 
         if keep_ignored_labels:
-            selected_peaks = np.concatenate((hdbscan.medoids_, data[np.where(hdbscan.labels_==-1)]), axis=0)
+            selected_peak_indices = np.concatenate((hdbscan.medoids_, peak_indices[np.where(hdbscan.labels_==-1)]), axis=0)
         else:
-            selected_peaks = hdbscan.medoids_
+            selected_peak_indices = hdbscan.medoids_
         confidence = []
-        for peak in selected_peaks:
-            confidence.append(peakdata[np.where((data == peak).all(axis=1))[0].item(), -1])
-        return np.column_stack((selected_peaks, confidence))
+        for peak in selected_peak_indices:
+            confidence.append(peakdata[np.where((peak_indices == peak).all(axis=1))[0].item(), -1])
+        return np.column_stack((selected_peak_indices, confidence))
     
 
     def _do_cnn_inferencing(self, workspace):
