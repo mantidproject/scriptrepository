@@ -2,7 +2,7 @@
 from mantid.simpleapi import *
 import matplotlib.pyplot as plt
 import numpy as np
-from IntegratePeaksSkew import InstrumentArrayConverter, PeakData
+from plugins.algorithms.peakdata_utils import InstrumentArrayConverter, PeakData
 from scipy.optimize import minimize, curve_fit
 from mantid.api import FunctionFactory
 
