@@ -1,6 +1,4 @@
--f https://download.pytorch.org/whl/cu118
-torch
-torchvision
-
+torch==2.5.1
+torchvision==0.20.1
 albumentations==1.4.0
 tqdm==4.66.3
