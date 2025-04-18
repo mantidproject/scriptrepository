@@ -1,4 +1,4 @@
-torch==2.5.1
+torch==2.6.0
 torchvision==0.20.1
 albumentations==1.4.0
 tqdm==4.66.3
