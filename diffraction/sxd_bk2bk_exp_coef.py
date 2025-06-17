@@ -31,7 +31,7 @@ for run in runs:
     Load(Filename=f'{ws_list[-1]}.raw', OutputWorkspace=ws_list[-1])
     FindSXPeaks(InputWorkspace=ws_list[-1], PeakFindingStrategy='AllPeaks', 
                 AbsoluteBackground=25, ResolutionStrategy='AbsoluteResolution', 
-                XResolution=200, PhiResolution=2, TwoThetaResolution=2, 
+                XResolution=250, PhiResolution=2, TwoThetaResolution=2, 
                 OutputWorkspace=ws_list[-1] + '_peaks')
     ConvertUnits(InputWorkspace=ws_list[-1], OutputWorkspace=ws_list[-1], Target='dSpacing')
 
