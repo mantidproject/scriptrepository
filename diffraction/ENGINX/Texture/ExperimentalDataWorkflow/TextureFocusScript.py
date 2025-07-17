@@ -11,7 +11,7 @@ from Engineering.texture.TextureUtils import find_all_files, run_focus_script
 # First, you need to specify your file directories, If you are happy to use the same root, from experiment
 # to experiment, you can just change this experiment name.
 
-exp_name = "PostExp-ZrRingDiagScript"
+exp_name = "PostExp-SteelCentre"
 
 # otherwise set root directory here:
 root_dir = fr"C:\Users\kcd17618\Engineering_Mantid\User\{exp_name}"
@@ -26,9 +26,10 @@ ceria_run = "305738"
 
 # set the path to the grouping file created by calibration
 prm_path = None # fr"{root}\Calibration\ENGINX_305738_Texture30.prm"
-grouping = "Texture30"
+grouping = "Custom"
+groupingfile_path = r"C:\Users\kcd17618\Documents\MantidScripts\FullBankPoleFigure\block.cal" # if a custom cal/xml grouping file is desired
 
-# Define some file paths
+# Define some file paths, can be found in the interface settings
 full_instr_calib = r"C:\Users\kcd17618\Documents\dev\mantid\mantid\scripts\Engineering\calib\ENGINX_full_instrument_calibration_193749.nxs"
 
 ######################### RUN SCRIPT ########################################
@@ -41,5 +42,6 @@ run_focus_script(wss = run_files,
                  ceria_run = ceria_run,
                  full_instr_calib = full_instr_calib, 
                  grouping = grouping,
-                 prm_path = prm_path)
+                 prm_path = prm_path,
+                 groupingfile_path = groupingfile_path)
 

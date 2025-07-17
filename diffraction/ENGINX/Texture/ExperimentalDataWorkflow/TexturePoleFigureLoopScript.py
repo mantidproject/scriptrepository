@@ -25,6 +25,9 @@ peaks = [2.8, 2.575, 2.455, 1.89, 1.62, 1.46]
 readout_columns = ["I", "I_est", "X0"]
 # you need to specify the detector grouping
 grouping = "Texture30"
+# and some grouping path if not using a standard
+prm_path = None
+groupingfile_path = None
 # and the type of projection to plot
 projection_method = "Azimuthal"
 
@@ -59,12 +62,38 @@ scat_vol_pos = (0.0,0.0,0.0) # for now, can assume the gauge vol will be centred
 
 ######################### RUN SCRIPT ########################################
 
+
+# get grouping directory name
+calib_info = CalibrationInfo(group = GROUP(grouping))
+if groupingfile_path:
+    calib_info.set_grouping_file(groupingfile_path)
+elif prm_path:
+    calib_info.set_prm_filepath(prm_path) 
+group_folder = calib_info.get_group_suffix()
+focussed_data_dir = path.join(root_dir, file_folder, group_folder, "CombinedFiles")
+focus_ws_paths = find_all_files(focussed_data_dir)
+focus_wss = [path.splitext(path.basename(fp))[0] for fp in focus_ws_paths]
+for iws, ws in enumerate(focus_wss):
+    if not ADS.doesExist(ws):
+        Load(Filename = focus_ws_paths[iws], OutputWorkspace= ws)
+
+fit_load_dirs = [path.join(root_dir, fit_save_folder, group_folder, str(peak)) for peak in peaks]
+
 hkls = [hkl_peaks[peak] if include_scatt_power else None for peak in peaks]
-create_pf_loop(root_dir = root_dir, 
-               ws_folder = ws_folder, 
-               fit_folder = fit_folder, 
-               peaks = peaks, 
-               grouping = grouping, 
+
+fit_param_wss = []
+for ifit, fit_folder in enumerate(fit_load_dirs):
+    # get fit params
+    fit_dir = path.join(root_dir, fit_folder)
+    fit_wss = find_all_files(fit_dir)
+    param_wss = [path.splitext(path.basename(fp))[0] for fp in fit_wss]
+    fit_param_wss.append(param_wss)
+    for iparam, param in enumerate(param_wss):
+        if not ADS.doesExist(param):
+            Load(Filename=fit_wss[iparam], OutputWorkspace=param)
+
+create_pf_loop(wss = focus_wss,
+               param_wss = fit_param_wss,
                include_scatt_power = include_scatt_power, 
                cif = cif, 
                lattice = lattice, 
@@ -84,3 +113,4 @@ create_pf_loop(root_dir = root_dir,
                save_root = save_root, 
                exp_name = exp_name, 
                projection_method = projection_method)
+

@@ -139,7 +139,82 @@ chi2_thresh = 0.4   # max value of Chi^2 to be included as a point in the table
 peak_thresh = 0.01   # max difference from either the HKL specified or the mean X0
 scat_vol_pos = (0.0,0.0,0.0) # for now, can assume the gauge vol will be centred on origin
 
+############### ENGINEERING DIFFRACTION INTERFACE FOCUS ANALOGUE #######################
+
+######################### EXPERIMENTAL INFORMATION ########################################
+
+# next, specify the folder with the files you would like to focus 
+# (if you are using the standard scripts this might not need to change)
+data_dir = fr"{root_dir}\AbsorptionCorrection"
+
+# fill in the file paths for the vanadium and ceria runs (just run numbers might work if you are setup into the file system)
+van_run = r"C:\Users\kcd17618\Documents\dev\TextureCommisioning\Day1\SteelDataset\DataFiles\ENGINX00361838.nxs"
+ceria_run = "305738"
+
+# set the path to the grouping file created by calibration
+prm_path = None # r"C:\Users\kcd17618\Engineering_Mantid\Calibration\ENGINX_305738_Custom_block.prm"
+grouping = "Texture30"
+groupingfile_path = None
+
+# Define some file paths
+full_instr_calib = r"C:\Users\kcd17618\Documents\dev\mantid\mantid\scripts\Engineering\calib\ENGINX_full_instrument_calibration_193749.nxs"
+
+############### ENGINEERING DIFFRACTION INTERFACE FITTING ANALOGUE #######################
+
+######################### EXPERIMENTAL INFORMATION ########################################
+
+
+# Next the folder contraining the workspaces you want to fit
+file_folder = "Focus"
+
+# You also need to specify a name for the folder the fit parameters will be saved in
+fit_save_folder = "ScriptFitParameters"
+
+# Finally, provide a list of peaks that you want to be fit within the spectra
+peaks = [2.03,1.44, 1.17, 0.91] # steel
+#peaks = [2.8, 2.575, 2.455, 1.89, 1.62, 1.46] # zr
+
+
+############### ENGINEERING DIFFRACTION INTERFACE POLE FIGURE ANALOGUE #######################
+
+######################### EXPERIMENTAL INFORMATION ########################################
+
+# define the columns you would like to create pole figures for
+readout_columns = ["I", "I_est", "X0"]
+# and the type of projection to plot
+projection_method = "Azimuthal"
+
+# you need to define the orientation of the intrinsic sample directions when the sample orientation matrix == I (no rotation)
+# this should be the same as the reference state used in the absorption correction
+dir1 = np.array((1,0,0))
+dir2 = np.array((0,1,0)) # projection axis
+dir3 = np.array((0,0,1))
+# you can also supply names for these three directions
+dir_names = ["RD", "ND", "TD"]
+
+# set whether you would like the plotted pole figure to be a scatter of experimental points or whether you would like to apply gaussian smoothing and
+# plot a contour representation
+scatter = "both"
+# if contour, what should the kernel size of the gaussian be
+kernel = 6.0
+
+# do you want to include a scattering power correction
+include_scatt_power = False
+# if so what is the crystal structure, defined either by giving a cif file or supplying the lattice, space group and basis
+cif = None
+lattice = None #"2.8665  2.8665  2.8665"
+space_group = None #"I m -3 m"
+basis = None # "Fe 0 0 0 1.0 0.05; Fe 0.5 0.5 0.5 1.0 0.05"
+# if you have set a crystal, you can also provide a set of hkls, the hkl_peaks dictionary is a useful way of assigning the peaks
+hkl_peaks = {1.17: (1,1,2),1.43: (2,0,0),2.03: (1,1,0)} #Fe
+
+chi2_thresh = 1.5   # max value of Chi^2 to be included as a point in the table
+peak_thresh = 0.01   # max difference from either the HKL specified or the mean X0
+scat_vol_pos = (0.0,0.0,0.0) # for now, can assume the gauge vol will be centred on origin
+
 ######################### RUN SCRIPT ########################################
+
+#~~~~~~~~~~~~~~~~~~~~~ ABSORPTION CORRECTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # load the ref workspace
 ref_ws_str = path.splitext(path.basename(ref_ws_path))[0]
@@ -174,6 +249,8 @@ run_abs_corr(wss = raw_wss,
              div_vert = div_vert, 
              det_hoz = det_hoz, 
              clear_ads_after = clear_ads_after)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~ FOCUSING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
              
 to_be_focussed_files = find_all_files(data_dir)
 
@@ -184,13 +261,24 @@ run_focus_script(wss = to_be_focussed_files,
                  full_instr_calib = full_instr_calib, 
                  grouping = grouping,
                  prm_path = prm_path)        
+
+
+#~~~~~~~~~~~~~~~~~~~~~ PEAK FITTING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             
 # create output directory
 fit_save_dir = path.join(root_dir, fit_save_folder)
 mk(fit_save_dir)
 
 # find and load peaks
-focussed_data_dir = path.join(root_dir, file_folder, grouping, "CombinedFiles")
+
+# get grouping directory name
+calib_info = CalibrationInfo(group = GROUP(grouping))
+if groupingfile_path:
+    calib_info.set_grouping_file(groupingfile_path)
+elif prm_path:
+    calib_info.set_prm_filepath(prm_path) 
+group_folder = calib_info.get_group_suffix()
+focussed_data_dir = path.join(root_dir, file_folder, group_folder, "CombinedFiles")
 focus_ws_paths = find_all_files(focussed_data_dir)
 focus_wss = [path.splitext(path.basename(fp))[0] for fp in focus_ws_paths]
 for iws, ws in enumerate(focus_wss):
@@ -200,13 +288,25 @@ for iws, ws in enumerate(focus_wss):
 # execute the fitting                     
 fit_all_peaks(focus_wss, peaks, 0.02, fit_save_dir)     
 
+#~~~~~~~~~~~~~~~~~~~~~ POLE FIGURE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+fit_load_dirs = [path.join(root_dir, fit_save_folder, group_folder, str(peak)) for peak in peaks]
 
 hkls = [hkl_peaks[peak] if include_scatt_power else None for peak in peaks]
-create_pf_loop(root_dir = root_dir, 
-               ws_folder = file_folder, 
-               fit_folder = fit_save_folder, 
-               peaks = peaks, 
-               grouping = grouping, 
+
+fit_param_wss = []
+for ifit, fit_folder in enumerate(fit_load_dirs):
+    # get fit params
+    fit_dir = path.join(root_dir, fit_folder)
+    fit_wss = find_all_files(fit_dir)
+    param_wss = [path.splitext(path.basename(fp))[0] for fp in fit_wss]
+    fit_param_wss.append(param_wss)
+    for iparam, param in enumerate(param_wss):
+        if not ADS.doesExist(param):
+            Load(Filename=fit_wss[iparam], OutputWorkspace=param)
+
+create_pf_loop(wss = focus_wss,
+               param_wss = fit_param_wss,
                include_scatt_power = include_scatt_power, 
                cif = cif, 
                lattice = lattice, 
