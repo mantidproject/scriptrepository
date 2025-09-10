@@ -76,6 +76,9 @@ angles_workspace = 'angles_ws'  # name of workspace to store previously seen ang
 sumruns_savemem = False         # Compresses event in summed ws to save memory
                                 # (causes some loss of data so cannot use event filtering)
 cs_smidge = 0.001               # Tolerance on continuous scan bins size
+cs_conv_to_md = False           # Convert a continuous scan to an MDWorkspace
+cs_conv_pars = {}               # A dict with 'lattice_pars', 'lattice_angles', 'u', 'v', 'psi0'
+cs_single = False               # Outputs an EventWorkspace of a continuous scan (does not histogram)
 #========================================================
 #!end_params
 
@@ -244,6 +247,10 @@ if cs_block and cs_bin_size > 0:
     print(f'{cs_block} = {min(bval):.1f} {unit} to {max(bval):.1f} {unit}')
     print(f'... filtering in {cs_bin_size:.1f} {unit} steps')
     print(f'... N={bval_nbins} bins with {bval_remainder:.2f} {unit} remainder')
+if cs_conv_to_md:
+    powder = False
+    assert(all([v in cs_conv_pars for v in ['lattice_pars', 'lattice_ang', 'u', 'v', 'psi0']]),
+        'Conversion to MDWorkspace needs parameters: "lattice_pars", "lattice_ang", "u", "v", "psi0"')
 
 # =======================sum sample runs if required=========================
 sumsuf = sumruns and len(sample) > 1
@@ -343,14 +350,17 @@ for irun in sample:
             tryload(irun)
             print(f'Loading run# {irun}')
 
-    ws = NormaliseByCurrent('ws')
+    try:
+        ws = NormaliseByCurrent('ws')
+    except RuntimeError:
+        pass
     if sumruns and sumruns_savemem:
         ws = CompressEvents(ws, Tolerance=1e-5)  # Tolerance in microseconds
 
     # instrument geometry to work out ToF ranges
     sampos = ws.getInstrument().getSample().getPos()
     l1 = (sampos - ws.getInstrument().getSource().getPos()).norm()
-    l2 = (ws.getDetector(ws.getSpectrumNumbers()[0]).getPos() - sampos).norm()
+    l2 = (ws.getDetector(ws.getSpectrumNumbers()[1]).getPos() - sampos).norm()
 
     # Updates ei_loop if auto _and_ not using monovan
     if use_auto_ei:
@@ -409,8 +419,9 @@ for irun in sample:
         MoveInstrumentComponent(ws_rep, ComponentName=source, Z=m2pos, RelativePosition=False)
 
         ws_rep = ConvertUnits(ws_rep, 'DeltaE', EMode='Direct', EFixed=Ei)
-        ws_out = Rebin(ws_rep, [x*origEi for x in Erange], PreserveEvents=False)
-        ws_out = DetectorEfficiencyCor(ws_out, IncidentEnergy=Ei)
+        ws_out = Rebin(ws_rep, [x*origEi for x in Erange], PreserveEvents=cs_single)
+        if not cs_single:
+            ws_out = DetectorEfficiencyCor(ws_out, IncidentEnergy=Ei)
         ws_out = CorrectKiKf(ws_out, Efixed=Ei, EMode='Direct')
         ADS.remove('ws_rep')
 
@@ -426,6 +437,7 @@ for irun in sample:
         else:
             ofile_prefix = f'{inst[:3]}{irun}'
             ofile_suffix = ''
+        ofile_prefix = ofile_prefix[3:] if ofile_prefix[:3] == ofile_prefix[3:6] else ofile_prefix
 
         # rings grouping if desired
         if powder or inst == 'MARI' or QENS:
@@ -444,6 +456,21 @@ for irun in sample:
         if idebug:
             Rebin('ws_out', [-0.05*Ei, 100, 0.05*Ei], PreserveEvents=False, OutputWorkspace=ofile+'_elastic')
             Transpose(f'{ofile}_elastic', OutputWorkspace=f'{ofile}_elastic')
+
+        # Convert to MD:
+        if cs_conv_to_md:
+            SetGoniometer('ws_out', Axis0=f'{cs_block},0,1,0,1', Axis1=f'{cs_conv_pars["psi0"]},0,1,0,-1')
+            a, b, c = tuple(cs_conv_pars['lattice_pars'])
+            alpha, beta, gamma = tuple(cs_conv_pars['lattice_ang'])
+            SetUB('ws_out', a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma, u=cs_conv_pars['u'], v=cs_conv_pars['v'])
+            mn, mx = ConvertToMDMinMaxGlobal('ws_out', QDimensions='Q3D', dEAnalysisMode='Direct', Q3DFrames='HKL')
+            ConvertToMD('ws_out', QDimensions='Q3D', dEAnalysisMode='Direct', Q3DFrames='HKL', QConversionScales='HKL',
+                MinValues=mn, MaxValues=mx, PreprocDetectorsWS='-', OutputWorkspace=ofile+'_ang_md')
+            continue
+
+        if cs_single:
+            CloneWorkspace('ws_out', OutputWorkspace='single_md')
+            continue
 
         # output appropriate formats
         ws_out = ConvertToDistribution(ws_out)

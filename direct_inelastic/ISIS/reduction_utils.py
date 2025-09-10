@@ -37,6 +37,8 @@ def _get_mon_from_history(ws_name):
     # loads the monitors from that raw file.
     orig_file = None
     for hist in mtd[ws_name].getHistory().getAlgorithmHistories():
+        if hist.name().startswith('StartLiveData'):
+            return _create_dummy_monitors(ws_name)
         if hist.name().startswith('Load') and 'Filename' in [pp.name() for pp in hist.getProperties()]:
             orig_file = hist.getPropertyValue('Filename')
             break
@@ -51,6 +53,18 @@ def _get_mon_from_history(ws_name):
     DeleteWorkspace('tmp_mons')
     mtd[ws_name].setMonitorWorkspace(mtd[ws_mon_name])
     CloneWorkspace(ws_mon_name, OutputWorkspace='ws_monitors')
+
+MONDAT = {
+    'MERLIN': {'ws':range(69633, 69642), 'l2':[3.258]+[1.504]*4+[4.247]*4, 'th':[180]*5+[0]*4},
+    'MAPS': {'ws':range(36864, 36868), 'l2':[4.109,2.805,1.716,8.35], 'th':[180]*3+[0]},
+    'LET': {'ws':range(98304,98312), 'l2':[17.758, 17.06, 16.558, 13.164, 9.255, 1.333, 1.088, 1.088], 'th':[180]*8}
+}
+def _create_dummy_monitors(ws_name):
+    # Creates dummy monitors for a live data workspace
+    inst = mtd[ws_name].getInstrument().getName()
+    CreateSimulationWorkspace(inst, [100,100,19000], UnitX='TOF', OutputWorkspace='ws_monitors')
+    ExtractSpectra('ws_monitors', WorkspaceIndexList=MONDAT[inst]['ws'], OutputWorkspace='ws_monitors')
+    EditInstrumentGeometry('ws_monitors', L2=MONDAT[inst]['l2'], Polar=MONDAT[inst]['th'])
 
 def get_angle(irun, angle_workspace='angle_ws', psi_motor_name='rot', tryload=None):
     # Checks if a workspace with previous angles exists and if we've seen this run before
@@ -526,6 +540,7 @@ def iliad(runno, ei, wbvan, monovan=None, sam_mass=None, sam_rmm=None, sum_runs=
     wv_file = f'WV_{wv_name}.txt'
     wv_args = {}
     if 'inst' in kwargs:
+        kwargs['inst'] = kwargs['inst'].upper()
         config['default.instrument'] = kwargs['inst']
         wv_args = {'inst':kwargs['inst']}
     try:

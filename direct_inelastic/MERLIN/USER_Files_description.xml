@@ -42,6 +42,11 @@
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
     <replace var = "RINGS_MAP_XML" by_var="MERLIN_rings_242.xml"/>
   </file_to_copy>
+  <file_to_copy file_name="../ISIS/DG_alignment.py" copy_as="DG_alignment.py">
+    <replace var = "INSTRUMENT_NAME" by_var="MERLIN"/>
+    <replace var = "CYCLE_ID" by_var="$cycleID$"/>
+    <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
+  </file_to_copy>
 
 
 </user_files_description>
