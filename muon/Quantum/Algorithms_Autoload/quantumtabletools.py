@@ -1313,7 +1313,7 @@ def ParseMeasureType(pars,prog=None):
 	if((mtype=="timespectra" or mtype=="phasequad") and hadaxis0):
 		timebins=pars["axis0"] # passed in from fit function
 	elif(pars["ntbins"][0]==1):
-		timebins=numpy.array([pars["starttime"][0],pars["endtime"][0]],dtype=numpy.float_) # exact ends
+		timebins=numpy.array([pars["starttime"][0],pars["endtime"][0]],dtype=numpy.float64) # exact ends
 	else:
 		timebins=numpy.linspace(pars["starttime"][0],pars["endtime"][0],int(pars["ntbins"][0])+1,endpoint=True) # these will be bin boundaries
 	if((mtype=="timespectra" or mtype=="phasequad")and not(hadaxis0)):
