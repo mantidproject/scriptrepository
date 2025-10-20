@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 from mantid.api import AnalysisDataService as ADS
 from Engineering.common.calibration_info import CalibrationInfo
 from Engineering.EnggUtils import GROUP
-from Engineering.common.texture_sample_viewer import plot_sample_directions
+from mantidqtinterfaces.Engineering.gui.engineering_diffraction.tabs.common.show_sample.show_sample_model import ShowSampleModel
 from mantidqt.plotting.sample_shape import plot_sample_only
 import os
 
@@ -195,9 +195,12 @@ def update_plot():
     gon_ax.set_axis_off()
 
     # 3D plot
+    sample_model = ShowSampleModel()
+    sample_model.fig = fig
+    sample_model.ws_name = "ws"
     fig.sca(lab_ax)
     plot_sample_only(fig, rot_mesh*0.5, 0.5, "grey")
-    plot_sample_directions(fig, "ws", ax_transform, dir_names)
+    sample_model.plot_sample_directions(ax_transform, dir_names)
     lab_ax.set_xlim([-extent, extent])
     lab_ax.set_ylim([-extent, extent])
     lab_ax.set_zlim([-extent, extent])

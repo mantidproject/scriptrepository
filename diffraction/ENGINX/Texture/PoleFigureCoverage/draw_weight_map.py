@@ -8,7 +8,6 @@ from matplotlib.widgets import PolygonSelector
 from matplotlib.path import Path
 from importlib import reload
 import sys
-reload(sys.modules["coverage_funcs"])
 
 
 # This script might help you highlight the regions of interest in a pole figure to
