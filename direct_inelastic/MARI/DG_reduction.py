@@ -94,7 +94,7 @@ if inst == 'MARI':
     same_angle_action = 'ignore'
 elif inst == 'MERLIN':
     source = 'undulator'
-    m2spec = 69636              # specID of monitor2 (pre-sample)
+    m2spec = 69634              # specID of monitor2 (pre-sample)
     m3spec = 69640              # specID of monitor3 (post-sample)
     #monovan_mass = 32.62       # mass of vanadium cylinder
 elif inst == 'MAPS':
@@ -199,6 +199,7 @@ if sample_cd is not None and (isinstance(sample_cd, str) or not hasattr(sample_c
 if mask is None:
     print(f'{inst}: WARNING - No hard mask!  Bad detectors wont be removed')
 if mask not in ws_list and mask is not None:
+    assert mask.endswith('xml') or mask.endswith('msk'), 'Mask file should be .msk or .xml'
     print(f'{inst}: Loading hard mask - {mask}')
     LoadMask(inst,mask,OutputWorkspace=mask)
 else:
@@ -251,8 +252,8 @@ if cs_block and cs_bin_size > 0:
     print(f'... N={bval_nbins} bins with {bval_remainder:.2f} {unit} remainder')
 if cs_conv_to_md:
     powder = False
-    assert(all([v in cs_conv_pars for v in ['lattice_pars', 'lattice_ang', 'u', 'v', 'psi0']]),
-        'Conversion to MDWorkspace needs parameters: "lattice_pars", "lattice_ang", "u", "v", "psi0"')
+    assert all([v in cs_conv_pars for v in ['lattice_pars', 'lattice_ang', 'u', 'v', 'psi0']]), \
+        'Conversion to MDWorkspace needs parameters: "lattice_pars", "lattice_ang", "u", "v", "psi0"'
 
 # =======================sum sample runs if required=========================
 sumsuf = sumruns and len(sample) > 1
@@ -267,14 +268,13 @@ if is_auto(Ei_list) or hasattr(Ei_list, '__iter__') and is_auto(Ei_list[0]):
     try:
         Ei_list = autoei(ws)
     except (NameError, RuntimeError) as e:
-        fn = str(sample[0])
-        if not fn.startswith(inst[:3]): fn = f'{inst[:3]}{fn}'
-        if fn.endswith('.raw'): fn = fn[:-4]
-        if fn[-4:-2] == '.s': fn = fn[:-4] + '.n0' + fn[-2:]
-        if not fn.endswith('.nxs') and fn[-5:-2] != '.n0': fn += '.nxs'
-        ws_tmp_mons = LoadNexusMonitors(fn, OutputWorkspace='ws_tmp_mons')
-        Ei_list = autoei(ws_tmp_mons)
-    if not Ei_list:
+        fn = str(sample[0]).split(inst[:3])[-1].replace('.raw', '.nxs').replace('.s','.n0')
+        try:
+            ws_tmp_mons = LoadNexusMonitors(fn, OutputWorkspace='ws_tmp_mons')
+            Ei_list = autoei(ws_tmp_mons)
+        except:
+            pass
+    if not Ei_list and mv_file is not None:
         raise RuntimeError(f'Invalid run(s) {sample}. Chopper(s) not running ' \
                             'or could not determine neutron energy')
     print(f"Automatically determined Ei's: {Ei_list}")
@@ -308,7 +308,7 @@ if mv_file is not None and monovan_mass is not None:
         mv_fac.append(mvf)
 else:
     print(f'{inst}: Skipping absolute calibration')
-    mv_fac = [x/x for x in Ei_list]     # monovan factors = 1 by default
+    mv_fac = [1.0 for x in Ei_list]     # monovan factors = 1 by default
 
 # =====================angles cache stuff====================================
 if utils_loaded:
@@ -352,10 +352,14 @@ for irun in sample:
             tryload(irun)
             print(f'Loading run# {irun}')
 
+    # Fixes the current if it's been corrupted by a bug in Mantid
     try:
+        if mtd['ws'].getRun().getLogData('gd_prtn_chrg').value == 0:
+            AddSampleLog('ws', 'gd_prtn_chrg', str(np.sum(mtd['ws'].getRun().getLogData('proton_charge').value)), 'Number')
         ws = NormaliseByCurrent('ws')
     except RuntimeError:
-        pass
+        print(f'{inst}: WARNING: Could not normalise run. No integrated current found or current is zero')
+        ws = mtd['ws']
     if sumruns and sumruns_savemem:
         ws = CompressEvents(ws, Tolerance=1e-5)  # Tolerance in microseconds
 
@@ -382,9 +386,12 @@ for irun in sample:
         t_shift = 20000 if inst == 'MARI' and origEi < 3.1 else 0
 
         tofs = ws.readX(0)
-        tof_min = np.sqrt(l1**2 * 5.227e6 / Ei) - t_shift
-        tof_max = tof_min + np.sqrt(l2**2 * 5.226e6 / (Ei*(1-Erange[-1])))
-        ws_rep = CropWorkspace(ws, max(min(tofs), tof_min), min(max(tofs), tof_max))
+        if np.max(tofs) < 0.1 and isinstance(ws, mantid.dataobjects.EventWorkspace): # Probably live data don't crop
+            ws_rep = CloneWorkspace(ws)
+        else:
+            tof_min = np.sqrt(l1**2 * 5.227e6 / Ei) - t_shift
+            tof_max = tof_min + np.sqrt(l2**2 * 5.226e6 / (Ei*(1-Erange[-1])))
+            ws_rep = CropWorkspace(ws, max(min(tofs), tof_min), min(max(tofs), tof_max))
 
         if sample_cd is not None:
             print(f'... subtracting Cd background')
@@ -405,8 +412,7 @@ for irun in sample:
         print('... t2e section')
         ws_monitors = mtd['ws_monitors']
         spectra = ws_monitors.getSpectrumNumbers()
-        index = spectra.index(m2spec)
-        m2pos = ws.detectorInfo().position(index)[2]
+        m2pos = ws.detectorInfo().position(spectra.index(m2spec))[2]
 
         if inst == 'MARI' and utils_loaded and origEi < 4.01:
             # Shifts data / monitors into second frame for MARI

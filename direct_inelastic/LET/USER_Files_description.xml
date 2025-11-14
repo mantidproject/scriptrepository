@@ -25,28 +25,33 @@
   <file_to_copy file_name="../ISIS/DG_whitevan.py" copy_as="DG_whitevan.py">
     <replace var = "INSTRUMENT_NAME" by_var="LET"/>
     <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
-    <replace var = "MASK_FILE_XML" by_var="LET_mask_222.xml"/>
+    <replace var = "MASK_FILE_XML" by_var="LET_mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
   </file_to_copy>
   <file_to_copy file_name="../ISIS/DG_reduction.py" copy_as="DG_reduction.py">
     <replace var = "INSTRUMENT_NAME" by_var="LET"/>
     <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
-    <replace var = "MASK_FILE_XML" by_var="LET_mask_222.xml"/>
+    <replace var = "MASK_FILE_XML" by_var="LET_mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
-    <replace var = "RINGS_MAP_XML" by_var="LET_rings_222.xml"/>
+    <replace var = "RINGS_MAP_XML" by_var="LET_rings_252.xml"/>
     <replace var = "FIXEIVAL" by_var="True"/>
   </file_to_copy>
   <file_to_copy file_name="../ISIS/DG_monovan.py" copy_as="DG_monovan.py">
     <replace var = "INSTRUMENT_NAME" by_var="LET"/>
-    <replace var = "MASK_FILE_XML" by_var="LET_mask_222.xml"/>
+    <replace var = "MASK_FILE_XML" by_var="LET_mask_242.xml"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
-    <replace var = "RINGS_MAP_XML" by_var="LET_rings_222.xml"/>
+    <replace var = "RINGS_MAP_XML" by_var="LET_rings_252.xml"/>
   </file_to_copy>
   <file_to_copy file_name="../ISIS/DG_alignment.py" copy_as="DG_alignment.py">
     <replace var = "INSTRUMENT_NAME" by_var="LET"/>
     <replace var = "CYCLE_ID" by_var="$cycleID$"/>
     <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
   </file_to_copy>
-
+  <file_to_copy file_name="../ISIS/DG_PLET-calibration.py" copy_as="DG_PLET-calibration.py">
+  </file_to_copy>
+  <file_to_copy file_name="../ISIS/DG_PLET-analysis.py" copy_as="DG_PLET-analysis.py">
+    <replace var = "USER_RB_FOLDER" by_var="$rb_folder$"/>
+    <replace var = "RINGS_MAP_XML" by_var="LET_rings_252.xml"/>
+  </file_to_copy>
 
 </user_files_description>
