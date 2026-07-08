@@ -7,7 +7,7 @@ from mantid.simpleapi import *
 
 class CreateBlankTableForQuantum(PythonAlgorithm):
 	def category(self):
-		return 'Muon\Quantum'
+		return r'Muon\Quantum'
 
 	def PyInit(self):
 		self.declareProperty("BlankRows",30)
