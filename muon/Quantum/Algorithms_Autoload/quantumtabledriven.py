@@ -114,7 +114,7 @@ class QuantumTableDrivenSimulation(PythonAlgorithm):
     def name(self):
         return 'SimulateBasedOnTable'
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def PyInit(self):
         self.declareProperty(ITableWorkspaceProperty('ModelTable','',Direction.Input))
@@ -242,7 +242,7 @@ def RunModelledSystemCached(pars,key,cache={},counter=[0]):
 
 class QuantumTableDrivenFunction1(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -295,7 +295,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction1)
 
 class QuantumTableDrivenFunction2(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -350,7 +350,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction2)
 
 class QuantumTableDrivenFunction3(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -407,7 +407,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction3)
 
 class QuantumTableDrivenFunction3SD(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -464,7 +464,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction3SD)
 
 class QuantumTableDrivenFunction4(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -523,7 +523,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction4)
 
 class QuantumTableDrivenFunction4SD(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -582,7 +582,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction4SD)
 
 class QuantumTableDrivenFunction5(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -643,7 +643,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction5)
 
 class QuantumTableDrivenFunction5SD(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -704,7 +704,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction5SD)
 
 class QuantumTableDrivenFunction6(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -767,7 +767,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction6)
 
 class QuantumTableDrivenFunction6SD(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -830,7 +830,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction6SD)
 
 class QuantumTableDrivenFunction7(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -895,7 +895,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction7)
 
 class QuantumTableDrivenFunction8(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -962,7 +962,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction8)
 
 class QuantumTableDrivenFunction9(IFunction1D):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def init(self):
         self.declareAttribute("Table","Tab")
@@ -1031,7 +1031,7 @@ FunctionFactory.subscribe(QuantumTableDrivenFunction9)
 
 class ReplaceFitParsInTable(PythonAlgorithm):
     def category(self):
-        return 'Muon\Quantum'
+        return r'Muon\Quantum'
 
     def PyInit(self):
         self.declareProperty(ITableWorkspaceProperty('OrigModelTable','',Direction.Input))
