@@ -973,7 +973,7 @@ def processor_FittedCurve(pars,ybins,ebins,dest,asym):
 		# recycle named fit pars as initial value next time
 		for (i,parname) in enumerate(fitstuff[3].column(str("Name"))):
 			if (parname in pars["recycle"]):
-				matc=re.match("f([0-9]+)\.(.+)",parname)
+				matc=re.match(r"f([0-9]+)\.(.+)",parname)
 				if(matc):
 					baseparname=matc.group(2)
 					funcindex=int(matc.group(1))
