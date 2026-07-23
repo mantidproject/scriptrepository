@@ -1,8 +1,8 @@
 name: Index Repository
 
 on:
-  push:
-    branches: ["main", "master"]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   indexing:
