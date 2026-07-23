@@ -192,15 +192,17 @@ def get_description(path):
 
 def get_author(path):
     try:
-        output = subprocess.getstatusoutput("git log -1 "+path)[1]
-        spec_m = re.search(re_signed_author,output)
+        cmd = ["git", "log", "-1", "--", path]
+        output = subprocess.run(cmd, capture_output=True, text=True).stdout
+        spec_m = re.search(re_signed_author, output)
         if spec_m:
             return spec_m.group('author')
-        def_m = re.search(re_default_author,output)
+        def_m = re.search(re_default_author, output)
         if def_m:
             return def_m.group('author')
-    except:
+    except Exception:
         print('FAILED')
+    return None
 
 
 
@@ -272,7 +274,7 @@ def parse_repository(repository_path, out_directory):
     first_root = repository_path.replace('\\','/')
     os.chdir(first_root)
     #directory requires the last slash
-    if first_root.endswith('/'):
+    if not first_root.endswith('/'):
         first_root += '/'
     ## iterating through the folders/files
     for root, dirs, files in os.walk(first_root):
