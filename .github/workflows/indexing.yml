@@ -3,6 +3,8 @@ name: Index Repository
 on:
   push:
     branches: ["main", "master"]
+    paths-ignore:
+      - 'repository.json'
 
 jobs:
   indexing:
