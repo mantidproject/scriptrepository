@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          github_token: ${{ secrets.INDEXING }}
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -25,3 +27,4 @@ jobs:
           commit_message: Updating repository index JSON file
           commit_options: '--no-verify'
           file_pattern: './repository.json'
+          github_token: ${{ secrets.INDEXING }}
