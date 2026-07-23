@@ -1,13 +1,14 @@
 Bragg Peaks detection using a pre-trained Faster RCNN deep neural network 
 ================
 
-Inorder to run the pre-trained Faster RCNN model via mantid inside an IDAaaS instance, below steps are required.
+In order to run the pre-trained Faster RCNN model via mantid inside an IDAaaS instance, below steps are required.
 
 * Launch an IDAaaS instance with GPUs selected from WISH > Wish Single Crystal GPU Advanced
 * From IDAaaS, launch Mantid workbench nightly from Applications->Software->Mantid->Mantid Workbench Nightly 
 * Download `scriptrepository\diffraction\WISH` directory from mantid's script repository as instructed here https://docs.mantidproject.org/nightly/workbench/scriptrepository.html
 * Check whether `<local path>\diffraction\WISH` path is listed under `Python Script Directories` tab from `File->Manage User Directories` of Mantid workbench.
-* Below is an example code snippet to use the pretrained model for Bragg peak detection. It will create a peaks workspace with the inferred peaks from the model. The valid values for the `clustering` argument are `QLab` or `HDBSCAN`. For `QLab` method the default value of `q_tol=0.05` will be used for `BaseSX.remove_duplicate_peaks_by_qlab` method. 
+* Given below is an example code snippet to use the pretrained model for Bragg peak detection. If running them gives any import errors, please close Mantid workbench and follow the steps at the troubleshoot guide at the bottom of this page before relaunching the Mantid workbench to try again.
+* The code below will create a peaks workspace with the inferred peaks from the model. The valid values for the `clustering` argument are `QLab` or `HDBSCAN`. For `QLab` method the default value of `q_tol=0.05` will be used for `BaseSX.remove_duplicate_peaks_by_qlab` method. 
 ```python
 from cnn.BraggDetectCNN import BraggDetectCNN
 model_weights = r'/mnt/ceph/auxiliary/wish/BraggDetect_FasterRCNN_Resnet50_Weights_v1.pt'
@@ -27,3 +28,20 @@ cnn_peaks_detector.find_bragg_peaks(workspace='WISH00042730', output_ws_name="CN
 ```
 * The documentation for using HDBSCAN can be found here: https://scikit-learn.org/1.5/modules/generated/sklearn.cluster.HDBSCAN.html
 * The documentation for using `BaseSX.remove_duplicate_peaks_by_qlab` can be found here: https://docs.mantidproject.org/nightly/techniques/ISIS_SingleCrystalDiffraction_Workflow.html
+
+Troubleshooting
+-----
+
+If you see any of the following errors, you may need to install (or reinstall) some additional repositories
+* `ModuleNotFoundError: No module named 'torchvision'`
+* `ImportError: libcudnn.so.9: cannot open shared object file: No such file or directory`
+
+Then follow the steps to reinstall the required libraries as below before restarting the Mantid workbench
+```
+1. conda activate <env name>
+      Ex: conda activate /opt/mantidworkbenchnightly/
+2. conda remove cudnn
+3. pip uninstall torch torchvision tqdm albumentations scikit-learn
+4. pip install -r requirements.txt
+5. conda install -c conda-forge cudnn
+```
