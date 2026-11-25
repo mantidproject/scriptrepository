@@ -49,7 +49,6 @@ import subprocess
 import sys
 import time
 
-re_default_author = re.compile('Author: (?P<author>.+) <(?P<email>.+)>')
 re_signed_author = re.compile('signed by: (?P<author>.+) <(?P<email>.+)>')
 
 def extract_readme_doc(path):
@@ -190,21 +189,28 @@ def get_description(path):
 
 
 
-def get_author(path):
+def get_git_info(path):
+    """
+    Return (author, pub_date) from the last commit that touched path.
+
+    Uses the commit date rather than the file mtime, which on a fresh
+    checkout is just the checkout time. Requires full git history
+    (actions/checkout with fetch-depth: 0).
+    """
     try:
-        cmd = ["git", "log", "-1", "--", path]
-        output = subprocess.run(cmd, capture_output=True, text=True).stdout
-        spec_m = re.search(re_signed_author, output)
+        cmd = ["git", "log", "-1", "--format=%ct%n%an <%ae>%n%B", "--", path]
+        output = subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
+        if not output:
+            return None, None
+        timestamp, author_line, body = (output.split("\n", 2) + ["", ""])[:3]
+        pub_date = time.strftime("%Y-%b-%d %H:%M:%S", time.gmtime(int(timestamp)))
+        spec_m = re.search(re_signed_author, body)
         if spec_m:
-            return spec_m.group('author')
-        def_m = re.search(re_default_author, output)
-        if def_m:
-            return def_m.group('author')
+            return spec_m.group('author'), pub_date
+        return author_line.rsplit(" <", 1)[0], pub_date
     except Exception:
-        print('FAILED')
-    return None
-
-
+        print('FAILED to get git info for', path)
+    return None, None
 
 
 def make_entry(path, first_root):
@@ -239,14 +245,11 @@ def make_entry(path, first_root):
 
     """
     try:
-        timeformat="%Y-%b-%d %H:%M:%S"
-        stat = os.stat(path)
-        pub_date = time.strftime(timeformat,time.gmtime(int(stat.st_mtime)))
+        relative_path = path[len(first_root):] or "."
+        author, pub_date = get_git_info(relative_path)
         directory = os.path.isdir(path)
         if directory:
             return (path.replace(first_root,''),{'pub_date':pub_date, 'directory':directory, 'description':""}, False)
-        relative_path = path[len(first_root):]
-        author = get_author(relative_path)
         description,has_dir_desc = get_description(path)
         return (path.replace(first_root,''),{'pub_date':pub_date, 'directory':directory, 'description':description, 'author':author}, has_dir_desc)
     except:
